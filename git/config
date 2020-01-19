@@ -1,0 +1,24 @@
+[core]
+        excludesfile = ~/.config/git/ignore
+        quotepath = false
+        editor = emacsclient
+        ignorecase = false
+
+[user]
+        name = Geoff MacIntosh
+        email = geoff@mac.into.sh
+
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+        interactive = auto
+        ui = auto
+
+[credential]
+        helper = osxkeychain
+
+[diff]
+        renameLimit = 5000
+[http]
+	sslcainfo = /Users/g/.nix-profile/etc/ssl/certs/ca-bundle.crt
