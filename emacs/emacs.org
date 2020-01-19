@@ -1,0 +1,5 @@
+#+title: Emacs
+
+#+begin_src emacs-lisp
+  (straight-use-package 'use-package)
+#+end_src
