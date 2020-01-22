@@ -4,7 +4,9 @@
 /borgmatic
 /configstore
 /devcert
-/fish
+/fish/**
+!/fish/fishfile
+/fisher
 /git-annex
 /gopass
 /nnn
