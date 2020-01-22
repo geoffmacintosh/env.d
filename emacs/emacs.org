@@ -1,5 +1,157 @@
 #+title: Emacs
+#+property: header-args :results output silent :comments link
+
+* Initialization
 
 #+begin_src emacs-lisp
   (straight-use-package 'use-package)
 #+end_src
+
+#+begin_src emacs-lisp
+  (use-package no-littering)
+  (use-package bind-key)
+  (use-package exec-path-from-shell)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package system-packages
+    :custom
+    (system-packages-use-sudo nil)
+    (system-packages-package-manager 'nix))
+  (use-package use-package-ensure-system-package)
+#+end_src
+
+* User Interface
+
+#+begin_src emacs-lisp
+  (use-package help
+    :straight nil
+    :custom
+    (help-window-select t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package jit-lock
+    :straight nil
+    :custom
+    (jit-lock-defer-time 0))
+#+end_src
+
+#+begin_src emacs-lisp
+  (blink-cursor-mode -1)
+  (setq cursor-type 'box)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq scroll-conservatively 101)
+  (setq scroll-margin 0)
+  (setq mouse-wheel-scroll-amount '(1))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun display-startup-echo-area-message ()
+    "Remove the GNU info from the minibuffer on startup"
+    (message ""))
+  (setq inhibit-startup-message t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+When running in a non-client-server-mode, per-frame settings only need to be set once because frames aren't really created, even if they are. It's complicated. Anyway, frame-based features need to be initialized every time ~emacsclient~ is called, so I'm going to use a custom function for convenience. It takes one argument, which is the frame that it's being called after. It isn't used, and so is provided optionally.
+
+This function checks to see if ~tool-bar-mode~ etc are non-nil, then sets it to nil. That way, if emacs is opened in a terminal and things like ~tool-bar-mode~ aren't relevent, they're not set. Howevew, I like ~menu-bar-mode~ in the GUI but not in the terminal, so I disable it in non-gui-mode.
+
+#+begin_src emacs-lisp
+  (defun actuator-font-exists-p (font)
+    "Returns non-nil if the font is loaded."
+    (member font (font-family-list)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables"
+    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    (when (and (not (display-graphic-p))
+	       (fboundp 'menu-bar-mode))
+      (menu-bar-mode   -1))
+    (when (actuator-font-exists-p "SF Mono")
+      (set-frame-font "SF Mono-14" nil t)))
+#+end_src
+
+Then I need to have it run after emacsclient is run. There's a special hook for that, but it's non-standard, so passes a single argument, which is the frame it's being called on, but apparently it's not super important to do anything with it. Oh well.
+
+#+begin_src emacs-lisp
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+#+end_src
+
+Then I run the function a normal initialization so that the GUI settings are correct.
+
+#+begin_src emacs-lisp
+  (actuator-frame-init)
+#+end_src
+
+** Theme
+#+begin_src emacs-lisp
+  (load-theme 'actuator t)
+#+end_src
+
+
+** Scratch Message
+#+begin_src emacs-lisp
+  (setq initial-scratch-message "")
+#+end_src
+
+* Modules
+** Magit
+   :PROPERTIES:
+   :ID:       1539207a-2931-4f38-aa1c-b1464abd9cae
+   :END:
+ According to the Magit documentation, most Magit stuff is done from the status window, so creating a binding for that is a good idea.
+
+ The config section also initializes the package [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]], which is an "...Emacs library to ensure environment variables inside Emacs look the same as in the user's shell." I use it to fix an issue with Magit not being able to find ~git-lfs~. It would fail trying to push to GitHub because of that. [[https://magit.vc/manual/magit/I-am-using-OS-X-and-SOMETHING-works-in-shell-but-not-in-Magit.html#I-am-using-OS-X-and-SOMETHING-works-in-shell-but-not-in-Magit][Magit]] has documentation on the subject. Anyway, it's not a package that is useful elsewhere (so far), so I'm only loading it when Magit is loaded. Let's see it that works. The only way to tell is to push somthing to the server. Sweet. FYI, it worked.
+
+ #+begin_src emacs-lisp
+   (use-package magit
+     :after exec-path-from-shell
+     :bind ("C-c g" . magit-status)
+     :custom
+     (magit-diff-refine-hunk 'all)
+     (magit-save-repository-buffers 'dontask)
+     ;; (magit-section-initial-visibility-alist
+     ;;  '((untracked . show)
+     ;;    (unstaged  . show)
+     ;;    (upushed   . show)
+     ;;    (unpulled  . show)
+     ;;    (stashes   . show)
+     ;;    (recent    . show)))
+     (magit-push-always-verify nil)
+     (magit-revert-buffers 'silent)
+     (magit-no-confirm '(stage-all-changes
+                         unstage-all-changes))
+     :config
+     (defadvice magit-status (around magit-fullscreen activate)
+       (window-configuration-to-register :magit-fullscreen)
+       ad-do-it
+       (delete-other-windows))
+     (defun magit-quit-session ()
+       "Restores the previous window configuration and kills the magit buffer"
+       (interactive)
+       (kill-buffer)
+       (jump-to-register :magit-fullscreen)))
+ #+end_src
+
+* Programming Modules
+** Syntax Highlighting
+#+begin_src emacs-lisp
+  (use-package fish-mode)
+  (use-package gitconfig-mode)
+  (use-package gitignore-mode)
+  (use-package lua-mode)
+  (use-package toml-mode)
+#+end_src
+
+
