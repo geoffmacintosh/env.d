@@ -18,6 +18,6 @@
 /wget
 /youtube-dl
 /emacs/emacs.el
-/emacs/straight/repos
-/emacs/straight/build
-/emacs/straight/build-cache.el
+/emacs/straight/**
+!/emacs/straight/versions/default.el
+/emacs/var
