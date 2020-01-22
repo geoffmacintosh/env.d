@@ -31,11 +31,11 @@
   abbr -a -- = nextd
   abbr -a l exa -lFah --git
 
-  if test -d /usr/local/sbin
+  if test -e /usr/local/sbin
       set PATH /usr/local/sbin $PATH
   end
 
-  if test -d /Library/TeX/texbin
+  if test -e /Library/TeX/texbin
       set PATH $PATH /Library/TeX/texbin
   end
 
