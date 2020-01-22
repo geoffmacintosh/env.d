@@ -105,7 +105,92 @@ Then I run the function a normal initialization so that the GUI settings are cor
   (setq initial-scratch-message "")
 #+end_src
 
-* Modules
+* Core Adjustments
+** Settings
+
+#+begin_src emacs-lisp
+  (global-auto-revert-mode 1)
+  (setq global-auto-revert-non-file-buffers t)
+  (setq auto-revert-verbose nil)
+  (setq revert-without-query t)
+  (setq auto-revert-check-vc-info t)
+
+  (delete-selection-mode t)
+  (midnight-mode 1)
+  (setq sentence-end-double-space nil)
+
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+
+  (setq indent-tabs-mode nil)
+  (setq require-final-newline t)
+
+  (save-place-mode 1)
+
+  (setq backup-by-copying    t)
+  (setq delete-old-versions  t)
+  (setq kept-new-versions    50)
+  (setq kept-old-versions    5)
+  (setq version-control      t)
+
+  (setq vc-make-backup-files t)
+
+  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-separator "/")
+  (setq uniquify-after-kill-buffer-p t)
+  (setq uniquify-ignore-buffers-re "^\\*")
+  (setq uniquify-strip-common-suffix nil)
+#+end_src
+
+** Recent Files
+
+Recentf mode builds a list of recently opened files that are automatically saved across sessions.
+
+#+begin_src emacs-lisp
+  (use-package recentf
+    :after no-littering
+    :straight nil
+    :config
+    (recentf-mode)
+    :custom
+    (recentf-max-saved-items 500)
+    (recentf-exclude `(,no-littering-var-directory
+		       ,no-littering-etc-directory))
+    :hook (midnight . recentf-cleanup))
+#+end_src
+
+** Autosaves
+Autosaves are those things that are done every 300 characters in case Emacs crashes. They might as well also be saved in a nice place. I'm not positive what the "auto-save-file-name-transforms" does, but I think it helps with ensuring that files are correctly named in the saves folders.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :straight nil
+    :after no-littering
+    :custom
+    (auto-save-file-name-transforms
+     `((".*" ,(expand-file-name "auto-save/" no-littering-var-directory) t)))
+    (auto-save-mode))
+#+end_src
+
+** Move Customize Settings File
+
+If I use ~M-x customize~, it normally garbages up my init.el file. This allows it to garbage up its own place. Because [[https://github.com/nonissue][some nerd]] complained about not being able to clone and use my config without errors, I added a check to see if the file =~/.emacs.d/custom.el= exists. If it doesn't, it's created automatically and then used. If you want to use the customize interface, this is probably a bad thing to use, I think.
+
+#+begin_src emacs-lisp
+  (use-package cus-edit
+    :straight nil
+    :after no-littering
+    :custom
+    (custom-file (expand-file-name "custom.el" no-littering-var-directory))
+    :config
+    (load custom-file 'noerror))
+#+end_src
+
+* Core Modules
 ** Magit
    :PROPERTIES:
    :ID:       1539207a-2931-4f38-aa1c-b1464abd9cae
@@ -131,7 +216,7 @@ Then I run the function a normal initialization so that the GUI settings are cor
      (magit-push-always-verify nil)
      (magit-revert-buffers 'silent)
      (magit-no-confirm '(stage-all-changes
-                         unstage-all-changes))
+			 unstage-all-changes))
      :config
      (defadvice magit-status (around magit-fullscreen activate)
        (window-configuration-to-register :magit-fullscreen)
@@ -144,6 +229,100 @@ Then I run the function a normal initialization so that the GUI settings are cor
        (jump-to-register :magit-fullscreen)))
  #+end_src
 
+** Prescient
+
+#+begin_src emacs-lisp
+  (use-package prescient
+    :custom
+    (prescient-persist-mode 1)
+    (prescient-history-length 1000)
+    (prescient-aggressive-file-save t))
+#+end_src
+** Minibuffer
+
+#+begin_src emacs-lisp
+  (use-package minibuffer
+    :straight nil
+    :custom
+    (completion-styles '(fuzzy
+			       basic
+			       partial-completion
+			       substring
+			       initials
+			       emacs22)))
+#+end_src
+
+After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swiper) as my completion mechanism. Sounds fancy. Anyway, it's not a huge package, but I've tinkered it into some neat things.
+
+1. I have some settings for counsel-projectile in the projects section so I make sure that I'm always switching projects using counsel/ivy.
+
+2. Return completes the current directory and shows the candidates that are inside (or whatever hierarchical equivalent there is), kind of like ido.
+
+3. The C-j command selects whatever I've typed as the exact completion candidate. This is useful if I want to create a new file that is being matched to something that already exists.
+
+4. Also, I wanted to make ~M-y~ display the counsel-version of yank, but then also cycle through options, just like the normal one does. Borrowed from [[http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/][Pragmatic Emacs]].
+
+#+begin_src emacs-lisp
+  (use-package counsel
+    :config
+    (counsel-mode 1)
+    :bind
+    ("C-x C-r" . counsel-recentf)
+    ("C-x C-f" . counsel-find-file)
+    ("M-x"     . counsel-M-x)
+    ("s-x"     . counsel-M-x)
+    ("C-x l"   . counsel-locate)
+    ("C-h f"   . counsel-describe-function)
+    ("C-h v"   . counsel-describe-variable)
+    ("C-h k"   . counsel-descbinds)
+    ("M-y"     . counsel-yank-pop))
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (use-package ivy
+    :config
+    (ivy-mode 1)
+    (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
+    (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
+    (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line)
+    :custom
+    (ivy-use-ignore-default 'always)
+    (ivy-ignore-buffers '("*elfeed-log*"))
+    (ivy-use-virtual-buffers nil)
+    (ivy-count-format "(%d/%d) ")
+    (ivy-extra-directories nil)
+    :bind
+    ("C-x b" . ivy-switch-buffer))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package swiper
+    :bind ("C-s" . swiper))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ivy-posframe
+    :disabled t
+    :after ivy
+    :if (display-graphic-p)
+    :config
+    (ivy-posframe-mode 1)
+    :custom
+    (ivy-posframe-display-functions-alist
+     '((swiper                   . nil)
+       (counsel-M-x              . ivy-posframe-display-at-frame-top-center)
+       (ivy-completion-in-region . ivy-posframe-display-at-point)
+       (t                        . ivy-posframe-display-at-frame-top-center))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ivy-prescient
+    :after (ivy prescient)
+    :config
+    (ivy-prescient-mode 1))
+ #+end_src
+
 * Programming Modules
 ** Syntax Highlighting
 #+begin_src emacs-lisp
@@ -153,5 +332,3 @@ Then I run the function a normal initialization so that the GUI settings are cor
   (use-package lua-mode)
   (use-package toml-mode)
 #+end_src
-
-
