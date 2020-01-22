@@ -32,11 +32,18 @@
   abbr -a l exa -lFah --git
 
   if test -e /usr/local/sbin
-      set PATH /usr/local/sbin $PATH
+      set -gx PATH /usr/local/sbin $PATH
   end
 
   if test -e /Library/TeX/texbin
-      set PATH $PATH /Library/TeX/texbin
+      set -gx PATH $PATH /Library/TeX/texbin
+  end
+
+  # Brew's relationship to ruby is weird but I can't make it work with
+  # Nix yet.
+  if test -e /usr/local/lib/ruby/gems/2.6.0/bin
+      set -gx PATH /usr/local/lib/ruby/gems/2.6.0/bin $PATH
+      set -gx PATH /usr/local/opt/ruby/bin $PATH
   end
 
   function manp  -d "Open man pages as PDF documents"
