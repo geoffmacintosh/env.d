@@ -116,14 +116,25 @@
           extended-command-history))
 
   (defun display-startup-echo-area-message ()
-    "Remove the GNU info from the minibuffer on startup"
+    "Remove the GNU info from the minibuffer on startup.
+  All you have to do is create a function with this name. It's
+  called automatically."
     (message ""))
 
   (setq default-frame-alist
         '((ns-transparent-titlebar . t)
           (ns-appearance           . 'light)))
 
+  (setq truncate-partial-width-windows nil)
   (toggle-truncate-lines 1) ; Don't wrap lines by default (overridden a lot)
+
+  (setq completion-styles
+        '(fuzzy
+          basic
+          partial-completion
+          substring
+          initials
+          emacs22))
 #+end_src
 
 ** Frames
@@ -136,24 +147,25 @@ Then I run the function a normal initialization so that the GUI settings are cor
 
 #+begin_src emacs-lisp
   (defun actuator-font-exists-p (font)
-    "Returns non-nil if the font is loaded."
+    "Returns non-nil if FONT is loaded."
     (member font (font-family-list)))
 #+end_src
 
 #+begin_src emacs-lisp
-   (defun actuator-frame-init (&optional _frame)
-      "Initialize per-frame variables"
-      (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-      (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-      (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-      (when (and (not (display-graphic-p))
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
+  These variables need to be set every time a frame is created."
+    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    (when (and (not (display-graphic-p))
                (fboundp 'menu-bar-mode))
-        (menu-bar-mode   -1))
-      (when (actuator-font-exists-p "SF Mono")
-        (set-frame-font "SF Mono-14" nil t)))
+      (menu-bar-mode   -1))
+    (when (actuator-font-exists-p "SF Mono")
+      (set-frame-font "SF Mono-14" nil t)))
 
-    (add-hook 'after-make-frame-functions 'actuator-frame-init)
-    (actuator-frame-init)
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+  (actuator-frame-init)
 #+end_src
 
 * Core Adjustments
@@ -203,22 +215,21 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
 
 * Core Modules
 ** Just One Space
-   :PROPERTIES:
-   :ID:       131A5011-6D95-4F19-BB73-042A8CABAB83
-   :END:
+:PROPERTIES:
+:ID:       131A5011-6D95-4F19-BB73-042A8CABAB83
+:END:
 #+begin_src emacs-lisp
-  (defun actuator-just-one-space-minus-one ()
-    "Inserts just one space, killing all newlines as well as
-  whitespace."
+  (defun actuator-just-one-space ()
+    "Inserts just one space, killing ALL whitespace."
     (interactive)
     (just-one-space -1))
 
-  (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space-minus-one)
+  (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space)
 #+end_src
 ** Unfill
-   :PROPERTIES:
-   :ID:       B7B78476-C8E7-4FEB-A273-C85E1C9B6855
-   :END:
+:PROPERTIES:
+:ID:       B7B78476-C8E7-4FEB-A273-C85E1C9B6855
+:END:
 :LOGBOOK:
 - Refiled on [2019-09-23 Mon 13:12]
 :END:
@@ -232,9 +243,9 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
   (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
 #+end_src
 ** Magit
-   :PROPERTIES:
-   :ID:       1539207a-2931-4f38-aa1c-b1464abd9cae
-   :END:
+:PROPERTIES:
+:ID:       1539207a-2931-4f38-aa1c-b1464abd9cae
+:END:
  According to the Magit documentation, most Magit stuff is done from the status window, so creating a binding for that is a good idea.
 
  The config section also initializes the package [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]], which is an "...Emacs library to ensure environment variables inside Emacs look the same as in the user's shell." I use it to fix an issue with Magit not being able to find ~git-lfs~. It would fail trying to push to GitHub because of that. [[https://magit.vc/manual/magit/I-am-using-OS-X-and-SOMETHING-works-in-shell-but-not-in-Magit.html#I-am-using-OS-X-and-SOMETHING-works-in-shell-but-not-in-Magit][Magit]] has documentation on the subject. Anyway, it's not a package that is useful elsewhere (so far), so I'm only loading it when Magit is loaded. Let's see it that works. The only way to tell is to push somthing to the server. Sweet. FYI, it worked.
@@ -246,13 +257,13 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
      :custom
      (magit-diff-refine-hunk 'all)
      (magit-save-repository-buffers 'dontask)
-     ;; (magit-section-initial-visibility-alist
-     ;;  '((untracked . show)
-     ;;    (unstaged  . show)
-     ;;    (upushed   . show)
+     (magit-section-initial-visibility-alist
+       '((untracked . show)
+         (unstaged  . show)
+         (upushed   . show)
      ;;    (unpulled  . show)
      ;;    (stashes   . show)
-     ;;    (recent    . show)))
+         (recent    . show)))
      (magit-push-always-verify nil)
      (magit-revert-buffers 'silent)
      (magit-no-confirm '(stage-all-changes
@@ -280,18 +291,6 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
 #+end_src
 ** Minibuffer
 
-#+begin_src emacs-lisp
-  (use-package minibuffer
-    :straight nil
-    :custom
-    (completion-styles '(fuzzy
-                               basic
-                               partial-completion
-                               substring
-                               initials
-                               emacs22)))
-#+end_src
-
 After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swiper) as my completion mechanism. Sounds fancy. Anyway, it's not a huge package, but I've tinkered it into some neat things.
 
 1. I have some settings for counsel-projectile in the projects section so I make sure that I'm always switching projects using counsel/ivy.
@@ -317,7 +316,6 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
     ("C-h k"   . counsel-descbinds)
     ("M-y"     . counsel-yank-pop))
 #+end_src
-
 
 #+begin_src emacs-lisp
   (use-package ivy
@@ -393,6 +391,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
 
 #+begin_src emacs-lisp
   (defun actuator-hippie-unexpand ()
+    "Remove an expansion without having to loop around."
     (interactive)
     (hippie-expand 0))
   (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
@@ -412,6 +411,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (add-hook 'emacs-startup-hook #'actuator-startup-profile)
 
   (defun actuator-startup-profile ()
+    "Displays startup time garbage collections in the modeline."
     (message "Emacs ready in %s with %d garbage collections."
              (format "%.2f seconds"
                      (float-time
@@ -439,7 +439,6 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (use-package gitignore-mode)
   (use-package lua-mode)
   (use-package toml-mode)
-  ;;(use-package sass)
 #+end_src
 * Org Modules
 ** Org Settings
@@ -535,6 +534,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (use-package org-download
     :preface
     (defun actuator-org-dl-annotate (_link)
+      "Minimal org-download header info."
       (format "#+DOWNLOADED: %s\n"
               (format-time-string "%Y-%m-%d")))
     :custom
