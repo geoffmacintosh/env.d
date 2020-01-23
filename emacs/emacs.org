@@ -8,17 +8,18 @@
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package no-littering)
-  (use-package bind-key)
-  (use-package exec-path-from-shell)
+    (use-package no-littering)
+    (use-package bind-key)
+    (use-package exec-path-from-shell
+      :hook (after-init . exec-path-from-shell-initialize))
 #+end_src
 
 #+begin_src emacs-lisp
+  (use-package use-package-ensure-system-package)
   (use-package system-packages
     :custom
     (system-packages-use-sudo nil)
     (system-packages-package-manager 'nix))
-  (use-package use-package-ensure-system-package)
 #+end_src
 
 * User Interface
