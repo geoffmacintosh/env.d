@@ -36,6 +36,81 @@
   (fset 'yes-or-no-p 'y-or-n-p)
   (load-theme 'actuator t)
 
+  (global-auto-revert-mode 1)
+  (setq global-auto-revert-non-file-buffers t)
+  (setq auto-revert-verbose nil)
+  (setq revert-without-query t)
+  (setq auto-revert-check-vc-info t)
+
+  (global-set-key (kbd "M-o") #'other-window)
+
+  (delete-selection-mode t)
+  (midnight-mode 1)
+  (setq sentence-end-double-space nil)
+
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+
+  (setq indent-tabs-mode nil)
+  (setq require-final-newline t)
+
+  (save-place-mode 1)
+
+  (setq backup-by-copying    t)
+  (setq delete-old-versions  t)
+  (setq kept-new-versions    50)
+  (setq kept-old-versions    5)
+  (setq version-control      t)
+
+  (setq vc-make-backup-files t)
+
+  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-separator "/")
+  (setq uniquify-after-kill-buffer-p t)
+  (setq uniquify-ignore-buffers-re "^\\*")
+  (setq uniquify-strip-common-suffix nil)
+
+  (setq find-file-visit-truename nil)
+  (setq confirm-kill-emacs 'y-or-n-p)
+
+  (abbrev-mode)
+  (setq save-abbrevs 'silently)
+  (setq enable-recursive-minibuffers t)
+
+  (setq history-length 10000)
+  (setq history-delete-duplicates t)
+  (setq message-log-max 10000)
+
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-defun  'disabled nil)
+
+  (setq-local default-directory "~/")
+
+  (add-hook 'after-save-hook
+            'executable-make-buffer-file-executable-if-script-p)
+
+  (savehist-mode)
+  (setq savehist-save-minibuffer-history t)
+  (setq savehist-additional-variables
+        '(mark-ring
+          kill-ring
+          Info-history-list
+          last-kbd-macro
+          kmacro-ring
+          register-alist
+          global-mark-ring
+          regexp-search-ring
+          file-name-history
+          shell-command-history
+          compile-history
+          command-history
+          extended-command-history))
+
+
   (defun display-startup-echo-area-message ()
     "Remove the GNU info from the minibuffer on startup"
     (message ""))
@@ -71,161 +146,7 @@ Then I run the function a normal initialization so that the GUI settings are cor
     (actuator-frame-init)
 #+end_src
 
-#+begin_src emacs-lisp
-  (global-auto-revert-mode 1)
-  (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil)
-  (setq revert-without-query t)
-  (setq auto-revert-check-vc-info t)
-
-  (global-set-key (kbd "M-o") #'other-window)
-
-  (delete-selection-mode t)
-  (midnight-mode 1)
-  (setq sentence-end-double-space nil)
-
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-
-  (setq indent-tabs-mode nil)
-  (setq require-final-newline t)
-
-  (save-place-mode 1)
-
-  (setq backup-by-copying    t)
-  (setq delete-old-versions  t)
-  (setq kept-new-versions    50)
-  (setq kept-old-versions    5)
-  (setq version-control      t)
-
-  (setq vc-make-backup-files t)
-
-  (setq uniquify-buffer-name-style 'forward)
-  (setq uniquify-separator "/")
-  (setq uniquify-after-kill-buffer-p t)
-  (setq uniquify-ignore-buffers-re "^\\*")
-  (setq uniquify-strip-common-suffix nil)
-
-  (setq find-file-visit-truename nil)
-  (setq confirm-kill-emacs 'y-or-n-p)
-
-  (abbrev-mode)
-  (setq save-abbrevs 'silently)
-  (setq enable-recursive-minibuffers t)
-
-  (setq history-length 10000)
-  (setq history-delete-duplicates t)
-  (setq message-log-max 10000)
-
-  (put 'narrow-to-region 'disabled nil)
-  (put 'narrow-to-defun  'disabled nil)
-
-  (setq-local default-directory "~/")
-
-  (add-hook 'after-save-hook
-            'executable-make-buffer-file-executable-if-script-p)
-
-  (savehist-mode)
-  (setq savehist-save-minibuffer-history t)
-  (setq savehist-additional-variables
-        '(mark-ring
-          kill-ring
-          Info-history-list
-          last-kbd-macro
-          kmacro-ring
-          register-alist
-          global-mark-ring
-          regexp-search-ring
-          file-name-history
-          shell-command-history
-          compile-history
-          command-history
-          extended-command-history))
-#+end_src
-
 * Core Adjustments
-** Settings
-
-#+begin_src emacs-lisp
-  (global-auto-revert-mode 1)
-  (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil)
-  (setq revert-without-query t)
-  (setq auto-revert-check-vc-info t)
-
-  (global-set-key (kbd "M-o") #'other-window)
-
-  (delete-selection-mode t)
-  (midnight-mode 1)
-  (setq sentence-end-double-space nil)
-
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-
-  (setq indent-tabs-mode nil)
-  (setq require-final-newline t)
-
-  (save-place-mode 1)
-
-  (setq backup-by-copying    t)
-  (setq delete-old-versions  t)
-  (setq kept-new-versions    50)
-  (setq kept-old-versions    5)
-  (setq version-control      t)
-
-  (setq vc-make-backup-files t)
-
-  (setq uniquify-buffer-name-style 'forward)
-  (setq uniquify-separator "/")
-  (setq uniquify-after-kill-buffer-p t)
-  (setq uniquify-ignore-buffers-re "^\\*")
-  (setq uniquify-strip-common-suffix nil)
-
-  (setq find-file-visit-truename nil)
-  (setq confirm-kill-emacs 'y-or-n-p)
-
-  (abbrev-mode)
-  (setq save-abbrevs 'silently)
-  (setq enable-recursive-minibuffers t)
-
-  (setq history-length 10000)
-  (setq history-delete-duplicates t)
-  (setq message-log-max 10000)
-
-  (put 'narrow-to-region 'disabled nil)
-  (put 'narrow-to-defun  'disabled nil)
-
-  (setq-local default-directory "~/")
-
-  (add-hook 'after-save-hook
-            'executable-make-buffer-file-executable-if-script-p)
-
-  (savehist-mode)
-  (setq savehist-save-minibuffer-history t)
-  (setq savehist-additional-variables
-        '(mark-ring
-          kill-ring
-          Info-history-list
-          last-kbd-macro
-          kmacro-ring
-          register-alist
-          global-mark-ring
-          regexp-search-ring
-          file-name-history
-          shell-command-history
-          compile-history
-          command-history
-          extended-command-history))
-#+end_src
-
 ** Recent Files
 
 Recentf mode builds a list of recently opened files that are automatically saved across sessions.
