@@ -24,45 +24,28 @@
 * User Interface
 
 #+begin_src emacs-lisp
-  (use-package help
-    :straight nil
-    :custom
-    (help-window-select t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package jit-lock
-    :straight nil
-    :custom
-    (jit-lock-defer-time 0))
-#+end_src
-
-#+begin_src emacs-lisp
+  (setq help-window-select t)
+  (setq jit-lock-defer-time 0)
   (blink-cursor-mode -1)
   (setq cursor-type 'box)
-#+end_src
-
-#+begin_src emacs-lisp
   (setq scroll-conservatively 101)
   (setq scroll-margin 0)
   (setq mouse-wheel-scroll-amount '(1))
-#+end_src
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message "")
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (load-theme 'actuator t)
 
-#+begin_src emacs-lisp
   (defun display-startup-echo-area-message ()
     "Remove the GNU info from the minibuffer on startup"
     (message ""))
-  (setq inhibit-startup-message t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
 When running in a non-client-server-mode, per-frame settings only need to be set once because frames aren't really created, even if they are. It's complicated. Anyway, frame-based features need to be initialized every time ~emacsclient~ is called, so I'm going to use a custom function for convenience. It takes one argument, which is the frame that it's being called after. It isn't used, and so is provided optionally.
 
 This function checks to see if ~tool-bar-mode~ etc are non-nil, then sets it to nil. That way, if emacs is opened in a terminal and things like ~tool-bar-mode~ aren't relevent, they're not set. Howevew, I like ~menu-bar-mode~ in the GUI but not in the terminal, so I disable it in non-gui-mode.
-
+Then I need to have it run after emacsclient is run. There's a special hook for that, but it's non-standard, so passes a single argument, which is the frame it's being called on, but apparently it's not super important to do anything with it. Oh well.
+Then I run the function a normal initialization so that the GUI settings are correct.
 #+begin_src emacs-lisp
   (defun actuator-font-exists-p (font)
     "Returns non-nil if the font is loaded."
@@ -80,29 +63,9 @@ This function checks to see if ~tool-bar-mode~ etc are non-nil, then sets it to 
       (menu-bar-mode   -1))
     (when (actuator-font-exists-p "SF Mono")
       (set-frame-font "SF Mono-14" nil t)))
-#+end_src
 
-Then I need to have it run after emacsclient is run. There's a special hook for that, but it's non-standard, so passes a single argument, which is the frame it's being called on, but apparently it's not super important to do anything with it. Oh well.
-
-#+begin_src emacs-lisp
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
-#+end_src
-
-Then I run the function a normal initialization so that the GUI settings are correct.
-
-#+begin_src emacs-lisp
   (actuator-frame-init)
-#+end_src
-
-** Theme
-#+begin_src emacs-lisp
-  (load-theme 'actuator t)
-#+end_src
-
-
-** Scratch Message
-#+begin_src emacs-lisp
-  (setq initial-scratch-message "")
 #+end_src
 
 * Core Adjustments
@@ -110,40 +73,77 @@ Then I run the function a normal initialization so that the GUI settings are cor
 
 #+begin_src emacs-lisp
   (global-auto-revert-mode 1)
-  (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil)
-  (setq revert-without-query t)
-  (setq auto-revert-check-vc-info t)
+    (setq global-auto-revert-non-file-buffers t)
+    (setq auto-revert-verbose nil)
+    (setq revert-without-query t)
+    (setq auto-revert-check-vc-info t)
 
-  (delete-selection-mode t)
-  (midnight-mode 1)
-  (setq sentence-end-double-space nil)
+    (global-set-key (kbd "M-o") #'other-window)
 
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
+    (delete-selection-mode t)
+    (midnight-mode 1)
+    (setq sentence-end-double-space nil)
 
-  (add-hook 'before-save-hook 'whitespace-cleanup)
+    (prefer-coding-system 'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
 
-  (setq indent-tabs-mode nil)
-  (setq require-final-newline t)
+    (add-hook 'before-save-hook 'whitespace-cleanup)
 
-  (save-place-mode 1)
+    (setq indent-tabs-mode nil)
+    (setq require-final-newline t)
 
-  (setq backup-by-copying    t)
-  (setq delete-old-versions  t)
-  (setq kept-new-versions    50)
-  (setq kept-old-versions    5)
-  (setq version-control      t)
+    (save-place-mode 1)
 
-  (setq vc-make-backup-files t)
+    (setq backup-by-copying    t)
+    (setq delete-old-versions  t)
+    (setq kept-new-versions    50)
+    (setq kept-old-versions    5)
+    (setq version-control      t)
 
-  (setq uniquify-buffer-name-style 'forward)
-  (setq uniquify-separator "/")
-  (setq uniquify-after-kill-buffer-p t)
-  (setq uniquify-ignore-buffers-re "^\\*")
-  (setq uniquify-strip-common-suffix nil)
+    (setq vc-make-backup-files t)
+
+    (setq uniquify-buffer-name-style 'forward)
+    (setq uniquify-separator "/")
+    (setq uniquify-after-kill-buffer-p t)
+    (setq uniquify-ignore-buffers-re "^\\*")
+    (setq uniquify-strip-common-suffix nil)
+
+    (setq find-file-visit-truename nil)
+    (setq confirm-kill-emacs 'y-or-n-p)
+
+    (abbrev-mode)
+    (setq save-abbrevs 'silently)
+    (setq enable-recursive-minibuffers t)
+    (setq history-length 10000)
+    (setq history-delete-duplicates t)
+    (setq message-log-max 10000)
+
+    (put 'narrow-to-region 'disabled nil)
+    (put 'narrow-to-defun  'disabled nil)
+
+    (setq-local default-directory "~/")
+
+  (add-hook 'after-save-hook
+	      'executable-make-buffer-file-executable-if-script-p)
+
+      (savehist-mode)
+
+      (setq savehist-save-minibuffer-history t)
+      (setq savehist-additional-variables '(mark-ring
+				       kill-ring
+				       Info-history-list
+				       last-kbd-macro
+				       kmacro-ring
+				       register-alist
+				       global-mark-ring
+				       regexp-search-ring
+				       file-name-history
+				       shell-command-history
+				       compile-history
+				       command-history
+				       extended-command-history))
 #+end_src
 
 ** Recent Files
@@ -191,6 +191,35 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
 #+end_src
 
 * Core Modules
+** Just One Space
+   :PROPERTIES:
+   :ID:       131A5011-6D95-4F19-BB73-042A8CABAB83
+   :END:
+#+begin_src emacs-lisp
+  (defun actuator-just-one-space-minus-one ()
+    "Inserts just one space, killing all newlines as well as
+  whitespace."
+    (interactive)
+    (just-one-space -1))
+
+  (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space-minus-one)
+#+end_src
+** Unfill
+   :PROPERTIES:
+   :ID:       B7B78476-C8E7-4FEB-A273-C85E1C9B6855
+   :END:
+:LOGBOOK:
+- Refiled on [2019-09-23 Mon 13:12]
+:END:
+
+#+begin_src emacs-lisp
+  (defun actuator-unfill-paragraph ()
+      "Unfills a paragraph."
+    (interactive)
+    (let ((fill-column 'most-positive-fixed-num))
+      (fill-paragraph)))
+  (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
+#+end_src
 ** Magit
    :PROPERTIES:
    :ID:       1539207a-2931-4f38-aa1c-b1464abd9cae
@@ -324,6 +353,19 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
  #+end_src
 
 * Programming Modules
+** Parens
+:PROPERTIES:
+:ID:       5EC65547-949C-4C7F-8C9C-CDFA94C99031
+:END:
+
+#+begin_src emacs-lisp
+  (show-paren-mode)
+  (setq blink-matching-paren nil)
+  (electric-pair-mode 1)
+  ;;(setq blink-matching-paren nil)
+  (setq show-paren-delay 0)
+  (setq show-paren-style 'mixed)
+#+end_src
 ** Syntax Highlighting
 #+begin_src emacs-lisp
   (use-package fish-mode)
@@ -331,4 +373,767 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (use-package gitignore-mode)
   (use-package lua-mode)
   (use-package toml-mode)
+  ;;(use-package sass)
+#+end_src
+* Org Modules
+** Org Settings
+#+begin_src emacs-lisp
+  ;;(use-package org
+  ;;  :straight org-plus-contrib)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-startup-align-all-tables t)
+  (setq org-startup-shrink-all-tables t)
+  (setq org-startup-with-inline-images t)
+  (setq org-startup-indented t)
+  (setq org-hide-leading-stars t)
+  (setq org-pretty-entities-include-sub-superscripts t)
+  (setq org-hide-emphasis-markers t)
+  (setq org-image-actual-width 300)
+  (setq org-edit-src-persistent-message nil)
+  (setq org-src-fontify-natively t)
+  (setq org-fontify-done-headline t)
+  (setq org-agenda-dim-blocked-tasks t)
+  (org-indent-mode 1))
+  (setq org-babel-results-keyword "results")
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-footnote-auto-adjust t)
+  (setq org-footnote-define-inline t)
+  (setq org-footnote-auto-label 'random)
+  (setq org-list-indent-offset 1)
+  (setq org-src-tab-acts-natively t)
+  (setq org-structure-template-alist '(("e" . "src emacs-lisp")
+				       ("s" . "src shell")))
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (global-set-key (kbd "C-c c") #'counsel-org-capture)
+  (setq org-attach-store-link-p 'attached)
+  (setq org-attach-dir-relative t)
+  (setq org-attach-preferred-new-method 'dir)
+  (setq org-attach-method 'mv)
+  (setq org-attach-auto-tag nil)
+  (setq org-attach-archive-delete 'query)
+  (setq org-attach-annex-auto-get t)
+  (setq org-id-link-to-org-use-id t)
+  (setq org-modules '(org-crypt))
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+  (setq org-crypt-key nil)
+  (add-hook 'midnight-hook #'org-id-update-id-locations)
+  (global-set-key (kbd "C-c l") #'org-store-link)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+  (setq org-log-refile 'time)
+  (setq org-closed-keep-when-no-todo t)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-enforce-todo-checkbox-dependencies t)
+
+  (setq org-complete-tags-always-offer-all-agenda-tags t)
+  (setq org-clone-delete-id t)
+  (setq org-tags-column -60)
+
+  ;; Safety
+  (setq org-catch-invisible-edits 'show-and-error)
+  (setq org-insert-heading-respect-content t)
+  (setq org-ctrl-k-protect-subtree t)
+  (setq org-M-RET-may-split-line '((default . nil)))
+
+  ;; Editing
+  (setq org-special-ctrl-k t)
+  (setq org-special-ctrl-a/e t)
+  (setq org-blank-before-new-entry '((heading         . t)
+				     (plain-list-item . auto)))
+
+  ;; Properties
+  (setq org-use-property-inheritance t)
+
+  (add-to-list 'org-babel-default-header-args
+	       '(:mkdirp . "yes"))
+  (org-babel-do-load-languages 'org-babel-load-languages
+			       '((emacs-lisp . t)
+				 (shell      . t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◆" "◆" "◇" "◇" "◇")))
+#+end_src
+
+** Org Attach
+
+#+begin_src emacs-lisp
+  (use-package org-download
+    :preface
+    (defun actuator-org-dl-annotate (_link)
+      (format "#+DOWNLOADED: %s\n"
+	      (format-time-string "%Y-%m-%d")))
+    :custom
+    (org-download-method 'attach)
+    (org-download-timestamp "")
+    (org-download-annotate-function #'actuator-org-dl-annotate))
+#+end_src
+
+* Disabled
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+** Visual Fill Column
+#+begin_src emacs-lisp
+  (use-package visual-fill-column
+    :config
+    (global-visual-fill-column-mode 1)
+    (global-visual-line-mode 1)
+    :custom
+    ;;(visual-line-fringe-indicators '(nil right-curly-arrow))
+    (visual-fill-column-width 70))
+#+end_src
+** Startup Profiler
+#+begin_src emacs-lisp
+  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
+
+  (defun actuator-startup-profile ()
+    (message "Emacs ready in %s with %d garbage collections."
+	     (format "%.2f seconds"
+		     (float-time
+		      (time-subtract after-init-time before-init-time)))
+	     gcs-done))
+#+end_src
+** Cancel GC in Minibuffer
+#+begin_src emacs-lisp
+  (defun actuator-minibuffer-setup-hook ()
+    (setq gc-cons-threshold (* 500 1024 1024)))
+
+  (defun actuator-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'actuator-minibuffer-exit-hook)
+#+end_src
+
+** Delete by Moving to Trash
+#+begin_src emacs-lisp
+  (use-package emacs
+    :ensure nil
+    :after system-packages
+    :ensure-system-package trash-cli
+    :custom
+    (delete-by-moving-to-trash t)
+    :config
+    (defun system-move-file-to-trash (file)
+      "Move the file to trash via the `trash` command-line tool."
+      (call-process "trash" nil nil nil file)))
+#+end_src
+
+** Titlebar
+#+begin_src emacs-lisp
+  (setq default-frame-alist
+	 '((ns-transparent-titlebar . t)
+	   (ns-appearance           . 'light)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq frame-title-format '((:eval (if (buffer-file-name)
+					 (abbreviate-file-name (buffer-file-name))
+				       "%b"))))
+#+end_src
+** Server
+#+begin_src emacs-lisp
+  (use-package server
+    :ensure nil
+    :config
+    (defun actuator-running-as-server-p ()
+      "Returns true if `server-start' has been called."
+    (condition-case nil
+	(and (boundp 'server-process)
+	     (memq (process-status server-process)
+		   '(connect listen open run)))
+      (error)))
+
+    (unless (actuator-running-as-server-p)
+      (server-start)))
+#+end_src
+
+
+
+** Hippie Expand
+:PROPERTIES:
+:ID:       D05AEED2-AD8C-4B75-A8CF-F129EBB8B8C7
+:END:
+
+#+begin_src emacs-lisp
+  (use-package hippie-exp
+    :bind ("s-/" . hippie-expand)
+    :custom
+    (hippie-expand-verbose t)
+    (hippie-expand-try-functions-list
+     '(try-expand-all-abbrevs
+       try-expand-dabbrev-visible
+       try-expand-dabbrev
+       try-expand-dabbrev-all-buffers
+       try-expand-dabbrev-from-kill
+       try-expand-whole-kill)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun hippie-unexpand ()
+    (interactive)
+    (hippie-expand 0))
+  (global-set-key (kbd "<backtab>") #'hippie-unexpand)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package smart-tab
+    :config
+    (global-smart-tab-mode 1)
+    :custom
+    (smart-tab-using-hippie-expand t)
+    (smart-tab-completion-functions-alist nil))
+#+end_src
+
+[[https://blog.binchen.org/posts/autocomplete-with-a-dictionary-with-hippie-expand.html][Binchen]]
+
+#+begin_src emacs-lisp :tangle no
+   (defun try-expand-by-dict (old)
+     (require 'ispell)
+     ;;(require 'hippie-exp)
+     ;;(unless (bound-and-true-p ispell-minor-mode)
+       ;;(ispell-minor-mode 1))
+
+     (if (not ispell-alternate-dictionary)
+	 (setq ispell-alternate-dictionary (file-truename "/usr/share/dict/words")))
+     (let ((lookup-func (if (fboundp 'ispell-lookup-words)
+			  'ispell-lookup-words
+			  'lookup-words)))
+       (unless old
+	 (he-init-string (he-lisp-symbol-beg) (point))
+	 (if (not (he-string-member he-search-string he-tried-table))
+	   (setq he-tried-table (cons he-search-string he-tried-table)))
+	 (setq he-expand-list
+	       (and (not (equal he-search-string ""))
+		    (funcall lookup-func (concat (buffer-substring-no-properties (he-lisp-symbol-beg) (point)) "*")))))
+       (if (null he-expand-list)
+	 (if old (he-reset-string))
+	 (he-substitute-string (car he-expand-list))
+	 (setq he-expand-list (cdr he-expand-list))
+	 t)
+       ))
+#+end_src
+
+** Company
+    :PROPERTIES:
+    :ID:       035DE7B4-9F7F-4D38-9BEA-5BE947281CD9
+    :END:
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :custom
+    (company-idle-delay 0)
+    (company-minimum-prefix-length 2)
+    (company-backends
+	   '(company-files
+	     (company-capf
+	      company-dabbrev-code)))
+    (company-require-match nil)
+    (company-show-numbers t)
+    :config
+    (add-hook 'prog-mode-hook #'company-mode)
+    (defun mac-company-number ()
+      "Forward to `company-complete-number'.
+
+  Unless the number is potentially part of the candidate.
+  In that case, insert the number."
+      (interactive)
+      (let* ((k (this-command-keys))
+	     (re (concat "^" company-prefix k)))
+	(if (cl-find-if (lambda (s) (string-match re s))
+			company-candidates)
+	    (self-insert-command 1)
+	  (company-complete-number (string-to-number k)))))
+
+    (let ((map company-active-map))
+      (mapc
+       (lambda (x)
+	 (define-key map (format "%d" x) 'mac-company-number))
+       (number-sequence 0 9))
+      (define-key map " " (lambda ()
+			    (interactive)
+			    (company-abort)
+			    (self-insert-command 1)))
+      (define-key map (kbd "<return>") nil))
+
+    ;; (defun mac-org-mode-hook ()
+    ;;   (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+    ;; (add-hook 'org-mode-hook #'mac-org-mode-hook))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package company-posframe
+    :ensure t
+    :if (display-graphic-p)
+    :after company)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package company-prescient
+    :ensure t
+    :after (company prescient))
+#+end_src
+
+** Web Dev (React / JSX)
+
+ #+begin_src emacs-lisp
+   (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-mode))
+ #+end_src
+
+ #+begin_src emacs-lisp
+   (use-package prettier-js-mode
+     :hook (js-mode . prettier-js-mode))
+ #+end_src
+
+ #+begin_src emacs-lisp
+   (use-package js2-mode
+     :hook (js-mode . js2-minor-mode)
+     :custom
+     (js2-strict-missing-semi-warning nil))
+ #+end_src
+
+ #+begin_src emacs-lisp
+   (use-package prodigy
+     :config
+     (prodigy-define-service
+     :name "Gatsby.js"
+     :command "gatsby"
+     :args '("develop")
+     :cwd "~/Projects/portfolio"
+     :tags '(personal)
+     :stop-signal 'sigkill
+     :kill-process-buffer-on-stop t))
+ #+end_src
+
+** Hydra
+   :PROPERTIES:
+   :ID:       1340236C-B973-4C63-923E-F36C47AB65A1
+   :END:
+#+begin_src emacs-lisp
+  (use-package hydra
+    :ensure t
+    :config
+    (csetq hydra-hint-display-type 'lv))
+#+end_src
+
+** Modeline
+
+#+begin_src emacs-lisp
+  (use-package minions
+    :ensure t
+    :config
+    (minions-mode 1))
+#+end_src
+
+** Scratch Buffer
+   :PROPERTIES:
+   :ID:       C17636D1-9417-42DB-9252-F69F4B6832D3
+   :END:
+
+
+
+[[http://www.geocrawler.com/archives/3/338/1994/6/0/1877802/][Morten Welind: recreate scratch buffer if killed]].
+
+#+begin_src emacs-lisp
+   (defun kill-scratch-buffer ()
+     (set-buffer (get-buffer-create "*scratch*"))
+     (remove-hook 'kill-buffer-query-functions 'kill-scratch-buffer)
+     (kill-buffer (current-buffer))
+     (set-buffer (get-buffer-create "*scratch*"))
+     (lisp-interaction-mode)
+     (make-local-variable 'kill-buffer-query-functions)
+     (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer)
+     nil)
+
+  (with-current-buffer (get-buffer-create "*scratch*")
+     (lisp-interaction-mode)
+     (make-local-variable 'kill-buffer-query-functions)
+     (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer))
+#+end_src
+
+** Projectile
+   :PROPERTIES:
+   :ID:       6E928D94-AB52-4FC2-873D-A2D36B2EA7B3
+   :END:
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :ensure t
+    :bind ("C-c q" . projectile-find-file-in-known-projects)
+    :config
+    (require 'subr-x)
+    (projectile-mode)
+    :custom
+    (projectile-switch-project-action 'counsel-projectile-find-file)
+    (projectile-globally-ignored-file-suffixes '("org_archive"))
+    (projectile-indexing-method 'hybrid)
+    (projectile-completion-system 'ivy)
+    (projectile-sort-order 'recentf))
+#+end_src
+
+But I don't /actually/ want to use projectile. I want to use projectile with fancy ivy/counsel-style completion. So I need a package that bridges the two, at least for the bindings that I actually use on a regular basis. Note that ~counsel-projectile~ is super-cool in that if I'm not in a project already, it switches projects instead. That's better.
+
+#+begin_src emacs-lisp
+  (use-package counsel-projectile
+    :ensure t
+    :bind
+    ("C-x C-p" . counsel-projectile)
+    ("C-c p"   . counsel-projectile-switch-project)
+    ("C-c b"   . counsel-projectile-switch-to-buffer))
+#+end_src
+
+[[id:8D13228C-9B3B-491B-ABA0-1AAE2B4FCF3C][Midnight]]
+
+#+begin_src emacs-lisp
+  (add-hook 'midnight-hook #'projectile-cleanup-known-projects)
+#+end_src
+
+** Desktop
+   :PROPERTIES:
+   :ID:       823C17F1-623C-465C-B29D-87E994A0D8E3
+   :END:
+
+#+begin_src emacs-lisp
+  (use-package desktop
+    :init
+    (desktop-save-mode 1)
+    :custom
+    (desktop-file-name-format 'tilde)
+    (desktop-missing-file-warning nil)
+    (desktop-globals-to-clear nil))
+#+end_src
+
+** Spell check
+   :PROPERTIES:
+   :ID:       9131A2E2-EA2C-4F73-98F5-449DC0594CA0
+   :END:
+
+#+begin_src emacs-lisp
+  (use-package flyspell
+    :disabled
+    :custom
+    (flyspell-abbrev-p t)
+    (flyspell-use-global-abbrev-table-p t)
+    (flyspell-issue-message-flag nil)
+    (flyspell-issue-welcome-flag nil)
+    (flyspell-mode 1))
+
+  (use-package flyspell-correct-ivy
+    :disabled
+    :after flyspell
+    :bind (:map flyspell-mode-map
+	  ("C-;" . flyspell-correct-word-generic))
+    :custom (flyspell-correct-interface 'flyspell-correct-ivy))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ispell
+    :disabled
+    ;:ensure-system-package hunspell
+    :custom
+    (when (executable-find "hunspell")
+      (setq-default ispell-program-name "hunspell")
+      (setq ispell-really-hunspell t))
+    (ispell-current-personal-dictionary "~/.dict"))
+#+end_src
+
+** Slime
+   :PROPERTIES:
+   :ID:       4B6E3CCE-F1A9-40A0-A729-A1715D801E93
+   :END:
+#+begin_src emacs-lisp :tangle no
+  (use-package slime
+    :ensure t
+    :config
+    (csetq inferior-lisp-program "/usr/local/bin/sbcl")
+    (csetq slime-kill-without-query-p t)
+    (csetq slime-contribs '(slime-fancy)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package slime-repl
+    :config
+    (csetq slime-repl-history-size 10000)
+    (csetq slime-repl-history-file (expand-file-name "slime-history.el" no-littering-var-directory)))
+#+end_src
+
+** Publishing
+   :PROPERTIES:
+   :ID:       AC3AC665-78F8-4EA7-8DD7-771275C175E1
+   :END:
+#+begin_src emacs-lisp
+  (use-package ox-publish
+    :config
+    (add-to-list
+     'org-publish-project-alist
+     `("org-content"
+       :base-directory ,org-directory
+       :base-extension "org"
+       ;;:html-link-home "/"
+       :publishing-directory ,org-directory
+       :publishing-function org-html-publish-to-html
+       :recursive t
+       :with-toc nil
+       :section-numbers nil
+       :with-broken-links mark
+       :with-priority nil
+       :with-tasks nil
+
+       :html-doctype "html5"
+       :html-html5-fancy t
+       :html-head-extra nil
+       :html-head-include-default-style nil
+       :html-head-include-scripts nil
+       :html-head "<link href=\"assets/main.css\" rel=\"stylesheet\" type=\"text/css\">"
+       :html-preamble nil
+       :html-postamble nil
+
+       :sitemap-title "Org"
+       :sitemap-style list
+       :sitemap-filename "sitemap.org"
+       :sitemap-sort-files anti-chronologically
+       :auto-sitemap t)))
+#+end_src
+
+** Skeleton
+   :PROPERTIES:
+   :ID:       CFB6E1FF-EE35-47FF-ADED-99C9E564958F
+   :END:
+#+begin_src emacs-lisp
+  (define-skeleton mac-insert-org-wiki-header
+    "Stuff"
+    '(setq str (skeleton-read "Title: "))
+    "#+title: " str \n
+    "* " str \n
+    _ \n
+    "** Related" \n
+    "** References" \n)
+#+end_src
+
+** Git Gutter
+   :PROPERTIES:
+   :ID:       EE7ED645-5822-4774-9CF2-F56BFBE788A8
+   :END:
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :ensure t
+    :hook (magit-post-refresh . diff-hl-magit-post-refresh)
+    :config
+    (global-diff-hl-mode))
+#+end_src
+
+** LaTeX
+   :PROPERTIES:
+   :ID:       9FC5A1C8-3895-4FA2-B582-C278E0A0196E
+   :END:
+#+begin_src emacs-lisp
+  (use-package tex
+    :ensure auctex
+    :custom
+    (TeX-engine 'luatex)
+    (TeX-view-program-list
+     '(("Skim"
+	"/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
+    (TeX-source-correlate-start-server t))
+#+end_src
+
+** Eshell
+   :PROPERTIES:
+   :ID:       B6E67E95-4B41-40F8-849B-B42500ED0733
+   :END:
+
+#+begin_src emacs-lisp
+  (defalias 'eshell/f  'find-file-other-window)
+  (defalias 'eshell/ff 'find-file)
+  (defalias 'eshell/v 'view-file-other-window)
+  (defalias 'eshell/vv 'view-file)
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-hook 'eshell-mode-hook
+    (lambda ()
+      (define-key eshell-mode-map (kbd "<tab>")
+	(lambda () (interactive) (pcomplete-std-complete)))))
+#+end_src
+
+ #+begin_src emacs-lisp
+   (use-package em-smart
+     :hook (eshell-mode . eshell-smart-initialize)
+     :custom
+     (eshell-where-to-jump 'begin)
+     (eshell-review-quick-commands nil)
+     (eshell-smart-space-goes-to-end t))
+ #+end_src
+
+ #+begin_src emacs-lisp
+   (defun eshell/alac ()
+     "Poops out alac files from flac."
+     (require 'em-glob)
+     (declare-function eshell-extended-glob "em-glob" (glob))
+     (dolist (f (eshell-extended-glob "*.flac"))
+       (shell-command (format "ffmpeg -i \"%s\" -acodec alac \"%s.m4a\"" f (file-name-sans-extension f)))))
+ #+end_src
+
+ #+begin_src emacs-lisp
+   (use-package em-hist
+     :custom
+     (eshell-hist-ignoredups t)
+     (eshell-history-size 10000))
+ #+end_src
+
+#+begin_src emacs-lisp
+  (use-package em-banner
+    :custom
+    (eshell-banner-message ""))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package em-prompt
+    :config
+    (defun fish-path (path max-len)
+      "Return a potentially trimmed-down version of the directory PATH, replacing
+  parent directories with their initial characters to try to get the character
+  length of PATH (sans directory slashes) down to MAX-LEN."
+      (let* ((components (split-string (abbreviate-file-name path) "/"))
+	     (len (+ (1- (length components))
+		     (cl-reduce '+ components :key 'length)))
+	     (str ""))
+	(while (and (> len max-len)
+		    (cdr components))
+	  (setq str (concat str
+			    (cond ((= 0 (length (car components))) "/")
+				  ((= 1 (length (car components)))
+				   (concat (car components) "/"))
+				  (t
+				   (if (string= "."
+						(string (elt (car components) 0)))
+				       (concat (substring (car components) 0 2)
+					       "/")
+				     (string (elt (car components) 0) ?/)))))
+		len (- len (1- (length (car components))))
+		components (cdr components)))
+	(concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
+    :custom
+    (eshell-prompt-function
+     (lambda ()
+       (concat
+	(propertize
+	 (fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
+	(propertize
+	 (if (= (user-uid) 0)
+	     " # "
+	   " ❯ ") 'face `(:foreground "black")))))
+
+    (eshell-highlight-prompt nil)
+
+    (eshell-prompt-regexp "^.*?[#❯] ")
+    )
+#+end_src
+
+** Ibuffer
+#+begin_src emacs-lisp
+  (use-package ibuffer
+    :bind ("C-x C-b" . ibuffer)
+    :custom
+    (ibuffer-expert t)
+    (ibuffer-show-empty-filter-groups nil)
+    (ibuffer-saved-filter-groups
+     '(("home"
+	("Magit"     (name . "\*magit"))
+	("Help"  (or (name . "\*Help\*")
+		     (name . "\*Apropos\*")
+		     (name . "\*info\*")))
+	("Src"       (name . "\*Org Src"))
+	("Dired"     (mode . "Dired"))
+	("Misc"  (or (name . "\*scratch\*")
+		     (name . "\*Messages\*"))))))
+    :hook
+    (ibuffer-mode . (lambda ()
+		      (ibuffer-auto-mode 1)
+		      (ibuffer-switch-to-saved-filter-groups "home")))
+    )
+#+end_src
+
+** Hot Expand
+
+#+begin_src emacs-lisp
+    (defhydra hydra-org-template (:color blue :hint nil)
+       "
+    _C_enter  _Q_uote     _e_macs-lisp  _I_NCLUDE:
+    _l_atex   _E_xample   _s_hell       _i_ndex:
+    _a_scii
+    _S_rc
+    _h_tml    ^ ^         ^ ^
+
+   "
+       ("S" (hot-expand "<s"))
+       ("E" (hot-expand "<e"))
+       ("Q" (hot-expand "<Q"))
+       ("C" (hot-expand "<c"))
+       ("l" (hot-expand "<l"))
+       ("h" (hot-expand "<h"))
+       ("a" (hot-expand "<a"))
+       ("i" (hot-expand "<i"))
+       ("e" (hot-expand "<s" "emacs-lisp"))
+       ("s" (hot-expand "<s" "shell"))
+       ("I" (hot-expand "<I"))
+       ("<" self-insert-command "ins")
+       ("q" nil "quit"))
+
+     (require 'org-tempo) ; Required from org 9 onwards for old template expansion
+     ;; Reset the org-template expnsion system, this is need after upgrading to org 9 for some reason
+     (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
+     (defun hot-expand (str &optional mod header)
+       "Expand org template.
+
+   STR is a structure template string recognised by org like <s. MOD is a
+   string with additional parameters to add the begin line of the
+   structure element. HEADER string includes more parameters that are
+   prepended to the element after the #+HEADER: tag."
+       (let (text)
+	 (when (region-active-p)
+	   (setq text (buffer-substring (region-beginning) (region-end)))
+	   (delete-region (region-beginning) (region-end))
+	   (deactivate-mark))
+	 (when header (insert "#+HEADER: " header) (forward-line))
+	 (insert str)
+	 (org-tempo-complete-tag)
+	 (when mod (insert mod) (forward-line))
+	 (when text (insert text))))
+
+     (define-key org-mode-map "<"
+       (lambda () (interactive)
+	 (if (or (region-active-p) (looking-back "^" 1))
+	     (hydra-org-template/body)
+	   (self-insert-command 1))))
+ #+end_src
+** Eldoc
+   :PROPERTIES:
+   :ID:       71D564B4-640F-4E50-A6CE-8FD0C54F363A
+   :END:
+
+[[https://www.reddit.com/r/emacs/comments/c1zl0s/weekly_tipstricketc_thread/ergullj/?context=1][Improve eldoc's documentation]]
+
+#+begin_src emacs-lisp :tangle no
+  (use-package eldoc
+    :custom
+    (eldoc-echo-area-use-multiline-p t)
+    (eldoc-idle-delay 0)
+    :config
+    (define-advice elisp-get-fnsym-args-string (:around (orig-fun sym &rest r) docstring)
+      "If SYM is a function, append its docstring."
+      (require 'subr-x)
+      (concat
+       (apply orig-fun sym r)
+       (when-let ((doc (and (fboundp sym) (documentation sym 'raw)))
+		  (oneline (substring doc 0 (string-match "\n" doc))))
+	 (when (not (string= "" oneline))
+	   (concat " " (propertize oneline 'face 'italic)))))))
 #+end_src
