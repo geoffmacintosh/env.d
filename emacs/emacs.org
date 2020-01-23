@@ -22,7 +22,7 @@
 #+end_src
 
 * User Interface
-
+** Settings
 #+begin_src emacs-lisp
   (setq help-window-select t)
   (setq jit-lock-defer-time 0)
@@ -41,11 +41,14 @@
     (message ""))
 #+end_src
 
+** Frames
+
 When running in a non-client-server-mode, per-frame settings only need to be set once because frames aren't really created, even if they are. It's complicated. Anyway, frame-based features need to be initialized every time ~emacsclient~ is called, so I'm going to use a custom function for convenience. It takes one argument, which is the frame that it's being called after. It isn't used, and so is provided optionally.
 
 This function checks to see if ~tool-bar-mode~ etc are non-nil, then sets it to nil. That way, if emacs is opened in a terminal and things like ~tool-bar-mode~ aren't relevent, they're not set. Howevew, I like ~menu-bar-mode~ in the GUI but not in the terminal, so I disable it in non-gui-mode.
 Then I need to have it run after emacsclient is run. There's a special hook for that, but it's non-standard, so passes a single argument, which is the frame it's being called on, but apparently it's not super important to do anything with it. Oh well.
 Then I run the function a normal initialization so that the GUI settings are correct.
+
 #+begin_src emacs-lisp
   (defun actuator-font-exists-p (font)
     "Returns non-nil if the font is loaded."
@@ -53,19 +56,95 @@ Then I run the function a normal initialization so that the GUI settings are cor
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-frame-init (&optional _frame)
-    "Initialize per-frame variables"
-    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-    (when (and (not (display-graphic-p))
-	       (fboundp 'menu-bar-mode))
-      (menu-bar-mode   -1))
-    (when (actuator-font-exists-p "SF Mono")
-      (set-frame-font "SF Mono-14" nil t)))
+   (defun actuator-frame-init (&optional _frame)
+      "Initialize per-frame variables"
+      (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+      (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+      (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+      (when (and (not (display-graphic-p))
+               (fboundp 'menu-bar-mode))
+        (menu-bar-mode   -1))
+      (when (actuator-font-exists-p "SF Mono")
+        (set-frame-font "SF Mono-14" nil t)))
 
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
-  (actuator-frame-init)
+    (add-hook 'after-make-frame-functions 'actuator-frame-init)
+    (actuator-frame-init)
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-auto-revert-mode 1)
+  (setq global-auto-revert-non-file-buffers t)
+  (setq auto-revert-verbose nil)
+  (setq revert-without-query t)
+  (setq auto-revert-check-vc-info t)
+
+  (global-set-key (kbd "M-o") #'other-window)
+
+  (delete-selection-mode t)
+  (midnight-mode 1)
+  (setq sentence-end-double-space nil)
+
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+
+  (setq indent-tabs-mode nil)
+  (setq require-final-newline t)
+
+  (save-place-mode 1)
+
+  (setq backup-by-copying    t)
+  (setq delete-old-versions  t)
+  (setq kept-new-versions    50)
+  (setq kept-old-versions    5)
+  (setq version-control      t)
+
+  (setq vc-make-backup-files t)
+
+  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-separator "/")
+  (setq uniquify-after-kill-buffer-p t)
+  (setq uniquify-ignore-buffers-re "^\\*")
+  (setq uniquify-strip-common-suffix nil)
+
+  (setq find-file-visit-truename nil)
+  (setq confirm-kill-emacs 'y-or-n-p)
+
+  (abbrev-mode)
+  (setq save-abbrevs 'silently)
+  (setq enable-recursive-minibuffers t)
+
+  (setq history-length 10000)
+  (setq history-delete-duplicates t)
+  (setq message-log-max 10000)
+
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-defun  'disabled nil)
+
+  (setq-local default-directory "~/")
+
+  (add-hook 'after-save-hook
+            'executable-make-buffer-file-executable-if-script-p)
+
+  (savehist-mode)
+  (setq savehist-save-minibuffer-history t)
+  (setq savehist-additional-variables
+        '(mark-ring
+          kill-ring
+          Info-history-list
+          last-kbd-macro
+          kmacro-ring
+          register-alist
+          global-mark-ring
+          regexp-search-ring
+          file-name-history
+          shell-command-history
+          compile-history
+          command-history
+          extended-command-history))
 #+end_src
 
 * Core Adjustments
@@ -73,77 +152,78 @@ Then I run the function a normal initialization so that the GUI settings are cor
 
 #+begin_src emacs-lisp
   (global-auto-revert-mode 1)
-    (setq global-auto-revert-non-file-buffers t)
-    (setq auto-revert-verbose nil)
-    (setq revert-without-query t)
-    (setq auto-revert-check-vc-info t)
+  (setq global-auto-revert-non-file-buffers t)
+  (setq auto-revert-verbose nil)
+  (setq revert-without-query t)
+  (setq auto-revert-check-vc-info t)
 
-    (global-set-key (kbd "M-o") #'other-window)
+  (global-set-key (kbd "M-o") #'other-window)
 
-    (delete-selection-mode t)
-    (midnight-mode 1)
-    (setq sentence-end-double-space nil)
+  (delete-selection-mode t)
+  (midnight-mode 1)
+  (setq sentence-end-double-space nil)
 
-    (prefer-coding-system 'utf-8)
-    (set-default-coding-systems 'utf-8)
-    (set-terminal-coding-system 'utf-8)
-    (set-keyboard-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
 
-    (add-hook 'before-save-hook 'whitespace-cleanup)
+  (add-hook 'before-save-hook 'whitespace-cleanup)
 
-    (setq indent-tabs-mode nil)
-    (setq require-final-newline t)
+  (setq indent-tabs-mode nil)
+  (setq require-final-newline t)
 
-    (save-place-mode 1)
+  (save-place-mode 1)
 
-    (setq backup-by-copying    t)
-    (setq delete-old-versions  t)
-    (setq kept-new-versions    50)
-    (setq kept-old-versions    5)
-    (setq version-control      t)
+  (setq backup-by-copying    t)
+  (setq delete-old-versions  t)
+  (setq kept-new-versions    50)
+  (setq kept-old-versions    5)
+  (setq version-control      t)
 
-    (setq vc-make-backup-files t)
+  (setq vc-make-backup-files t)
 
-    (setq uniquify-buffer-name-style 'forward)
-    (setq uniquify-separator "/")
-    (setq uniquify-after-kill-buffer-p t)
-    (setq uniquify-ignore-buffers-re "^\\*")
-    (setq uniquify-strip-common-suffix nil)
+  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-separator "/")
+  (setq uniquify-after-kill-buffer-p t)
+  (setq uniquify-ignore-buffers-re "^\\*")
+  (setq uniquify-strip-common-suffix nil)
 
-    (setq find-file-visit-truename nil)
-    (setq confirm-kill-emacs 'y-or-n-p)
+  (setq find-file-visit-truename nil)
+  (setq confirm-kill-emacs 'y-or-n-p)
 
-    (abbrev-mode)
-    (setq save-abbrevs 'silently)
-    (setq enable-recursive-minibuffers t)
-    (setq history-length 10000)
-    (setq history-delete-duplicates t)
-    (setq message-log-max 10000)
+  (abbrev-mode)
+  (setq save-abbrevs 'silently)
+  (setq enable-recursive-minibuffers t)
 
-    (put 'narrow-to-region 'disabled nil)
-    (put 'narrow-to-defun  'disabled nil)
+  (setq history-length 10000)
+  (setq history-delete-duplicates t)
+  (setq message-log-max 10000)
 
-    (setq-local default-directory "~/")
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-defun  'disabled nil)
+
+  (setq-local default-directory "~/")
 
   (add-hook 'after-save-hook
-	      'executable-make-buffer-file-executable-if-script-p)
+            'executable-make-buffer-file-executable-if-script-p)
 
-      (savehist-mode)
-
-      (setq savehist-save-minibuffer-history t)
-      (setq savehist-additional-variables '(mark-ring
-				       kill-ring
-				       Info-history-list
-				       last-kbd-macro
-				       kmacro-ring
-				       register-alist
-				       global-mark-ring
-				       regexp-search-ring
-				       file-name-history
-				       shell-command-history
-				       compile-history
-				       command-history
-				       extended-command-history))
+  (savehist-mode)
+  (setq savehist-save-minibuffer-history t)
+  (setq savehist-additional-variables
+        '(mark-ring
+          kill-ring
+          Info-history-list
+          last-kbd-macro
+          kmacro-ring
+          register-alist
+          global-mark-ring
+          regexp-search-ring
+          file-name-history
+          shell-command-history
+          compile-history
+          command-history
+          extended-command-history))
 #+end_src
 
 ** Recent Files
@@ -159,7 +239,7 @@ Recentf mode builds a list of recently opened files that are automatically saved
     :custom
     (recentf-max-saved-items 500)
     (recentf-exclude `(,no-littering-var-directory
-		       ,no-littering-etc-directory))
+                       ,no-littering-etc-directory))
     :hook (midnight . recentf-cleanup))
 #+end_src
 
@@ -245,7 +325,7 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
      (magit-push-always-verify nil)
      (magit-revert-buffers 'silent)
      (magit-no-confirm '(stage-all-changes
-			 unstage-all-changes))
+                         unstage-all-changes))
      :config
      (defadvice magit-status (around magit-fullscreen activate)
        (window-configuration-to-register :magit-fullscreen)
@@ -264,7 +344,7 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
   (use-package prescient
     :custom
     (prescient-persist-mode 1)
-    (prescient-history-length 1000)
+    (prescient-history-length 10000)
     (prescient-aggressive-file-save t))
 #+end_src
 ** Minibuffer
@@ -274,11 +354,11 @@ If I use ~M-x customize~, it normally garbages up my init.el file. This allows i
     :straight nil
     :custom
     (completion-styles '(fuzzy
-			       basic
-			       partial-completion
-			       substring
-			       initials
-			       emacs22)))
+                               basic
+                               partial-completion
+                               substring
+                               initials
+                               emacs22)))
 #+end_src
 
 After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swiper) as my completion mechanism. Sounds fancy. Anyway, it's not a huge package, but I've tinkered it into some neat things.
@@ -352,6 +432,61 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
     (ivy-prescient-mode 1))
  #+end_src
 
+** Hippie Expand
+:PROPERTIES:
+:ID:       D05AEED2-AD8C-4B75-A8CF-F129EBB8B8C7
+:END:
+
+#+begin_src emacs-lisp
+  (use-package hippie-exp
+    :straight nil
+    :bind ("s-/" . hippie-expand)
+    :custom
+    (hippie-expand-verbose t)
+    (hippie-expand-try-functions-list
+     '(try-expand-all-abbrevs
+       try-expand-dabbrev-visible
+       try-expand-dabbrev
+       try-expand-dabbrev-all-buffers
+       try-expand-dabbrev-from-kill
+       try-complete-file-name-partially
+       try-complete-file-name
+       ;;try-expand-line
+       ;;try-expand-line-all-buffers ;;slow
+       ;;try-complete-lisp-symbol-partially
+       ;;try-complete-lisp-symbol ;; many, many completions
+       ;;try-expand-list
+       ;;try-expand-list-all-buffers
+       try-expand-whole-kill)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-hippie-unexpand ()
+    (interactive)
+    (hippie-expand 0))
+  (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package smart-tab
+    :config
+    (global-smart-tab-mode 1)
+    :custom
+    (smart-tab-using-hippie-expand t)
+    (smart-tab-completion-functions-alist nil))
+#+end_src
+
+** Startup Profiler
+#+begin_src emacs-lisp
+  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
+
+  (defun actuator-startup-profile ()
+    (message "Emacs ready in %s with %d garbage collections."
+             (format "%.2f seconds"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))
+             gcs-done))
+#+end_src
 * Programming Modules
 ** Parens
 :PROPERTIES:
@@ -395,7 +530,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (setq org-src-fontify-natively t)
   (setq org-fontify-done-headline t)
   (setq org-agenda-dim-blocked-tasks t)
-  (org-indent-mode 1))
+  (org-indent-mode 1)
   (setq org-babel-results-keyword "results")
   (setq org-confirm-babel-evaluate nil)
   (setq org-footnote-auto-adjust t)
@@ -404,7 +539,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (setq org-list-indent-offset 1)
   (setq org-src-tab-acts-natively t)
   (setq org-structure-template-alist '(("e" . "src emacs-lisp")
-				       ("s" . "src shell")))
+                                       ("s" . "src shell")))
   (global-set-key (kbd "C-c a") #'org-agenda)
   (global-set-key (kbd "C-c c") #'counsel-org-capture)
   (setq org-attach-store-link-p 'attached)
@@ -416,7 +551,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (setq org-attach-annex-auto-get t)
   (setq org-id-link-to-org-use-id t)
   (setq org-modules '(org-crypt))
-  (org-crypt-use-before-save-magic)
+  ;;(org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
   (setq org-crypt-key nil)
   (add-hook 'midnight-hook #'org-id-update-id-locations)
@@ -442,16 +577,18 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (setq org-special-ctrl-k t)
   (setq org-special-ctrl-a/e t)
   (setq org-blank-before-new-entry '((heading         . t)
-				     (plain-list-item . auto)))
+                                     (plain-list-item . auto)))
 
   ;; Properties
   (setq org-use-property-inheritance t)
 
   (add-to-list 'org-babel-default-header-args
-	       '(:mkdirp . "yes"))
+               '(:mkdirp . "yes"))
   (org-babel-do-load-languages 'org-babel-load-languages
-			       '((emacs-lisp . t)
-				 (shell      . t)))
+                               '((emacs-lisp . t)
+                                 (shell      . t)))
+
+  (add-hook 'org-mode-hook #'visual-line-mode)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -468,7 +605,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
     :preface
     (defun actuator-org-dl-annotate (_link)
       (format "#+DOWNLOADED: %s\n"
-	      (format-time-string "%Y-%m-%d")))
+              (format-time-string "%Y-%m-%d")))
     :custom
     (org-download-method 'attach)
     (org-download-timestamp "")
@@ -479,7 +616,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
 :PROPERTIES:
 :header-args: :tangle no
 :END:
-** Visual Fill Column
+** DONE Visual Fill Column
 #+begin_src emacs-lisp
   (use-package visual-fill-column
     :config
@@ -488,17 +625,6 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
     :custom
     ;;(visual-line-fringe-indicators '(nil right-curly-arrow))
     (visual-fill-column-width 70))
-#+end_src
-** Startup Profiler
-#+begin_src emacs-lisp
-  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
-
-  (defun actuator-startup-profile ()
-    (message "Emacs ready in %s with %d garbage collections."
-	     (format "%.2f seconds"
-		     (float-time
-		      (time-subtract after-init-time before-init-time)))
-	     gcs-done))
 #+end_src
 ** Cancel GC in Minibuffer
 #+begin_src emacs-lisp
@@ -529,14 +655,14 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
 ** Titlebar
 #+begin_src emacs-lisp
   (setq default-frame-alist
-	 '((ns-transparent-titlebar . t)
-	   (ns-appearance           . 'light)))
+         '((ns-transparent-titlebar . t)
+           (ns-appearance           . 'light)))
 #+end_src
 
 #+begin_src emacs-lisp
   (csetq frame-title-format '((:eval (if (buffer-file-name)
-					 (abbreviate-file-name (buffer-file-name))
-				       "%b"))))
+                                         (abbreviate-file-name (buffer-file-name))
+                                       "%b"))))
 #+end_src
 ** Server
 #+begin_src emacs-lisp
@@ -546,79 +672,13 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
     (defun actuator-running-as-server-p ()
       "Returns true if `server-start' has been called."
     (condition-case nil
-	(and (boundp 'server-process)
-	     (memq (process-status server-process)
-		   '(connect listen open run)))
+        (and (boundp 'server-process)
+             (memq (process-status server-process)
+                   '(connect listen open run)))
       (error)))
 
     (unless (actuator-running-as-server-p)
       (server-start)))
-#+end_src
-
-
-
-** Hippie Expand
-:PROPERTIES:
-:ID:       D05AEED2-AD8C-4B75-A8CF-F129EBB8B8C7
-:END:
-
-#+begin_src emacs-lisp
-  (use-package hippie-exp
-    :bind ("s-/" . hippie-expand)
-    :custom
-    (hippie-expand-verbose t)
-    (hippie-expand-try-functions-list
-     '(try-expand-all-abbrevs
-       try-expand-dabbrev-visible
-       try-expand-dabbrev
-       try-expand-dabbrev-all-buffers
-       try-expand-dabbrev-from-kill
-       try-expand-whole-kill)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun hippie-unexpand ()
-    (interactive)
-    (hippie-expand 0))
-  (global-set-key (kbd "<backtab>") #'hippie-unexpand)
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package smart-tab
-    :config
-    (global-smart-tab-mode 1)
-    :custom
-    (smart-tab-using-hippie-expand t)
-    (smart-tab-completion-functions-alist nil))
-#+end_src
-
-[[https://blog.binchen.org/posts/autocomplete-with-a-dictionary-with-hippie-expand.html][Binchen]]
-
-#+begin_src emacs-lisp :tangle no
-   (defun try-expand-by-dict (old)
-     (require 'ispell)
-     ;;(require 'hippie-exp)
-     ;;(unless (bound-and-true-p ispell-minor-mode)
-       ;;(ispell-minor-mode 1))
-
-     (if (not ispell-alternate-dictionary)
-	 (setq ispell-alternate-dictionary (file-truename "/usr/share/dict/words")))
-     (let ((lookup-func (if (fboundp 'ispell-lookup-words)
-			  'ispell-lookup-words
-			  'lookup-words)))
-       (unless old
-	 (he-init-string (he-lisp-symbol-beg) (point))
-	 (if (not (he-string-member he-search-string he-tried-table))
-	   (setq he-tried-table (cons he-search-string he-tried-table)))
-	 (setq he-expand-list
-	       (and (not (equal he-search-string ""))
-		    (funcall lookup-func (concat (buffer-substring-no-properties (he-lisp-symbol-beg) (point)) "*")))))
-       (if (null he-expand-list)
-	 (if old (he-reset-string))
-	 (he-substitute-string (car he-expand-list))
-	 (setq he-expand-list (cdr he-expand-list))
-	 t)
-       ))
 #+end_src
 
 ** Company
@@ -632,9 +692,9 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
     (company-idle-delay 0)
     (company-minimum-prefix-length 2)
     (company-backends
-	   '(company-files
-	     (company-capf
-	      company-dabbrev-code)))
+           '(company-files
+             (company-capf
+              company-dabbrev-code)))
     (company-require-match nil)
     (company-show-numbers t)
     :config
@@ -646,21 +706,21 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   In that case, insert the number."
       (interactive)
       (let* ((k (this-command-keys))
-	     (re (concat "^" company-prefix k)))
-	(if (cl-find-if (lambda (s) (string-match re s))
-			company-candidates)
-	    (self-insert-command 1)
-	  (company-complete-number (string-to-number k)))))
+             (re (concat "^" company-prefix k)))
+        (if (cl-find-if (lambda (s) (string-match re s))
+                        company-candidates)
+            (self-insert-command 1)
+          (company-complete-number (string-to-number k)))))
 
     (let ((map company-active-map))
       (mapc
        (lambda (x)
-	 (define-key map (format "%d" x) 'mac-company-number))
+         (define-key map (format "%d" x) 'mac-company-number))
        (number-sequence 0 9))
       (define-key map " " (lambda ()
-			    (interactive)
-			    (company-abort)
-			    (self-insert-command 1)))
+                            (interactive)
+                            (company-abort)
+                            (self-insert-command 1)))
       (define-key map (kbd "<return>") nil))
 
     ;; (defun mac-org-mode-hook ()
@@ -733,29 +793,26 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
 #+end_src
 
 ** Scratch Buffer
-   :PROPERTIES:
+:PROPERTIES:
    :ID:       C17636D1-9417-42DB-9252-F69F4B6832D3
    :END:
-
-
-
 [[http://www.geocrawler.com/archives/3/338/1994/6/0/1877802/][Morten Welind: recreate scratch buffer if killed]].
 
 #+begin_src emacs-lisp
-   (defun kill-scratch-buffer ()
-     (set-buffer (get-buffer-create "*scratch*"))
-     (remove-hook 'kill-buffer-query-functions 'kill-scratch-buffer)
-     (kill-buffer (current-buffer))
-     (set-buffer (get-buffer-create "*scratch*"))
-     (lisp-interaction-mode)
-     (make-local-variable 'kill-buffer-query-functions)
-     (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer)
-     nil)
+  (defun kill-scratch-buffer ()
+    (set-buffer (get-buffer-create "*scratch*"))
+    (remove-hook 'kill-buffer-query-functions 'kill-scratch-buffer)
+    (kill-buffer (current-buffer))
+    (set-buffer (get-buffer-create "*scratch*"))
+    (lisp-interaction-mode)
+    (make-local-variable 'kill-buffer-query-functions)
+    (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer)
+    nil)
 
   (with-current-buffer (get-buffer-create "*scratch*")
-     (lisp-interaction-mode)
-     (make-local-variable 'kill-buffer-query-functions)
-     (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer))
+    (lisp-interaction-mode)
+    (make-local-variable 'kill-buffer-query-functions)
+    (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer))
 #+end_src
 
 ** Projectile
@@ -817,7 +874,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
 
 #+begin_src emacs-lisp
   (use-package flyspell
-    :disabled
+    :straight nil
     :custom
     (flyspell-abbrev-p t)
     (flyspell-use-global-abbrev-table-p t)
@@ -826,16 +883,15 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     (flyspell-mode 1))
 
   (use-package flyspell-correct-ivy
-    :disabled
     :after flyspell
     :bind (:map flyspell-mode-map
-	  ("C-;" . flyspell-correct-word-generic))
+          ("C-;" . flyspell-correct-word-generic))
     :custom (flyspell-correct-interface 'flyspell-correct-ivy))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package ispell
-    :disabled
+    :straight nil
     ;:ensure-system-package hunspell
     :custom
     (when (executable-find "hunspell")
@@ -940,7 +996,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     (TeX-engine 'luatex)
     (TeX-view-program-list
      '(("Skim"
-	"/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
+        "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
     (TeX-source-correlate-start-server t))
 #+end_src
 
@@ -960,11 +1016,12 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
   (add-hook 'eshell-mode-hook
     (lambda ()
       (define-key eshell-mode-map (kbd "<tab>")
-	(lambda () (interactive) (pcomplete-std-complete)))))
+        (lambda () (interactive) (pcomplete-std-complete)))))
 #+end_src
 
  #+begin_src emacs-lisp
    (use-package em-smart
+     :straight nil
      :hook (eshell-mode . eshell-smart-initialize)
      :custom
      (eshell-where-to-jump 'begin)
@@ -983,6 +1040,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
 
  #+begin_src emacs-lisp
    (use-package em-hist
+     :straight nil
      :custom
      (eshell-hist-ignoredups t)
      (eshell-history-size 10000))
@@ -990,46 +1048,48 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
 
 #+begin_src emacs-lisp
   (use-package em-banner
+    :straight nil
     :custom
     (eshell-banner-message ""))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package em-prompt
+    :straight nil
     :config
     (defun fish-path (path max-len)
       "Return a potentially trimmed-down version of the directory PATH, replacing
   parent directories with their initial characters to try to get the character
   length of PATH (sans directory slashes) down to MAX-LEN."
       (let* ((components (split-string (abbreviate-file-name path) "/"))
-	     (len (+ (1- (length components))
-		     (cl-reduce '+ components :key 'length)))
-	     (str ""))
-	(while (and (> len max-len)
-		    (cdr components))
-	  (setq str (concat str
-			    (cond ((= 0 (length (car components))) "/")
-				  ((= 1 (length (car components)))
-				   (concat (car components) "/"))
-				  (t
-				   (if (string= "."
-						(string (elt (car components) 0)))
-				       (concat (substring (car components) 0 2)
-					       "/")
-				     (string (elt (car components) 0) ?/)))))
-		len (- len (1- (length (car components))))
-		components (cdr components)))
-	(concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
+             (len (+ (1- (length components))
+                     (cl-reduce '+ components :key 'length)))
+             (str ""))
+        (while (and (> len max-len)
+                    (cdr components))
+          (setq str (concat str
+                            (cond ((= 0 (length (car components))) "/")
+                                  ((= 1 (length (car components)))
+                                   (concat (car components) "/"))
+                                  (t
+                                   (if (string= "."
+                                                (string (elt (car components) 0)))
+                                       (concat (substring (car components) 0 2)
+                                               "/")
+                                     (string (elt (car components) 0) ?/)))))
+                len (- len (1- (length (car components))))
+                components (cdr components)))
+        (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
     :custom
     (eshell-prompt-function
      (lambda ()
        (concat
-	(propertize
-	 (fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
-	(propertize
-	 (if (= (user-uid) 0)
-	     " # "
-	   " ❯ ") 'face `(:foreground "black")))))
+        (propertize
+         (fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
+        (propertize
+         (if (= (user-uid) 0)
+             " # "
+           " ❯ ") 'face `(:foreground "black")))))
 
     (eshell-highlight-prompt nil)
 
@@ -1039,27 +1099,37 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
 
 ** Ibuffer
 #+begin_src emacs-lisp
-  (use-package ibuffer
-    :bind ("C-x C-b" . ibuffer)
-    :custom
-    (ibuffer-expert t)
-    (ibuffer-show-empty-filter-groups nil)
-    (ibuffer-saved-filter-groups
-     '(("home"
-	("Magit"     (name . "\*magit"))
-	("Help"  (or (name . "\*Help\*")
-		     (name . "\*Apropos\*")
-		     (name . "\*info\*")))
-	("Src"       (name . "\*Org Src"))
-	("Dired"     (mode . "Dired"))
-	("Misc"  (or (name . "\*scratch\*")
-		     (name . "\*Messages\*"))))))
-    :hook
-    (ibuffer-mode . (lambda ()
-		      (ibuffer-auto-mode 1)
-		      (ibuffer-switch-to-saved-filter-groups "home")))
-    )
+    (use-package ibuffer
+      :straight nil
+      :bind ("C-x C-b" . ibuffer)
+      :custom
+      (ibuffer-expert t)
+      (ibuffer-show-empty-filter-groups nil)
+      (ibuffer-saved-filter-groups
+       '(("home"
+          ("Magit"     (name . "magit"))
+          ("Help"  (or (name . "\*Help\*")
+                       (name . "\*Apropos\*")
+                       (name . "\*info\*")))
+          ("Src"       (name . "\*Org Src"))
+          ("Dired"     (mode . "Dired"))
+          ("Misc"  (or ;;(name . "\*scratch\*")
+                       ;;(name . "\*Messages\*")
+                       ;;(name . "\*Backtrace\*")
+                       (name . "^\\*.*\\*$")
+                       )))))
+      :hook
+      (ibuffer-mode . (lambda ()
+                        (ibuffer-auto-mode 1)
+                        (ibuffer-switch-to-saved-filter-groups "home")
+                        ;;(visual-line-mode -1)
+                        (toggle-truncate-lines +1)
+  ))
+      )
 #+end_src
+
+#+RESULTS:
+: ibuffer
 
 ** Hot Expand
 
@@ -1098,21 +1168,21 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
    structure element. HEADER string includes more parameters that are
    prepended to the element after the #+HEADER: tag."
        (let (text)
-	 (when (region-active-p)
-	   (setq text (buffer-substring (region-beginning) (region-end)))
-	   (delete-region (region-beginning) (region-end))
-	   (deactivate-mark))
-	 (when header (insert "#+HEADER: " header) (forward-line))
-	 (insert str)
-	 (org-tempo-complete-tag)
-	 (when mod (insert mod) (forward-line))
-	 (when text (insert text))))
+         (when (region-active-p)
+           (setq text (buffer-substring (region-beginning) (region-end)))
+           (delete-region (region-beginning) (region-end))
+           (deactivate-mark))
+         (when header (insert "#+HEADER: " header) (forward-line))
+         (insert str)
+         (org-tempo-complete-tag)
+         (when mod (insert mod) (forward-line))
+         (when text (insert text))))
 
      (define-key org-mode-map "<"
        (lambda () (interactive)
-	 (if (or (region-active-p) (looking-back "^" 1))
-	     (hydra-org-template/body)
-	   (self-insert-command 1))))
+         (if (or (region-active-p) (looking-back "^" 1))
+             (hydra-org-template/body)
+           (self-insert-command 1))))
  #+end_src
 ** Eldoc
    :PROPERTIES:
@@ -1133,7 +1203,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
       (concat
        (apply orig-fun sym r)
        (when-let ((doc (and (fboundp sym) (documentation sym 'raw)))
-		  (oneline (substring doc 0 (string-match "\n" doc))))
-	 (when (not (string= "" oneline))
-	   (concat " " (propertize oneline 'face 'italic)))))))
+                  (oneline (substring doc 0 (string-match "\n" doc))))
+         (when (not (string= "" oneline))
+           (concat " " (propertize oneline 'face 'italic)))))))
 #+end_src
