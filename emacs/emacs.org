@@ -110,10 +110,13 @@
           command-history
           extended-command-history))
 
-
   (defun display-startup-echo-area-message ()
     "Remove the GNU info from the minibuffer on startup"
     (message ""))
+
+  (setq default-frame-alist
+        '((ns-transparent-titlebar . t)
+          (ns-appearance           . 'light)))
 #+end_src
 
 ** Frames
