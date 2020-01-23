@@ -25,15 +25,19 @@
 * User Interface
 ** Settings
 #+begin_src emacs-lisp
-  (setq help-window-select t)
-  (setq jit-lock-defer-time 0)
+  (setq help-window-select t) ; Select help window by default
+  (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
+
   (blink-cursor-mode -1)
   (setq cursor-type 'box)
-  (setq scroll-conservatively 101)
+
+  (setq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
   (setq scroll-margin 0)
   (setq mouse-wheel-scroll-amount '(1))
+
   (setq inhibit-startup-message t)
   (setq initial-scratch-message "")
+
   (fset 'yes-or-no-p 'y-or-n-p)
   (load-theme 'actuator t)
 
@@ -56,7 +60,7 @@
 
   (add-hook 'before-save-hook 'whitespace-cleanup)
 
-  (setq indent-tabs-mode nil)
+  (setq indent-tabs-mode nil) ; Never insert tabs with tab key
   (setq require-final-newline t)
 
   (save-place-mode 1)
@@ -64,22 +68,22 @@
   (setq backup-by-copying    t)
   (setq delete-old-versions  t)
   (setq kept-new-versions    50)
-  (setq kept-old-versions    5)
+  (setq kept-old-versions    5) ; I don't know what an old version is
   (setq version-control      t)
-
   (setq vc-make-backup-files t)
 
-  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
   (setq uniquify-separator "/")
   (setq uniquify-after-kill-buffer-p t)
   (setq uniquify-ignore-buffers-re "^\\*")
   (setq uniquify-strip-common-suffix nil)
 
-  (setq find-file-visit-truename nil)
+  (setq find-file-visit-truename nil) ; Don't resolve symlinks
   (setq confirm-kill-emacs 'y-or-n-p)
 
   (abbrev-mode)
   (setq save-abbrevs 'silently)
+
   (setq enable-recursive-minibuffers t)
 
   (setq history-length 10000)
