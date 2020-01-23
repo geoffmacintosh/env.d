@@ -442,8 +442,8 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
 * Org Modules
 ** Org Settings
 #+begin_src emacs-lisp
-  ;;(use-package org
-  ;;  :straight org-plus-contrib)
+  (use-package org
+    :straight org-plus-contrib)
 #+end_src
 
 #+begin_src emacs-lisp
