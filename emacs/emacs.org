@@ -595,6 +595,13 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
                                  (shell      . t)))
 
   (add-hook 'org-mode-hook #'visual-line-mode)
+
+  (defun actuator-org-capture-turn-off-header-line ()
+    "Disables the header-line in a local mode.
+  This is used to disable the help line in org-capture buffers as
+  there's no variable that will do it."
+    (setq-local header-line-format nil))
+  (add-hook 'org-capture-mode-hook #'actuator-org-capture-turn-off-header-line)
 #+end_src
 
 #+begin_src emacs-lisp
