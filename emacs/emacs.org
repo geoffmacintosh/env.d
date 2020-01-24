@@ -495,7 +495,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
              gcs-done))
 #+end_src
 * Programming Modules
-** Parens
+** Settings
 :PROPERTIES:
 :ID:       5EC65547-949C-4C7F-8C9C-CDFA94C99031
 :END:
@@ -504,11 +504,10 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (show-paren-mode)
   (setq blink-matching-paren nil)
   (electric-pair-mode 1)
-  ;;(setq blink-matching-paren nil)
   (setq show-paren-delay 0)
   (setq show-paren-style 'mixed)
 #+end_src
-** Syntax Highlighting
+
 #+begin_src emacs-lisp
   (use-package fish-mode)
   (use-package gitconfig-mode)
@@ -516,6 +515,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (use-package lua-mode)
   (use-package toml-mode)
 #+end_src
+
 * Org Modules
 ** Org Settings
 #+begin_src emacs-lisp
