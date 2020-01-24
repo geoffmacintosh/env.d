@@ -602,6 +602,11 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   there's no variable that will do it."
     (setq-local header-line-format nil))
   (add-hook 'org-capture-mode-hook #'actuator-org-capture-turn-off-header-line)
+
+  (defun actuator-org-src-line-wrap-setup ()
+    "Set truncate-lines-mode in org-source-editing buffers."
+    (setq-local truncate-lines t))
+  (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
 #+end_src
 
 #+begin_src emacs-lisp
