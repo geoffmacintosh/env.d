@@ -2,7 +2,7 @@
 
 * Fish
 
-#+begin_src fish :tangle ~/.config/fish/config.fish
+#+begin_src fish :tangle fish/config.fish
   if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
       bax ". ~/.nix-profile/etc/profile.d/nix.sh"
   end
@@ -46,12 +46,12 @@
       set -gx PATH /usr/local/opt/ruby/bin $PATH
   end
 
-  function manp  -d "Open man pages as PDF documents"
-    if type open > /dev/null 2>&1
-      man -t $argv | open -f -a Preview
-    else
-      man $argv
-    end
+
+  if test -e {$HOME}/.iterm2_shell_integration.fish; and test $LC_TERMINAL = iTerm2
+      source {$HOME}/.iterm2_shell_integration.fish
+  else if test $LC_TERMINAL = iTerm2
+      curl -L https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh | bash
+      source {$HOME}/.iterm2_shell_integration.fish
   end
 
   if not functions -q fisher
@@ -61,10 +61,10 @@
   end
 #+end_src
 
-#+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
+#+begin_src fish :tangle fish/functions/fish_prompt.fish
   function prompt_ssh -d "Check to see if in an SSH session."
       if test -n "$SSH_CLIENT"
-	  printf '%s@%s ' (whoami) (hostname -s)
+          printf '%s@%s ' (whoami) (hostname -s)
       end
   end
 
@@ -86,6 +86,26 @@
   end
 #+end_src
 
-#+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish
+#+begin_src fish :tangle fish/functions/fish_user_key_bindings.fish
   bind \ef forward-bigword
+#+end_src
+
+#+begin_src fish :tangle fish/functions/manp.fish
+  function manp  -d "Open man pages as PDF documents"
+      if type open > /dev/null 2>&1
+          man -t $argv | open -f -a Preview
+      else
+          man $argv
+      end
+  end
+#+end_src
+
+#+begin_src fish :tangle fish/functions/flac-alac.fish
+  function flac-alac -d "Convert flac to alac"
+      if type ffmpeg > /dev/null 2>&1
+          echo yay
+      else
+          echo "Install FFMPEG with ALAC support."
+      end
+  end
 #+end_src
