@@ -607,6 +607,31 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
     "Set truncate-lines-mode in org-source-editing buffers."
     (setq-local truncate-lines t))
   (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
+
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-use-outline-path 'file)
+
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+
+  ;;(setq org-refile-targets
+  ;;      `((,(file-expand-wildcards ) :maxlevel . 9)))
+
+  (setq org-agenda-files (list org-directory))
+
+  ;; The original regexp was "\\`[^.].*\\.org\\'" which matched files
+  ;; that did not begin with a dot [^.] as the caret character inside a
+  ;; match group inverses a match and the dot is not special so doesn't
+  ;; need to be escaped. I want to only add files that begin with a
+  ;; hyphen to org agenda. That way I can sort all the agenda files at
+  ;; the top of the directory, and I have a simple method for limiting
+  ;; the search scope of org-agenda to keep it nice and speedy, and also
+  ;; allow as many files as I want in my org-files. The hyphen is not a
+  ;; special regex symbol outside of a character altenative [], so
+  ;; doesn't need to be escaped.
+  ;;(setq org-agenda-file-regexp "\\`-.*\\.org\\'")
+
+  (setq org-use-speed-commands t)
 #+end_src
 
 #+begin_src emacs-lisp
