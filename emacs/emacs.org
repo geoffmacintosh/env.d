@@ -4,6 +4,10 @@
 * Initialization
 
 #+begin_src emacs-lisp
+  ;;; -*- lexical-binding: t; -*-
+#+end_src
+
+#+begin_src emacs-lisp
   (straight-use-package 'use-package)
 #+end_src
 
