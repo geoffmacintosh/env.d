@@ -552,18 +552,8 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
                                        ("s" . "src shell")))
   (global-set-key (kbd "C-c a") #'org-agenda)
   (global-set-key (kbd "C-c c") #'counsel-org-capture)
-  (setq org-attach-store-link-p 'attached)
-  (setq org-attach-dir-relative t)
-  (setq org-attach-preferred-new-method 'dir)
-  (setq org-attach-method 'mv)
-  (setq org-attach-auto-tag nil)
-  (setq org-attach-archive-delete 'query)
-  (setq org-attach-annex-auto-get t)
+
   (setq org-id-link-to-org-use-id t)
-  (setq org-modules '(org-crypt))
-  ;;(org-crypt-use-before-save-magic)
-  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-  (setq org-crypt-key nil)
   (add-hook 'midnight-hook #'org-id-update-id-locations)
   (global-set-key (kbd "C-c l") #'org-store-link)
   (setq org-log-done 'time)
@@ -615,7 +605,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-use-outline-path 'file)
-
+  (setq org-modules nil)
   (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
 
   ;;(setq org-refile-targets
@@ -648,14 +638,73 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
 ** Org Attach
 
 #+begin_src emacs-lisp
+  (defun actuator-org-dl-annotate (_link)
+    "Minimal org-download header info."
+    (format "#+DOWNLOADED: %s\n"
+            (format-time-string "%Y-%m-%d")))
+#+end_src
+
+#+begin_src emacs-lisp
   (use-package org-download
-    :preface
-    (defun actuator-org-dl-annotate (_link)
-      "Minimal org-download header info."
-      (format "#+DOWNLOADED: %s\n"
-              (format-time-string "%Y-%m-%d")))
     :custom
     (org-download-method 'attach)
     (org-download-timestamp "")
     (org-download-annotate-function #'actuator-org-dl-annotate))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-attach
+    :straight nil
+    :custom
+    (org-attach-store-link-p t)
+    (org-attach-dir-relative t)
+    (org-attach-preferred-new-method 'dir)
+    (org-attach-method 'mv)
+    (org-attach-auto-tag "attach")
+    (org-attach-archive-delete 'query))
+#+end_src
+
+** Org Crypt
+
+#+begin_src emacs-lisp
+  (use-package org-crypt
+    :straight nil
+    :init
+    (require 'org-crypt)
+    :config
+    (org-crypt-use-before-save-magic)
+    ;;(add-to-list 'org-modules 'org-crypt)
+    :custom
+    (org-tags-exclude-from-inheritance (quote ("crypt")))
+    (org-crypt-key nil))
+#+end_src
+Needs nix:
+
+#+begin_src shell
+  nix-env -i gpg pinentry-mac
+#+end_src
+
+Also need to have the ABSOLUTE path in gpg-agent.conf. Will not work with ~ or $HOME. Needs to link to the binary inside the .app file.
+
+To test you need to kill the gpg agent. You won't need to restart it, it will do that automatically.
+
+#+begin_src shell
+  gpgconf --kill gpg-agent
+#+end_src
+
+*Reference*
+- [[https://czyzykowski.com/posts/gnupg-nix-osx.html][Gnupg Nix macOS]]
+
+** Org Cliplink
+#+begin_src emacs-lisp
+  (use-package org-cliplink
+    :bind ("C-x p i" . org-cliplink))
+#+end_src
+
+* LaTeX
+#+begin_src emacs-lisp
+  (use-package tex
+    :straight auctex
+    :custom
+    (TeX-engine 'luatex))
 #+end_src
