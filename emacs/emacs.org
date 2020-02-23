@@ -567,6 +567,11 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (setq org-clone-delete-id t)
   (setq org-tags-column -60)
 
+  (setq org-src-window-setup 'other-frame)
+  (setq org-src-ask-before-returning-to-edit-buffer nil)
+
+  (org-num-mode +1)
+
   ;; Safety
   (setq org-catch-invisible-edits 'show-and-error)
   (setq org-insert-heading-respect-content t)
