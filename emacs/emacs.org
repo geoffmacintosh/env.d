@@ -26,6 +26,67 @@
     (system-packages-package-manager 'nix))
 #+end_src
 
+* Unfiled
+** Disable Control-Mousewheel Bindings
+#+begin_src emacs-lisp
+  (global-unset-key (kbd "<C-wheel-down>"))
+  (global-unset-key (kbd "<C-wheel-up>"))
+#+end_src
+
+** Mouse Support in Term
+#+begin_src emacs-lisp
+  (unless window-system
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (defun track-mouse (e))
+    (setq mouse-sel-mode t))
+#+end_src
+
+** Org Folding
+#+begin_src emacs-lisp
+  (setq org-startup-folded 'content)
+#+end_src
+
+** Get Refile Targets
+#+begin_src emacs-lisp
+  (add-hook 'midnight-mode #'org-refile-get-targets)
+#+end_src
+
+** Org Ellipsis
+#+begin_src emacs-lisp
+  ;; (setq org-ellipsis "→")
+#+end_src
+
+** Csetq
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+    `(funcall (or (get ',variable 'custom-set)
+                  'set-default)
+              ',variable ,value))
+#+end_src
+
+** Org-Numbering
+#+begin_src emacs-lisp
+  (require 'org-num)
+  (add-hook 'org-mode-hook #'org-num-mode)
+#+end_src
+
+** Locate
+#+begin_src emacs-lisp
+  (use-package locate
+    :straight nil
+    :custom
+    (locate-command "mdfind"))
+#+end_src
+
+** DWIM
+#+begin_src emacs-lisp
+  ;; Better than default - from /u/zck
+  (bind-key "M-c" 'capitalize-dwim)
+  (bind-key "M-l" 'downcase-dwim)
+  (bind-key "M-u" 'upcase-dwim)
+#+end_src
+
 * User Interface
 ** Settings
 #+begin_src emacs-lisp
@@ -89,6 +150,7 @@
   (setq save-abbrevs 'silently)
 
   (setq enable-recursive-minibuffers t)
+  (minibuffer-depth-indicate-mode 1)
 
   (setq history-length 10000)
   (setq history-delete-duplicates t)
@@ -570,7 +632,7 @@ After having used Ido and Helm, I have settled on using Ivy (and Counsel / Swipe
   (setq org-src-window-setup 'other-frame)
   (setq org-src-ask-before-returning-to-edit-buffer nil)
 
-  (org-num-mode +1)
+  ;;(org-num-mode +1)
 
   ;; Safety
   (setq org-catch-invisible-edits 'show-and-error)
