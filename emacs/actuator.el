@@ -4,13 +4,15 @@
 
 ;; Prefer csetq to setq
 (defmacro csetq (variable value)
-  `(funcall (or (get ',variable 'custom-set)
+ " Alternative to \"setq\" that works with custom-set variables.
+Should be a drop-in replacement in absolutely all cases."
+ `(funcall (or (get ',variable 'custom-set)
 		'set-default)
 	    ',variable ,value))
 
 ;; Set up straight.el
 (defvar straight-use-package-by-default t)
-(defvar straight-enable-use-package-integration t )
+(defvar straight-enable-use-package-integration t)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -29,6 +31,7 @@
 (straight-use-package 'use-package)
 (eval-when-compile
   (add-to-list 'load-path (expand-file-name "straight/build/use-package" user-emacs-directory))
+  (add-to-list 'load-path (expand-file-name "straight/build/bind-key" user-emacs-directory))
   (require 'use-package))
 
 (use-package no-littering
@@ -161,11 +164,15 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(global-auto-revert-mode 1)
-(setq global-auto-revert-non-file-buffers t)
-(setq auto-revert-verbose nil)
-(setq revert-without-query t)
-(setq auto-revert-check-vc-info t)
+(use-package autorevert
+  :straight nil
+  :config
+  (global-auto-revert-mode 1)
+  :custom
+  (global-auto-revert-non-file-buffers t)
+  (auto-revert-verbose nil)
+  (revert-without-query t)
+  (auto-revert-check-vc-info t))
 
 (global-set-key (kbd "M-o") #'other-window)
 
@@ -219,22 +226,26 @@
 (add-hook 'after-save-hook
 	  'executable-make-buffer-file-executable-if-script-p)
 
-(savehist-mode)
-(setq savehist-save-minibuffer-history t)
-(setq savehist-additional-variables
-      '(mark-ring
-	kill-ring
-	Info-history-list
-	last-kbd-macro
-	kmacro-ring
-	register-alist
-	global-mark-ring
-	regexp-search-ring
-	file-name-history
-	shell-command-history
-	compile-history
-	command-history
-	extended-command-history))
+(use-package savehist
+  :straight nil
+  :config
+  (savehist-mode)
+  :custom
+  (savehist-save-minibuffer-history t)
+  (savehist-additional-variables
+   '(mark-ring
+     kill-ring
+     Info-history-list
+     last-kbd-macro
+     kmacro-ring
+     register-alist
+     global-mark-ring
+     regexp-search-ring
+     file-name-history
+     shell-command-history
+     compile-history
+     command-history
+     extended-command-history)))
 
 (defun display-startup-echo-area-message ()
   "Remove the GNU info from the minibuffer on startup.
@@ -317,8 +328,9 @@ These variables need to be set every time a frame is created."
        (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
 
 (defun actuator-eshell-autocomplete ()
-  "Enable tab autocompletion in eshell"
-  (define-key eshell-mode-map (kbd "<tab>")
+  "Enable tab autocompletion in eshell."
+  (define-key
+    eshell-mode-map (kbd "<tab>")
       (lambda () (interactive) (pcomplete-std-complete))))
 
 (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
@@ -411,6 +423,7 @@ These variables need to be set every time a frame is created."
   ("M-y"     . counsel-yank-pop))
 
 (use-package ivy
+  :defines ivy-minibuffer-map
   :config
   (ivy-mode 1)
   (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
@@ -459,12 +472,12 @@ These variables need to be set every time a frame is created."
      try-expand-dabbrev-from-kill
      try-complete-file-name-partially
      try-complete-file-name
-     ;;try-expand-line
-     ;;try-expand-line-all-buffers ;;slow
-     ;;try-complete-lisp-symbol-partially
-     ;;try-complete-lisp-symbol ;; many, many completions
-     ;;try-expand-list
-     ;;try-expand-list-all-buffers
+     try-expand-line
+     try-expand-line-all-buffers ;;slow
+     try-complete-lisp-symbol-partially
+     try-complete-lisp-symbol ;; many, many completions
+     try-expand-list
+     try-expand-list-all-buffers
      try-expand-whole-kill)))
 
 (defun actuator-hippie-unexpand ()
@@ -490,11 +503,15 @@ These variables need to be set every time a frame is created."
 		    (time-subtract after-init-time before-init-time)))
 	   gcs-done))
 
-(show-paren-mode)
-(setq blink-matching-paren nil)
-(electric-pair-mode 1)
-(setq show-paren-delay 0)
-(setq show-paren-style 'mixed)
+(use-package paren
+  :straight nil
+  :config
+  (show-paren-mode)
+  (electric-pair-mode 1)
+  :custom
+  (blink-matching-paren nil)
+  (show-paren-delay 0)
+  (show-paren-style 'mixed))
 
 (use-package fish-mode)
 (use-package gitconfig-mode)
@@ -504,6 +521,11 @@ These variables need to be set every time a frame is created."
 
 (use-package org
   :straight org-plus-contrib)
+
+(use-package org-agenda
+  :straight nil
+  :custom
+  (org-agenda-dim-blocked-tasks t))
 
 (setq org-startup-align-all-tables t)
 (setq org-startup-shrink-all-tables t)
@@ -516,7 +538,7 @@ These variables need to be set every time a frame is created."
 (setq org-edit-src-persistent-message nil)
 (setq org-src-fontify-natively t)
 (setq org-fontify-done-headline t)
-(setq org-agenda-dim-blocked-tasks t)
+
 (org-indent-mode 1)
 (setq org-babel-results-keyword "results")
 (setq org-confirm-babel-evaluate nil)
@@ -530,7 +552,11 @@ These variables need to be set every time a frame is created."
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'counsel-org-capture)
 
-(setq org-id-link-to-org-use-id t)
+(use-package org-id
+  :straight nil
+  :custom
+  (org-id-link-to-org-use-id t))
+
 (add-hook 'midnight-hook #'org-id-update-id-locations)
 (global-set-key (kbd "C-c l") #'org-store-link)
 (setq org-log-done 'time)
@@ -608,13 +634,6 @@ there's no variable that will do it."
 ;;(setq org-agenda-file-regexp "\\`-.*\\.org\\'")
 
 (setq org-use-speed-commands t)
-
-
-
-
-
-
-
 
 (use-package org-crypt
   :straight nil
