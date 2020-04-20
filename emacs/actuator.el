@@ -1,16 +1,13 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq load-prefer-newer t)
-
-;; Prefer csetq to setq
 (defmacro csetq (variable value)
- " Alternative to \"setq\" that works with custom-set variables.
-Should be a drop-in replacement in absolutely all cases."
- `(funcall (or (get ',variable 'custom-set)
+  "Alternative to \"setq\" that works with custom-set.
+Should be a drop-in replacement in absolutely all cases. Use
+identically to setq, setting VARIABLE to VALUE."
+  `(funcall (or (get ',variable 'custom-set)
 		'set-default)
 	    ',variable ,value))
 
-;; Set up straight.el
 (defvar straight-use-package-by-default t)
 (defvar straight-enable-use-package-integration t)
 
@@ -27,8 +24,10 @@ Should be a drop-in replacement in absolutely all cases."
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; Set up use-package.el
+
+
 (straight-use-package 'use-package)
+
 (eval-when-compile
   (add-to-list 'load-path (expand-file-name "straight/build/use-package" user-emacs-directory))
   (add-to-list 'load-path (expand-file-name "straight/build/bind-key" user-emacs-directory))
@@ -47,15 +46,12 @@ Should be a drop-in replacement in absolutely all cases."
 (use-package use-package-ensure-system-package
   :straight t)
 
-(require 'org)
-
 (use-package system-packages
   :straight t
   :custom
   (system-packages-use-sudo nil)
   (system-packages-package-manager 'nix))
 
-;; Load theme shit
 (load-theme 'actuator t)
 
 (blink-cursor-mode -1)
@@ -89,11 +85,95 @@ Should be a drop-in replacement in absolutely all cases."
 
 (use-package org
   :straight org-plus-contrib
+  :config
+  (org-indent-mode 1)
+  (add-to-list 'org-babel-default-header-args
+	       '(:mkdirp . "yes"))
+  (org-babel-do-load-languages 'org-babel-load-languages
+			       '((emacs-lisp . t)
+				 (shell      . t)))
+
+  :bind
+  ("C-c c" . counsel-org-capture)
+  ("C-c a" . org-agenda)
+  ("C-c l" . org-store-link)
+
   :custom
-  org-startup-folded 'content
-  org-ellipsis "→"
-  :hook (midnight-mode . org-refile-get-targets)
-  )
+  (org-startup-folded 'content)
+  (org-ellipsis "→")
+  (org-startup-align-all-tables t)
+  (org-startup-shrink-all-tables t)
+  (org-startup-with-inline-images t)
+  (org-startup-indented t)
+  (org-hide-leading-stars t)
+  (org-pretty-entities-include-sub-superscripts t)
+  (org-hide-emphasis-markers t)
+  (org-image-actual-width 300)
+  (org-fontify-done-headline t)
+  (org-structure-template-alist '(("e" . "src emacs-lisp")
+				  ("s" . "src shell")))
+  (org-log-done 'time)
+  (org-log-into-drawer t)
+  (org-closed-keep-when-no-todo t)
+  (org-enforce-todo-dependencies t)
+  (org-enforce-todo-checkbox-dependencies t)
+  (org-complete-tags-always-offer-all-agenda-tags t)
+  (org-clone-delete-id t)
+  (org-tags-column -60)
+  (org-catch-invisible-edits 'show-and-error)
+  (org-insert-heading-respect-content t)
+  (org-ctrl-k-protect-subtree t)
+  (org-M-RET-may-split-line '((default . nil)))
+  (org-special-ctrl-k t)
+  (org-special-ctrl-a/e t)
+  ;;(org-agenda-files (list org-directory))
+  (org-blank-before-new-entry '((heading         . t)
+				(plain-list-item . auto)))
+  (org-use-property-inheritance t)
+  (org-modules nil)
+  :hook
+  (;;(midnight-mode . org-refile-get-targets)
+  (org-mode . visual-line-mode)))
+
+(use-package org-list
+  :straight nil
+  :custom
+  (org-list-indent-offset 1))
+
+(use-package org-keys
+  :straight nil
+  :custom
+  (org-use-speed-commands t))
+
+;; (use-package org-refile
+;;   :straight nil
+;;   :custom
+;;   (org-refile-allow-creating-parent-nodes 'confirm)
+;;   (org-outline-path-complete-in-steps nil)
+;;   (org-refile-use-outline-path 'file)
+;;   (org-refile-targets '((org-agenda-files :maxlevel . 3))))
+
+(use-package org-src
+  :straight nil
+  :custom
+  (org-edit-src-persistent-message nil)
+  (org-src-tab-acts-natively t)
+  (org-src-window-setup 'other-frame)
+  (org-src-ask-before-returning-to-edit-buffer nil)
+  (org-src-fontify-natively t))
+
+(use-package org-footnote
+  :straight nil
+  :custom
+  (org-footnote-auto-adjust t)
+  (org-footnote-define-inline t)
+  (org-footnote-auto-label 'random))
+
+(use-package ob-core
+  :straight nil
+  :custom
+  (org-confirm-babel-evaluate nil)
+  (org-babel-results-keyword "results"))
 
 (use-package recentf
   :straight nil
@@ -150,7 +230,6 @@ Should be a drop-in replacement in absolutely all cases."
   :hook (org-mode . org-bullets-mode)
   :custom
   (org-bullets-bullet-list '("◆" "◆" "◇" "◇" "◇")))
-
 
 (global-unset-key (kbd "<C-wheel-down>"))
 (global-unset-key (kbd "<C-wheel-up>"))
@@ -269,7 +348,7 @@ called automatically."
 	emacs22))
 
 (defun actuator-font-exists-p (font)
-  "Returns non-nil if FONT is loaded."
+  "Return non-nil if FONT is loaded."
   (member font (font-family-list)))
 
 (defun actuator-frame-init (&optional _frame)
@@ -287,13 +366,6 @@ These variables need to be set every time a frame is created."
 (add-hook 'after-make-frame-functions 'actuator-frame-init)
 (actuator-frame-init)
 
-
-
-(defalias 'eshell/f  'find-file-other-window)
-(defalias 'eshell/ff 'find-file)
-(defalias 'eshell/v  'view-file-other-window)
-(defalias 'eshell/vv 'view-file)
-
 (use-package emacs
   :straight nil
   :after no-littering
@@ -302,50 +374,54 @@ These variables need to be set every time a frame is created."
    `((".*" ,(expand-file-name "auto-save/" no-littering-var-directory) t)))
   (auto-save-mode))
 
-(defun actuator-fish-path (path max-len)
-  "Return a potentially trimmed-down version of the directory
+(use-package eshell
+  :straight nil
+  :config
+  (defalias 'eshell/f  'find-file-other-window)
+  (defalias 'eshell/ff 'find-file)
+  (defalias 'eshell/v  'view-file-other-window)
+  (defalias 'eshell/vv 'view-file)
+
+  (defun actuator-fish-path (path max-len)
+    "Return a potentially trimmed-down version of the directory
  PATH, replacing parent directories with their initial characters
  to try to get the character length of PATH (sans directory
  slashes) down to MAX-LEN."
-     (let* ((components (split-string (abbreviate-file-name path) "/"))
-	    (len (+ (1- (length components))
-		    (cl-reduce '+ components :key 'length)))
-	    (str ""))
-       (while (and (> len max-len)
-		   (cdr components))
-	 (setq str (concat str
-			   (cond ((= 0 (length (car components))) "/")
-				 ((= 1 (length (car components)))
-				  (concat (car components) "/"))
-				 (t
-				  (if (string= "."
-					       (string (elt (car components) 0)))
-				      (concat (substring (car components) 0 2)
-					      "/")
-				    (string (elt (car components) 0) ?/)))))
-	       len (- len (1- (length (car components))))
-	       components (cdr components)))
-       (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
+    (let* ((components (split-string (abbreviate-file-name path) "/"))
+	   (len (+ (1- (length components))
+		   (cl-reduce '+ components :key 'length)))
+	   (str ""))
+      (while (and (> len max-len)
+		  (cdr components))
+	(setq str (concat str
+			  (cond ((= 0 (length (car components))) "/")
+				((= 1 (length (car components)))
+				 (concat (car components) "/"))
+				(t
+				 (if (string= "."
+					      (string (elt (car components) 0)))
+				     (concat (substring (car components) 0 2)
+					     "/")
+				   (string (elt (car components) 0) ?/)))))
+	      len (- len (1- (length (car components))))
+	      components (cdr components)))
+      (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
 
-(defun actuator-eshell-autocomplete ()
-  "Enable tab autocompletion in eshell."
-  (define-key
-    eshell-mode-map (kbd "<tab>")
+  (defun actuator-eshell-autocomplete ()
+    "Enable tab autocompletion in eshell."
+    (define-key
+      eshell-mode-map (kbd "<tab>")
       (lambda () (interactive) (pcomplete-std-complete))))
 
-(add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
+  (defun actuator-eshell-prompt ()
+    (concat
+     (propertize
+      (actuator-fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
+     (propertize
+      (if (= (user-uid) 0)
+	  " # "
+	" ❯ ") 'face `(:foreground "black"))))
 
-(defun actuator-eshell-prompt ()
-  (concat
-   (propertize
-    (actuator-fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
-   (propertize
-    (if (= (user-uid) 0)
-	" # "
-      " ❯ ") 'face `(:foreground "black"))))
-
-(use-package eshell
-  :straight nil
   :custom
   (eshell-where-to-jump 'begin)
   (eshell-review-quick-commands nil)
@@ -356,19 +432,23 @@ These variables need to be set every time a frame is created."
   (eshell-prompt-function #'actuator-eshell-prompt)
   (eshell-highlight-prompt nil)
   (eshell-prompt-regexp "^.*?[#❯] ")
-  :hook (eshell-mode . (lambda ()
-			 (require 'em-smart)
-			 (eshell-smart-initialize))))
+  :hook
+  (eshell-mode . (lambda ()
+		   (require 'em-smart)
+		   (eshell-smart-initialize)))
+  (eshell-mode . actuator-eshell-autocomplete))
+
+;;:hook (eshell-mode . actuator-eshell-autocomplete)
 
 (defun actuator-just-one-space ()
-  "Inserts just one space, killing ALL whitespace."
+  "Insert just one space, killing ALL whitespace."
   (interactive)
   (just-one-space -1))
 
 (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space)
 
 (defun actuator-unfill-paragraph ()
-    "Unfills a paragraph."
+  "Unfills a paragraph."
   (interactive)
   (let ((fill-column 'most-positive-fixed-num))
     (fill-paragraph)))
@@ -381,12 +461,12 @@ These variables need to be set every time a frame is created."
   (magit-diff-refine-hunk 'all)
   (magit-save-repository-buffers 'dontask)
   (magit-section-initial-visibility-alist
-    '((untracked . show)
-      (unstaged  . show)
-      (upushed   . show)
-  ;;    (unpulled  . show)
-  ;;    (stashes   . show)
-      (recent    . show)))
+   '((untracked . show)
+     (unstaged  . show)
+     (upushed   . show)
+     ;;    (unpulled  . show)
+     ;;    (stashes   . show)
+     (recent    . show)))
   (magit-push-always-verify nil)
   (magit-revert-buffers 'silent)
   (magit-no-confirm '(stage-all-changes
@@ -409,6 +489,7 @@ These variables need to be set every time a frame is created."
   (prescient-aggressive-file-save t))
 
 (use-package counsel
+  :functions counsel-mode
   :config
   (counsel-mode 1)
   :bind
@@ -424,6 +505,7 @@ These variables need to be set every time a frame is created."
 
 (use-package ivy
   :defines ivy-minibuffer-map
+  :functions ivy-mode
   :config
   (ivy-mode 1)
   (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
@@ -456,6 +538,7 @@ These variables need to be set every time a frame is created."
 
 (use-package ivy-prescient
   :after (ivy prescient)
+  :functions ivy-prescient-mode
   :config
   (ivy-prescient-mode 1))
 
@@ -487,6 +570,7 @@ These variables need to be set every time a frame is created."
 (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
 
 (use-package smart-tab
+  :functions global-smart-tab-mode
   :config
   (global-smart-tab-mode 1)
   :custom
@@ -519,88 +603,20 @@ These variables need to be set every time a frame is created."
 (use-package lua-mode)
 (use-package toml-mode)
 
-(use-package org
-  :straight org-plus-contrib)
-
 (use-package org-agenda
   :straight nil
   :custom
   (org-agenda-dim-blocked-tasks t))
 
-(setq org-startup-align-all-tables t)
-(setq org-startup-shrink-all-tables t)
-(setq org-startup-with-inline-images t)
-(setq org-startup-indented t)
-(setq org-hide-leading-stars t)
-(setq org-pretty-entities-include-sub-superscripts t)
-(setq org-hide-emphasis-markers t)
-(setq org-image-actual-width 300)
-(setq org-edit-src-persistent-message nil)
-(setq org-src-fontify-natively t)
-(setq org-fontify-done-headline t)
-
-(org-indent-mode 1)
-(setq org-babel-results-keyword "results")
-(setq org-confirm-babel-evaluate nil)
-(setq org-footnote-auto-adjust t)
-(setq org-footnote-define-inline t)
-(setq org-footnote-auto-label 'random)
-(setq org-list-indent-offset 1)
-(setq org-src-tab-acts-natively t)
-(setq org-structure-template-alist '(("e" . "src emacs-lisp")
-				     ("s" . "src shell")))
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'counsel-org-capture)
-
 (use-package org-id
   :straight nil
   :custom
-  (org-id-link-to-org-use-id t))
-
-(add-hook 'midnight-hook #'org-id-update-id-locations)
-(global-set-key (kbd "C-c l") #'org-store-link)
-(setq org-log-done 'time)
-(setq org-log-into-drawer t)
-(setq org-log-refile 'time)
-(setq org-closed-keep-when-no-todo t)
-(setq org-enforce-todo-dependencies t)
-(setq org-enforce-todo-checkbox-dependencies t)
-
-(setq org-complete-tags-always-offer-all-agenda-tags t)
-(setq org-clone-delete-id t)
-(setq org-tags-column -60)
-
-(setq org-src-window-setup 'other-frame)
-(setq org-src-ask-before-returning-to-edit-buffer nil)
-
-;;(org-num-mode +1)
-
-;; Safety
-(setq org-catch-invisible-edits 'show-and-error)
-(setq org-insert-heading-respect-content t)
-(setq org-ctrl-k-protect-subtree t)
-(setq org-M-RET-may-split-line '((default . nil)))
-
-;; Editing
-(setq org-special-ctrl-k t)
-(setq org-special-ctrl-a/e t)
-(setq org-blank-before-new-entry '((heading         . t)
-				   (plain-list-item . auto)))
-
-;; Properties
-(setq org-use-property-inheritance t)
-
-(add-to-list 'org-babel-default-header-args
-	     '(:mkdirp . "yes"))
-(org-babel-do-load-languages 'org-babel-load-languages
-			     '((emacs-lisp . t)
-			       (shell      . t)))
-
-(add-hook 'org-mode-hook #'visual-line-mode)
+  (org-id-link-to-org-use-id t)
+  :hook (midnight-mode . org-id-update-id-locations))
 
 (defun actuator-org-capture-turn-off-header-line ()
-  "Disables the header-line in a local mode.
-This is used to disable the help line in org-capture buffers as
+  "Disable the header-line in a local mode.
+This is used to disable the help line in `org-capture' buffers as
 there's no variable that will do it."
   (setq-local header-line-format nil))
 (add-hook 'org-capture-mode-hook #'actuator-org-capture-turn-off-header-line)
@@ -609,31 +625,6 @@ there's no variable that will do it."
   "Set truncate-lines-mode in org-source-editing buffers."
   (setq-local truncate-lines t))
 (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
-
-(setq org-refile-allow-creating-parent-nodes 'confirm)
-(setq org-outline-path-complete-in-steps nil)
-(setq org-refile-use-outline-path 'file)
-(setq org-modules nil)
-(setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-
-;;(setq org-refile-targets
-;;      `((,(file-expand-wildcards ) :maxlevel . 9)))
-
-;; (setq org-agenda-files (list org-directory))
-
-;; The original regexp was "\\`[^.].*\\.org\\'" which matched files
-;; that did not begin with a dot [^.] as the caret character inside a
-;; match group inverses a match and the dot is not special so doesn't
-;; need to be escaped. I want to only add files that begin with a
-;; hyphen to org agenda. That way I can sort all the agenda files at
-;; the top of the directory, and I have a simple method for limiting
-;; the search scope of org-agenda to keep it nice and speedy, and also
-;; allow as many files as I want in my org-files. The hyphen is not a
-;; special regex symbol outside of a character altenative [], so
-;; doesn't need to be escaped.
-;;(setq org-agenda-file-regexp "\\`-.*\\.org\\'")
-
-(setq org-use-speed-commands t)
 
 (use-package org-crypt
   :straight nil
@@ -645,3 +636,6 @@ there's no variable that will do it."
   :custom
   (org-tags-exclude-from-inheritance (quote ("crypt")))
   (org-crypt-key nil))
+
+(provide 'actuator)
+;;; actuator.el ends here
