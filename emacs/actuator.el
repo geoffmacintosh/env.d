@@ -25,7 +25,7 @@ identically to setq, setting VARIABLE to VALUE."
   (load bootstrap-file nil 'nomessage))
 
 
-
+(declare-function straight-use-package "ext:straight")
 (straight-use-package 'use-package)
 
 (eval-when-compile
@@ -505,7 +505,7 @@ These variables need to be set every time a frame is created."
 
 (use-package ivy
   :defines ivy-minibuffer-map
-  :functions ivy-mode
+  :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
   :config
   (ivy-mode 1)
   (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
