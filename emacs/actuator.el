@@ -1,12 +1,6 @@
 ;;; -*- lexical-binding: t; -*-
 
-(defmacro csetq (variable value)
-  "Alternative to \"setq\" that works with custom-set.
-Should be a drop-in replacement in absolutely all cases. Use
-identically to setq, setting VARIABLE to VALUE."
-  `(funcall (or (get ',variable 'custom-set)
-		'set-default)
-	    ',variable ,value))
+(declare-function csetq "init")
 
 (defvar straight-use-package-by-default t)
 (defvar straight-enable-use-package-integration t)
@@ -23,7 +17,6 @@ identically to setq, setting VARIABLE to VALUE."
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-
 
 (declare-function straight-use-package "ext:straight")
 (straight-use-package 'use-package)
@@ -83,6 +76,8 @@ identically to setq, setting VARIABLE to VALUE."
   :custom
   (locate-command "mdfind"))
 
+(defvar org-directory "~/org")
+
 (use-package org
   :straight org-plus-contrib
   :config
@@ -92,12 +87,10 @@ identically to setq, setting VARIABLE to VALUE."
   (org-babel-do-load-languages 'org-babel-load-languages
 			       '((emacs-lisp . t)
 				 (shell      . t)))
-
   :bind
   ("C-c c" . counsel-org-capture)
   ("C-c a" . org-agenda)
   ("C-c l" . org-store-link)
-
   :custom
   (org-startup-folded 'content)
   (org-ellipsis "→")
@@ -126,14 +119,13 @@ identically to setq, setting VARIABLE to VALUE."
   (org-M-RET-may-split-line '((default . nil)))
   (org-special-ctrl-k t)
   (org-special-ctrl-a/e t)
-  ;;(org-agenda-files (list org-directory))
+  (org-agenda-files (list org-directory))
   (org-blank-before-new-entry '((heading         . t)
 				(plain-list-item . auto)))
   (org-use-property-inheritance t)
   (org-modules nil)
   :hook
-  (;;(midnight-mode . org-refile-get-targets)
-  (org-mode . visual-line-mode)))
+  (org-mode . visual-line-mode))
 
 (use-package org-list
   :straight nil
@@ -145,13 +137,15 @@ identically to setq, setting VARIABLE to VALUE."
   :custom
   (org-use-speed-commands t))
 
-;; (use-package org-refile
-;;   :straight nil
-;;   :custom
-;;   (org-refile-allow-creating-parent-nodes 'confirm)
-;;   (org-outline-path-complete-in-steps nil)
-;;   (org-refile-use-outline-path 'file)
-;;   (org-refile-targets '((org-agenda-files :maxlevel . 3))))
+(use-package org-refile
+  :straight nil
+  :custom
+  (org-refile-allow-creating-parent-nodes 'confirm)
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-use-outline-path 'file)
+  (org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  :hook
+  (midnight-mode . org-refile-get-targets))
 
 (use-package org-src
   :straight nil
@@ -184,7 +178,7 @@ identically to setq, setting VARIABLE to VALUE."
   (recentf-max-saved-items 500)
   (recentf-exclude `(,no-littering-var-directory
 		     ,no-littering-etc-directory))
-  :hook (midnight . recentf-cleanup))
+  :hook (midnight-mode . recentf-cleanup))
 
 (use-package cus-edit
   :straight nil
@@ -399,7 +393,8 @@ These variables need to be set every time a frame is created."
 				 (concat (car components) "/"))
 				(t
 				 (if (string= "."
-					      (string (elt (car components) 0)))
+					      (string (elt (car
+					      components) 0)))
 				     (concat (substring (car components) 0 2)
 					     "/")
 				   (string (elt (car components) 0) ?/)))))
@@ -490,6 +485,8 @@ These variables need to be set every time a frame is created."
 
 (use-package counsel
   :functions counsel-mode
+  :custom
+  (counsel-find-file-ignore-regexp "\(?:\‘[#.]\)\|\(?:[#~]\’\)\|\'\.") ;; Doesn't work
   :config
   (counsel-mode 1)
   :bind
@@ -508,7 +505,7 @@ These variables need to be set every time a frame is created."
   :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
   :config
   (ivy-mode 1)
-  (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
+  (define-key ivy-minibuffer-map (kbd "<C-return>") #'ivy-immediate-done)
   (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
   (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line)
   :custom
@@ -607,6 +604,12 @@ These variables need to be set every time a frame is created."
   :straight nil
   :custom
   (org-agenda-dim-blocked-tasks t))
+
+(use-package org-clock
+  :straight nil
+  :custom
+  (org-clock-out-remove-zero-time-clocks t)
+  (org-clock-mode-line-total 'current))
 
 (use-package org-id
   :straight nil
