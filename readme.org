@@ -1,8 +1,0 @@
-#+title: Env.d
-
-* Introduction
-Hi, welcome to my dotfiles with a funny name. It's mostly made up of Org-mode files, but not entirely. It probably won't work on your system.
-
-* Sections
-- [[file:shell.org][Shell]]
-- [[file:emacs/emacs.org][Emacs]]
