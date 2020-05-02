@@ -1,0 +1,65 @@
+#+title: Ivy
+#+property: header-args :results output silent :comments link :noweb yes
+
+#+begin_src emacs-lisp
+(use-package prescient
+  :straight t
+  :custom
+  (prescient-persist-mode 1)
+  (prescient-history-length 10000)
+  (prescient-aggressive-file-save t))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package counsel
+  :straight t
+  :functions counsel-mode
+  :config
+  (counsel-mode 1)
+  :bind
+  ("C-x C-r" . counsel-recentf)
+  ("C-x C-f" . counsel-find-file)
+  ("M-x"     . counsel-M-x)
+  ("s-x"     . counsel-M-x)
+  ("C-x l"   . counsel-locate)
+  ("C-h f"   . counsel-describe-function)
+  ("C-h v"   . counsel-describe-variable)
+  ("C-h k"   . counsel-descbinds)
+  ("M-y"     . counsel-yank-pop))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ivy
+    :straight t
+    :defines ivy-minibuffer-map
+    :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
+    :config
+    (ivy-mode 1)
+    :custom
+    (ivy-use-ignore-default 'always)
+    (ivy-ignore-buffers '("*elfeed-log*" "*straight-process*" "Completions*" "*Compile-Log*"))
+    (ivy-use-virtual-buffers nil)
+    (ivy-count-format "(%d/%d) ")
+    (ivy-extra-directories nil)
+    :bind
+    (("C-x b" . ivy-switch-buffer)
+     :map ivy-minibuffer-map
+     ("<C-return>" . ivy-immediate-done)
+     ("RET"       . ivy-alt-done)
+     ("M-y"       . ivy-next-line)))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package swiper
+  :straight t
+  :bind ("C-s" . swiper))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package ivy-prescient
+  :straight t
+  :after (ivy prescient)
+  :functions ivy-prescient-mode
+  :config
+  (ivy-prescient-mode 1))
+#+end_src

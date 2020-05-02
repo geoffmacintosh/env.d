@@ -1,0 +1,50 @@
+#+title: Hippie Expand
+#+property: header-args :results output silent :comments link :noweb yes
+
+#+begin_src emacs-lisp
+(use-package smart-tab
+  :straight t
+  :functions global-smart-tab-mode
+  :config
+  (global-smart-tab-mode 1)
+  :custom
+  (smart-tab-using-hippie-expand t)
+  (smart-tab-completion-functions-alist nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package hippie-exp
+    :straight nil
+    :bind ("M-/" . hippie-expand)
+    :custom
+    (hippie-expand-verbose t)
+    (hippie-expand-try-functions-list
+     '(try-expand-all-abbrevs
+       try-expand-dabbrev-visible
+       try-expand-dabbrev
+       try-expand-dabbrev-all-buffers
+       try-expand-dabbrev-from-kill
+       try-complete-file-name-partially
+       try-complete-file-name
+       try-expand-line
+       try-complete-lisp-symbol-partially
+       try-complete-lisp-symbol
+       try-expand-list
+       try-expand-list-all-buffers
+       try-expand-whole-kill
+       try-expand-line-all-buffers)))
+#+end_src
+
+#+results:
+: hippie-expand
+
+- tpy-complete-lisp-symbol has a lot of completions
+- try-expand-line-all-buffers is very slow
+
+#+begin_src emacs-lisp
+  (defun actuator-hippie-unexpand ()
+    "Remove an expansion without having to loop around."
+    (interactive)
+    (hippie-expand 0))
+  (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
+#+end_src

@@ -1,0 +1,7 @@
+#+title: MacOS
+
+* Hide dock
+#+begin_src shell
+  defaults write com.apple.Dock autohide-delay -float 2
+  killall dock
+#+end_src

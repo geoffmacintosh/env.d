@@ -26,8 +26,14 @@ identically to setq, setting VARIABLE to VALUE."
   (straight-use-package 'use-package)
   (use-package no-littering
     :straight t)
-  (straight-use-package '(org-plus-contrib :includes (org)))
+  ;;(straight-use-package '(org-plus-contrib :includes (org)))
+  (straight-use-package 'org)
   (org-babel-load-file (expand-file-name "emacs.org" user-emacs-directory))
+  (org-babel-load-file (expand-file-name "elfeed.org" user-emacs-directory))
+  (org-babel-load-file (expand-file-name "ivy.org" user-emacs-directory))
+  (org-babel-load-file (expand-file-name "hippie.org" user-emacs-directory))
+  (org-babel-load-file (expand-file-name "dired.org" user-emacs-directory))
+  (org-babel-load-file (expand-file-name "org-mode.org" user-emacs-directory))
   ;;(load (expand-file-name "actuator.el" user-emacs-directory))
   (garbage-collect))
 

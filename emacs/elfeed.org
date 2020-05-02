@@ -1,0 +1,250 @@
+#+title: Elfeed
+#+property: header-args :results output silent :comments link :noweb yes
+
+* Elfeed
+:PROPERTIES:
+:ID:       15E8DD30-9B7E-4909-AAA1-F030F849F22D
+:END:
+
+#+name: elfeed-use-package
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :straight t
+    :bind
+    (("C-x w" . actuator-elfeed-load-db-and-open)
+     :map elfeed-search-mode-map
+     ("q" . actuator-elfeed-save-db-and-bury)
+     ("/" . actuator-elfeed-search-live-filter-space)
+     ("R" . actuator-elfeed-mark-all-as-read)
+     ("w" . actuator-elfeed-play-with-mpv))
+    :config
+    <<elfeed-faces>>
+    <<elfeed-filters>>
+    <<elfeed-feeds>>
+    <<elfeed-play-with-mpv>>
+    <<elfeed-load-db-and-open>>
+    <<elfeed-save-db-and-bury>>
+    <<elfeed-search-live-filter-space>>
+    <<elfeed-mark-all-as-read>>)
+#+end_src
+
+* Filters
+:PROPERTIES:
+:ID:       4B3C3A02-D0EA-4F09-BA45-5BEA8F05EB08
+:header-args: :noweb-ref elfeed-filters :tangle no
+:END:
+#+begin_src emacs-lisp
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :entry-title "sponsor\\|podcast\\|revenue\\|MacWorld\\financial"
+                                :add 'junk
+                                :remove 'unread))
+
+  ;; (add-hook 'elfeed-new-entry-hook
+  ;;           (elfeed-make-tagger :entry-title '("podcast"
+  ;;                                              "revenue")
+  ;;                               :add 'junk
+  ;;                               :remove 'unread))
+
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :before "2 weeks ago"
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-title "MacSparky"
+                                :entry-title "focused"
+                                :add 'junk
+                                :remove 'unread))
+#+end_src
+
+* Width
+:PROPERTIES:
+:ID:       652FF298-92D7-4344-A32D-1C467E9E7279
+:END:
+
+#+begin_src emacs-lisp
+  (use-package shr
+    :straight nil
+    :custom
+    (shr-width 75))
+#+end_src
+
+* Load elfeed
+:PROPERTIES:
+:ID:       9FB75923-4973-4455-9CDA-17BE4078123F
+:END:
+
+#+name: elfeed-load-db-and-open
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-load-db-and-open ()
+        "Wrapper to load the elfeed database from disk before
+        opening. Taken from Pragmatic Emacs."
+        (interactive)
+        (elfeed)
+        (elfeed-db-load)
+        (elfeed-search-update 1)
+        (elfeed-update))
+#+end_src
+
+* Quit elfeed
+:PROPERTIES:
+:ID:       0270B1D5-7DB9-4BFF-8588-41C1D4F22484
+:END:
+
+#+name: elfeed-save-db-and-bury
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-save-db-and-bury ()
+    "Wrapper to save the elfeed database to disk before burying
+    buffer. Taken from Pragmatic Emacs."
+    (interactive)
+    (elfeed-db-save)
+    (quit-window))
+#+end_src
+
+* Mark all as read
+:PROPERTIES:
+:ID:       9659048D-338A-434E-B010-59ADD50A79FC
+:END:
+
+#+name: elfeed-mark-all-as-read
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-mark-all-as-read ()
+      "Mark all feeds in search as read."
+      (interactive)
+      (mark-whole-buffer)
+      (elfeed-search-untag-all-unread))
+#+end_src
+
+* Search
+:PROPERTIES:
+:ID:       2265AAB5-1CC5-4042-8856-272AE0D51997
+:END:
+
+#+name: elfeed-search-live-filter-space
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-search-live-filter-space ()
+      "Insert a space when running elfeed filter. Taken from
+      Pragmatic Emacs."
+      (interactive)
+      (let ((elfeed-search-filter (concat elfeed-search-filter " ")))
+        (elfeed-search-live-filter)))
+#+end_src
+
+* Play YT
+:PROPERTIES:
+:ID:       39718615-A7FB-4609-8EEF-75C8E4B1D2DF
+:END:
+
+#+name: elfeed-play-with-mpv
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-play-with-mpv ()
+    "Play entry link with mpv."
+    (interactive)
+    (let ((entry (if (eq major-mode 'elfeed-show-mode) elfeed-show-entry (elfeed-search-selected :single)))
+          (quality-arg "")
+          (quality-val (completing-read "Max height resolution (0 for unlimited): " '("0" "480" "720") nil nil)))
+      (setq quality-val (string-to-number quality-val))
+      (message "Opening %s with height≤%s with mpv..." (elfeed-entry-link entry) quality-val)
+      (when (< 0 quality-val)
+        (setq quality-arg (format "--ytdl-format=[height<=?%s]" quality-val)))
+      (start-process "elfeed-mpv" nil "mpv" quality-arg (elfeed-entry-link entry))))
+#+end_src
+
+* Faces
+:PROPERTIES:
+:header-args: :noweb-ref elfeed-faces :tangle no
+:END:
+
+#+begin_src emacs-lisp
+  (add-to-list 'elfeed-search-face-alist
+                 '(video actuator-elfeed-video-face))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defface actuator-elfeed-video-face
+    `((t . (:background "gray90" :foreground "blue")))
+    "face for video feed"
+    :group 'actuator-elfeed)
+#+end_src
+
+* Feeds
+:PROPERTIES:
+:ID:       42925954-86A5-49E0-8D8D-B5982347E91C
+:END:
+
+#+name: elfeed-feeds
+#+begin_src emacs-lisp
+  (setq elfeed-feeds
+        '(("https://www.youtube.com/feeds/videos.xml?channel_id=UCwBbuLWaIhxGuA6THzAqqIQ" video)
+          ("http://approachingpavonis.blogspot.com/feeds/posts/default")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVdQKW6fmfBmhz4t5k8Dq5w" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkcODH4P9o3ovGWCRV5kJkA" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCJps2S5PiabUY3yZv3iq0tw" video)
+          ("https://twitchrss.appspot.com/vod/dragonfriends" video)
+          ("https://blog.jethro.dev/index.xml")
+          ("https://www.kijiji.ca/rss-srp-buy-sell/st-johns/g-shock/k0c10l1700113" shop)
+          ("https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering" shop)
+          ("https://www.kijiji.ca/rss-srp-mens-shoes/st-johns/size+8__size+8+5/c15117001l1700113a15117001?ad=offering" shop)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1XDekTJ0jp24_aw4MncIsg" video)
+          ("https://medium.com/feed/@ghostlux")
+          ("https://idiotreport.substack.com/feed/")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8TjnmfivUw4bLB-VEn0_Sw" video)
+          ("https://formerf1doc.wordpress.com/feed/")
+          ("http://anaffordablewardrobe.blogspot.com/feeds/posts/default")
+          ("http://feedpress.me/apt2024")
+          ("https://sam217pa.github.io/index.xml")
+          ("https://blog.blankbaby.com/atom.xml")
+          ("https://cestlaz.github.io/rss.xml" emacs)
+          ("http://blog.binchen.org/rss.xml" emacs)
+          ("https://css-tricks.com/feed/")
+          ("https://deathtrashgame.tumblr.com/rss")
+          ("https://dieworkwear.com/rss")
+          ("https://emacsredux.com/atom.xml" emacs)
+          ("http://emacsrocks.com/atom.xml" emacs)
+          ("https://fastmail.blog/rss/")
+          ("https://epsalt.ca/rss" blog)
+          ("https://hk-devblog.com/feed/")
+          ("http://www.howardism.org/index.xml" emacs)
+          ("http://feeds.feedburner.com/Ikeahacker")
+          ("http://irreal.org/blog/?feed=rss2" emacs)
+          ("https://www.kinowear.com/feed/")
+          ("https://longreads.com/feed/")
+          ("https://www.macsparky.com/blog?format=rss")
+          ("http://mbork.pl/?action=rss" emacs)
+          ("https://www.masteringemacs.org/feed" emacs)
+          ("https://fuco1.github.io/rss.xml" emacs)
+          ("https://mcmansionhell.com/rss")
+          ("http://www.modernemacs.com/index.xml" emacs)
+          ("https://nefariousreviews.com/feed/")
+          ("https://updates.nonissue.org/rss")
+          ("https://nullprogram.com/feed/" emacs)
+          ("https://scripter.co/posts/index.xml" emacs)
+          ("http://pragmaticemacs.com/feed/" emacs)
+          ("http://www.lunaryorn.com/feed.atom" emacs)
+          ("http://endlessparentheses.com/atom.xml" emacs)
+          ("https://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml")
+          ("https://www.rhiannok.com/blog?format=RSS")
+          ("https://sachachua.com/blog/feed/" emacs)
+          ("https://feedpress.me/sixcolors")
+          ("https://strattondelany.com/feed/" blog)
+          ("https://www.stylesofman.com/feed/")
+          ("http://takingnotenow.blogspot.com/feeds/posts/default")
+          ("https://journal.styleforum.net/feed/")
+          ("https://culturedcode.com/things/blog/feed/rss.xml")
+          ("https://tungodies.com/feed/")
+          ("https://manuel-uberti.github.io/feed" emacs)
+          ("http://usuallywhatimdressed.in/feed/")
+          ("https://zettelkasten.de/feed.atom")
+          ("https://zzamboni.org/index.xml")
+          ("https://eightiesandninetiesanime.tumblr.com/rss" image)
+          ("https://1041uuu.tumblr.com/rss" image)
+          ("https://bubblegumcrash.tumblr.com/rss" comic)
+          ("https://cyberianpunks.tumblr.com/rss" image)
+          ("https://www.drugsandwires.fail/feed/" comic)
+          ("http://feeds.feedburner.com/Explosm" comic)
+          ("https://www.foxtrot.com/feed/" comic)
+          ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
+          ("https://rekall.me/rss" image)
+          ("http://collet66.blog52.fc2.com/?xml")
+          ("https://noonker.github.io/index.xml")))
+#+end_src

@@ -17,7 +17,8 @@
 /neofetch
 /wget
 /youtube-dl
-/emacs/emacs.el
+/emacs/*.el
+!/emacs/init.el
 /emacs/straight/**
 !/emacs/straight/versions/default.el
 /emacs/var

@@ -86,15 +86,8 @@ http://irreal.org/blog/?p=2895
 
 #+results:
 : t
-* Elfeed
-#+begin_src emacs-lisp
-  (use-package elfeed
-    :straight t)
 
-  (use-package elfeed-org
-    :straight t
-    :after elfeed)
-#+end_src
+
 * Persist org-clock
 
 #+begin_src emacs-lisp
@@ -140,10 +133,7 @@ http://irreal.org/blog/?p=2895
                `("d" "Date File" entry (file ,(actuator-make-date-file-name org-directory))
                  "* %<%A %e %B %Y (W%V)> %? %^G \n %i"))
   ;; Bookmark
-  (add-to-list 'org-capture-templates
-               `("b" "Bookmark" item (file+headline ,(expand-file-name "inbox.org" org-directory) "Bookmarks")
-                 "%(org-cliplink-capture) %U"
-                 :immediate-finish t))
+
 
   ;; Exercise / Hiking / Running Entry
   (add-to-list 'org-capture-templates
@@ -921,4 +911,18 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
                   (oneline (substring doc 0 (string-match "\n" doc))))
          (when (not (string= "" oneline))
            (concat " " (propertize oneline 'face 'italic)))))))
+#+end_src
+#+begin_src emacs-lisp
+  (use-package ivy-posframe
+    :disabled t
+    :after ivy
+    :if (display-graphic-p)
+    :config
+    (ivy-posframe-mode 1)
+    :custom
+    (ivy-posframe-display-functions-alist
+     '((swiper                   . nil)
+       (counsel-M-x              . ivy-posframe-display-at-frame-top-center)
+       (ivy-completion-in-region . ivy-posframe-display-at-point)
+       (t                        . ivy-posframe-display-at-frame-top-center))))
 #+end_src

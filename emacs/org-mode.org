@@ -1,0 +1,17 @@
+#+title: Org-mode
+
+* Cliplink
+:PROPERTIES:
+:ID:       39FC6AD4-455F-478E-B5B3-A1E49BD312B2
+:END:
+#+begin_src emacs-lisp
+  (use-package org-cliplink
+    :straight t
+    :bind ("C-x p i" . org-cliplink)
+    :config
+    (with-eval-after-load 'org-capture
+      (add-to-list 'org-capture-templates
+                   `("b" "Bookmark" item (file+headline ,(expand-file-name "inbox.org" org-directory) "Bookmarks")
+                     "%(org-cliplink-capture) %U"
+                     :immediate-finish t))))
+#+end_src

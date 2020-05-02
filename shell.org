@@ -1,0 +1,114 @@
+#+title: Shell
+
+* Fish
+:PROPERTIES:
+:ID:       355D48A5-7AAD-42AA-B593-E70104FB1587
+:END:
+
+#+begin_src fish :tangle fish/config.fish
+  if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
+      bax ". ~/.nix-profile/etc/profile.d/nix.sh"
+  end
+
+  set -gx XDG_CACHE_HOME $HOME/.cache
+  set -gx XDG_DATA_HOME $HOME/.local/share
+  set -gx XDG_CONFIG_HOME $HOME/.config
+
+  #set -gx WGETRC $XDG_CONFIG_HOME/wgetrc
+
+  set -gx VISUAL "emacsclient -c -a \"\""
+  set -gx EDITOR "emacsclient -tty -a\"\""
+
+  function __fish_describe_command; end # Fixes issues with Catalina
+
+  set __fish_git_prompt_show_informative_status "yes"
+  set __fish_git_prompt_char_dirtystate "+"
+
+  function fish_greeting; end
+  function fish_title; end
+
+  #alias pass="gopass"
+  alias tmux="tmux -f ~/.config/tmux.conf"
+
+  abbr -a -- - prevd
+  abbr -a -- = nextd
+
+  abbr -a yt  youtube-dl
+  abbr -a yta youtube-dl -x --audioformat best
+  abbr -a dired emacsclient --tty -a "emacs -nw" $PWD
+
+  if test -e /usr/local/sbin
+      set -gx PATH /usr/local/sbin $PATH
+  end
+
+#  if test -e /Library/TeX/texbin
+#      set -gx PATH $PATH /Library/TeX/texbin
+#  end
+
+  # Brew's relationship to ruby is weird but I can't make it work with
+  # Nix yet.
+  if test -e /usr/local/lib/ruby/gems/2.7.0/bin
+      set -gx PATH /usr/local/lib/ruby/gems/2.7.0/bin $PATH
+      set -gx PATH /usr/local/opt/ruby/bin $PATH
+  end
+
+  if not functions -q fisher
+      set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
+      curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
+      fish -c fisher
+  end
+#+end_src
+
+#+begin_src fish :tangle fish/fishfile
+  jethrokuan/z
+  jorgebucaran/fish-bax
+#+end_src
+
+#+begin_src fish :tangle fish/functions/fish_prompt.fish
+  function prompt_ssh -d "Check to see if in an SSH session."
+      if test -n "$SSH_CLIENT"
+          printf '%s@%s ' (whoami) (hostname -s)
+      end
+  end
+
+  function prompt_cwd -d "Display the current working directory."
+      # set_color $fish_color_cwd
+      printf '%s' (prompt_pwd)
+      set_color normal
+  end
+
+  function prompt_git -d "Display git status in the prompt"
+      printf '%s' (__fish_git_prompt)
+  end
+
+  function fish_prompt -d "The prompt for fish"
+      prompt_ssh
+      prompt_cwd
+      prompt_git
+      printf ' ❯ '
+  end
+#+end_src
+
+#+begin_src fish :tangle fish/functions/fish_user_key_bindings.fish
+  bind \ef forward-bigword
+#+end_src
+
+#+begin_src fish :tangle fish/functions/manp.fish
+  function manp  -d "Open man pages as PDF documents"
+      if type open > /dev/null 2>&1
+          man -t $argv | open -f -a Preview
+      else
+          man $argv
+      end
+  end
+#+end_src
+
+#+begin_src fish :tangle fish/functions/flac-alac.fish
+  function flac-alac -d "Convert flac to alac"
+      if type ffmpeg > /dev/null 2>&1
+          echo yay
+      else
+          echo "Install FFMPEG with ALAC support."
+      end
+  end
+#+end_src
