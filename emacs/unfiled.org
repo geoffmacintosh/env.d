@@ -88,12 +88,30 @@ http://irreal.org/blog/?p=2895
 : t
 
 
-* Persist org-clock
+* Play YT
+:PROPERTIES:
+:ID:       39718615-A7FB-4609-8EEF-75C8E4B1D2DF
+:END:
 
+#+name: elfeed-play-with-mpv
 #+begin_src emacs-lisp
-  (org-clock-persistence-insinuate)
-  (setq org-clock-persist t)
+  (defun actuator-elfeed-play-with-mpv ()
+    "Play entry link with mpv."
+    (interactive)
+    (let ((entry (if (eq major-mode 'elfeed-show-mode) elfeed-show-entry (elfeed-search-selected :single)))
+          (quality-arg "")
+          (quality-val (completing-read "Max height resolution (0 for unlimited): " '("0" "480" "720") nil nil)))
+      (setq quality-val (string-to-number quality-val))
+      (message "Opening %s with height≤%s with mpv..." (elfeed-entry-link entry) quality-val)
+      (when (< 0 quality-val)
+        (setq quality-arg (format "--ytdl-format=[height<=?%s]" quality-val)))
+      (start-process "elfeed-mpv" nil "mpv" quality-arg (elfeed-entry-link entry))))
 #+end_src
+
+     ("w" . actuator-elfeed-play-with-mpv))
+         <<elfeed-play-with-mpv>>
+
+* NOV
 
 #+begin_src emacs-lisp
   (use-package nov
@@ -117,48 +135,7 @@ http://irreal.org/blog/?p=2895
 
 #+results:
 : ((doing . d) (health h) (actuator a))
-* Capture Templates
-:PROPERTIES:
-:ID:       b8c6d668-1803-4d4e-abf0-363010867af9
-:END:
-#+begin_src emacs-lisp
-  (setq org-capture-templates nil)
-
-  ;; Journal based on todays date
-  (defun actuator-make-date-file-name (path)
-    "Make a filename for the current date for a given PATH."
-    (expand-file-name (concat path "/" (format-time-string "%Y-%m-%d") ".org")))
-
-  (add-to-list 'org-capture-templates
-               `("d" "Date File" entry (file ,(actuator-make-date-file-name org-directory))
-                 "* %<%A %e %B %Y (W%V)> %? %^G \n %i"))
-  ;; Bookmark
-
-
-  ;; Exercise / Hiking / Running Entry
-  (add-to-list 'org-capture-templates
-               `("e" "Exercise Log" entry
-                 (file+datetree ,(expand-file-name "exercise-log.org" org-directory))
-                 "* %<%A %e %B %Y (W%V)> %^g %^{Duration} %^{Distanc}p %^{Elevation}p %^{Pace}p \n%?"))
-
-  ;; Reading List
-  (add-to-list 'org-capture-templates
-               `("r" "Reading Log" entry
-                 (file ,(expand-file-name "reading-log.org" org-directory))
-                 "* %^{Author Name} - %^{Series/Title} (%^{Year}) %^u %^g"))
-
-  ;; Watch List?
-  (add-to-list 'org-capture-templates
-               `("w" "Watch Log" entry
-                 (file ,(expand-file-name "watch-log.org" org-directory))
-                 "* %^{Title} (%^{Year}) %^{series}p %^u %^g"))
-#+end_src
-
-#+results:
-| w | Watch Log    | entry | (file /Users/g/org/watch-log.org)             | * %^{Title} (%^{Year}) %^{series}p %^u %^g                                    |
-| r | Reading Log  | entry | (file /Users/g/org/reading-log.org)           | * %^{Author Name} - %^{Series/Title} (%^{Year}) %^u %^g                       |
-| e | Exercise Log | entry | (file+datetree /Users/g/org/exercise-log.org) | * %<%A %e %B %Y (W%V)> %^g %^{Duration} %^{Distanc}p %^{Elevation}p %^{Pace}p |
-* Emacs Keybindings
+* Emacbs Keybindings
 :LOGBOOK:
 - Refiled on [2020-01-30 Thu 16:56]
 :END:

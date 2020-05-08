@@ -1,10 +1,18 @@
 #+title: Elfeed
 #+property: header-args :results output silent :comments link :noweb yes
 
-* Elfeed
+* Unfiled
+#+begin_src emacs-lisp
+  ;;(setq-default elfeed-search-filter "@1-week-ago +unread ")
+#+end_src
+* Introduction
 :PROPERTIES:
 :ID:       15E8DD30-9B7E-4909-AAA1-F030F849F22D
 :END:
+
+Usually people start these things out by explaining what RSS is and all that. I don't think I'll be doing that. I like RSS because I like knowing when new things happen, and I don't want to check a bunch of different services all the time. Beyond that, I also really like the idea of being able to filter out feed items that don't appeal to me. I don't mind if I can only read stuff on my computer, so I haven't set up any sort of sync with my phone, although it should be possible to do that.
+
+I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-package declaration, and I've pulled all the individual functions out into their own bits so as to talk about them separately.
 
 #+name: elfeed-use-package
 #+begin_src emacs-lisp
@@ -14,51 +22,51 @@
     (("C-x w" . actuator-elfeed-load-db-and-open)
      :map elfeed-search-mode-map
      ("q" . actuator-elfeed-save-db-and-bury)
-     ("/" . actuator-elfeed-search-live-filter-space)
-     ("R" . actuator-elfeed-mark-all-as-read)
-     ("w" . actuator-elfeed-play-with-mpv))
+     ;;("/" . actuator-elfeed-search-live-filter-space)
+     ("R" . actuator-elfeed-mark-all-as-read))
+    :custom
+    (elfeed-search-filter "@1-week-ago +unread ")
     :config
     <<elfeed-faces>>
     <<elfeed-filters>>
     <<elfeed-feeds>>
-    <<elfeed-play-with-mpv>>
     <<elfeed-load-db-and-open>>
     <<elfeed-save-db-and-bury>>
-    <<elfeed-search-live-filter-space>>
+    ;;<<elfeed-search-live-filter-space>>
     <<elfeed-mark-all-as-read>>)
 #+end_src
 
 * Filters
 :PROPERTIES:
 :ID:       4B3C3A02-D0EA-4F09-BA45-5BEA8F05EB08
-:header-args: :noweb-ref elfeed-filters :tangle no
+:header-args: :noweb-ref elfeed-filters :tangle no :results output silent
 :END:
 #+begin_src emacs-lisp
   (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :entry-title "sponsor\\|podcast\\|revenue\\|MacWorld\\financial"
+            (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
                                 :add 'junk
                                 :remove 'unread))
-
-  ;; (add-hook 'elfeed-new-entry-hook
-  ;;           (elfeed-make-tagger :entry-title '("podcast"
-  ;;                                              "revenue")
-  ;;                               :add 'junk
-  ;;                               :remove 'unread))
-
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :before "2 weeks ago"
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-title "MacSparky"
-                                :entry-title "focused"
-                                :add 'junk
+                                :entry-title "focused\\|Mac Power Users"
+                                :add 'macsparky
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-title "Six Colors"
+                                :entry-title "podcast\\|macworld"
+                                :add 'six
                                 :remove 'unread))
 #+end_src
 
-* Width
+
+* Text Width
 :PROPERTIES:
 :ID:       652FF298-92D7-4344-A32D-1C467E9E7279
 :END:
+Elfeed uses the built-in package shr---Simple HTML Renderer---to display articles. That's true of a bunch of Emacs' packages I expect, but this is the only case where I (knowingly) make use of it so far, so I'm configuring it here for now.
 
 #+begin_src emacs-lisp
   (use-package shr
@@ -67,10 +75,12 @@
     (shr-width 75))
 #+end_src
 
-* Load elfeed
+* Load and quit elfeed nicely
 :PROPERTIES:
 :ID:       9FB75923-4973-4455-9CDA-17BE4078123F
 :END:
+
+You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
 
 #+name: elfeed-load-db-and-open
 #+begin_src emacs-lisp
@@ -83,11 +93,6 @@
         (elfeed-search-update 1)
         (elfeed-update))
 #+end_src
-
-* Quit elfeed
-:PROPERTIES:
-:ID:       0270B1D5-7DB9-4BFF-8588-41C1D4F22484
-:END:
 
 #+name: elfeed-save-db-and-bury
 #+begin_src emacs-lisp
@@ -103,11 +108,12 @@
 :PROPERTIES:
 :ID:       9659048D-338A-434E-B010-59ADD50A79FC
 :END:
+You can just go post-by-post and use ~r~ to mark individual posts as read. I stole this function from [[https://cestlaz-nikola.github.io/posts/using-emacs-29%20elfeed/][Mike Zamansky]] because it seemed like a nice addition.
 
 #+name: elfeed-mark-all-as-read
 #+begin_src emacs-lisp
   (defun actuator-elfeed-mark-all-as-read ()
-      "Mark all feeds in search as read."
+      "Mark all feeds in search as read. Taken from Mike Zamansky"
       (interactive)
       (mark-whole-buffer)
       (elfeed-search-untag-all-unread))
@@ -118,6 +124,8 @@
 :ID:       2265AAB5-1CC5-4042-8856-272AE0D51997
 :END:
 
+My general useage of Elfeed is pretty straight-forward. I check it once or twice a day, I go from top to bottom and read pretty much every entry. I don't use search very much. That's too bad, because Elfeed's live search is great. This function makes one change; it adds a space to the end of the search field, so you don't have to type it yourself. It's such a /nice/ feature that I don't want to not have it. I don't use search often, but if I do, I want to have this minor tweak there to make it just that little bit nicer. This is another function taken verbatim from the amazing [[http://pragmaticemacs.com/emacs/a-tweak-to-elfeed-filtering/][Pragmatic Emacs]].
+
 #+name: elfeed-search-live-filter-space
 #+begin_src emacs-lisp
   (defun actuator-elfeed-search-live-filter-space ()
@@ -126,26 +134,6 @@
       (interactive)
       (let ((elfeed-search-filter (concat elfeed-search-filter " ")))
         (elfeed-search-live-filter)))
-#+end_src
-
-* Play YT
-:PROPERTIES:
-:ID:       39718615-A7FB-4609-8EEF-75C8E4B1D2DF
-:END:
-
-#+name: elfeed-play-with-mpv
-#+begin_src emacs-lisp
-  (defun actuator-elfeed-play-with-mpv ()
-    "Play entry link with mpv."
-    (interactive)
-    (let ((entry (if (eq major-mode 'elfeed-show-mode) elfeed-show-entry (elfeed-search-selected :single)))
-          (quality-arg "")
-          (quality-val (completing-read "Max height resolution (0 for unlimited): " '("0" "480" "720") nil nil)))
-      (setq quality-val (string-to-number quality-val))
-      (message "Opening %s with height≤%s with mpv..." (elfeed-entry-link entry) quality-val)
-      (when (< 0 quality-val)
-        (setq quality-arg (format "--ytdl-format=[height<=?%s]" quality-val)))
-      (start-process "elfeed-mpv" nil "mpv" quality-arg (elfeed-entry-link entry))))
 #+end_src
 
 * Faces
@@ -170,6 +158,8 @@
 :ID:       42925954-86A5-49E0-8D8D-B5982347E91C
 :END:
 
+I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/elfeed-org][Elfeed-org]] package. I have used it in the past, but I don't anymore. I don't like Org-mode documents where headlines are also links, and I don't value having much of a hiearchy for tags. I keep considering setting it up just so I can nicely rename all my feeds to be consistent, but I just haven't bothered.
+
 #+name: elfeed-feeds
 #+begin_src emacs-lisp
   (setq elfeed-feeds
@@ -180,7 +170,13 @@
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA" video)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w" video)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCJps2S5PiabUY3yZv3iq0tw" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbJ1WFUdC4ImBlFReGNHjKQ" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvETBL47UPZVMBdIW-gFpPQ" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCcGoqh8kLlACkFFpqXm6eSw" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A" video)
           ("https://twitchrss.appspot.com/vod/dragonfriends" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA")
+          ("https://sewmuchblack.de/feed/")
           ("https://blog.jethro.dev/index.xml")
           ("https://www.kijiji.ca/rss-srp-buy-sell/st-johns/g-shock/k0c10l1700113" shop)
           ("https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering" shop)
@@ -188,6 +184,7 @@
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1XDekTJ0jp24_aw4MncIsg" video)
           ("https://medium.com/feed/@ghostlux")
           ("https://idiotreport.substack.com/feed/")
+          ("https://backstage.1blocker.com/feed")
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8TjnmfivUw4bLB-VEn0_Sw" video)
           ("https://formerf1doc.wordpress.com/feed/")
           ("http://anaffordablewardrobe.blogspot.com/feeds/posts/default")
@@ -223,7 +220,6 @@
           ("http://www.lunaryorn.com/feed.atom" emacs)
           ("http://endlessparentheses.com/atom.xml" emacs)
           ("https://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml")
-          ("https://www.rhiannok.com/blog?format=RSS")
           ("https://sachachua.com/blog/feed/" emacs)
           ("https://feedpress.me/sixcolors")
           ("https://strattondelany.com/feed/" blog)
@@ -246,5 +242,32 @@
           ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
           ("https://rekall.me/rss" image)
           ("http://collet66.blog52.fc2.com/?xml")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=3&view=rss" reddit)
+                  ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=3&view=rss" reddit)
           ("https://noonker.github.io/index.xml")))
 #+end_src
+
+Honestly, it feels weird to share my entire collection of feeds in public. Like I'm sharing something very personal. Anyway, that's it. That's my Elfeed.
+
+* The future
+There are a bunch of things I'd like to add to my Elfeed setup that I haven't done yet.
+
+** TODO Make the interface prettier
+
+** TODO Look into sync options
+I don't know if I care enough about reading RSS on my phone, but maybe I'd like it if I tried it. There seem to be two main ways. Elfeed-web is a sub-package that is part of Elfeed proper, which creates a single webpage using an Emacs HTML server that could be read by a phone I assume. Seems like I might have to do some fiddling, and it would only work if the computer running Elfeed is on---which is currently my laptop. The other option is [[https://github.com/fasheng/elfeed-protocol][Elfeed-protocol]] combined with a web-based RSS reader that's compatible. That would probably require paying money for either a webhost or a subscription-based feed reader, and checking to see how my elfeed filters work with it.
+
+** TODO Set up video integration
+A significant portion of my use of Elfeed involves
+
+** TODO Look into Elfeed-score
+
+** TODO Set up EWW's readability features for even more Emacs
+
+* Additional resources
+- [[https://noonker.github.io/posts/2020-04-22-elfeed/][Elfeed Rules! :: Noonker — thoughts, guides, etc]]
+- [[https://nullprogram.com/tags/elfeed/][Posts tagged elfeed « null program]]
+- [[http://pragmaticemacs.com/category/elfeed/][elfeed | Pragmatic Emacs]]
+- [[https://cestlaz-nikola.github.io/posts/using-emacs-29%20elfeed/][Using Emacs - 29 -elfeed part 1 | C'est la Z]]
+- [[https://cestlaz-nikola.github.io/posts/using-emacs-30-elfeed-2/][Using Emacs - 30 - elfeed part 2 - Hydras | C'est la Z]]
+- [[https://cestlaz-nikola.github.io/posts/using-emacs-31-elfeed-3/][Using Emacs - 31 - elfeed part 3 - macros | C'est la Z]]

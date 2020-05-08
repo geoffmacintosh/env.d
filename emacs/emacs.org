@@ -13,12 +13,13 @@
 
 * Unfiled Settings
 
+From  emacs-plus:
+
 #+begin_src emacs-lisp
-  (use-package org-habit
-    :straight nil
-    :config
-    (add-to-list 'org-modules 'org-habit))
+  ;; C source code
+  (csetq frame-resize-pixelwise t)
 #+end_src
+
 
 #+begin_src emacs-lisp
   (global-unset-key (kbd "<C-wheel-down>"))
@@ -184,13 +185,19 @@
     (org-M-RET-may-split-line '((default . nil)))
     (org-special-ctrl-k t)
     (org-special-ctrl-a/e t)
-    (org-agenda-files (list org-directory))
+    ;;(org-agenda-files (list org-directory))
     (org-blank-before-new-entry '((heading         . t)
                                   (plain-list-item . auto)))
     (org-use-property-inheritance t)
     (org-modules nil)
     :hook
     (org-mode . visual-line-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+    (setq org-agenda-files `(,org-directory
+                             "~/.config"
+                             "~/.config/emacs"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -273,15 +280,8 @@
   (use-package org-agenda
     :straight nil
     :custom
+    (org-agenda-sticky t)
     (org-agenda-dim-blocked-tasks t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-clock
-    :straight nil
-    :custom
-    (org-clock-out-remove-zero-time-clocks t)
-    (org-clock-mode-line-total 'current))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -356,20 +356,8 @@
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package org-attach
-    :straight nil
-    :custom
-    (org-attach-store-link-p t)
-    (org-attach-dir-relative t)
-    (org-attach-preferred-new-method 'dir)
-    (org-attach-method 'mv)
-    (org-attach-auto-tag "attach")
-    (org-attach-archive-delete 'query))
-#+end_src
-
-
-#+begin_src emacs-lisp
   (use-package autorevert
+    :disabled t
     :straight nil
     :config
     (global-auto-revert-mode 1)
@@ -378,6 +366,12 @@
     (auto-revert-verbose nil)
     (revert-without-query t)
     (auto-revert-check-vc-info t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package vc-hooks
+    :custom
+    (vc-handled-backends nil))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -425,37 +419,6 @@
                      (float-time
                       (time-subtract after-init-time before-init-time)))
              gcs-done))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-hippie-unexpand ()
-    "Remove an expansion without having to loop around."
-    (interactive)
-    (hippie-expand 0))
-  (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package hippie-exp
-    :straight nil
-    :bind ("s-/" . hippie-expand)
-    :custom
-    (hippie-expand-verbose t)
-    (hippie-expand-try-functions-list
-     '(try-expand-all-abbrevs
-       try-expand-dabbrev-visible
-       try-expand-dabbrev
-       try-expand-dabbrev-all-buffers
-       try-expand-dabbrev-from-kill
-       try-complete-file-name-partially
-       try-complete-file-name
-       try-expand-line
-       try-expand-line-all-buffers ;;slow
-       try-complete-lisp-symbol-partially
-       try-complete-lisp-symbol ;; many, many completions
-       try-expand-list
-       try-expand-list-all-buffers
-       try-expand-whole-kill)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -571,6 +534,8 @@
        ;;    (stashes   . show)
        (recent    . show)))
     (magit-push-always-verify nil)
+    (magit-repository-directories '(("~/org" . 0)
+                                    ("~/.config" . 0)))
     (magit-revert-buffers 'silent)
     (magit-no-confirm '(stage-all-changes
                         unstage-all-changes))

@@ -1,0 +1,21 @@
+#+title: Publish
+
+HOLY SHIT THIS WORKS RIGHT NOW BUT YOU HAVE TO NAME ALL BLOG ENTRIES .BLOG.ORG
+
+#+begin_src emacs-lisp
+  (setq org-publish-project-alist
+        `(("blog-org"
+           :base-directory ,org-directory
+           :base-extension "blog\\.org"
+           :publishing-directory "~/Documents/Projects/mac-into-sh"
+           :publishing-function org-md-publish-to-md
+           :with-broken-links mark
+           )
+          ("blog-images"
+           :base-directory ,org-directory
+           :base-extension "jpg\\|gif\\|png\\|jpeg"
+           :publishing-directory "~/Documents/Projects/mac-into-sh/images"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("blog" :components ("blog-org" "blog-images"))))
+#+end_src

@@ -13,30 +13,6 @@
   :custom
   (TeX-engine 'luatex))
 
-
-
-(use-package org-attach
-  :straight nil
-  :custom
-  (org-attach-store-link-p t)
-  (org-attach-dir-relative t)
-  (org-attach-preferred-new-method 'dir)
-  (org-attach-method 'mv)
-  (org-attach-auto-tag "attach")
-  (org-attach-archive-delete 'query))
-
-(use-package org-download
-  :straight t
-  :config
-  (defun actuator-org-dl-annotate (_link)
-    "Minimal org-download header info."
-    (format "#+DOWNLOADED: %s\n"
-            (format-time-string "%Y-%m-%d")))
-  :custom
-  (org-download-method 'attach)
-  (org-download-timestamp "")
-  (org-download-annotate-function #'actuator-org-dl-annotate))
-
 (use-package org-bullets
   :straight t
   :hook (org-mode . org-bullets-mode)

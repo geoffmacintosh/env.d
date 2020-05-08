@@ -35,10 +35,7 @@
        try-expand-line-all-buffers)))
 #+end_src
 
-#+results:
-: hippie-expand
-
-- tpy-complete-lisp-symbol has a lot of completions
+- try-complete-lisp-symbol has a lot of completions
 - try-expand-line-all-buffers is very slow
 
 #+begin_src emacs-lisp
