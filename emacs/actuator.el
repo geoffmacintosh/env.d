@@ -19,16 +19,7 @@
   :custom
   (org-bullets-bullet-list '("◆" "◆" "◇" "◇" "◇")))
 
-(use-package fish-mode
-  :straight t)
-(use-package gitconfig-mode
-  :straight t)
-(use-package gitignore-mode
-  :straight t)
-(use-package lua-mode
-  :straight t)
-(use-package toml-mode
-  :straight t)
+
 
 (provide 'actuator)
 ;;; actuator.el ends here

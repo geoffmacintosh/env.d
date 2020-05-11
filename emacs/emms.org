@@ -1,0 +1,11 @@
+* EMMS
+#+begin_src emacs-lisp
+  (use-package emms
+    :straight t
+    :config
+    (require 'emms-setup)
+    (emms-all)
+    (emms-default-players)
+    :custom
+    (emms-source-file-default-directory "~/Music/iTunes/iTunes Music/Music/"))
+#+end_src

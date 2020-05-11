@@ -51,7 +51,7 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-title "MacSparky"
-                                :entry-title "focused\\|Mac Power Users"
+                                :entry-title "focused\\|Mac Power Users\\|jazz\\|automators\\|podcast"
                                 :add 'macsparky
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
@@ -59,6 +59,23 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
                                 :entry-title "podcast\\|macworld"
                                 :add 'six
                                 :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-title "Longreads"
+                                :entry-title "longreads"
+                                :add '(junk longreads)
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "youtube\\.com"
+                                :add '(video youtube)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "twitchrss"
+                                :add '(video twitch)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "kijiji\\.ca"
+                                :add '(shop kijiji)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "reddit"
+                                :add 'reddit))
 #+end_src
 
 
@@ -163,29 +180,29 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
 #+name: elfeed-feeds
 #+begin_src emacs-lisp
   (setq elfeed-feeds
-        '(("https://www.youtube.com/feeds/videos.xml?channel_id=UCwBbuLWaIhxGuA6THzAqqIQ" video)
+        '(("https://www.youtube.com/feeds/videos.xml?channel_id=UCwBbuLWaIhxGuA6THzAqqIQ")
           ("http://approachingpavonis.blogspot.com/feeds/posts/default")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVdQKW6fmfBmhz4t5k8Dq5w" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkcODH4P9o3ovGWCRV5kJkA" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCJps2S5PiabUY3yZv3iq0tw" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbJ1WFUdC4ImBlFReGNHjKQ" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvETBL47UPZVMBdIW-gFpPQ" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCcGoqh8kLlACkFFpqXm6eSw" video)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A" video)
-          ("https://twitchrss.appspot.com/vod/dragonfriends" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVdQKW6fmfBmhz4t5k8Dq5w")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkcODH4P9o3ovGWCRV5kJkA")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCJps2S5PiabUY3yZv3iq0tw")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbJ1WFUdC4ImBlFReGNHjKQ")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvETBL47UPZVMBdIW-gFpPQ")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCcGoqh8kLlACkFFpqXm6eSw")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A")
+          ("https://twitchrss.appspot.com/vod/dragonfriends")
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA")
           ("https://sewmuchblack.de/feed/")
           ("https://blog.jethro.dev/index.xml")
-          ("https://www.kijiji.ca/rss-srp-buy-sell/st-johns/g-shock/k0c10l1700113" shop)
-          ("https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering" shop)
-          ("https://www.kijiji.ca/rss-srp-mens-shoes/st-johns/size+8__size+8+5/c15117001l1700113a15117001?ad=offering" shop)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1XDekTJ0jp24_aw4MncIsg" video)
+          ("https://www.kijiji.ca/rss-srp-buy-sell/st-johns/g-shock/k0c10l1700113")
+          ("https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering")
+          ("https://www.kijiji.ca/rss-srp-mens-shoes/st-johns/size+8__size+8+5/c15117001l1700113a15117001?ad=offering")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1XDekTJ0jp24_aw4MncIsg")
           ("https://medium.com/feed/@ghostlux")
           ("https://idiotreport.substack.com/feed/")
           ("https://backstage.1blocker.com/feed")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8TjnmfivUw4bLB-VEn0_Sw" video)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8TjnmfivUw4bLB-VEn0_Sw")
           ("https://formerf1doc.wordpress.com/feed/")
           ("http://anaffordablewardrobe.blogspot.com/feeds/posts/default")
           ("http://feedpress.me/apt2024")
@@ -242,8 +259,8 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
           ("https://rekall.me/rss" image)
           ("http://collet66.blog52.fc2.com/?xml")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=3&view=rss" reddit)
-                  ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=3&view=rss" reddit)
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=3&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=3&view=rss")
           ("https://noonker.github.io/index.xml")))
 #+end_src
 

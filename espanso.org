@@ -1,0 +1,35 @@
+:PROPERTIES:
+:ID:       10C0A858-94F2-492F-83C0-91358CD0FAE7
+:END:
+#+begin_src yaml :tangle ~/Library/Preferences/espanso/default.yml
+  # espanso configuration file
+
+  # This is the default configuration file, change it as you like it
+  # You can refer to the official documentation:
+  # https://espanso.org/docs/
+
+  # Matches are the substitution rules, when you type the "trigger" string
+  # it gets replaced by the "replace" string.
+  matches:
+    # Simple text replacement
+    - trigger: "zcite"
+      replace: "Principles of Anatomy and Physiology 14th Ed. Chapter 4"
+
+    # Dates
+    - trigger: "zdate"
+      replace: "{{mydate}}"
+      vars:
+        - name: mydate
+          type: date
+          params:
+            format: "%Y-%m-%d"
+
+    # Shell commands
+    - trigger: ":shell"
+      replace: "{{output}}"
+      vars:
+        - name: output
+          type: shell
+          params:
+            cmd: "echo Hello from your shell"
+#+end_src

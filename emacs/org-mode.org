@@ -69,6 +69,17 @@
     (org-clock-out-remove-zero-time-clocks t)
     (org-clock-mode-line-total 'auto))
 #+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-mru-clock
+    :straight t
+    :bind
+    ("C-c C-x i" . org-mru-clock-in)
+    ("C-c C-x C-j . org-mru-clock-select-recent-task")
+    :custom
+    (org-mru-clock-completing-read 'ivy-completing-read))
+#+end_src
+
 * Capture Templates
 :PROPERTIES:
 :ID:       b8c6d668-1803-4d4e-abf0-363010867af9

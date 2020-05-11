@@ -569,3 +569,93 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     "Package name: "
     "(use-package " str "\n  :straight nil\n " _ "  :custom)")
 #+end_src
+* Installs
+#+begin_src emacs-lisp
+  (use-package fish-mode
+    :straight t)
+  (use-package gitconfig-mode
+    :straight t)
+  (use-package gitignore-mode
+    :straight t)
+  (use-package lua-mode
+    :straight t)
+  (use-package toml-mode
+    :straight t)
+  (use-package yaml-mode
+    :straight t)
+#+end_src
+* Fix savehist
+1. Quick fixes:
+
+   ;; the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
+
+https://github.com/syl20bnr/spacemacs/issues/9409
+
+
+#+begin_src emacs-lisp
+  (setq history-length 1000)
+  (put 'minibuffer-history 'history-length 100)
+  (put 'kill-ring 'history-length 25)
+  (setq save-interprogram-paste-before-kill nil)
+#+end_src
+
+#+results:
+
+https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
+
+2. Unpropertize kill ring on quit
+#+begin_src emacs-lisp
+  (defun actuator-unpropertize-kill-ring ()
+    "It do thing."
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+
+  (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
+#+end_src
+
+#+results:
+| actuator-unpropertize-kill-ring | org-clock-save | org-id-locations-save | savehist-autosave | recentf-save-list | save-place-kill-emacs-hook | org-babel-remove-temporary-directory |
+
+3. Savehist on kill only
+
+#+begin_src emacs-lisp
+  (setq savehist-autosave-interval nil)
+  (add-hook 'kill-emacs-hook #'savehist-save)
+#+end_src
+
+#+results:
+| savehist-save | actuator-unpropertize-kill-ring | org-clock-save | org-id-locations-save | savehist-autosave | recentf-save-list | save-place-kill-emacs-hook | org-babel-remove-temporary-directory |
+* Made a keyboard macro
+
+https://www.emacswiki.org/emacs/KeyboardMacros
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html
+
+http://ergoemacs.org/emacs/emacs_macro_example.html
+
+C-x ( start defining a keyboard macro
+C-x ) end a keyboard macro
+C-u C-x ( replay macro and append keys to the definition
+C-u C-u C-x ( don’t replay but append keys
+C-x C-k r run the last keyboard macro on each line that begins in the region
+
+C-x C-k n name the most recent macro
+C-x C-k b bind the most recent macro to a keybinding (for the session only)
+M-x insert-kbd-macro insert the most recent macro into the buffer as lisp That’s how you save it
+
+C-x C-k 0-9 and C-x C-k A-Z are reserved for keyboard macros
+
+#+begin_src emacs-lisp
+  (fset 'actuator-make-checklist
+        (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?ã] 0 "%d"))
+  (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+#+end_src
+* Copy sentence
+#+begin_src emacs-lisp
+  (defun actuator-copy-sentence ()
+    "Save the entire sentence to the clipboard/kill ring."
+    (interactive)
+    (save-excursion
+      (backward-sentence)
+      (mark-end-of-sentence nil)
+      (copy-region-as-kill nil nil t)))
+#+end_src

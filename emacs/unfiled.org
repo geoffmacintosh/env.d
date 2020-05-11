@@ -129,13 +129,16 @@ http://irreal.org/blog/?p=2895
     (nov-text-width 65))
 #+end_src
 
+#+results:
+: t
+
 #+begin_src emacs-lisp
   (setq org-tag-persistent-alist '(("doing" . d) ("health" h) ("actuator" a)))
 #+end_src
 
 #+results:
 : ((doing . d) (health h) (actuator a))
-* Emacbs Keybindings
+* Emacs Keybindings
 :LOGBOOK:
 - Refiled on [2020-01-30 Thu 16:56]
 :END:
