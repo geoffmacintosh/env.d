@@ -1,4 +1,25 @@
 #+title: Emacs Unfiled Projects
+
+* Free Keybindings
+:LOGBOOK:
+- Refiled on [2020-01-30 Thu 16:56]
+:END:
+[2019-08-18 Sun 17:14]
+
+- C-x C-l
+- C-x C-n
+- C-x C-o
+- C-x C-p
+- M-j (indent-new-comment-line)
+- C-=:
+- C-`:
+- C-q: quoted-insert (USELESS)
+- C-z: suspend-frame (USELESS)
+- M-`: tmm-menubar (USELESS)
+- M-i: tab-to-tab-stop (USELESS)
+
+
+http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
 * Applescript Get Link
 
 http://irreal.org/blog/?p=2895
@@ -87,7 +108,6 @@ http://irreal.org/blog/?p=2895
 #+results:
 : t
 
-
 * Play YT
 :PROPERTIES:
 :ID:       39718615-A7FB-4609-8EEF-75C8E4B1D2DF
@@ -138,237 +158,6 @@ http://irreal.org/blog/?p=2895
 
 #+results:
 : ((doing . d) (health h) (actuator a))
-* Emacs Keybindings
-:LOGBOOK:
-- Refiled on [2020-01-30 Thu 16:56]
-:END:
-[2019-08-18 Sun 17:14]
-
-- C--: negative-argument
-- C-=:
-- C-`:
-- C-a: move-beginning-of-line
-- C-b: backward-char
-- C-c: PREFIX
-- C-d: delete-char
-- C-e: move-end-of-line
-- C-f: forward-char
-- C-g: keyboard-quit
-- C-h: help-prefix
-- C-i:
-- C-j: DEPENDS
-- C-k: kill-line
-- C-l: recenter
-- C-m:
-- C-n: next-line
-- C-o: open-line (fix)
-- C-p: previous-line
-- C-q: quoted-insert (USELESS)
-- C-r: isearch-backward (USELESS?)
-- C-s: swiper
-- C-t: transpose-chars
-- C-u: universal-argument
-- C-v: scroll-up-command
-- C-w: kill-region
-- C-x: PREFIX
-- C-y: yank (FIX)
-- C-z: suspend-frame (USELESS)
-
-- M-`: tmm-menubar (USELESS)
-- M--: negative-argument
-- M-=: count-words-region
-- M-a: backward-sentence
-- M-b: backward-word
-- M-c: capitalize-word (FIX)
-- M-d: kill-word (FIX)
-- M-e: forward-sentence
-- M-f: forward-word
-- M-g: PREFIX
-- M-h: depends (USELESS?)
-- M-i: tab-to-tab-stop (USELESS)
-- M-j: default-indent-new-line (WHAT?)
-- M-k: kill-sentence (FIX)
-- M-l: downcase-word (FIX)
-- M-m: back-to-indentation
-- M-n: (USED IN LOTS OF MODES)
-- M-o: PREFIX
-- M-p: (USED IN LOTS OF MODES)
-- M-q: fill-paragraph
-- M-r: move-to-window-top-bottom
-- M-s: PREFIX
-- M-t: transpose-words
-- M-u: upcase-word (FIX)
-- M-v: scroll-down-command
-- M-w: kill-ring-save (copy)
-- M-x: m-x
-- M-y: counsel-yank-pop
-- M-z: zap-to-char
-
-*C-x prefix*
-- C-x C-b: list-buffers
-- C-x d: dired
-- C-x C-w: write-file
-- C-x k: kill buffer
-- C-x 8 RET: insert-char
-- C-x o: other-window
-- C-x C-;: comment line
-
-*Prefixes*
-- C-x n narrow/widen-prefix
-- C-x t tabs-prefix
-- C-x r rectange/register/bookmark
-- C-x v version control
-- C-x a abbrev
-
-- C-x h: mark-whole-buffer
-- C-x b: switch-buffer
-
-- C-x ^: enlarge-window
-- C-x -: shrink-window-if-larger-than-buffer
-
-- C-x 0: delete-window
-- C-x 1: delete-other-windows
-- C-x 2: split-window-below
-- C-x 3: split-window-right
-
-- C-x 4 0: kill-buffer-and-window
-- C-x 4 f/C-f: find-file-other-window
-- C-x 4 b: switch-to-buffer-other-window
-- C-x 4 c: clone-indirect-buffer-other-window
-- C-x 4 a: add-change-log-entry-other-window
-- C-x 4 d: dired-other-window
-
-- C-x 5 0: delete frame
-- C-x 5 1: delete-other-frames
-- C-x 5 2: make-frame-command
-- C-x 5 o: other-frame
-- C-x 5 d: dired-other-frame
-- C-x 5 f or C-x 5 C-f: find-file-other-frame
-- C-x 5 C-o: display-buffer-other-frame
-- C-x 5 b: switch-to-buffer-other-frame
-
-*Window Controls Basics*
-- 0: Delete
-- 1: Delete Other
-- 2: Create
-- f: Open (find-file)
-- b: Buffer
-- d: Dired
-- o: Other
-
-- 4: Window / Panel Commands
-- 5: Frame
-- 6: Tab (My choice)
-
-
-- C-x t 2: tab-new
-- C-x t m: tab-move
-- C-x t o: tab-next
-- C-x t 0: tab-close
-- C-x t r: tab-rename
-- C-x t 1: tab-close-other
-- C-x t d: dired-other-tab
-- C-x t f/C-f: find-file-other-tab
-- C-x t RET: tab-bar-select-tab-by-name
-- C-x t b: switch-to-buffer-other-tab
-
-*C-c prefix*
-
-*M-g prefix*
-
-*M-o prefix*
-
-*M-s prefix*
-
-- C-x C-l (downcase-region)
-- C-x C-n (set-goal-column)
-- C-x C-o (delete-blank-lines)
-- C-x C-p (mark-page)
-- C-x C-r (find-file-read-only)
-- C-o (open-line)
-
-http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
-* Colours
-* Theme
-:PROPERTIES:
-:ID:       1D1D65DF-9D51-4709-B02C-E98A6E94C60E
-:END:
-
-#+begin_src emacs-lisp
-  (deftheme actuator)
-
-  (let ((blue  "#29BEEA")
-        (white "#FFFFFF")
-        (dark  "#000000")
-        (cyan  "#00FFFF")
-        (red   "#8b0000")
-        (grey  "#484e55")
-        (lgrey "#bdc4cc")
-
-        (highlight-dim "#B1F8FF")
-        (code-background "#FFFFFF")
-
-        (xgrey "#F5F6F8")
-        (xbord "#EDF0F4"))
-
-    (custom-theme-set-faces
-     `actuator
-     `(fixed-pitch ((t (:family "SF Mono"))))
-     `(variable-pitch ((t (:family "SF Pro Text" :weight light))))
-     `(default ((t (:background ,white :foreground ,dark))))
-     `(cursor ((t (:background ,blue))))
-     `(fringe ((t (:background ,white))))
-     `(region ((t (:background ,highlight-dim))))
-     `(highlight ((t (:background nil))))
-
-     `(font-lock-builtin-face ((t (:weight bold))))
-     `(font-lock-constant-face ((t (:weight bold))))
-     `(font-lock-function-name-face ((t (:weight bold))))
-     `(font-lock-keyword-face ((t (:weight bold))))
-     `(font-lock-variable-name-face ((t (:weight bold))))
-     `(font-lock-type-face ((t (:weight bold))))
-     `(font-lock-string-face ((t (:weight thin))))
-
-     `(font-lock-warning-face ((t (:foreground ,red))))
-     `(font-lock-comment-face ((t (:weight thin))))
-     `(font-lock-comment-delimiter-face ((t (:weight thin))))
-
-     `(org-drawer ((t (:foreground ,lgrey))))
-     `(org-special-keyword ((t (:inherit org-drawer
-                                         :foreground ,dark))))
-     `(org-block ((t (:background ,code-background :extend t))))
-     `(org-block-begin-line ((t :inherit org-block)))
-     `(link ((t :foreground ,dark
-                :underline t)))
-     `(org-document-title ((t (:foreground ,dark
-                               :height 220))))
-
-
-     `(mode-line ((t (:box (:line-width 5
-                                        :color ,xgrey)
-                           :underline nil
-                           :overline ,xbord
-                           :foreground ,dark
-                           :background ,xgrey
-                           :inherit variable-pitch
-                           :height 140))))
-     `(mode-line-inactive ((t (:inherit mode-line
-                               :foreground ,lgrey))))
-
-
-     ))
-
-  (provide-theme 'actuator)
-
-  ;; Local Variables:
-  ;; no-byte-compile: t
-  ;; End:
-
-  ;;; actuator-theme.el ends here
-#+end_src
-
-#+results:
-: actuator-theme
 * Minibuffer
 :PROPERTIES:
 :ID:       046D7A20-7570-4D2E-B5DC-A15819096755
@@ -381,30 +170,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
          (set (make-local-variable 'face-remapping-alist)
             '((org-document-title :height 1.0))))
 #+end_src
-* Modeline
-* Porp
-- Test
-- _Test_
-- *Test*
-- /Test/
-- +Test+
-* Quick Notes
-- Fringe
-- Company dropdown menus
-- Modeline
-- Minibuffer/posframe/crap
-- MOAR HYDRAS/ make integrated
-- Titlebar
-- The dot in the stoplight means unsaved changes, don't need any more indications
-- Would be neat to have a good list of minor modes
-- All-the-icons!
-- Async?
-- Lots of org-tweaks
-- Possible variable-pitch? Maybe actually a bad idea.
-- Variable pitch options for sidebar (treemacs?) and modeline. Minibuffer? Probably not.
--
-* Disabled
-** Visual Fill Column
+* Visual Fill Column
 #+begin_src emacs-lisp
   (use-package visual-fill-column
     :config
@@ -414,7 +180,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
     ;;(visual-line-fringe-indicators '(nil right-curly-arrow))
     (visual-fill-column-width 70))
 #+end_src
-** Cancel GC in Minibuffer
+* Cancel GC in Minibuffer
 #+begin_src emacs-lisp
   (defun actuator-minibuffer-setup-hook ()
     (setq gc-cons-threshold (* 500 1024 1024)))
@@ -426,7 +192,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
   (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
 #+end_src
 
-** Delete by Moving to Trash
+* Delete by Moving to Trash
 #+begin_src emacs-lisp
   (defun system-move-file-to-trash (file)
     "Move the file to trash via the `trash` command-line tool."
@@ -442,7 +208,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
     (delete-by-moving-to-trash t))
 #+end_src
 
-** Titlebar
+* Titlebar
 #+begin_src emacs-lisp
   (setq frame-title-format
         '((:eval (if (buffer-file-name)
@@ -450,7 +216,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
                    "%b"))))
 #+end_src
 
-** Server
+* Server
 #+begin_src emacs-lisp
   (defun actuator-running-as-server-p ()
     "Returns true if `server-start' has been called."
@@ -469,7 +235,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
       (server-start)))
 #+end_src
 
-** Company
+* Company
     :PROPERTIES:
     :ID:       035DE7B4-9F7F-4D38-9BEA-5BE947281CD9
     :END:
@@ -526,7 +292,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
     :after (company prescient))
 #+end_src
 
-** Web Dev (React / JSX)
+* Web Dev (React / JSX)
 
  #+begin_src emacs-lisp
    ;;(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-mode))
@@ -544,7 +310,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
      (js2-strict-missing-semi-warning nil))
  #+end_src
 
-** Prodigy
+* Prodigy
 
  #+begin_src emacs-lisp
    (use-package prodigy
@@ -559,7 +325,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
       :kill-process-buffer-on-stop t))
  #+end_src
 
-** Hydra
+* Hydra
    :PROPERTIES:
    :ID:       1340236C-B973-4C63-923E-F36C47AB65A1
    :END:
@@ -570,7 +336,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
 )
 #+end_src
 
-** Modeline
+* Modeline
 
 #+begin_src emacs-lisp
   (use-package minions
@@ -578,7 +344,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
     (minions-mode 1))
 #+end_src
 
-** Scratch Buffer
+* Scratch Buffer
 :PROPERTIES:
 :ID:       C17636D1-9417-42DB-9252-F69F4B6832D3
 :END:
@@ -601,7 +367,7 @@ http://mbork.pl/2019-03-18_Free_Emacs_key_bindings
     (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer))
 #+end_src
 
-** Projectile
+* Projectile
    :PROPERTIES:
    :ID:       6E928D94-AB52-4FC2-873D-A2D36B2EA7B3
    :END:
@@ -636,7 +402,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
   (add-hook 'midnight-hook #'projectile-cleanup-known-projects)
 #+end_src
 
-** Desktop
+* Desktop
 :PROPERTIES:
 :ID:       823C17F1-623C-465C-B29D-87E994A0D8E3
 :END:
@@ -651,7 +417,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     (desktop-globals-to-clear nil))
 #+end_src
 
-** Spell check
+* Spell check
 :PROPERTIES:
 :ID:       9131A2E2-EA2C-4F73-98F5-449DC0594CA0
 :END:
@@ -684,7 +450,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     (ispell-current-personal-dictionary "~/.dict"))
 #+end_src
 
-** Slime
+* Slime
    :PROPERTIES:
    :ID:       4B6E3CCE-F1A9-40A0-A729-A1715D801E93
    :END:
@@ -704,7 +470,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     (csetq slime-repl-history-file (expand-file-name "slime-history.el" no-littering-var-directory)))
 #+end_src
 
-** Publishing
+* Publishing
    :PROPERTIES:
    :ID:       AC3AC665-78F8-4EA7-8DD7-771275C175E1
    :END:
@@ -742,7 +508,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
        :auto-sitemap t)))
 #+end_src
 
-** Skeleton
+* Skeleton
 :PROPERTIES:
 :ID:       CFB6E1FF-EE35-47FF-ADED-99C9E564958F
 :END:
@@ -758,7 +524,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     "** References" \n)
 #+end_src
 
-** Git Gutter
+* Git Gutter
    :PROPERTIES:
    :ID:       EE7ED645-5822-4774-9CF2-F56BFBE788A8
    :END:
@@ -770,7 +536,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     (global-diff-hl-mode))
 #+end_src
 
-** LaTeX
+* LaTeX
    :PROPERTIES:
    :ID:       9FC5A1C8-3895-4FA2-B582-C278E0A0196E
    :END:
@@ -785,7 +551,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
     (TeX-source-correlate-start-server t))
 #+end_src
 
-** Ibuffer
+* Ibuffer
 #+begin_src emacs-lisp
     (use-package ibuffer
       :straight nil
@@ -816,7 +582,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
       )
 #+end_src
 
-** Hot Expand
+* Hot Expand
 
 #+begin_src emacs-lisp
     (defhydra hydra-org-template (:color blue :hint nil)
@@ -869,7 +635,7 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
              (hydra-org-template/body)
            (self-insert-command 1))))
  #+end_src
-** Eldoc
+* Eldoc
 :PROPERTIES:
 :ID:       71D564B4-640F-4E50-A6CE-8FD0C54F363A
 :END:
@@ -976,3 +742,419 @@ C-x C-k 0-9 and C-x C-k A-Z are reserved for keyboard macros
     (revert-without-query t)
     (auto-revert-check-vc-info t))
 #+end_src
+* Cliplink custom transformers
+#+begin_src emacs-lisp
+  (defun actuator-org-cliplink ()
+    (interactive)
+    (org-cliplink-insert-transformed-title
+     (org-cliplink-clipboard-content)     ;take the URL from the CLIPBOARD
+     (lambda (url title)
+       (let* ((parsed-url (url-generic-parse-url url)) ;parse the url
+              (clean-title
+               (cond
+                ;; if the host is github.com, cleanup the title
+                ((string= (url-host parsed-url) "github.com")
+                 (replace-regexp-in-string "GitHub - .*: \\(.*\\)" "\\1" title))
+                ;; otherwise keep the original title
+                (t title))))
+         ;; forward the title to the default org-cliplink transformer
+         (org-cliplink-org-mode-link-transformer url clean-title)))))
+#+end_src
+
+* Rsync music backup
+:PROPERTIES:
+:ID:       0EC091CC-29F0-4586-8776-B93136136247
+:END:
+#+begin_src shell
+  rsync -av ~/Music/ ~/Documents/Archive/Music
+#+end_src
+
+THE SECRET WAS TO ENABLE FDA ACESS FOR ~/bin/sh~
+
+https://www.reddit.com/r/MacOS/comments/dffpzj/launchd_agent_no_longer_functions_after_catalina/f34ykb6/
+
+#+begin_src xml :tangle ~/Library/LaunchAgents/actuator.syncmusic.plist
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+    <dict>
+      <key>Label</key>
+      <string>actuator.syncmusic</string>
+      <key>ProgramArguments</key>
+      <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>/usr/bin/rsync -av ~/Music/ ~/Documents/Archive/Music</string>
+      </array>
+      <key>StartCalendarInterval</key>
+      <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+      </dict>
+      <key>StandardInPath</key>
+      <string>/tmp/test.stdin</string>
+      <key>StandardOutPath</key>
+      <string>/tmp/test.stdout</string>
+      <key>StandardErrorPath</key>
+      <string>/tmp/test.stderr</string>
+    </dict>
+  </plist>
+#+end_src
+* Working: EMMS
+
+[[https://github.com/howardabrams/dot-files/blob/master/emacs-emms.org][dot-files/emacs-emms.org at master · howardabrams/dot-files · GitHub]]:
+
+Perhaps the easiest approach is just to have some radio stations wrapped up in some easy-to-functions, for instance:
+
+#+begin_src emacs-lisp
+  (defun play-smooth-jazz ()
+    "Start up some nice Jazz"
+    (interactive)
+    (emms-play-streamlist "http://thejazzgroove.com/itunes.pls"))
+#+end_src
+
+And then bind it to some key, however, I’m sure I will start picking up a larger and larger collection of radio stations that fit my mood, so I might as well create a prefix for these using my snazzy dazzy define-sequence macro:
+
+#+begin_src emacs-lisp
+  (define-sequence 'personal-music-map "<f9> m" 'emms-play-streamlist
+    '(("a" "http://stereoscenic.com/pls/pill-hi-mp3.pls") ;; Ambient
+      ("t" "http://www.1.fm/tunein/trance64k.pls")        ;; Trance
+      ("j" "http://thejazzgroove.com/itunes.pls")))       ;; Jazz
+#+end_src
+
+* Help Keybindings
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-h x k") #'describe-key)
+#+end_src
+
+* iMenu on Eshell
+- [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
+
+In an eshell mode hook function, one can set the imenu-generic-expression to help it find your favorite prompt:
+
+(setq-local imenu-generic-expression
+                  '(("Prompt" " $ \\(.*\\)" 1)))
+
+* Dired extras
+
+#+begin_src emacs-lisp
+  (use-package dired-git-info
+    :straight t
+    :bind (:map dired-mode-map
+                (")" . dired-git-info-mode)))
+
+  (use-package diredfl
+    :straight t
+    :config
+    (diredfl-global-mode 1))
+
+  (use-package dired
+    :hook (dired-mode . dired-hide-details-mode))
+#+end_src
+
+* Make Tramp faster
+
+in ~/.ssh/config
+
+#+begin_src conf
+  Host *
+      ControlPath ~/.ssh/master-%h:%p
+      ControlMaster auto
+      ControlPersist 10m
+#+end_src
+
+* Improve shell-command-history
+- [[http://xenodium.com/more-reusable-emacs-shell-command-history/][A more reusable Emacs shell-command history]] [2020-05-12 Tue]
+
+- This changes shell-command's setup so you can type $f instead of the current buffer's file name.
+
+#+begin_src emacs-lisp
+  (defun ar/adviced-read-shell-command (orig-fun &rest r)
+    "Advice around `read-shell-command' to replace $f with buffer file name."
+    (let ((command (apply orig-fun r)))
+      (if (string-match-p "\\$f" command)
+          (replace-regexp-in-string "\\$f"
+                                    (or (buffer-file-name)
+                                        (user-error "No file file visited to replace $f"))
+                                    command)
+        command)))
+
+  (advice-add 'read-shell-command
+              :around
+              'ar/adviced-read-shell-command)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package savehist
+    :custom
+    (savehist-file "~/.emacs.d/savehist")
+    (savehist-save-minibuffer-history t)
+    (history-length 10000)
+    (savehist-additional-variables
+     '(shell-command-history))
+    :config
+    (savehist-mode +1))
+#+end_src
+* Projectile
+#+begin_src emacs-lisp
+  (counsel-git-grep nil nil "rg --files -g \"*%s*\"")
+#+end_src
+
+* Openwith
+What others did you try?  Is there another you might recommend?
+
+Edit: this seems to work well, found on one of the emacs wikis.
+
+#+begin_src emacs-lisp
+  (defun dired-open-file ()
+    "In dired, open the file named on this line."
+    (interactive)
+    (let* ((file (dired-get-filename nil t)))
+      (call-process "xdg-open" nil 0 nil file)))
+
+  (use-package dired
+    :defer t
+    :bind (("C-c o" . dired-open-file)))
+#+end_src
+
+Similarly, but to save me from the pain of accidentally starting a lot of viewers if I have selected all:
+
+#+begin_src emacs-lisp
+  (defun dired-xdg-open ()
+    "Open the file at point with xdg-open"
+    (interactive)
+    (let* ((files (dired-get-marked-files t current-prefix-arg))
+           (nfiles (length files)))
+      (when (or (< nfiles 8)
+                (y-or-n-p (format "Really open %d files?" nfiles)))
+        (dolist (file files) (start-process "xdg-open" nil "xdg-open" file)))))
+
+    (bind-key "e" #'dired-xdg-open dired-mode-map)
+#+end_src
+
+* Stop indexing node_modules
+
+FROM ANDY
+#+begin_src shell
+  find . -type d -name "node_modules" -exec touch "{}/.metadata_never_index" \;
+#+end_src
+
+* Visual Line FUNCTIONS
+TEXT MODE: visual-line-mode
+PROG MODE: truncate-line-mode + autofill
+READING MODE (like nov.el/shr/html/eww/elfeed):
+variable pitch mode + visual line mode + some form of line shortening. Maybe visual-fill-column!
+
+Nov.el:
+By default text is filled by the window width. You can customize nov-text-width to a number of columns to change that: (setq nov-text-width 80)
+
+Larger font, nice line spacing, maybe some decent visual-line-mode shit
+
+It’s also possible to set it to t to inhibit text filling, this can be used in combination with visual-line-mode and packages such as visual-fill-column to implement more flexible filling:
+
+#+begin_src emacs-lisp
+  (setq nov-text-width t)
+  (setq visual-fill-column-center-text t)
+  (add-hook ‘nov-mode-hook ‘visual-line-mode)
+  (add-hook ‘nov-mode-hook ‘visual-fill-column-mode)
+#+end_src
+
+Notes:
+- enable autofill in org-src buffers
+- Improve the toggle-truncate-lines setting
+
+- Enable visual line mode in org-mode and Help buffers
+
+- Have org-src auto-indent on opening an org-src buffer maybe only if it’s elisp (or maybe bind something nice to auto-indent-entire-buffer)
+
+- It can be done by setq-default truncate-lines t or some such.
+* Ibuffer
+#+begin_src emacs-lisp
+  (defalias 'list-buffers 'ibuffer
+    "Use ibuffer instead of list-buffers")
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-hook 'ibuffer-mode-hook 'toggle-truncate-lines)
+#+end_src
+
+#+results:
+| toggle-truncate-lines |
+
+#+begin_src emacs-lisp
+  (define-ibuffer-column size-h
+    (:name "Size" :inline t)
+    (cond
+     ((> (buffer-size) 1000000) (format "%7.1fM" (/ (buffer-size) 1000000.0)))
+     ((> (buffer-size) 100000) (format "%7.0fk" (/ (buffer-size) 1000.0)))
+     ((> (buffer-size) 1000) (format "%7.1fk" (/ (buffer-size) 1000.0)))
+     (t (format "%8d" (buffer-size)))))
+
+
+    (setq ibuffer-formats
+          '((mark modified read-only " "
+                  (name 18 18 :left :elide)
+                  " "
+                  (size-h 9 -1 :right)
+                  " "
+                  (mode 16 16 :left :elide)
+                  " "
+                  filename-and-process)))
+
+  (defun ajv/human-readable-file-sizes-to-bytes (string)
+    "Convert a human-readable file size into bytes."
+    (interactive)
+    (cond
+     ((string-suffix-p "G" string t)
+      (* 1000000000 (string-to-number (substring string 0 (- (length string) 1)))))
+     ((string-suffix-p "M" string t)
+      (* 1000000 (string-to-number (substring string 0 (- (length string) 1)))))
+     ((string-suffix-p "K" string t)
+      (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
+     (t
+      (string-to-number (substring string 0 (- (length string) 1))))
+     )
+    )
+
+  (defun ajv/bytes-to-human-readable-file-sizes (bytes)
+    "Convert number of bytes to human-readable file size."
+    (interactive)
+    (cond
+     ((> bytes 1000000000) (format "%10.1fG" (/ bytes 1000000000.0)))
+     ((> bytes 100000000) (format "%10.0fM" (/ bytes 1000000.0)))
+     ((> bytes 1000000) (format "%10.1fM" (/ bytes 1000000.0)))
+     ((> bytes 100000) (format "%10.0fk" (/ bytes 1000.0)))
+     ((> bytes 1000) (format "%10.1fk" (/ bytes 1000.0)))
+     (t (format "%10d" bytes)))
+    )
+
+
+  (define-ibuffer-column size-h
+    (:name "Size"
+           :inline t
+           :summarizer
+           (lambda (column-strings)
+             (let ((total 0))
+               (dolist (string column-strings)
+                 (setq total
+
+                       (+ (float (ajv/human-readable-file-sizes-to-bytes string))
+                          total)))
+               (ajv/bytes-to-human-readable-file-sizes total)))
+           )
+    (ajv/bytes-to-human-readable-file-sizes (buffer-size)))
+
+
+  (setq ibuffer-formats
+        '((mark modified read-only locked " "
+                (name 20 20 :left :elide)
+                " "
+                (size-h 11 -1 :right)
+                " "
+                (mode 16 16 :left :elide)
+                " "
+                filename-and-process)
+          (mark " "
+                (name 16 -1)
+                " " filename)))
+
+#+end_src
+
+#+results:
+| mark | modified | read-only    | locked |          | (name 20 20 :left :elide) |   | (size-h 11 -1 :right) |   | (mode 16 16 :left :elide) |   | filename-and-process |
+| mark |          | (name 16 -1) |        | filename |                           |   |                       |   |                           |   |                      |
+
+#+begin_src emacs-lisp
+  (setq mp/ibuffer-collapsed-groups (list "Helm" "*Internal*"))
+
+  (defadvice ibuffer (after collapse-helm)
+    (dolist (group mp/ibuffer-collapsed-groups)
+            (progn
+              (goto-char 1)
+              (when (search-forward (concat "[ " group " ]") (point-max) t)
+                (progn
+                  (move-beginning-of-line nil)
+                  (ibuffer-toggle-filter-group)
+                  )
+                )
+              )
+            )
+      (goto-char 1)
+      (search-forward "[ " (point-max) t)
+    )
+
+  (ad-activate 'ibuffer)
+#+end_src
+
+#+begin_src emacs-lisp
+    (defun ibuffer-previous-line ()
+      (interactive) (previous-line)
+      (if (<= (line-number-at-pos) 2)
+          (goto-line (- (count-lines (point-min) (point-max)) 2))))
+    (defun ibuffer-next-line ()
+      (interactive) (next-line)
+      (if (>= (line-number-at-pos) (- (count-lines (point-min) (point-max)) 1))
+          (goto-line 3)))
+    (define-key ibuffer-mode-map (kbd "<up>") 'ibuffer-previous-line)
+    (define-key ibuffer-mode-map (kbd "<down>") 'ibuffer-next-line)
+
+
+    (defun ibuffer-advance-motion (direction)
+          (forward-line direction)
+          (beginning-of-line)
+          (if (not (get-text-property (point) 'ibuffer-filter-group-name))
+              t
+            (ibuffer-skip-properties '(ibuffer-filter-group-name)
+                                     direction)
+            nil))
+    (defun ibuffer-previous-line (&optional arg)
+      "Move backwards ARG lines, wrapping around the list if necessary."
+      (interactive "P")
+      (or arg (setq arg 1))
+      (let (err1 err2)
+        (while (> arg 0)
+          (cl-decf arg)
+          (setq err1 (ibuffer-advance-motion -1)
+                err2 (if (not (get-text-property (point) 'ibuffer-title))
+                         t
+                       (goto-char (point-max))
+                       (beginning-of-line)
+                       (ibuffer-skip-properties '(ibuffer-summary
+                                                  ibuffer-filter-group-name)
+                                                -1)
+                       nil)))
+        (and err1 err2)))
+    (defun ibuffer-next-line (&optional arg)
+      "Move forward ARG lines, wrapping around the list if necessary."
+      (interactive "P")
+      (or arg (setq arg 1))
+      (let (err1 err2)
+        (while (> arg 0)
+          (cl-decf arg)
+          (setq err1 (ibuffer-advance-motion 1)
+                err2 (if (not (get-text-property (point) 'ibuffer-summary))
+                         t
+                       (goto-char (point-min))
+                       (beginning-of-line)
+                       (ibuffer-skip-properties '(ibuffer-summary
+                                                  ibuffer-filter-group-name
+                                                  ibuffer-title)
+                                                1)
+                       nil)))
+        (and err1 err2)))
+    (defun brust/ibuffer-next-header ()
+      (interactive)
+      (while (ibuffer-next-line)))
+    (defun brust/ibuffer-previous-header ()
+      (interactive)
+      (while (ibuffer-previous-line)))
+    (define-key ibuffer-mode-map (kbd "<up>") 'ibuffer-previous-line)
+    (define-key ibuffer-mode-map (kbd "<down>") 'ibuffer-next-line)
+    (define-key ibuffer-mode-map (kbd "<right>") 'ibuffer-previous-header)
+    (define-key ibuffer-mode-map (kbd "<left>") 'ibuffer-next-header)
+#+end_src
+
+#+results:
+: ibuffer-next-header
