@@ -1,15 +1,10 @@
 #+title: Elfeed
 #+property: header-args :results output silent :comments link :noweb yes
 
-* Unfiled
-#+begin_src emacs-lisp
-  ;;(setq-default elfeed-search-filter "@1-week-ago +unread ")
-#+end_src
 * Introduction
 :PROPERTIES:
 :ID:       15E8DD30-9B7E-4909-AAA1-F030F849F22D
 :END:
-
 Usually people start these things out by explaining what RSS is and all that. I don't think I'll be doing that. I like RSS because I like knowing when new things happen, and I don't want to check a bunch of different services all the time. Beyond that, I also really like the idea of being able to filter out feed items that don't appeal to me. I don't mind if I can only read stuff on my computer, so I haven't set up any sort of sync with my phone, although it should be possible to do that.
 
 I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-package declaration, and I've pulled all the individual functions out into their own bits so as to talk about them separately.
@@ -81,7 +76,6 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
                                 :add '(junk ikea)))
 #+end_src
 
-
 * Text Width
 :PROPERTIES:
 :ID:       652FF298-92D7-4344-A32D-1C467E9E7279
@@ -99,7 +93,6 @@ Elfeed uses the built-in package shr---Simple HTML Renderer---to display article
 :PROPERTIES:
 :ID:       9FB75923-4973-4455-9CDA-17BE4078123F
 :END:
-
 You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
 
 #+name: elfeed-load-db-and-open
