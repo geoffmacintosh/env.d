@@ -2,30 +2,39 @@
 #+property: header-args :results output silent :comments link :noweb yes
 
 #+begin_src emacs-lisp
-(use-package prescient
-  :straight t
-  :custom
-  (prescient-persist-mode 1)
-  (prescient-history-length 10000)
-  (prescient-aggressive-file-save t))
+  (use-package prescient
+    :straight t
+    :custom
+    (prescient-persist-mode 1)
+    (prescient-history-length 10000)
+    (prescient-aggressive-file-save t))
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package counsel
-  :straight t
-  :functions counsel-mode
-  :config
-  (counsel-mode 1)
-  :bind
-  ("C-x C-r" . counsel-recentf)
-  ("C-x C-f" . counsel-find-file)
-  ("M-x"     . counsel-M-x)
-  ("s-x"     . counsel-M-x)
-  ("C-x l"   . counsel-locate)
-  ("C-h f"   . counsel-describe-function)
-  ("C-h v"   . counsel-describe-variable)
-  ("C-h k"   . counsel-descbinds)
-  ("M-y"     . counsel-yank-pop))
+  (use-package counsel
+    :straight t
+    :functions counsel-mode
+    :config
+    (counsel-mode 1)
+    :bind
+    ("C-x C-r" . counsel-buffer-or-recentf)
+    ("C-x C-f" . counsel-find-file)
+    ("M-x"     . counsel-M-x)
+    ("s-x"     . counsel-M-x)
+    ("C-x m"   . counsel-semantic-or-imenu)
+    ("C-r"     . counsel-minibuffer-history)
+    ("C-x l"   . counsel-locate)
+    ("C-h f"   . counsel-describe-function)
+    ("C-h v"   . counsel-describe-variable)
+    ;;("C-h k"   . counsel-descbinds)
+    ("C-h x f" . counsel-faces)
+    ("C-c s"   . counsel-search)
+    ("M-y"     . counsel-yank-pop))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package request
+    :straight t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -37,7 +46,10 @@
     (ivy-mode 1)
     :custom
     (ivy-use-ignore-default 'always)
-    (ivy-ignore-buffers '("*elfeed-log*" "*straight-process*" "Completions*" "*Compile-Log*"))
+    (ivy-ignore-buffers '("*elfeed-log*"
+                          "*straight-process*"
+                          "*Completions*"
+                          "*Compile-Log*"))
     (ivy-use-virtual-buffers nil)
     (ivy-count-format "(%d/%d) ")
     (ivy-extra-directories nil)
@@ -45,14 +57,14 @@
     (("C-x b" . ivy-switch-buffer)
      :map ivy-minibuffer-map
      ("<C-return>" . ivy-immediate-done)
-     ("RET"       . ivy-alt-done)
-     ("M-y"       . ivy-next-line)))
+     ("RET"        . ivy-alt-done)
+     ("M-y"        . ivy-next-line)))
 #+end_src
 
 #+begin_src emacs-lisp
 (use-package swiper
   :straight t
-  :bind ("C-s" . swiper))
+  :bind ("C-s" . swiper-isearch))
 #+end_src
 
 #+begin_src emacs-lisp

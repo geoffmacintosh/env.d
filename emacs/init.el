@@ -28,12 +28,33 @@ identically to setq, setting VARIABLE to VALUE."
     :straight t)
   ;;(straight-use-package '(org-plus-contrib :includes (org)))
   (straight-use-package 'org)
-  (org-babel-load-file (expand-file-name "emacs.org" user-emacs-directory))
-  (org-babel-load-file (expand-file-name "elfeed.org" user-emacs-directory))
-  (org-babel-load-file (expand-file-name "ivy.org" user-emacs-directory))
-  (org-babel-load-file (expand-file-name "hippie.org" user-emacs-directory))
-  (org-babel-load-file (expand-file-name "dired.org" user-emacs-directory))
-  (org-babel-load-file (expand-file-name "org-mode.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "interface.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "simple.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "elfeed.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "ivy.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "hippie.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "dired.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "org-mode.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "emms.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "functions.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "skeletons.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "savehist.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "eshell.org" user-emacs-directory))
+  (org-babel-load-file
+   (expand-file-name "magit.org" user-emacs-directory))
+
   ;;(load (expand-file-name "actuator.el" user-emacs-directory))
   (garbage-collect))
 

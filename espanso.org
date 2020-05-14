@@ -15,6 +15,9 @@
     - trigger: "zcite"
       replace: "Principles of Anatomy and Physiology 14th Ed. Chapter 4"
 
+    - trigger: "zstudy"
+      replace: "{{c1::XXXX}} is the study of {{c2::XXXX}}."
+
     # Dates
     - trigger: "zdate"
       replace: "{{mydate}}"
@@ -32,4 +35,5 @@
           type: shell
           params:
             cmd: "echo Hello from your shell"
+
 #+end_src

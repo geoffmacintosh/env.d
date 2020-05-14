@@ -1,0 +1,68 @@
+#+begin_src emacs-lisp
+  (use-package eshell
+    :straight nil
+    :config
+    (defalias 'eshell/f  'find-file-other-window)
+    (defalias 'eshell/ff 'find-file)
+    (defalias 'eshell/v  'view-file-other-window)
+    (defalias 'eshell/vv 'view-file)
+
+    (defun actuator-fish-path (path max-len)
+      "Return a potentially trimmed-down version of the directory
+   PATH, replacing parent directories with their initial characters
+   to try to get the character length of PATH (sans directory
+   slashes) down to MAX-LEN."
+      (let* ((components (split-string (abbreviate-file-name path) "/"))
+             (len (+ (1- (length components))
+                     (cl-reduce '+ components :key 'length)))
+             (str ""))
+        (while (and (> len max-len)
+                    (cdr components))
+          (setq str (concat str
+                            (cond ((= 0 (length (car components))) "/")
+                                  ((= 1 (length (car components)))
+                                   (concat (car components) "/"))
+                                  (t
+                                   (if (string= "."
+                                                (string (elt (car
+                                                components) 0)))
+                                       (concat (substring (car components) 0 2)
+                                               "/")
+                                     (string (elt (car components) 0) ?/)))))
+                len (- len (1- (length (car components))))
+                components (cdr components)))
+        (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
+
+    (defun actuator-eshell-autocomplete ()
+      "Enable tab autocompletion in eshell."
+      (define-key
+        eshell-mode-map (kbd "<tab>")
+        (lambda () (interactive) (pcomplete-std-complete))))
+
+    (defun actuator-eshell-prompt ()
+      (concat
+       (propertize
+        (actuator-fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
+       (propertize
+        (if (= (user-uid) 0)
+            " # "
+          " ❯ ") 'face `(:foreground "black"))))
+
+    :custom
+    (eshell-where-to-jump 'begin)
+    (eshell-review-quick-commands nil)
+    (eshell-smart-space-goes-to-end t)
+    (eshell-hist-ignoredups t)
+    (eshell-history-size 10000)
+    (eshell-banner-message "")
+    (eshell-prompt-function #'actuator-eshell-prompt)
+    (eshell-highlight-prompt nil)
+    (eshell-prompt-regexp "^.*?[#❯] ")
+    :hook
+    (eshell-mode . (lambda ()
+                     (require 'em-smart)
+                     (eshell-smart-initialize)))
+    (eshell-mode . actuator-eshell-autocomplete))
+
+  ;;:hook (eshell-mode . actuator-eshell-autocomplete)
+#+end_src

@@ -22,17 +22,15 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     (("C-x w" . actuator-elfeed-load-db-and-open)
      :map elfeed-search-mode-map
      ("q" . actuator-elfeed-save-db-and-bury)
-     ;;("/" . actuator-elfeed-search-live-filter-space)
      ("R" . actuator-elfeed-mark-all-as-read))
     :custom
-    (elfeed-search-filter "@1-week-ago +unread ")
+    (elfeed-search-filter "@6-months-ago +unread ")
     :config
     <<elfeed-faces>>
     <<elfeed-filters>>
     <<elfeed-feeds>>
     <<elfeed-load-db-and-open>>
     <<elfeed-save-db-and-bury>>
-    ;;<<elfeed-search-live-filter-space>>
     <<elfeed-mark-all-as-read>>)
 #+end_src
 
@@ -76,6 +74,11 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-url "reddit"
                                 :add 'reddit))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "ikea"
+                                :entry-title "Q\\:"
+                                :remove 'unread
+                                :add '(junk ikea)))
 #+end_src
 
 
@@ -105,6 +108,8 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
         "Wrapper to load the elfeed database from disk before
         opening. Taken from Pragmatic Emacs."
         (interactive)
+        (window-configuration-to-register :elfeed-fullscreen)
+        (delete-other-windows)
         (elfeed)
         (elfeed-db-load)
         (elfeed-search-update 1)
@@ -118,7 +123,9 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
     buffer. Taken from Pragmatic Emacs."
     (interactive)
     (elfeed-db-save)
-    (quit-window))
+    (quit-window)
+    (garbage-collect)
+    (jump-to-register :elfeed-fullscreen))
 #+end_src
 
 * Mark all as read
@@ -134,23 +141,6 @@ You can just go post-by-post and use ~r~ to mark individual posts as read. I sto
       (interactive)
       (mark-whole-buffer)
       (elfeed-search-untag-all-unread))
-#+end_src
-
-* Search
-:PROPERTIES:
-:ID:       2265AAB5-1CC5-4042-8856-272AE0D51997
-:END:
-
-My general useage of Elfeed is pretty straight-forward. I check it once or twice a day, I go from top to bottom and read pretty much every entry. I don't use search very much. That's too bad, because Elfeed's live search is great. This function makes one change; it adds a space to the end of the search field, so you don't have to type it yourself. It's such a /nice/ feature that I don't want to not have it. I don't use search often, but if I do, I want to have this minor tweak there to make it just that little bit nicer. This is another function taken verbatim from the amazing [[http://pragmaticemacs.com/emacs/a-tweak-to-elfeed-filtering/][Pragmatic Emacs]].
-
-#+name: elfeed-search-live-filter-space
-#+begin_src emacs-lisp
-  (defun actuator-elfeed-search-live-filter-space ()
-      "Insert a space when running elfeed filter. Taken from
-      Pragmatic Emacs."
-      (interactive)
-      (let ((elfeed-search-filter (concat elfeed-search-filter " ")))
-        (elfeed-search-live-filter)))
 #+end_src
 
 * Faces
@@ -194,6 +184,9 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("https://twitchrss.appspot.com/vod/dragonfriends")
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA")
           ("https://sewmuchblack.de/feed/")
+          ("https://www.g-central.com/feed/")
+          ("https://weather.gc.ca/rss/warning/nl-24_e.xml")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCY3Nryf55m0yn48jLezBhlw")
           ("https://blog.jethro.dev/index.xml")
           ("https://www.kijiji.ca/rss-srp-buy-sell/st-johns/g-shock/k0c10l1700113")
           ("https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering")
@@ -227,6 +220,8 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("http://mbork.pl/?action=rss" emacs)
           ("https://www.masteringemacs.org/feed" emacs)
           ("https://fuco1.github.io/rss.xml" emacs)
+          ("https://oremacs.com/atom.xml")
+          ("http://xenodium.com/rss.xml")
           ("https://mcmansionhell.com/rss")
           ("http://www.modernemacs.com/index.xml" emacs)
           ("https://nefariousreviews.com/feed/")
@@ -259,8 +254,14 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
           ("https://rekall.me/rss" image)
           ("http://collet66.blog52.fc2.com/?xml")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=3&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=3&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=emacs&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=orgmode&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwearclothing&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwear&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=formula1&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=malefashionadvice&averagePostsPerDay=1&view=rss")
           ("https://noonker.github.io/index.xml")))
 #+end_src
 

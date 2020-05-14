@@ -1,0 +1,222 @@
+#+title: Interface
+
+* Unfiled Settings
+
+From  emacs-plus:
+
+#+begin_src emacs-lisp
+  ;; C source code
+  (csetq frame-resize-pixelwise t)
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (global-unset-key (kbd "<C-wheel-down>"))
+  (global-unset-key (kbd "<C-wheel-up>"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-c") 'capitalize-dwim)
+  (global-set-key (kbd "M-l") 'downcase-dwim)
+  (global-set-key (kbd "M-u") 'upcase-dwim)
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq help-window-select t) ; Select help window by default
+  (csetq jit-lock-defer-time 0) ; Delay font-lock if its slow
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  (global-set-key (kbd "M-o") #'other-window)
+
+  (delete-selection-mode t)
+  (midnight-mode 1)
+  (csetq sentence-end-double-space nil)
+
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+
+  (csetq indent-tabs-mode nil) ; Never insert tabs with tab key
+  (csetq require-final-newline t)
+
+  (save-place-mode 1)
+
+  (csetq backup-by-copying    t)
+  (csetq delete-old-versions  t)
+  (csetq kept-new-versions    50)
+  (csetq kept-old-versions    5) ; I don't know what an old version is
+  (csetq version-control      t)
+  (csetq vc-make-backup-files t)
+
+  (csetq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
+  (csetq uniquify-separator "/")
+  (csetq uniquify-after-kill-buffer-p t)
+  (csetq uniquify-ignore-buffers-re "^\\*")
+  (csetq uniquify-strip-common-suffix nil)
+
+  (csetq find-file-visit-truename nil) ; Don't resolve symlinks
+  (csetq confirm-kill-emacs 'y-or-n-p)
+
+  ;;(abbrev-mode)
+  (setq-default abbrev-mode t)
+  (csetq save-abbrevs 'silently)
+
+  (csetq enable-recursive-minibuffers t)
+  (minibuffer-depth-indicate-mode 1)
+
+
+
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-defun  'disabled nil)
+
+  (add-hook 'after-save-hook
+            'executable-make-buffer-file-executable-if-script-p)
+
+  (defun display-startup-echo-area-message ()
+    "Remove the GNU info from the minibuffer on startup.
+  All you have to do is create a function with this name.  It's
+  called automatically."
+    (message ""))
+
+  (setq default-frame-alist
+        '((ns-transparent-titlebar . t)
+          (ns-appearance           . 'light)))
+
+  (setq completion-styles
+        '(fuzzy
+          basic
+          partial-completion
+          substring
+          initials
+          emacs22))
+
+  (defun actuator-font-exists-p (font)
+    "Return non-nil if FONT is loaded."
+    (member font (font-family-list)))
+
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
+  These variables need to be set every time a frame is created."
+    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    (when (and (not (display-graphic-p))
+               (fboundp 'menu-bar-mode))
+      (menu-bar-mode   -1))
+    (when (actuator-font-exists-p "SF Mono")
+      (set-frame-font "SF Mono-14" nil t)))
+
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+  (actuator-frame-init)
+#+end_src
+
+#+begin_src emacs-lisp
+  (auto-save-mode)
+#+end_src
+
+* Misc
+
+#+begin_src emacs-lisp
+  (use-package recentf
+    :init
+    (recentf-mode)
+    :bind ("C-x C-r" . recentf-open-files)
+    :custom
+    (recentf-max-saved-items 500)
+    (recentf-exclude `(,no-littering-var-directory
+                       ,no-littering-etc-directory))
+    :hook (midnight-mode . recentf-cleanup))
+#+end_src
+
+Plain Font
+
+#+begin_src emacs-lisp
+  (load-theme 'actuator t)
+
+  (blink-cursor-mode -1)
+  (csetq cursor-type 'box)
+
+  (csetq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
+  (csetq scroll-margin 0)
+  (csetq mouse-wheel-scroll-amount '(1))
+
+  (csetq inhibit-startup-message t)
+  (csetq initial-scratch-message "")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package xt-mouse
+    :straight nil
+    :unless window-system
+    :config
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (defun track-mouse (_e))
+    :custom
+    (mouse-sel-mode t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package locate
+    :straight nil
+    :custom
+    (locate-command "mdfind"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package flymake
+    :straight nil
+    :hook (emacs-lisp-mode . flymake-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package cus-edit
+    :straight nil
+    :after no-littering
+    :custom
+    (custom-file (expand-file-name "custom.el" no-littering-var-directory))
+    :config
+    (load custom-file 'noerror))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package vc-hooks
+    :custom
+    (vc-handled-backends nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package paren
+    :straight nil
+    :config
+    (show-paren-mode)
+    (electric-pair-mode 1)
+    :custom
+    (blink-matching-paren nil)
+    (show-paren-delay 0)
+    (show-paren-style 'mixed))
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
+
+  (defun actuator-startup-profile ()
+    "Displays startup time garbage collections in the modeline."
+    (message "Emacs ready in %s with %d garbage collections."
+             (format "%.2f seconds"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))
+             gcs-done))
+#+end_src
+
+* Truncate shit TEST
+#+begin_src emacs-lisp
+  (setq truncate-partial-width-windows nil)
+  (toggle-truncate-lines 1) ; Don't wrap lines by default
+  (add-hook 'text-mode-hook    #'turn-on-visual-line-mode)
+  (add-hook 'prog-mode-hook    #'auto-fill-mode)
+  (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
+#+end_src

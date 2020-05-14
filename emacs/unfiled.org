@@ -906,3 +906,73 @@ But I don't /actually/ want to use projectile. I want to use projectile with fan
        (ivy-completion-in-region . ivy-posframe-display-at-point)
        (t                        . ivy-posframe-display-at-frame-top-center))))
 #+end_src
+
+* System packages
+
+#+begin_src emacs-lisp
+  (use-package use-package-ensure-system-package
+    :straight t)
+
+  (use-package system-packages
+    :straight t
+    :custom
+    (system-packages-use-sudo nil)
+    (system-packages-package-manager 'nix))
+#+end_src
+
+* Org bullets
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :straight t
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◆" "◆" "◇" "◇" "◇")))
+#+end_src
+
+* Auctex
+
+#+begin_src emacs-lisp
+  (use-package tex
+    :straight auctex
+    :custom
+    (TeX-engine 'luatex))
+#+end_src
+
+* Made a keyboard macro
+
+https://www.emacswiki.org/emacs/KeyboardMacros
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html
+
+http://ergoemacs.org/emacs/emacs_macro_example.html
+
+C-x ( start defining a keyboard macro
+C-x ) end a keyboard macro
+C-u C-x ( replay macro and append keys to the definition
+C-u C-u C-x ( don’t replay but append keys
+C-x C-k r run the last keyboard macro on each line that begins in the region
+
+C-x C-k n name the most recent macro
+C-x C-k b bind the most recent macro to a keybinding (for the session only)
+M-x insert-kbd-macro insert the most recent macro into the buffer as lisp That’s how you save it
+
+C-x C-k 0-9 and C-x C-k A-Z are reserved for keyboard macros
+
+#+begin_src emacs-lisp
+  (fset 'actuator-make-checklist
+        (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?ã] 0 "%d"))
+  (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :disabled t
+    :straight nil
+    :config
+    (global-auto-revert-mode 1)
+    :custom
+    (global-auto-revert-non-file-buffers t)
+    (auto-revert-verbose nil)
+    (revert-without-query t)
+    (auto-revert-check-vc-info t))
+#+end_src

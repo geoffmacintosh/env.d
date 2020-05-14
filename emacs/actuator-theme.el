@@ -22,9 +22,9 @@
 
   (custom-theme-set-faces
    `actuator
-   `(fixed-pitch ((t (:family "SF Mono"))))
+   `(fixed-pitch ((t (:family "SF Mono" :weight light))))
    `(variable-pitch ((t (:family "SF Pro Text" :weight light))))
-   `(default ((t (:background ,white :foreground ,dark))))
+   `(default ((t (:background ,white :foreground ,dark :weight light))))
    `(cursor ((t (:background ,blue))))
    `(fringe ((t (:background ,white))))
    `(region ((t (:background ,highlight-dim))))

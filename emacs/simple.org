@@ -1,0 +1,17 @@
+#+title: Simple
+
+* Installs
+#+begin_src emacs-lisp
+  (use-package fish-mode
+    :straight t)
+  (use-package gitconfig-mode
+    :straight t)
+  (use-package gitignore-mode
+    :straight t)
+  (use-package lua-mode
+    :straight t)
+  (use-package toml-mode
+    :straight t)
+  (use-package yaml-mode
+    :straight t)
+#+end_src
