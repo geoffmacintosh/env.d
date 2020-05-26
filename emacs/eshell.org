@@ -1,68 +1,206 @@
-#+begin_src emacs-lisp
+#+title: Eshell
+#+property: header-args :results output silent :comments link :noweb no-export :tangle no
+#+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
+#+hugo_draft: true
+#+date:
+
+* Introduction
+:PROPERTIES:
+:ID:       FB4FD057-D37E-4757-876D-43C0A3B39E21
+:END:
+
+#+begin_src emacs-lisp :tangle yes
   (use-package eshell
     :straight nil
     :config
-    (defalias 'eshell/f  'find-file-other-window)
-    (defalias 'eshell/ff 'find-file)
-    (defalias 'eshell/v  'view-file-other-window)
-    (defalias 'eshell/vv 'view-file)
-
-    (defun actuator-fish-path (path max-len)
-      "Return a potentially trimmed-down version of the directory
-   PATH, replacing parent directories with their initial characters
-   to try to get the character length of PATH (sans directory
-   slashes) down to MAX-LEN."
-      (let* ((components (split-string (abbreviate-file-name path) "/"))
-             (len (+ (1- (length components))
-                     (cl-reduce '+ components :key 'length)))
-             (str ""))
-        (while (and (> len max-len)
-                    (cdr components))
-          (setq str (concat str
-                            (cond ((= 0 (length (car components))) "/")
-                                  ((= 1 (length (car components)))
-                                   (concat (car components) "/"))
-                                  (t
-                                   (if (string= "."
-                                                (string (elt (car
-                                                components) 0)))
-                                       (concat (substring (car components) 0 2)
-                                               "/")
-                                     (string (elt (car components) 0) ?/)))))
-                len (- len (1- (length (car components))))
-                components (cdr components)))
-        (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
-
-    (defun actuator-eshell-autocomplete ()
-      "Enable tab autocompletion in eshell."
-      (define-key
-        eshell-mode-map (kbd "<tab>")
-        (lambda () (interactive) (pcomplete-std-complete))))
-
-    (defun actuator-eshell-prompt ()
-      (concat
-       (propertize
-        (actuator-fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
-       (propertize
-        (if (= (user-uid) 0)
-            " # "
-          " ❯ ") 'face `(:foreground "black"))))
-
+    <<shortcuts>>
+    <<prompt>>
+    <<smart-shell>>
+    <<autocomplete>>
     :custom
-    (eshell-where-to-jump 'begin)
-    (eshell-review-quick-commands nil)
-    (eshell-smart-space-goes-to-end t)
-    (eshell-hist-ignoredups t)
     (eshell-history-size 10000)
-    (eshell-banner-message "")
-    (eshell-prompt-function #'actuator-eshell-prompt)
-    (eshell-highlight-prompt nil)
-    (eshell-prompt-regexp "^.*?[#❯] ")
-    :hook
-    (eshell-mode . (lambda ()
-                     (require 'em-smart)
-                     (eshell-smart-initialize)))
-    (eshell-mode . actuator-eshell-autocomplete))
+    (eshell-banner-message ""))
+#+end_src
 
-  ;;:hook (eshell-mode . actuator-eshell-autocomplete)
+* Shortcuts
+:PROPERTIES:
+:header-args: :noweb-ref shortcuts :results output silent
+:END:
+
+#+begin_src emacs-lisp
+  (defalias 'eshell/f  'find-file-other-window)
+  (defalias 'eshell/ff 'find-file)
+  (defalias 'eshell/v  'view-file-other-window)
+  (defalias 'eshell/vv 'view-file)
+#+end_src
+
+* Prompt
+:PROPERTIES:
+:header-args: :noweb-ref prompt :results output silent
+:END:
+
+#+begin_src emacs-lisp
+  (defun actuator-fish-path (path max-len)
+        "Return a potentially trimmed-down version of the directory
+     PATH, replacing parent directories with their initial characters
+     to try to get the character length of PATH (sans directory
+     slashes) down to MAX-LEN."
+        (let* ((components (split-string (abbreviate-file-name path) "/"))
+               (len (+ (1- (length components))
+                       (cl-reduce '+ components :key 'length)))
+               (str ""))
+          (while (and (> len max-len)
+                      (cdr components))
+            (setq str (concat str
+                              (cond ((= 0 (length (car components))) "/")
+                                    ((= 1 (length (car components)))
+                                     (concat (car components) "/"))
+                                    (t
+                                     (if (string= "."
+                                                  (string (elt (car
+                                                  components) 0)))
+                                         (concat (substring (car components) 0 2)
+                                                 "/")
+                                       (string (elt (car components) 0) ?/)))))
+                  len (- len (1- (length (car components))))
+                  components (cdr components)))
+          (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-eshell-prompt ()
+        (concat
+         (propertize
+          (actuator-fish-path (eshell/pwd) 1) 'face `(:foreground "grey" ))
+         (propertize
+          (if (= (user-uid) 0)
+              " # "
+            " ❯ ") 'face `(:foreground "black"))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq eshell-prompt-function #'actuator-eshell-prompt)
+  (setq eshell-prompt-regexp "^.*?[#❯] ")
+  (setq eshell-highlight-prompt nil))
+#+end_src
+
+* Smart Shell
+:PROPERTIES:
+:header-args: :noweb-ref smart-shell :results output silent
+:END:
+
+#+begin_src emacs-lisp
+  (defun actuator-eshell-smart-shell ()
+    "Set up Plan9/Smart shell stuff."
+    (require 'em-smart)
+    (eshell-smart-initialize))
+  (add-hook 'eshell-mode-hook #'actuator-eshell-smart-shell)
+  (setq eshell-where-to-jump 'begin)
+  (setq eshell-review-quick-commands nil)
+  (setq eshell-smart-space-goes-to-end t)
+  (setq eshell-hist-ignoredups t)
+#+end_src
+
+* Bookmarks
+:PROPERTIES:
+:header-args: :tangle yes :results output silent
+:ID:       2B8F8AE1-A2E4-437A-8452-6922F16A930D
+:END:
+
+#+begin_src emacs-lisp
+  (use-package eshell-bookmark
+    :straight t
+    :hook (eshell-mode . eshell-bookmark-setup))
+#+end_src
+
+* Completion
+:PROPERTIES:
+:header-args: :tangle yes :results output silent
+:ID:       917E95E6-1F00-45F1-8837-2CD45889EC95
+:END:
+
+#+name: autocomplete
+#+begin_src emacs-lisp :tangle no
+  (defun actuator-eshell-autocomplete ()
+        "Enable tab autocompletion in eshell."
+        (define-key
+          eshell-mode-map (kbd "<tab>")
+          (lambda () (interactive) (pcomplete-std-complete))))
+
+  (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package pcomplete-extension
+    :straight t
+    :config
+    (require 'pcomplete-extension))
+  ;; find
+  ;; xargs
+  ;; cd
+  ;; ls
+  ;; hg
+  ;; apt-get
+  ;; sudo
+
+  (use-package pcmpl-args
+    :straight t
+    :config
+    (require 'pcmpl-args))
+  ;; bzip2
+  ;; chgrp
+  ;; chown
+  ;; gdb
+  ;; gzip
+  ;; make
+  ;; rm
+  ;; rmdir
+  ;; tar
+  ;; time
+  ;; which
+  ;; xargs
+
+  (use-package pcmpl-homebrew
+    :straight t
+    :config
+    (require 'pcmpl-homebrew))
+
+  (use-package pcmpl-pip
+    :straight t
+    :config
+    (require 'pcmpl-pip))
+
+  (use-package pcmpl-git
+    :straight t
+    :config
+    (require 'pcmpl-git))
+
+  (use-package fish-completion
+    :straight t
+    :custom
+    (fish-completion-fallback-on-bash-p t)
+    :config
+    (defun actuator-fish-completion ()
+      "arst"
+      (when (and (executable-find "fish")
+                 (require 'fish-completion nil t))
+        (fish-completion-mode)))
+    :hook (eshell-mode . actuator-fish-completion))
+#+end_src
+
+* Z
+:PROPERTIES:
+:header-args: :tangle yes :results output silent
+:ID:       C06D7CEF-E675-40C9-975E-6BF9B7974AD0
+:END:
+
+#+begin_src emacs-lisp
+  (use-package eshell-z
+    :straight t
+    :custom
+    (eshell-z-freq-dir-hash-table-file-name "~/.local/share/z/data")
+    :config
+    (add-hook 'eshell-mode-hook
+              (defun actuator-eshell-z ()
+                (require 'eshell-z))))
 #+end_src
