@@ -1,10 +1,9 @@
 #+title: Savehist
+#+property: header-args :results output silent :comments link :noweb tangle
+#+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
+#+hugo_draft: true
 
 * Savehist
-:PROPERTIES:
-:header-args: :noweb yes
-:END:
-
 #+begin_src emacs-lisp
   (use-package savehist
     :straight nil
@@ -31,22 +30,17 @@
        extended-command-history)))
 #+end_src
 
-
 1. Quick fixes:
 
    ;; the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
 
 https://github.com/syl20bnr/spacemacs/issues/9409
 
-
 #+begin_src emacs-lisp
-  (setq history-length 1000)
   (put 'minibuffer-history 'history-length 100)
   (put 'kill-ring 'history-length 25)
   (setq save-interprogram-paste-before-kill nil)
 #+end_src
-
-#+results:
 
 https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
@@ -56,11 +50,9 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     "It do thing."
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
+
   (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
 #+end_src
-
-#+results:
-| actuator-unpropertize-kill-ring | org-clock-save | org-id-locations-save | savehist-autosave | recentf-save-list | save-place-kill-emacs-hook | org-babel-remove-temporary-directory |
 
 3. Savehist on kill only
 
@@ -68,6 +60,3 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (setq savehist-autosave-interval nil)
   (add-hook 'kill-emacs-hook #'savehist-save)
 #+end_src
-
-#+results:
-| savehist-save | actuator-unpropertize-kill-ring | org-clock-save | org-id-locations-save | savehist-autosave | recentf-save-list | save-place-kill-emacs-hook | org-babel-remove-temporary-directory |
