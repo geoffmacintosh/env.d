@@ -1,6 +1,25 @@
 #+title: Interface
 
+* Undo
+- [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
+
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "s-z") #'undo-only)
+    (global-set-key (kbd "s-Z") #'undo-redo)
+  #+end_src
+
 * Unfiled Settings
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c i")
+                  (defun actuator-jump-to-inbox ()
+                    (interactive)
+                    (bookmark-jump "inbox.org")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq bookmark-version-control t)
+#+end_src
 
 From  emacs-plus:
 
