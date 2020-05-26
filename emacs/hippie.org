@@ -1,5 +1,7 @@
 #+title: Hippie Expand
-#+property: header-args :results output silent :comments link :noweb yes
+#+property: header-args :results output silent :comments link :noweb tangle
+#+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
+#+hugo_draft: true
 
 #+begin_src emacs-lisp
 (use-package smart-tab
@@ -32,7 +34,8 @@
        try-expand-list
        try-expand-list-all-buffers
        try-expand-whole-kill
-       try-expand-line-all-buffers)))
+       try-expand-line-all-buffers
+       actuator-try-add-expansion)))
 #+end_src
 
 - try-complete-lisp-symbol has a lot of completions
@@ -44,4 +47,50 @@
     (interactive)
     (hippie-expand 0))
   (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-try-add-expansion (old)
+      "Add a new global abbrev"
+      (he-init-string (he-dabbrev-beg) (point))
+      (or (inverse-add-global-abbrev 1)
+          (he-reset-string)))
+#+end_src
+
+* Unfiled
+:PROPERTIES:
+::header-args:: :tangle no
+:END:
+https://blog.binchen.org/posts/autocomplete-with-a-dictionary-with-hippie-expand.html
+
+#+begin_src emacs-lisp
+  (defun actuator-try-expand-by-dict (old)
+    "Attempts to use the dictionary to expand."
+
+    (unless (bound-and-true-p ispell-minor-mode)
+       (ispell-minor-mode 1))
+
+    ;; english-words.txt is the fallback dicitonary
+    (if (not ispell-alternate-dictionary)
+        (setq ispell-alternate-dictionary (file-truename "~/.emacs.d/misc/english-words.txt")))
+    (let ((lookup-func (if (fboundp 'ispell-lookup-words)
+                         'ispell-lookup-words
+                         'lookup-words)))
+
+      (unless old
+        (he-init-string (he-lisp-symbol-beg) (point))
+        (if (not (he-string-member he-search-string he-tried-table))
+          (setq he-tried-table (cons he-search-string he-tried-table)))
+        (setq he-expand-list
+              (and (not (equal he-search-string ""))
+                   (funcall lookup-func (concat (buffer-substring-no-properties (he-lisp-symbol-beg) (point)) "*")))))
+      (if (null he-expand-list)
+        (if old (he-reset-string))
+        (he-substitute-string (car he-expand-list))
+        (setq he-expand-list (cdr he-expand-list))
+        t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq hippie-expand-try-functions-list '(actuator-try-expand-by-dict))
 #+end_src
