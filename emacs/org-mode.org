@@ -292,4 +292,33 @@
                             (file . find-file))))
 #+end_src
 
-#+results:
+* Agenda
+
+#+begin_src emacs-lisp
+  (setq org-agenda-custom-commands
+        '(("X" agenda ""
+           ((ps-number-of-columns 2)
+            (ps-landscape-mode t)
+            (org-agenda-prefix-format " [ ] ")
+            (org-agenda-with-colors nil)
+            (org-agenda-start-day "Mon")
+            (org-agenda-remove-tags t))
+           ("~/Desktop/theagenda.pdf"))))
+  (setq org-agenda-window-setup 'only-window)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-span 'fortnight)
+  (setq org-agenda-include-diary t)
+  (setq org-agenda-text-search-extra-files nil)
+#+end_src
+
+* Holidays
+:PROPERTIES:
+:CATEGORY: Holiday
+:END:
+#+begin_src emacs-lisp
+  (setq holiday-islamic-holidays nil)
+  ;;(setq holiday-christian-holiday nil)
+  (setq holiday-bahai-holidays nil)
+  (setq holiday-oriental-holidays nil)
+  ;;(setq holiday-other-holidays '((lunar-phases)))
+#+end_src
