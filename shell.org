@@ -17,7 +17,7 @@
   #set -gx WGETRC $XDG_CONFIG_HOME/wgetrc
 
   set -gx VISUAL "emacsclient -c -a \"\""
-  set -gx EDITOR "emacsclient -tty -a\"\""
+  set -gx EDITOR "emacsclient -tty -a \"\""
 
   function __fish_describe_command; end # Fixes issues with Catalina
 
