@@ -1,5 +1,8 @@
 #+title: Elfeed
-#+property: header-args :results output silent :comments link :noweb yes
+#+property: header-args :results output silent :comments link :noweb no-export :tangle no
+#+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
+#+hugo_draft: false
+#+date: <2020-05-20 Wed>
 
 * Introduction
 :PROPERTIES:
@@ -9,53 +12,74 @@ Usually people start these things out by explaining what RSS is and all that. I 
 
 I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-package declaration, and I've pulled all the individual functions out into their own bits so as to talk about them separately.
 
-#+name: elfeed-use-package
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (use-package elfeed
     :straight t
     :bind
     (("C-x w" . actuator-elfeed-load-db-and-open)
      :map elfeed-search-mode-map
+     ("A" . actuator-elfeed-show-all)
+     ("U" . actuator-elfeed-show-unread)
      ("q" . actuator-elfeed-save-db-and-bury)
      ("R" . actuator-elfeed-mark-all-as-read))
     :custom
     (elfeed-search-filter "@6-months-ago +unread ")
     :config
-    <<elfeed-faces>>
-    <<elfeed-filters>>
-    <<elfeed-feeds>>
-    <<elfeed-load-db-and-open>>
-    <<elfeed-save-db-and-bury>>
-    <<elfeed-mark-all-as-read>>)
+    <<shortcuts>>
+    <<faces>>
+    <<filters>>
+    <<feeds>>
+    <<load-quit>>
+    <<mark-all-as-read>>)
+#+end_src
+
+* Shortcuts
+:PROPERTIES:
+:header-args: :noweb-ref shortcuts :tangle no :results output silent
+:END:
+I built a few shortcuts to switch between different tag views that I commonly use. Elfeed has support for Emacs' bookmarks, so I just needed to make bookmarks for the views I wanted. I set up the search how I like it (~s~) then made a bookmark entry (~C-x r m~) called, say ~elfeed-all~. I can call that bookmark from anywhere in Emacs to go to that elfeed view, but I also decided to [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][steal some functions from Pragmatic Emacs]] to make single-letter keybindings in elfeed.
+
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-show-all ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-all"))
+  (defun actuator-elfeed-show-unread ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-unread"))
 #+end_src
 
 * Filters
 :PROPERTIES:
 :ID:       4B3C3A02-D0EA-4F09-BA45-5BEA8F05EB08
-:header-args: :noweb-ref elfeed-filters :tangle no :results output silent
+:header-args: :noweb-ref filters :tangle no :results output silent
 :END:
+Filters are kind of the star of Elfeed. I mostly use them to remove items that I don't want to see (or already see in other contexts---podcasts for example). I think it's all pretty straightforward. The only thing of note that I do is adding a debug tag to each hook that hides things. That way I can tell which filter it is that's causing problems when I make a stupid typo and suddenly a specific filter matches all entries.
+
 #+begin_src emacs-lisp
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
-                                :add 'junk
+                                :add '(junk debug1)
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :before "2 weeks ago"
+                                :add 'debug2
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-title "MacSparky"
                                 :entry-title "focused\\|Mac Power Users\\|jazz\\|automators\\|podcast"
-                                :add 'macsparky
+                                :add '(junk debug3)
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-title "Six Colors"
                                 :entry-title "podcast\\|macworld"
-                                :add 'six
+                                :add '(junk debug4)
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-title "Longreads"
                                 :entry-title "longreads"
-                                :add '(junk longreads)
+                                :add '(junk debug5)
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-url "youtube\\.com"
@@ -73,7 +97,7 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
             (elfeed-make-tagger :feed-url "ikea"
                                 :entry-title "Q\\:"
                                 :remove 'unread
-                                :add '(junk ikea)))
+                                :add '(junk debug6)))
 #+end_src
 
 * Text Width
@@ -82,20 +106,20 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
 :END:
 Elfeed uses the built-in package shr---Simple HTML Renderer---to display articles. That's true of a bunch of Emacs' packages I expect, but this is the only case where I (knowingly) make use of it so far, so I'm configuring it here for now.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (use-package shr
     :straight nil
     :custom
     (shr-width 75))
 #+end_src
 
-* Load and quit elfeed nicely
+* Load and quit Elfeed nicely
 :PROPERTIES:
 :ID:       9FB75923-4973-4455-9CDA-17BE4078123F
+:header-args: :noweb-ref load-quit :tangle no :results output silent
 :END:
 You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
 
-#+name: elfeed-load-db-and-open
 #+begin_src emacs-lisp
   (defun actuator-elfeed-load-db-and-open ()
         "Wrapper to load the elfeed database from disk before
@@ -109,10 +133,9 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
         (elfeed-update))
 #+end_src
 
-#+name: elfeed-save-db-and-bury
 #+begin_src emacs-lisp
   (defun actuator-elfeed-save-db-and-bury ()
-    "Wrapper to save the elfeed database to disk before burying
+    "Wrapper to save the Elfeed database to disk before burying
     buffer. Taken from Pragmatic Emacs."
     (interactive)
     (elfeed-db-save)
@@ -124,10 +147,10 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 * Mark all as read
 :PROPERTIES:
 :ID:       9659048D-338A-434E-B010-59ADD50A79FC
+:header-args: :noweb-ref mark-all-as-read :tangle no :results output silent
 :END:
 You can just go post-by-post and use ~r~ to mark individual posts as read. I stole this function from [[https://cestlaz-nikola.github.io/posts/using-emacs-29%20elfeed/][Mike Zamansky]] because it seemed like a nice addition.
 
-#+name: elfeed-mark-all-as-read
 #+begin_src emacs-lisp
   (defun actuator-elfeed-mark-all-as-read ()
       "Mark all feeds in search as read. Taken from Mike Zamansky"
@@ -138,29 +161,47 @@ You can just go post-by-post and use ~r~ to mark individual posts as read. I sto
 
 * Faces
 :PROPERTIES:
-:header-args: :noweb-ref elfeed-faces :tangle no
+:header-args: :noweb-ref faces :tangle no :results output silent
 :END:
+Changing the colours of an entry is neat, but not that useful. I mostly have this set up in order to learn how to do it, and as a vague novelty.
 
 #+begin_src emacs-lisp
   (add-to-list 'elfeed-search-face-alist
-                 '(video actuator-elfeed-video-face))
+               '(video actuator-elfeed-video-face))
+  (add-to-list 'elfeed-search-face-alist
+               '(image actuator-elfeed-image-face))
+  (add-to-list 'elfeed-search-face-alist
+               '(comic actuator-elfeed-comic-face))
 #+end_src
 
 #+begin_src emacs-lisp
   (defface actuator-elfeed-video-face
     `((t . (:background "gray90" :foreground "blue")))
-    "face for video feed"
+    "Face for elfeed video entry."
+    :group 'actuator-elfeed)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defface actuator-elfeed-image-face
+    `((t . (:background "gray90" :foreground "blue")))
+    "Face for elfeed image entry."
+    :group 'actuator-elfeed)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defface actuator-elfeed-comic-face
+    `((t . (:background "gray90" :foreground "blue")))
+    "Face for elfeed comic entry."
     :group 'actuator-elfeed)
 #+end_src
 
 * Feeds
 :PROPERTIES:
 :ID:       42925954-86A5-49E0-8D8D-B5982347E91C
+:header-args: :noweb-ref feeds :tangle no :results output silent
 :END:
-
 I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/elfeed-org][Elfeed-org]] package. I have used it in the past, but I don't anymore. I don't like Org-mode documents where headlines are also links, and I don't value having much of a hiearchy for tags. I keep considering setting it up just so I can nicely rename all my feeds to be consistent, but I just haven't bothered.
 
-#+name: elfeed-feeds
 #+begin_src emacs-lisp
   (setq elfeed-feeds
         '(("https://www.youtube.com/feeds/videos.xml?channel_id=UCwBbuLWaIhxGuA6THzAqqIQ")
@@ -177,6 +218,9 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("https://twitchrss.appspot.com/vod/dragonfriends")
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA")
           ("https://sewmuchblack.de/feed/")
+          ("https://www.tchwr.com/feed/")
+          ("https://shellzine.net/feed/")
+          ("https://notmyhostna.me/atom.xml")
           ("https://www.g-central.com/feed/")
           ("https://weather.gc.ca/rss/warning/nl-24_e.xml")
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCY3Nryf55m0yn48jLezBhlw")
@@ -184,6 +228,7 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("https://www.kijiji.ca/rss-srp-buy-sell/st-johns/g-shock/k0c10l1700113")
           ("https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering")
           ("https://www.kijiji.ca/rss-srp-mens-shoes/st-johns/size+8__size+8+5/c15117001l1700113a15117001?ad=offering")
+          ("https://www.kijiji.ca/rss-srp-buy-sell-desks/st-johns/desk/k0c239l1700113?ad=offering&for-sale-by=ownr")
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1XDekTJ0jp24_aw4MncIsg")
           ("https://medium.com/feed/@ghostlux")
           ("https://idiotreport.substack.com/feed/")
@@ -218,6 +263,8 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("https://mcmansionhell.com/rss")
           ("http://www.modernemacs.com/index.xml" emacs)
           ("https://nefariousreviews.com/feed/")
+          ("https://genehack.blog/atom.xml")
+          ("https://scifiinterfaces.com/feed/")
           ("https://updates.nonissue.org/rss")
           ("https://nullprogram.com/feed/" emacs)
           ("https://scripter.co/posts/index.xml" emacs)
@@ -247,36 +294,115 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
           ("https://rekall.me/rss" image)
           ("http://collet66.blog52.fc2.com/?xml")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=5&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=5&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=emacs&averagePostsPerDay=5&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=orgmode&averagePostsPerDay=5&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwearclothing&averagePostsPerDay=5&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwear&averagePostsPerDay=5&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=formula1&averagePostsPerDay=5&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=2&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=2&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=emacs&averagePostsPerDay=2&view=rss" emacs)
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=orgmode&averagePostsPerDay=2&view=rss" emacs)
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwearclothing&averagePostsPerDay=2&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwear&averagePostsPerDay=2&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=formula1&averagePostsPerDay=1&view=rss")
           ("https://reddit-top-rss.herokuapp.com/?subreddit=malefashionadvice&averagePostsPerDay=1&view=rss")
-          ("https://noonker.github.io/index.xml")))
+          ("https://noonker.github.io/index.xml" emacs)
+          ("https://mac.into.sh/index.xml")))
 #+end_src
 
 Honestly, it feels weird to share my entire collection of feeds in public. Like I'm sharing something very personal. Anyway, that's it. That's my Elfeed.
 
 * The future
-There are a bunch of things I'd like to add to my Elfeed setup that I haven't done yet.
+There are a bunch of things I'd like to add to my Elfeed setup that I haven't  yet.
 
 ** TODO Make the interface prettier
+Obviously I'm going to need to fix the custom face, but here are the basic faces that Elfeed uses:
+
+- elfeed-search-date-face
+- elfeed-search-feed-face
+- elfeed-search-filter-face
+- elfeed-search-last-update-face
+- elfeed-search-tag-face
+- elfeed-search-title-face
+- elfeed-search-unread-count-face
+- elfeed-search-unread-title-face
+- message-header-name
+- message-header-subject
+- message-header-other
+- variable-pitch
 
 ** TODO Look into sync options
 I don't know if I care enough about reading RSS on my phone, but maybe I'd like it if I tried it. There seem to be two main ways. Elfeed-web is a sub-package that is part of Elfeed proper, which creates a single webpage using an Emacs HTML server that could be read by a phone I assume. Seems like I might have to do some fiddling, and it would only work if the computer running Elfeed is on---which is currently my laptop. The other option is [[https://github.com/fasheng/elfeed-protocol][Elfeed-protocol]] combined with a web-based RSS reader that's compatible. That would probably require paying money for either a webhost or a subscription-based feed reader, and checking to see how my elfeed filters work with it.
 
 ** TODO Set up video integration
-A significant portion of my use of Elfeed involves
+A portion of my use of Elfeed involves watching Youtube videos. There are a bunch of ways to hook Elfeed into various video-playing tools like MPV, or even the Emacs music thing called EMMS. I should see if I can make one of those work.
 
 ** TODO Look into Elfeed-score
+[[https://github.com/sp1ff/elfeed-score/][Elfeed-score]] seems like a neat way to enhance my on-or-off filters. I like using the filters to kill stuff that I absolutely don't want, but a ranking system might be neat.
+
+- Uprank
+   - Emacs
+- Downrank
+   - Hulu
+   - Apple TV
+   - Google
+   - Amazon
 
 ** TODO Set up EWW's readability features for even more Emacs
+I could set up a keybinding to auto-open feeds in EWW so I don't need to use Safari for stuff that doesn't need Safari. I actually can't see a reason to do this, but I kind of want to.
+
+** TODO Additional Functions
+:PROPERTIES:
+::header-args:: :tangle no
+:END:
+https://karthinks.com/blog/lazy-elfeed/
+
+#+begin_src emacs-lisp
+  (defun elfeed-scroll-up-command (&optional arg)
+    "Scroll up or go to next feed item in Elfeed"
+    (interactive "^P")
+    (let ((scroll-error-top-bottom nil))
+      (condition-case-unless-debug nil
+          (scroll-up-command arg)
+        (error (elfeed-show-next)))))
+
+  (defun elfeed-scroll-down-command (&optional arg)
+    "Scroll up or go to next feed item in Elfeed"
+    (interactive "^P")
+    (let ((scroll-error-top-bottom nil))
+      (condition-case-unless-debug nil
+          (scroll-down-command arg)
+        (error (elfeed-show-prev)))))
+
+  (define-key 'elfeed-show-mode-map (kbd "SPC") 'elfeed-scroll-up-command)
+  (define-key 'elfeed-show-mode-map (kbd "S-SPC") 'elfeed-scroll-down-command)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq browse-url-browser-function
+        '(("https:\\/\\/www\\.youtu\\.*be." . browse-url-mpv)
+          ("." . browse-url-generic)))
+
+  (defun browse-url-mpv (url &optional single)
+    (start-process "mpv" nil "mpv" (shell-quote-argument url)))
+#+end_src
+
+http://xenodium.com/open-emacs-elfeed-links-in-background/index.html
+
+#+begin_src emacs-lisp
+    (defun ar/elfeed-search-browse-background-url ()
+      "Open current `elfeed' entry (or region entries) in browser without losing focus."
+      (interactive)
+      (let ((entries (elfeed-search-selected)))
+        (mapc (lambda (entry)
+                (assert (memq system-type '(darwin)) t "open command is macOS only")
+                (start-process (concat "open " (elfeed-entry-link entry))
+                               nil "open" "--background" (elfeed-entry-link entry))
+                (elfeed-untag entry 'unread)
+                (elfeed-search-update-entry entry))
+              entries)
+        (unless (or elfeed-search-remain-on-entry (use-region-p))
+          (forward-line))))
+#+end_src
 
 * Additional resources
-- [[https://noonker.github.io/posts/2020-04-22-elfeed/][Elfeed Rules! :: Noonker — thoughts, guides, etc]]
+- [[https://noonker.github.io/posts/2020-04-22-elfeed/][Elfeed Rules! Noonker — thoughts, guides, etc]]
 - [[https://nullprogram.com/tags/elfeed/][Posts tagged elfeed « null program]]
 - [[http://pragmaticemacs.com/category/elfeed/][elfeed | Pragmatic Emacs]]
 - [[https://cestlaz-nikola.github.io/posts/using-emacs-29%20elfeed/][Using Emacs - 29 -elfeed part 1 | C'est la Z]]
