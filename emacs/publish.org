@@ -19,3 +19,17 @@ HOLY SHIT THIS WORKS RIGHT NOW BUT YOU HAVE TO NAME ALL BLOG ENTRIES .BLOG.ORG
            :publishing-function org-publish-attachment)
           ("blog" :components ("blog-org" "blog-images"))))
 #+end_src
+
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :straight t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ox-hugo
+    :straight t
+    :custom
+    org-hugo-section "posts")
+#+end_src
+
+#+results:
