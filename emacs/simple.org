@@ -14,4 +14,13 @@
     :straight t)
   (use-package yaml-mode
     :straight t)
+  (use-package ledger-mode
+    :straight t)
+#+end_src
+
+* Matrix
+#+begin_src emacs-lisp
+  (use-package matrix-client
+    :straight (matrix-client :host github
+                             :repo "alphapapa/matrix-client.el"))
 #+end_src
