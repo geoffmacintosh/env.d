@@ -15,7 +15,7 @@
   (defun actuator-unfill-paragraph ()
     "Unfills a paragraph."
     (interactive)
-    (let ((fill-column 'most-positive-fixed-num))
+    (let ((fill-column most-positive-fixnum))
       (fill-paragraph)))
   (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
 #+end_src
