@@ -86,8 +86,6 @@ From  emacs-plus:
   (csetq enable-recursive-minibuffers t)
   (minibuffer-depth-indicate-mode 1)
 
-
-
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-defun  'disabled nil)
 
@@ -144,11 +142,12 @@ From  emacs-plus:
     (recentf-mode)
     :bind ("C-x C-r" . recentf-open-files)
     :custom
-    (recentf-max-saved-items 500)
+    (recentf-max-saved-items 1000)
     (recentf-exclude `(,no-littering-var-directory
                        ,no-littering-etc-directory))
     :hook (midnight-mode . recentf-cleanup))
 #+end_src
+
 
 Plain Font
 
@@ -238,4 +237,33 @@ Plain Font
   (add-hook 'text-mode-hook    #'turn-on-visual-line-mode)
   (add-hook 'prog-mode-hook    #'auto-fill-mode)
   (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
+#+end_src
+
+* Cancel GC in Minibuffer
+#+begin_src emacs-lisp
+  (defun actuator-minibuffer-setup-hook ()
+    (setq gc-cons-threshold (* 500 1024 1024)))
+
+  (defun actuator-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
+#+end_src
+
+* Server
+
+#+begin_src emacs-lisp
+  (use-package server
+    :straight nil
+    :init
+    (load "server")
+    (unless (server-running-p) (server-start)))
+#+end_src
+
+#+results:
+
+* Help
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-h x k") #'describe-key)
 #+end_src
