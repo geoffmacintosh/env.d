@@ -58,9 +58,6 @@
 #+end_src
 
 * Unfiled
-:PROPERTIES:
-::header-args:: :tangle no
-:END:
 https://blog.binchen.org/posts/autocomplete-with-a-dictionary-with-hippie-expand.html
 
 #+begin_src emacs-lisp
@@ -91,6 +88,6 @@ https://blog.binchen.org/posts/autocomplete-with-a-dictionary-with-hippie-expand
         t)))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (setq hippie-expand-try-functions-list '(actuator-try-expand-by-dict))
 #+end_src
