@@ -52,7 +52,6 @@
     (org-M-RET-may-split-line '((default . nil)))
     (org-special-ctrl-k t)
     (org-special-ctrl-a/e t)
-    ;;(org-agenda-files (list org-directory))
     (org-blank-before-new-entry '((heading         . t)
                                   (plain-list-item . auto)))
     (org-use-property-inheritance t)
@@ -62,9 +61,11 @@
 #+end_src
 
 #+begin_src emacs-lisp
-    (setq org-agenda-files `(,org-directory
-                             "~/.config"
-                             "~/.config/emacs"))
+  (setq org-agenda-files `(,org-directory
+                           ,(if (getenv "XDG_CONFIG_HOME")
+                                (getenv "XDG_CONFIG_HOME")
+                              "~/.config")
+                           ,user-emacs-directory))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -159,9 +160,6 @@
     :hook (midnight-mode . org-id-update-id-locations))
 #+end_src
 * Cliplink
-:PROPERTIES:
-:ID:       39FC6AD4-455F-478E-B5B3-A1E49BD312B2
-:END:
 #+begin_src emacs-lisp
   (use-package org-cliplink
     :straight t
@@ -239,9 +237,6 @@
 #+end_src
 
 * Capture Templates
-:PROPERTIES:
-:ID:       b8c6d668-1803-4d4e-abf0-363010867af9
-:END:
 #+begin_src emacs-lisp
   (setq org-capture-templates nil)
 
@@ -310,6 +305,8 @@
   (setq org-agenda-include-diary t)
   (setq org-agenda-text-search-extra-files nil)
 #+end_src
+
+#+results:
 
 * Holidays
 :PROPERTIES:

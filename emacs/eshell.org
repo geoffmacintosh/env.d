@@ -6,7 +6,7 @@
 
 * Introduction
 :PROPERTIES:
-:ID:       FB4FD057-D37E-4757-876D-43C0A3B39E21
+:ID:       1E5D7A7F-0339-468C-94CE-D0D565392C15
 :END:
 
 #+begin_src emacs-lisp :tangle yes
@@ -14,9 +14,10 @@
     :straight nil
     :config
     <<shortcuts>>
-    <<prompt>>
+    ;;<<prompt>>
     <<smart-shell>>
     <<autocomplete>>
+    <<imenu>>
     :custom
     (eshell-history-size 10000)
     (eshell-banner-message ""))
@@ -24,7 +25,7 @@
 
 * Shortcuts
 :PROPERTIES:
-:header-args: :noweb-ref shortcuts :results output silent
+:header-args: :noweb-ref shortcuts :results output silent :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -36,7 +37,7 @@
 
 * Prompt
 :PROPERTIES:
-:header-args: :noweb-ref prompt :results output silent
+:header-args: :noweb-ref prompt :results output silent :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -81,12 +82,29 @@
 #+begin_src emacs-lisp
   (setq eshell-prompt-function #'actuator-eshell-prompt)
   (setq eshell-prompt-regexp "^.*?[#❯] ")
-  (setq eshell-highlight-prompt nil))
+  (setq eshell-highlight-prompt nil)
+#+end_src
+
+* iMenu
+:PROPERTIES:
+:header-args: :noweb-ref imenu :results output silent :tangle no
+:END:
+
+- [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
+
+In an eshell mode hook function, one can set the imenu-generic-expression to help it find your favorite prompt:
+
+#+begin_src emacs-lisp
+  (defun actuator-eshell-imenu ()
+    "arst"
+    (setq-local imenu-generic-expression
+                '(("Prompt" "^.*?[#❯]" 1))))
+  (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
 #+end_src
 
 * Smart Shell
 :PROPERTIES:
-:header-args: :noweb-ref smart-shell :results output silent
+:header-args: :noweb-ref smart-shell :results output silent :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -104,7 +122,7 @@
 * Bookmarks
 :PROPERTIES:
 :header-args: :tangle yes :results output silent
-:ID:       2B8F8AE1-A2E4-437A-8452-6922F16A930D
+:ID:       E0275FCE-6275-42E6-B22A-0CEFD19D7FDA
 :END:
 
 #+begin_src emacs-lisp
@@ -116,7 +134,7 @@
 * Completion
 :PROPERTIES:
 :header-args: :tangle yes :results output silent
-:ID:       917E95E6-1F00-45F1-8837-2CD45889EC95
+:ID:       54541C5E-54E8-4D26-8D66-440E11E24A0E
 :END:
 
 #+name: autocomplete
@@ -130,51 +148,61 @@
   (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
 #+end_src
 
+- find
+- xargs
+- cd
+- ls
+- hg
+- apt-get
+- sudo
 #+begin_src emacs-lisp
   (use-package pcomplete-extension
     :straight t
     :config
     (require 'pcomplete-extension))
-  ;; find
-  ;; xargs
-  ;; cd
-  ;; ls
-  ;; hg
-  ;; apt-get
-  ;; sudo
+#+end_src
 
+- bzip2
+- chgrp
+- chown
+- gdb
+- gzip
+- make
+- rm
+- rmdir
+- tar
+- time
+- which
+- xargs
+#+begin_src emacs-lisp
   (use-package pcmpl-args
     :straight t
     :config
     (require 'pcmpl-args))
-  ;; bzip2
-  ;; chgrp
-  ;; chown
-  ;; gdb
-  ;; gzip
-  ;; make
-  ;; rm
-  ;; rmdir
-  ;; tar
-  ;; time
-  ;; which
-  ;; xargs
+#+end_src
 
+#+begin_src emacs-lisp
   (use-package pcmpl-homebrew
     :straight t
     :config
     (require 'pcmpl-homebrew))
+#+end_src
 
+#+begin_src emacs-lisp
   (use-package pcmpl-pip
     :straight t
     :config
     (require 'pcmpl-pip))
+#+end_src
 
+#+begin_src emacs-lisp
   (use-package pcmpl-git
     :straight t
     :config
     (require 'pcmpl-git))
+#+end_src
 
+#+begin_src emacs-lisp
   (use-package fish-completion
     :straight t
     :custom
@@ -191,7 +219,7 @@
 * Z
 :PROPERTIES:
 :header-args: :tangle yes :results output silent
-:ID:       C06D7CEF-E675-40C9-975E-6BF9B7974AD0
+:ID:       6A6BFA1C-6CA9-4AD8-A76B-1478A47CD9AE
 :END:
 
 #+begin_src emacs-lisp

@@ -1,9 +1,6 @@
 #+title: Shell
 
 * Fish
-:PROPERTIES:
-:ID:       355D48A5-7AAD-42AA-B593-E70104FB1587
-:END:
 
 #+begin_src fish :tangle fish/config.fish
   if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
