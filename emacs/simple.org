@@ -14,8 +14,12 @@
     :straight t)
   (use-package yaml-mode
     :straight t)
-  (use-package ledger-mode
+  (use-package markdown-mode
     :straight t)
+  (use-package ledger-mode
+    :straight t
+    :config
+    (setq ledger-default-date-format ledger-iso-date-format))
 #+end_src
 
 * Matrix
