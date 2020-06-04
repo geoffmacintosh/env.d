@@ -1,6 +1,29 @@
 #+title: Ivy
 #+property: header-args :results output silent :comments link :noweb yes
 
+* Minibuffer Resize
+#+begin_src emacs-lisp
+  (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
+
+  (defun actuator-minibuffer-setup ()
+         (set (make-local-variable 'face-remapping-alist)
+            '((org-document-title :height 1.0))))
+#+end_src
+
+* Cancel GC in Minibuffer
+#+begin_src emacs-lisp
+  (defun actuator-minibuffer-setup-hook ()
+    (setq gc-cons-threshold (* 500 1024 1024)))
+
+  (defun actuator-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
+#+end_src
+
+* Ivy
+
 #+begin_src emacs-lisp
   (use-package prescient
     :straight t
