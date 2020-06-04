@@ -1,5 +1,14 @@
 #+title: Interface
 
+* Personal Stuff
+
+#+begin_src emacs-lisp
+  (setq user-full-name "Geoff MacIntosh")
+  (setq user-mail-address "geoff@mac.into.sh")
+  (setq calendar-latitude [47 33 north])
+  (setq calendar-longitude [52 42 west])
+#+end_src
+
 * Undo
 - [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
 
@@ -21,6 +30,11 @@
   (setq bookmark-version-control t)
 #+end_src
 
+#+begin_src emacs-lisp
+  (setq window-combination-resize t)
+  (setq undo-limit (* 80 1024 1024))
+#+end_src
+
 From  emacs-plus:
 
 #+begin_src emacs-lisp
@@ -28,6 +42,9 @@ From  emacs-plus:
   (csetq frame-resize-pixelwise t)
 #+end_src
 
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-=") #'count-words)
+#+end_src
 
 #+begin_src emacs-lisp
   (global-unset-key (kbd "<C-wheel-down>"))
@@ -239,18 +256,6 @@ Plain Font
   (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
 #+end_src
 
-* Cancel GC in Minibuffer
-#+begin_src emacs-lisp
-  (defun actuator-minibuffer-setup-hook ()
-    (setq gc-cons-threshold (* 500 1024 1024)))
-
-  (defun actuator-minibuffer-exit-hook ()
-    (setq gc-cons-threshold 800000))
-
-  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
-#+end_src
-
 * Server
 
 #+begin_src emacs-lisp
@@ -266,4 +271,21 @@ Plain Font
 * Help
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-h x k") #'describe-key)
+#+end_src
+* Titlebar
+#+begin_src emacs-lisp
+  (setq frame-title-format
+        '((:eval (if (buffer-file-name)
+                     (abbreviate-file-name (buffer-file-name))
+                   "%b"))))
+#+end_src
+* Delete by Moving to Trash
+#+begin_src emacs-lisp
+  (defun system-move-file-to-trash (file)
+    "Move the file to trash via the `trash` command-line tool."
+    (call-process "trash" nil nil nil file))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq delete-by-moving-to-trash t)
 #+end_src
