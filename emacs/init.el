@@ -27,7 +27,6 @@ identically to setq, setting VARIABLE to VALUE."
   (use-package no-littering
     :straight t)
   (straight-use-package '(org-plus-contrib :includes (org)))
-  ;;(straight-use-package 'org)
   (mapc #'org-babel-load-file
         (directory-files user-emacs-directory t "\\.org$"))
   (garbage-collect))
