@@ -1,0 +1,104 @@
+#+title: Install
+
+* Fish Mode
+#+begin_src emacs-lisp
+  (use-package fish-mode
+    :straight t)
+#+end_src
+
+* Ledger Mode
+#+begin_src emacs-lisp
+  (use-package ledger-mode
+    :straight t
+    :config
+    (setq ledger-default-date-format ledger-iso-date-format))
+#+end_src
+
+* Markdown Mode
+#+begin_src emacs-lisp
+    (use-package markdown-mode
+      :straight t)
+#+end_src
+
+* YAML Mode
+#+begin_src emacs-lisp
+    (use-package yaml-mode
+      :straight t)
+#+end_src
+
+* TOML Mode
+#+begin_src emacs-lisp
+    (use-package toml-mode
+      :straight t)
+#+end_src
+
+* Lua Mode
+#+begin_src emacs-lisp
+    (use-package lua-mode
+      :straight t)
+#+end_src
+
+* Gitignore Mode
+#+begin_src emacs-lisp
+    (use-package gitignore-mode
+      :straight t)
+#+end_src
+
+* Gitconfig Mode
+#+begin_src emacs-lisp
+  (use-package gitconfig-mode
+    :straight t)
+#+end_src
+
+* Auctex
+#+begin_src emacs-lisp
+  (use-package tex
+    :straight auctex
+    :custom
+    (TeX-engine 'luatex)
+    (TeX-source-correlate-start-server t))
+#+end_src
+
+* Matrix
+#+begin_src emacs-lisp
+  (use-package matrix-client
+    :straight (matrix-client :host github
+                             :repo "alphapapa/matrix-client.el"))
+#+end_src
+
+* Nov.el
+#+begin_src emacs-lisp
+  (use-package nov
+    :straight t
+    :config
+
+    (defun actuator-novel-setup ()
+      (face-remap-add-relative 'variable-pitch :family "Georgia"
+                               :height 1.3)
+      (setq-local line-spacing 1.2))
+    (add-hook 'nov-mode-hook 'actuator-novel-setup)
+
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+    :custom
+    (nov-text-width 65))
+#+end_src
+
+* Ripgrep
+#+begin_src emacs-lisp
+  (use-package rg
+    :straight t)
+#+end_src
+
+* Forge
+#+begin_src emacs-lisp
+  (use-package forge
+    :straight t)
+#+end_src
+* Hydra
+
+#+begin_src emacs-lisp
+  (use-package hydra
+    :straight t
+    :custom
+    (hydra-hint-display-type 'lv))
+#+end_src
