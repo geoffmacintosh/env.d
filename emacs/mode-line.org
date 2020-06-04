@@ -1,0 +1,9 @@
+#+title: Mode-line
+
+* Minions
+#+begin_src emacs-lisp
+  (use-package minions
+    :straight t
+    :config
+    (minions-mode))
+#+end_src
