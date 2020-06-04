@@ -22,3 +22,4 @@
 /emacs/straight/**
 !/emacs/straight/versions/default.el
 /emacs/var
+/emacs/etc
