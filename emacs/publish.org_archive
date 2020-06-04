@@ -1,0 +1,45 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/.config/emacs/publish.org
+
+
+* Publishing
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-06-04 Thu 16:24
+  :ARCHIVE_FILE: ~/.config/emacs/publish.org
+  :ARCHIVE_CATEGORY: publish
+  :END:
+#+begin_src emacs-lisp
+  (use-package ox-publish
+    :config
+    (add-to-list
+     'org-publish-project-alist
+     `("org-content"
+       :base-directory ,org-directory
+       :base-extension "org"
+       ;;:html-link-home "/"
+       :publishing-directory ,org-directory
+       :publishing-function org-html-publish-to-html
+       :recursive t
+       :with-toc nil
+       :section-numbers nil
+       :with-broken-links mark
+       :with-priority nil
+       :with-tasks nil
+
+       :html-doctype "html5"
+       :html-html5-fancy t
+       :html-head-extra nil
+       :html-head-include-default-style nil
+       :html-head-include-scripts nil
+       :html-head "<link href=\"assets/main.css\" rel=\"stylesheet\" type=\"text/css\">"
+       :html-preamble nil
+       :html-postamble nil
+
+       :sitemap-title "Org"
+       :sitemap-style list
+       :sitemap-filename "sitemap.org"
+       :sitemap-sort-files anti-chronologically
+       :auto-sitemap t)))
+#+end_src

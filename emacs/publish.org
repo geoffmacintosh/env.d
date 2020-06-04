@@ -1,7 +1,5 @@
 #+title: Publish
 
-HOLY SHIT THIS WORKS RIGHT NOW BUT YOU HAVE TO NAME ALL BLOG ENTRIES .BLOG.ORG
-
 #+begin_src emacs-lisp
   (setq org-publish-project-alist
         `(("blog-org"
@@ -31,5 +29,3 @@ HOLY SHIT THIS WORKS RIGHT NOW BUT YOU HAVE TO NAME ALL BLOG ENTRIES .BLOG.ORG
     :custom
     org-hugo-section "posts")
 #+end_src
-
-#+results:
