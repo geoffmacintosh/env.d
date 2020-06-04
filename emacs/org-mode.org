@@ -269,6 +269,7 @@
                  (file ,(expand-file-name "watch-log.org" org-directory))
                  "* %^{Title} (%^{Year}) %^{series}p %^u %^g"))
 #+end_src
+
 * Todos
 #+begin_src emacs-lisp
   (use-package org-agenda
@@ -276,6 +277,7 @@
     :custom
     (org-agenda-todo-list-sublevels nil))
 #+end_src
+
 * Links
 #+begin_src emacs-lisp
   (use-package ol
