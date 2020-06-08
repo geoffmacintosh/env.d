@@ -1,0 +1,23 @@
+#+title: Message
+#+date: [2020-06-05 Fri]
+
+* Message
+#+begin_src emacs-lisp
+  (use-package message
+    :straight nil
+    :custom
+    (message-fill-column nil)
+    (message-auto-save-directory "~/org/email/")
+    (message-signature-file nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package send-mail
+    :straight nil
+    :custom
+    (send-mail-function 'mailclient-send-it))
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\*message\\*" . message-mode))
+#+end_src
