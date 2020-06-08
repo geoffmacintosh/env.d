@@ -25,6 +25,9 @@
     ("C-c a" . org-agenda)
     ("C-c l" . org-store-link)
     :custom
+    (org-display-custom-times t)
+    (org-time-stamp-custom-formats
+     '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
     (org-startup-folded 'content)
     (org-ellipsis "→")
     (org-startup-align-all-tables t)
@@ -138,7 +141,7 @@
     (require 'org-crypt)
     :config
     (org-crypt-use-before-save-magic)
-    ;;(add-to-list 'org-modules 'org-crypt)
+    (add-to-list 'org-modules 'org-crypt)
     :custom
     (org-tags-exclude-from-inheritance (quote ("crypt")))
     (org-crypt-key nil))
@@ -160,6 +163,9 @@
     :hook (midnight-mode . org-id-update-id-locations))
 #+end_src
 * Cliplink
+:PROPERTIES:
+:ID:       B592B761-0FC7-4954-927A-189783720DD2
+:END:
 #+begin_src emacs-lisp
   (use-package org-cliplink
     :straight t
@@ -167,8 +173,8 @@
     :config
     (with-eval-after-load 'org-capture
       (add-to-list 'org-capture-templates
-                   `("b" "Bookmark" item (file+headline ,(expand-file-name "inbox.org" org-directory) "Bookmarks")
-                     "%(org-cliplink-capture) %U"
+                   `("b" "Bookmark" item (file+datetree ,(expand-file-name "bookmarks.org" org-directory))
+                     "%(org-cliplink-capture)"
                      :immediate-finish t))))
 #+end_src
 
@@ -182,13 +188,15 @@
     :straight nil
     :custom
     (org-attach-store-link-p t)
-    (org-attach-expert t)
+    (org-attach-expert nil)
     (org-attach-dir-relative t)
     (org-attach-preferred-new-method 'dir)
     (org-attach-method 'mv)
     (org-attach-auto-tag "attach")
     (org-attach-archive-delete 'query))
 #+end_src
+
+#+results:
 
 #+begin_src emacs-lisp
   (use-package org-download
@@ -202,15 +210,6 @@
     (org-download-method 'attach)
     (org-download-timestamp "")
     (org-download-annotate-function #'actuator-org-dl-annotate))
-#+end_src
-
-* Habit
-
-#+begin_src emacs-lisp
-  (use-package org-habit
-    :straight nil
-    :config
-    (add-to-list 'org-modules 'org-habit))
 #+end_src
 
 * Clock
@@ -237,38 +236,48 @@
 #+end_src
 
 * Capture Templates
+:PROPERTIES:
+:ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
+:END:
 #+begin_src emacs-lisp
-  (setq org-capture-templates nil)
-
-  ;; Journal based on todays date
-  (defun actuator-make-date-file-name (path)
-    "Make a filename for the current date for a given PATH."
-    (expand-file-name (concat path "/" (format-time-string "%Y-%m-%d") ".org")))
+  (use-package org-capture
+    :straight nil
+    :config
+    ;; (setq org-capture-templates nil)
+  ;; ;; Journal based on todays date
+  ;; (defun actuator-make-date-file-name (path)
+  ;;   "Make a filename for the current date for a given PATH."
+  ;;   (expand-file-name (concat path "/" (format-time-string "%Y-%m-%d") ".org")))
 
   (add-to-list 'org-capture-templates
-               `("d" "Date File" entry (file ,(actuator-make-date-file-name org-directory))
-                 "* %<%A %e %B %Y (W%V)> %? %^G \n %i"))
-  ;; Bookmark
+               `("i" "Inbox" entry
+                 (file ,(expand-file-name "inbox.org" org-directory))
+                 "* %^{Title} \n %u \n %i \n\n %a"))
 
+  ;; (add-to-list 'org-capture-templates
+  ;;              `("d" "Date File" entry (file ,(actuator-make-date-file-name org-directory))
+  ;;                "* %<%A %e %B %Y (W%V)> %? %^G \n %i"))
 
-  ;; Exercise / Hiking / Running Entry
-  (add-to-list 'org-capture-templates
-               `("e" "Exercise Log" entry
-                 (file+datetree ,(expand-file-name "exercise-log.org" org-directory))
-                 "* %<%A %e %B %Y (W%V)> %^g %^{Duration} %^{Distanc}p %^{Elevation}p %^{Pace}p \n%?"))
+  ;; ;; Exercise / Hiking / Running Entry
+  ;; (add-to-list 'org-capture-templates
+  ;;              `("e" "Exercise Log" entry
+  ;;                (file+datetree ,(expand-file-name "exercise-log.org" org-directory))
+  ;;                "* %<%A %e %B %Y (W%V)> %^g %^{Duration} %^{Distanc}p %^{Elevation}p %^{Pace}p \n%?"))
 
-  ;; Reading List
-  (add-to-list 'org-capture-templates
-               `("r" "Reading Log" entry
-                 (file ,(expand-file-name "reading-log.org" org-directory))
-                 "* %^{Author Name} - %^{Series/Title} (%^{Year}) %^u %^g"))
+  ;; ;; Reading List
+  ;; (add-to-list 'org-capture-templates
+  ;;              `("r" "Reading Log" entry
+  ;;                (file ,(expand-file-name "reading-log.org" org-directory))
+  ;;                "* %^{Author Name} - %^{Series/Title} (%^{Year}) %^u %^g"))
 
-  ;; Watch List?
-  (add-to-list 'org-capture-templates
-               `("w" "Watch Log" entry
-                 (file ,(expand-file-name "watch-log.org" org-directory))
-                 "* %^{Title} (%^{Year}) %^{series}p %^u %^g"))
+  ;; ;; Watch List?
+  ;; (add-to-list 'org-capture-templates
+  ;;              `("w" "Watch Log" entry
+  ;;                (file ,(expand-file-name "watch-log.org" org-directory))
+  ;;                "* %^{Title} (%^{Year}) %^{series}p %^u %^g"))
+  )
 #+end_src
+
 
 * Todos
 #+begin_src emacs-lisp
@@ -321,3 +330,23 @@
   (setq holiday-oriental-holidays nil)
   ;;(setq holiday-other-holidays '((lunar-phases)))
 #+end_src
+* Habit
+
+#+begin_src emacs-lisp
+  (use-package org-habit
+    :straight nil
+    :config
+    (add-to-list 'org-modules 'org-habit))
+#+end_src
+
+* Checklist
+
+#+begin_src emacs-lisp
+  (use-package org-checklist
+    :straight nil
+    :config
+    (add-to-list 'org-modules 'org-checklist))
+#+end_src
+
+#+results:
+: t
