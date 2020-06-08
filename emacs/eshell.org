@@ -20,6 +20,7 @@
     <<imenu>>
     :custom
     (eshell-history-size 10000)
+    (eshell-destroy-buffer-when-process-dies t)
     (eshell-banner-message ""))
 #+end_src
 
