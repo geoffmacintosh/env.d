@@ -20,6 +20,10 @@
 * Unfiled Settings
 
 #+begin_src emacs-lisp
+  (fringe-mode 12)
+#+end_src
+
+#+begin_src emacs-lisp
   (global-set-key (kbd "C-c i")
                   (defun actuator-jump-to-inbox ()
                     (interactive)
@@ -288,4 +292,18 @@ Plain Font
 
 #+begin_src emacs-lisp
   (setq delete-by-moving-to-trash t)
+#+end_src
+* Autorevert
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :straight nil
+    :config
+    (global-auto-revert-mode 1)
+    :custom
+    (global-auto-revert-non-file-buffers nil)
+    (auto-revert-verbose nil)
+    (auto-revert-avoid-polling t)
+    (auto-revert-interval 60)
+    (revert-without-query t)
+    (auto-revert-check-vc-info nil))
 #+end_src
