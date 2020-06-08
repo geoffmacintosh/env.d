@@ -102,3 +102,17 @@
     :custom
     (hydra-hint-display-type 'lv))
 #+end_src
+* Project
+#+begin_src emacs-lisp
+  (use-package project
+    :straight t)
+#+end_src
+
+`project-find-file', `project-find-regexp' and
+`project-or-external-find-regexp' use the current API, and thus
+will work in any project that has an adapter.
+* HTMLize
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :straight t)
+#+end_src
