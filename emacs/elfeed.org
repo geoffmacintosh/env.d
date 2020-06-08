@@ -101,16 +101,6 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
                                 :remove 'unread))
 #+end_src
 
-* Text Width
-Elfeed uses the built-in package shr---Simple HTML Renderer---to display articles. That's true of a bunch of Emacs' packages I expect, but this is the only case where I (knowingly) make use of it so far, so I'm configuring it here for now.
-
-#+begin_src emacs-lisp :tangle yes
-  (use-package shr
-    :straight nil
-    :custom
-    (shr-width 75))
-#+end_src
-
 * Load and quit Elfeed nicely
 :PROPERTIES:
 :header-args: :noweb-ref load-quit :tangle no :results output silent
@@ -216,6 +206,7 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("https://updates.orgmode.org/feed/updates")
           ("https://blog.aaronbieber.com/posts/index.xml")
           ("https://www.tchwr.com/feed/")
+          ("https://www.arp242.net/feed.xml")
           ("https://shellzine.net/feed/")
           ("https://notmyhostna.me/atom.xml")
           ("https://www.g-central.com/feed/")
@@ -296,6 +287,7 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("https://reddit-top-rss.herokuapp.com/?subreddit=techwear&averagePostsPerDay=2&view=rss")
           ("https://reddit-top-rss.herokuapp.com/?subreddit=formula1&averagePostsPerDay=1&view=rss")
           ("https://reddit-top-rss.herokuapp.com/?subreddit=malefashionadvice&averagePostsPerDay=1&view=rss")
+          ("https://reddit-top-rss.herokuapp.com/?subreddit=ClothingTechnology&averagePostsPerDay=1&view=rss")
           ("https://noonker.github.io/index.xml" emacs)
           ("https://mac.into.sh/index.xml")))
 #+end_src

@@ -1,0 +1,31 @@
+#+title: EWW
+#+date: [2020-06-05 Fri]
+#+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
+#+hugo_draft: true
+#+filetags: :blog:
+
+* Set up browsing handlers
+#+begin_src emacs-lisp
+  (use-package browse-url
+    :straight nil
+    :custom
+    (browse-url-handlers '(("wikipedia"   . eww )
+                           ("youtu\\.?be" . actuator-browse-video)
+                           ("twitch"      . actuator-browse-video))))
+#+end_src
+
+* Handle video urls
+#+begin_src emacs-lisp
+    (defun actuator-browse-video (url &rest _args)
+      "Browse a URL with a dedicated video player.
+  Avoids opening a browser window."
+      (start-process "mpv" nil "mpv" url))
+#+end_src
+
+* Simple HTML renderer
+#+begin_src emacs-lisp
+  (use-package shr
+    :straight nil
+    :custom
+    (shr-width 75))
+#+end_src
