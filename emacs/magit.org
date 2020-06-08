@@ -36,6 +36,7 @@
                                     ("~/.config" . 0)))
     (magit-no-confirm '(stage-all-changes
                         unstage-all-changes))
+    (magit-status-initial-section nil)
     :config
     <<magit-status>>
     <<magit-quit-session>>)
