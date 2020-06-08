@@ -1,0 +1,25 @@
+#+title: Keyboard Macros
+
+* Keyboard Macros
+
+- ~C-x (~ Start defining a keyboard macro.
+- ~C-x )~ End a keyboard macro.
+- ~C-u C-x (~ Replay macro and append keys to the definition.
+- ~C-u C-u C-x (~ Don’t replay but append keys.
+- ~C-x C-k r~ Run the last keyboard macro on each line that begins in the region.
+- ~C-x C-k n~ Name the most recent macro.
+- ~C-x C-k b~ Bind the most recent macro to a keybinding (for the session only).
+- ~M-x insert-kbd-macro~ Insert the most recent macro into the buffer as lisp. That’s how you save it.
+- ~C-x C-k 0-9~ and ~C-x C-k A-Z~ are reserved for keyboard macros
+
+** Make Checklist
+#+begin_src emacs-lisp
+  (fset 'actuator-make-checklist
+     (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ? ] 0 "%d"))
+  (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+#+end_src
+
+** References
+- [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
+- [[https://www.emacswiki.org/emacs/KeyboardMacros][EmacsWiki: Keyboard Macros]] [2020-06-08 Mon]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
