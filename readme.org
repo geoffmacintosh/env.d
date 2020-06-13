@@ -1,0 +1,4 @@
+#+title: env.d
+
+* Introduction
+Hello. These are my configuration files, written up as documents. My plan is to eventually publish them as blog entries. You can check out [[https://mac.into.sh][my site]] to see if I've actually accomplished any of my plan, or check out the files themselves here. I'll update these files more frequently than the blog, but they'll probably stay in reasonable sync.
