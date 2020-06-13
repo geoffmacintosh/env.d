@@ -1,6 +1,9 @@
 #+title: Shell
 
 * Fish
+:PROPERTIES:
+:ID:       2F8CA9BB-72E2-49E4-9D82-A64AB298B44D
+:END:
 
 #+begin_src fish :tangle fish/config.fish
   if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
@@ -31,7 +34,7 @@
   abbr -a -- = nextd
 
   abbr -a yt  youtube-dl
-  abbr -a yta youtube-dl -x --audioformat best
+  abbr -a yta youtube-dl -x --audio-format best
   abbr -a dired emacsclient --tty -a "emacs -nw" $PWD
 
   if test -e /usr/local/sbin
