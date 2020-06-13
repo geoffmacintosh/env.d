@@ -116,3 +116,18 @@ will work in any project that has an adapter.
   (use-package htmlize
     :straight t)
 #+end_src
+* Web Mode
+
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :straight t
+    :mode (("\\.html?\\'" . web-mode)
+           ("\\.css\\'"   . web-mode)
+           ("\\.jsx?\\'"  . web-mode)
+           ("\\.tsx?\\'"  . web-mode)
+           ("\\.json\\'"  . web-mode))
+    :custom
+    (web-mode-markup-indent-offset 2)
+    (web-mode-code-indent-offset 2)
+    (web-mode-css-indent-offset 2))
+#+end_src
