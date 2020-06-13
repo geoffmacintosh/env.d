@@ -15,9 +15,14 @@ it gets replaced by the "replace" string.
 #+begin_src yaml :tangle ~/Library/Preferences/espanso/default.yml
 
   matches:
-    # Simple text replacement
     - trigger: "zcite"
       replace: "Principles of Anatomy and Physiology 14th Ed. Chapter 7"
+
+    - trigger: "zsel"
+      replace: "Select all that apply."
+
+    - trigger: "zn"
+      replace: "(no description)"
 
     # Dates
     - trigger: "zdate"
