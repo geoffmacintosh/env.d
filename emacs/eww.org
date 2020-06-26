@@ -1,8 +1,8 @@
 #+title: EWW
 #+date: [2020-06-05 Fri]
 #+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
-#+hugo_draft: true
-#+filetags: :blog:
+#+hugo_bundle: eww
+#+export_file_name: index
 
 * Set up browsing handlers
 #+begin_src emacs-lisp
@@ -29,3 +29,4 @@
     :custom
     (shr-width 75))
 #+end_src
+* Metadata                       :noexport:blog:unpublished:
