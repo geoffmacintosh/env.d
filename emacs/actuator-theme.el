@@ -60,7 +60,7 @@
                          :foreground ,dark
                          :background ,xgrey
                          :inherit variable-pitch
-                         :height 140))))
+                         :height 110))))
    `(mode-line-inactive ((t (:inherit mode-line
                              :foreground ,lgrey))))
 
