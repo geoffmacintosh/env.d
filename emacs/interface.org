@@ -18,6 +18,9 @@
   #+end_src
 
 * Unfiled Settings
+:PROPERTIES:
+:ID:       3659786E-6B2D-4AF8-8901-434068730FC7
+:END:
 
 #+begin_src emacs-lisp
   (fringe-mode 12)
@@ -145,7 +148,7 @@ From  emacs-plus:
                (fboundp 'menu-bar-mode))
       (menu-bar-mode   -1))
     (when (actuator-font-exists-p "SF Mono")
-      (set-frame-font "SF Mono-14" nil t)))
+      (set-frame-font "SF Mono-11" nil t)))
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
   (actuator-frame-init)
