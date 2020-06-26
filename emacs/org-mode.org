@@ -170,18 +170,18 @@
   (use-package org-cliplink
     :straight t
     :bind ("C-x p i" . org-cliplink)
-    :config
+    :init
     (with-eval-after-load 'org-capture
       (add-to-list 'org-capture-templates
-                   `("b" "Bookmark" item (file+datetree ,(expand-file-name "bookmarks.org" org-directory))
-                     "%(org-cliplink-capture)"
+                  `("b" "Bookmark plus" entry (file+olp+datetree ,(expand-file-name "bookmarks.org" org-directory))
+                     "* %(org-cliplink-capture) %^g"
                      :immediate-finish t))))
 #+end_src
 
-#+results:
-: org-cliplink
-
 * Attach
+:PROPERTIES:
+:ID:       7542A761-77AB-4B42-B25E-33BFE7A45FE9
+:END:
 
 #+begin_src emacs-lisp
   (use-package org-attach
@@ -204,12 +204,13 @@
     :config
     (defun actuator-org-dl-annotate (_link)
       "Minimal org-download header info."
-      (format "#+DOWNLOADED: %s\n"
+      (format "#+attached: %s\n"
               (format-time-string "%Y-%m-%d")))
     :custom
     (org-download-method 'attach)
+    ;;(org-download-annotate-function #'actuator-org-dl-annotate)
     (org-download-timestamp "")
-    (org-download-annotate-function #'actuator-org-dl-annotate))
+    (org-download-screenshot-method "screencapture -i %s"))
 #+end_src
 
 * Clock
@@ -258,11 +259,11 @@
   ;;              `("d" "Date File" entry (file ,(actuator-make-date-file-name org-directory))
   ;;                "* %<%A %e %B %Y (W%V)> %? %^G \n %i"))
 
-  ;; ;; Exercise / Hiking / Running Entry
-  ;; (add-to-list 'org-capture-templates
-  ;;              `("e" "Exercise Log" entry
-  ;;                (file+datetree ,(expand-file-name "exercise-log.org" org-directory))
-  ;;                "* %<%A %e %B %Y (W%V)> %^g %^{Duration} %^{Distanc}p %^{Elevation}p %^{Pace}p \n%?"))
+
+  (add-to-list 'org-capture-templates
+               `("r" "Run" entry
+                 (file+datetree ,(expand-file-name "run-log.org" org-directory))
+                 "* %<%A %e %B %Y (W%V)> %^{Duration}p %^{Distance}p %^{Elevation}p %^{Pace}p \n%?"))
 
   ;; ;; Reading List
   ;; (add-to-list 'org-capture-templates
@@ -277,7 +278,6 @@
   ;;                "* %^{Title} (%^{Year}) %^{series}p %^u %^g"))
   )
 #+end_src
-
 
 * Todos
 #+begin_src emacs-lisp
@@ -336,7 +336,9 @@
   (use-package org-habit
     :straight nil
     :config
-    (add-to-list 'org-modules 'org-habit))
+    (add-to-list 'org-modules 'org-habit)
+    :custom
+    (org-habit-show-habits-only-for-today nil))
 #+end_src
 
 * Checklist
