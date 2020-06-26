@@ -13,6 +13,7 @@
 
 #+begin_src emacs-lisp
   (use-package send-mail
+    :disabled t
     :straight nil
     :custom
     (send-mail-function 'mailclient-send-it))
@@ -20,4 +21,21 @@
 
 #+begin_src emacs-lisp
   (add-to-list 'auto-mode-alist '("\\*message\\*" . message-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-mime
+    :straight t)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (setq send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server "")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :straight nil
+    :init
+    (add-to-list 'load-path "~/.nix-profile/share/emacs/site-lisp/mu4e"))
 #+end_src
