@@ -1,6 +1,9 @@
 #+title: Music
 
 * Rsync music backup
+:PROPERTIES:
+:ID:       CB217DF8-4B9F-4ADC-9F60-1B7FAB3DA897
+:END:
 I wanted to keep my music backed up to iCloud. I don't pay for iTunes Match or Apple Music, but I do have 2TB of iCloud Drive storage, so this works well.
 
 This script should rysnc-copy my music to my archive  very confusing) but had no end of issues getting permission from the system to run it. The secret was to enable full disk access to ~/bin/sh~.
@@ -25,12 +28,8 @@ This script should rysnc-copy my music to my archive  very confusing) but had no
         <key>Minute</key>
         <integer>0</integer>
       </dict>
-      <key>StandardInPath</key>
-      <string>/tmp/test.stdin</string>
-      <key>StandardOutPath</key>
-      <string>/tmp/test.stdout</string>
       <key>StandardErrorPath</key>
-      <string>/tmp/test.stderr</string>
+      <string>/tmp/music.stderr</string>
     </dict>
   </plist>
 #+end_src
