@@ -31,6 +31,18 @@
     org-hugo-section "posts")
 #+end_src
 
+#+begin_src emacs-lisp
+  (define-skeleton hugo-header-skeleton
+    "Insert the required Hugo information into a file."
+    > "#+title: " (setq v1 (skeleton-read "Title: ")) \n
+    "#+date: \n"
+    "#+hugo_base_dir: ~/Documents/Projects/mac-into-sh/\n"
+    "#+export_file_name: index\n"
+    "#+hugo_bundle: " (replace-regexp-in-string " " "-" (downcase v1))
+    "\n"
+    "* " v1 "\n" _ "\n\n"
+    "* Metadata                       :noexport:blog:unpublished:")
+#+end_src
 
 * Prodigy
 #+begin_src emacs-lisp
