@@ -1,0 +1,25 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/.config/emacs/org-mode.org
+
+
+* Old templates
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-06-27 Sat 18:40
+  :ARCHIVE_FILE: ~/.config/emacs/org-mode.org
+  :ARCHIVE_OLPATH: Capture Templates
+  :ARCHIVE_CATEGORY: org-mode
+  :END:
+#+begin_src emacs-lisp
+  ;; ;; Journal based on todays date
+  ;; (defun actuator-make-date-file-name (path)
+  ;;   "Make a filename for the current date for a given PATH."
+  ;;   (expand-file-name (concat path "/" (format-time-string "%Y-%m-%d") ".org")))
+
+
+
+  ;; (add-to-list 'org-capture-templates
+  ;;              `("d" "Date File" entry (file ,(actuator-make-date-file-name org-directory))
+  ;;                "* %<%A %e %B %Y (W%V)> %? %^G \n %i"))
+#+end_src
