@@ -7,8 +7,7 @@
     :straight nil
     :config
     <<filters>>
-    (defalias 'list-buffers 'ibuffer
-      "Use ibuffer instead of list-buffers")
+    :bind ("C-x C-b" . ibuffer)
     :custom
     (ibuffer-expert t))
 #+end_src
