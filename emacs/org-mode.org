@@ -159,9 +159,13 @@
   (use-package org-id
     :straight nil
     :custom
-    (org-id-link-to-org-use-id t)
+    (org-id-link-to-org-use-id nil)
     :hook (midnight-mode . org-id-update-id-locations))
 #+end_src
+
+#+results:
+| org-id-update-id-locations | org-refile-get-targets | recentf-cleanup |
+
 * Cliplink
 :PROPERTIES:
 :ID:       B592B761-0FC7-4954-927A-189783720DD2
