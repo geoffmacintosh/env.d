@@ -283,7 +283,7 @@
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("b" "Finished Book" entry
+                 `("f" "Finished Book" entry
                    (file+olp+datetree ,(expand-file-name "reading-log.org" org-directory))
                    "* %^{Author Name} - %^{Title} (%^{Year}) %^{Series}p
                  %^{SeriesNo}p %^{Author}p %^{Rating|2|1|3}p"
