@@ -279,13 +279,14 @@ Plain Font
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-h x k") #'describe-key)
 #+end_src
-* Titlebar
+* Eliminate frame title
 #+begin_src emacs-lisp
-  (setq frame-title-format
-        '((:eval (if (buffer-file-name)
-                     (abbreviate-file-name (buffer-file-name))
-                   "%b"))))
+  (setq ns-use-proxy-icon  nil)
+  (setq frame-title-format nil)
+  (set-frame-parameter (selected-frame) 'name nil)
+  (set-frame-parameter (selected-frame) 'title nil)
 #+end_src
+
 * Delete by Moving to Trash
 #+begin_src emacs-lisp
   (defun system-move-file-to-trash (file)

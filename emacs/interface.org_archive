@@ -1,0 +1,18 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/.config/emacs/interface.org
+
+
+* Titlebar
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-07-02 Thu 11:18
+  :ARCHIVE_FILE: ~/.config/emacs/interface.org
+  :ARCHIVE_CATEGORY: interface
+  :END:
+#+begin_src emacs-lisp
+  (setq frame-title-format
+        '((:eval (if (buffer-file-name)
+                     (abbreviate-file-name (buffer-file-name))
+                   "%b"))))
+#+end_src
