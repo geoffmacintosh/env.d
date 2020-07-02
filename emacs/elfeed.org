@@ -2,13 +2,11 @@
 #+property: header-args :results output silent :comments link :noweb no-export :tangle no
 #+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
 #+hugo_bundle: elfeed
-#+filetags: :emacs:
 #+export_file_name: index
 #+hugo_tags: emacs
-#+hugo_draft: false
-#+date: <2020-05-20 Wed>
+#+date: <2020-06-29 Mon>
 
-* Introduction
+* Introduction                                      :ignore:
 Usually people start these things out by explaining what RSS is and all that. I don't think I'll be doing that. I like RSS because I like knowing when new things happen, and I don't want to check a bunch of different services all the time. Beyond that, I also really like the idea of being able to filter out feed items that don't appeal to me. I don't mind if I can only read stuff on my computer, so I haven't set up any sort of sync with my phone, although it should be possible to do that.
 
 I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-package declaration, and I've pulled all the individual functions out into their own bits so as to talk about them separately.
@@ -33,8 +31,10 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     <<load-quit>>
     <<mark-all-as-read>>)
 #+end_src
+* Open videos in MPV                                :ignore:
+One feature that people talk about a lot is setting up Elfeed to handle video-feeds separately from others, allowing you to avoid opening---say---a YouTube link in MPV instead of a browser window. That's pretty nice if you think YouTube's site is bad. There are a variety of ways to do that, but my current solution is to adjust how Emacs handles URLs, as documented in my [[file:emacs-web.org][Web config]]. The advantage of my system is that it affects all links to YouTube, regardless of where they are. It's a general solution, not an Elfeed solution.
 
-* Shortcuts
+* Shortcuts                                         :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref shortcuts :tangle no :results output silent
 :END:
@@ -51,7 +51,7 @@ I built a few shortcuts to switch between different tag views that I commonly us
     (bookmark-jump "elfeed-unread"))
 #+end_src
 
-* Filters
+* Filters                                           :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref filters :tangle no :results output silent
 :END:
@@ -73,7 +73,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-title "Six Colors"
-                                :entry-title "podcast\\|macworld"
+                                :entry-title "podcast\\|macworld\\|member"
                                 :add '(junk debug4)
                                 :remove 'unread))
   (add-hook 'elfeed-new-entry-hook
@@ -105,7 +105,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
                                 :remove 'unread))
 #+end_src
 
-* Load and quit Elfeed nicely
+* Load and quit Elfeed nicely                       :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref load-quit :tangle no :results output silent
 :END:
@@ -135,7 +135,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
     (jump-to-register :elfeed-fullscreen))
 #+end_src
 
-* Mark all as read
+* Mark all as read                                  :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref mark-all-as-read :tangle no :results output silent
 :END:
@@ -149,7 +149,7 @@ You can just go post-by-post and use ~r~ to mark individual posts as read. I sto
       (elfeed-search-untag-all-unread))
 #+end_src
 
-* Faces
+* Faces                                             :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref faces :tangle no :results output silent
 :END:
@@ -185,7 +185,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     :group 'actuator-elfeed)
 #+end_src
 
-* Feeds
+* Feeds                                             :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref feeds :tangle no :results output silent
 :END:
@@ -293,12 +293,15 @@ I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/
           ("https://reddit-top-rss.herokuapp.com/?subreddit=malefashionadvice&averagePostsPerDay=1&view=rss")
           ("https://reddit-top-rss.herokuapp.com/?subreddit=ClothingTechnology&averagePostsPerDay=1&view=rss")
           ("https://noonker.github.io/index.xml" emacs)
-          ("https://mac.into.sh/index.xml")))
+          ("https://mac.into.sh/index.xml")
+          ("https://emacshorrors.com/feed.atom")
+          ("http://ergoemacs.org/emacs/blog.xml")
+          ("https://webkit.org/feed/")))
 #+end_src
 
 Honestly, it feels weird to share my entire collection of feeds in public. Like I'm sharing something very personal. Anyway, that's it. That's my Elfeed.
 
-* The future                                     :noexport:
+* The future                                      :noexport:
 There are a bunch of things I'd like to add to my Elfeed setup that I haven't  yet.
 
 ** TODO Make the interface prettier
@@ -415,13 +418,11 @@ http://xenodium.com/open-emacs-elfeed-links-in-background/index.html
           (forward-line))))
 #+end_src
 
-* Additional resources
-- [[https://noonker.github.io/posts/2020-04-22-elfeed/][Elfeed Rules! Noonker — thoughts, guides, etc]]
-- [[https://nullprogram.com/tags/elfeed/][Posts tagged elfeed « null program]]
-- [[http://pragmaticemacs.com/category/elfeed/][elfeed | Pragmatic Emacs]]
-- [[https://cestlaz-nikola.github.io/posts/using-emacs-29%20elfeed/][Using Emacs - 29 -elfeed part 1 | C'est la Z]]
-- [[https://cestlaz-nikola.github.io/posts/using-emacs-30-elfeed-2/][Using Emacs - 30 - elfeed part 2 - Hydras | C'est la Z]]
-- [[https://cestlaz-nikola.github.io/posts/using-emacs-31-elfeed-3/][Using Emacs - 31 - elfeed part 3 - macros | C'est la Z]]
+* Links
+- [[https://noonker.github.io/posts/2020-04-22-elfeed/][Elfeed Rules!]]
+- [[https://nullprogram.com/tags/elfeed/][Null Program (Elfeed's creator)]]
+- [[http://pragmaticemacs.com/category/elfeed/][Pragmatic Emacs]]
+- [[https://cestlaz-nikola.github.io/posts/using-emacs-29%20elfeed/][C'est la Z]]
 
 * Changes                                         :noexport:
 ** Wednesday May 20, 2020
