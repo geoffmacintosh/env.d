@@ -27,7 +27,6 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     <<shortcuts>>
     <<faces>>
     <<filters>>
-    <<feeds>>
     <<load-quit>>
     <<mark-all-as-read>>)
 #+end_src
@@ -102,6 +101,11 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
             (elfeed-make-tagger :feed-url "cestlaz"
                                 :entry-title '(not "emacs")
                                 :add '(junk debug7)
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "reddit\\.com"
+                                :entry-title '(not "F1")
+                                :add '(junk debug8)
                                 :remove 'unread))
 #+end_src
 
@@ -185,121 +189,222 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     :group 'actuator-elfeed)
 #+end_src
 
-* Feeds                                             :ignore:
-:PROPERTIES:
-:header-args: :noweb-ref feeds :tangle no :results output silent
-:END:
-I'm actually surprised I don't use the excellent [[https://github.com/remyhonig/elfeed-org][Elfeed-org]] package. I have used it in the past, but I don't anymore. I don't like Org-mode documents where headlines are also links, and I don't value having much of a hiearchy for tags. I keep considering setting it up just so I can nicely rename all my feeds to be consistent, but I just haven't bothered.
-
-#+begin_src emacs-lisp
-  (setq elfeed-feeds
-        '(("https://www.youtube.com/feeds/videos.xml?channel_id=UCwBbuLWaIhxGuA6THzAqqIQ")
-          ("http://approachingpavonis.blogspot.com/feeds/posts/default")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVdQKW6fmfBmhz4t5k8Dq5w")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkcODH4P9o3ovGWCRV5kJkA")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCJps2S5PiabUY3yZv3iq0tw")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbJ1WFUdC4ImBlFReGNHjKQ")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvETBL47UPZVMBdIW-gFpPQ")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCcGoqh8kLlACkFFpqXm6eSw")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A")
-          ("https://twitchrss.appspot.com/vod/dragonfriends")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA")
-          ("https://sewmuchblack.de/feed/")
-          ("https://updates.orgmode.org/feed/updates")
-          ("https://blog.aaronbieber.com/posts/index.xml")
-          ("https://www.tchwr.com/feed/")
-          ("https://www.arp242.net/feed.xml")
-          ("https://shellzine.net/feed/")
-          ("https://notmyhostna.me/atom.xml")
-          ("https://www.g-central.com/feed/")
-          ("https://weather.gc.ca/rss/warning/nl-24_e.xml")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCY3Nryf55m0yn48jLezBhlw")
-          ("https://blog.jethro.dev/index.xml")
-          ("https://www.kijiji.ca/rss-srp-buy-sell/st-johns/g-shock/k0c10l1700113")
-          ("https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering")
-          ("https://www.kijiji.ca/rss-srp-mens-shoes/st-johns/size+8__size+8+5/c15117001l1700113a15117001?ad=offering")
-          ("https://www.kijiji.ca/rss-srp-buy-sell-desks/st-johns/desk/k0c239l1700113?ad=offering&for-sale-by=ownr")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1XDekTJ0jp24_aw4MncIsg")
-          ("https://medium.com/feed/@ghostlux")
-          ("https://idiotreport.substack.com/feed/")
-          ("https://backstage.1blocker.com/feed")
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8TjnmfivUw4bLB-VEn0_Sw")
-          ("https://formerf1doc.wordpress.com/feed/")
-          ("http://anaffordablewardrobe.blogspot.com/feeds/posts/default")
-          ("http://feedpress.me/apt2024")
-          ("https://sam217pa.github.io/index.xml")
-          ("https://blog.blankbaby.com/atom.xml")
-          ("https://cestlaz.github.io/rss.xml" emacs)
-          ("http://blog.binchen.org/rss.xml" emacs)
-          ("https://css-tricks.com/feed/")
-          ("https://deathtrashgame.tumblr.com/rss")
-          ("https://dieworkwear.com/rss")
-          ("https://emacsredux.com/atom.xml" emacs)
-          ("http://emacsrocks.com/atom.xml" emacs)
-          ("https://fastmail.blog/rss/")
-          ("https://epsalt.ca/rss" blog)
-          ("https://hk-devblog.com/feed/")
-          ("http://www.howardism.org/index.xml" emacs)
-          ("http://feeds.feedburner.com/Ikeahacker")
-          ("http://irreal.org/blog/?feed=rss2" emacs)
-          ("https://www.kinowear.com/feed/")
-          ("https://longreads.com/feed/")
-          ("https://www.macsparky.com/blog?format=rss")
-          ("http://mbork.pl/?action=rss" emacs)
-          ("https://www.masteringemacs.org/feed" emacs)
-          ("https://fuco1.github.io/rss.xml" emacs)
-          ("https://oremacs.com/atom.xml")
-          ("http://xenodium.com/rss.xml")
-          ("https://mcmansionhell.com/rss")
-          ("http://www.modernemacs.com/index.xml" emacs)
-          ("https://nefariousreviews.com/feed/")
-          ("https://genehack.blog/atom.xml")
-          ("https://scifiinterfaces.com/feed/")
-          ("https://updates.nonissue.org/rss")
-          ("https://nullprogram.com/feed/" emacs)
-          ("https://scripter.co/posts/index.xml" emacs)
-          ("http://pragmaticemacs.com/feed/" emacs)
-          ("http://www.lunaryorn.com/feed.atom" emacs)
-          ("http://endlessparentheses.com/atom.xml" emacs)
-          ("https://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml")
-          ("https://sachachua.com/blog/feed/" emacs)
-          ("https://feedpress.me/sixcolors")
-          ("https://strattondelany.com/feed/" blog)
-          ("https://www.stylesofman.com/feed/")
-          ("http://takingnotenow.blogspot.com/feeds/posts/default")
-          ("https://journal.styleforum.net/feed/")
-          ("https://culturedcode.com/things/blog/feed/rss.xml")
-          ("https://tungodies.com/feed/")
-          ("https://manuel-uberti.github.io/feed" emacs)
-          ("http://usuallywhatimdressed.in/feed/")
-          ("https://zettelkasten.de/feed.atom")
-          ("https://zzamboni.org/index.xml")
-          ("https://eightiesandninetiesanime.tumblr.com/rss" image)
-          ("https://1041uuu.tumblr.com/rss" image)
-          ("https://www.drugsandwires.fail/feed/" comic)
-          ("http://feeds.feedburner.com/Explosm" comic)
-          ("https://www.foxtrot.com/feed/" comic)
-          ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
-          ("http://collet66.blog52.fc2.com/?xml")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=2&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=2&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=emacs&averagePostsPerDay=2&view=rss" emacs)
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=orgmode&averagePostsPerDay=2&view=rss" emacs)
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwearclothing&averagePostsPerDay=2&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=techwear&averagePostsPerDay=2&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=formula1&averagePostsPerDay=1&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=malefashionadvice&averagePostsPerDay=1&view=rss")
-          ("https://reddit-top-rss.herokuapp.com/?subreddit=ClothingTechnology&averagePostsPerDay=1&view=rss")
-          ("https://noonker.github.io/index.xml" emacs)
-          ("https://mac.into.sh/index.xml")
-          ("https://emacshorrors.com/feed.atom")
-          ("http://ergoemacs.org/emacs/blog.xml")
-          ("https://webkit.org/feed/")))
+* Org-elfeed
+#+begin_src emacs-lisp :tangle yes
+  (use-package elfeed-org
+    :straight t
+    :after elfeed
+    :config
+    (elfeed-org)
+    :custom
+    (rmh-elfeed-org-ignore-tag "disconnected")
+    (rmh-elfeed-org-auto-ignore-invalid-feeds t)
+    (rmh-elfeed-org-files (list "~/.config/emacs/elfeed.org"
+                                "~/org/feeds.org")))
 #+end_src
+* Feeds                                             :elfeed:
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCwBbuLWaIhxGuA6THzAqqIQ][YT1]]
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCVdQKW6fmfBmhz4t5k8Dq5w][YT2]]
 
-Honestly, it feels weird to share my entire collection of feeds in public. Like I'm sharing something very personal. Anyway, that's it. That's my Elfeed.
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCkcODH4P9o3ovGWCRV5kJkA][YT3]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA][YT4]]
+
+** [[http://approachingpavonis.blogspot.com/feeds/posts/default][Alastair Reynolds]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w][YT5]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCJps2S5PiabUY3yZv3iq0tw][YT6]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbJ1WFUdC4ImBlFReGNHjKQ][YT7]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCvETBL47UPZVMBdIW-gFpPQ][YT8]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCcGoqh8kLlACkFFpqXm6eSw][YT9]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A][YT10]]
+
+** [[https://twitchrss.appspot.com/vod/dragonfriends][Dragon Friends]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC8tThli1ZY7LW5Dxqr3Y0jA][YT11]]
+
+** [[https://sewmuchblack.de/feed/][Sew Much Black]]
+
+** https://blog.aaronbieber.com/posts/index.xml
+
+** https://www.tchwr.com/feed/
+
+** https://www.arp242.net/feed.xml
+
+** https://shellzine.net/feed/
+
+** https://notmyhostna.me/atom.xml
+
+** https://www.g-central.com/feed/
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCY3Nryf55m0yn48jLezBhlw"][YT12]]
+
+** https://blog.jethro.dev/index.xml
+
+** [[https://www.kijiji.ca/rss-srp-clothing-men/st-johns/small/c278l1700113a15183001?ad=offering][Clothing]]
+
+** [[https://www.kijiji.ca/rss-srp-mens-shoes/st-johns/size+8__size+8+5/c15117001l1700113a15117001?ad=offering][Shoes]]
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC1XDekTJ0jp24_aw4MncIsg][YT13]]
+
+** https://medium.com/feed/@ghostlux
+
+** https://idiotreport.substack.com/feed/
+
+** https://backstage.1blocker.com/feed
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC8TjnmfivUw4bLB-VEn0_Sw][YT14]]
+
+** [[https://formerf1doc.wordpress.com/feed/]]
+
+** http://anaffordablewardrobe.blogspot.com/feeds/posts/default
+
+** http://feedpress.me/apt2024
+
+** https://sam217pa.github.io/index.xml
+
+** https://blog.blankbaby.com/atom.xml
+
+** https://cestlaz.github.io/rss.xml
+
+** http://blog.binchen.org/rss.xml
+
+** https://css-tricks.com/feed/
+
+** https://deathtrashgame.tumblr.com/rss
+
+** https://dieworkwear.com/rss
+
+** https://emacsredux.com/atom.xml
+
+** http://emacsrocks.com/atom.xml
+
+** https://fastmail.blog/rss/
+
+** https://epsalt.ca/rss
+
+** https://hk-devblog.com/feed/
+
+** http://www.howardism.org/index.xml
+
+** http://feeds.feedburner.com/Ikeahacker
+
+** http://irreal.org/blog/?feed=rss2
+
+** https://www.kinowear.com/feed/
+
+** https://longreads.com/feed/
+
+** https://www.macsparky.com/blog?format=rss
+
+** http://mbork.pl/?action=rss
+
+** https://www.masteringemacs.org/feed
+
+** https://fuco1.github.io/rss.xml
+
+** https://oremacs.com/atom.xml
+
+** http://xenodium.com/rss.xml
+
+** https://mcmansionhell.com/rss
+
+** http://www.modernemacs.com/index.xml
+
+** https://nefariousreviews.com/feed/"
+
+** https://genehack.blog/atom.xml
+
+** https://scifiinterfaces.com/feed/
+
+** https://updates.nonissue.org/rss
+
+** https://nullprogram.com/feed/
+
+** https://scripter.co/posts/index.xml
+
+** http://pragmaticemacs.com/feed/
+
+** http://www.lunaryorn.com/feed.atom
+
+** http://endlessparentheses.com/atom.xml
+
+** https://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml
+
+** https://sachachua.com/blog/feed/
+
+** https://feedpress.me/sixcolors
+
+** https://strattondelany.com/feed/
+
+** https://www.stylesofman.com/feed/
+
+** http://takingnotenow.blogspot.com/feeds/posts/default
+
+** https://journal.styleforum.net/feed/
+
+** https://culturedcode.com/things/blog/feed/rss.xml
+
+** https://tungodies.com/feed/
+
+** https://manuel-uberti.github.io/feed
+
+** http://usuallywhatimdressed.in/feed/
+
+** https://zettelkasten.de/feed.atom
+
+** https://zzamboni.org/index.xml
+
+** https://eightiesandninetiesanime.tumblr.com/rss
+
+** https://1041uuu.tumblr.com/rss
+
+** https://www.drugsandwires.fail/feed/
+
+** http://feeds.feedburner.com/Explosm
+
+** https://www.foxtrot.com/feed/
+
+** http://feeds.feedburner.com/PoorlyDrawnLines
+
+** http://collet66.blog52.fc2.com/?xml
+
+** https://noonker.github.io/index.xml
+
+** https://mac.into.sh/index.xml
+
+** https://emacshorrors.com/feed.atom
+
+** http://ergoemacs.org/emacs/blog.xml
+
+** https://webkit.org/feed/
+
+** https://affordableearl.com/feed/
+
+** https://www.reddit.com/r/MotorsportsReplays/.rss
+
+** http://coatchecking.co/blog?format=rss
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=2&view=rss][Deus Ex]]
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=2&view=rss][Cyberpunk]]
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=emacs&averagePostsPerDay=2&view=rss][Emacs]]
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=orgmode&averagePostsPerDay=2&view=rss][Org-mode]]
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=techwearclothing&averagePostsPerDay=2&view=rss][TechwearClothing]]
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=techwear&averagePostsPerDay=2&view=rss][Techwear]]
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=malefashionadvice&averagePostsPerDay=1&view=rss][MFA]]
+
+** [[https://reddit-top-rss.herokuapp.com/?subreddit=ClothingTechnology&averagePostsPerDay=1&view=rss][ClothingTechnology]]
 
 * The future                                      :noexport:
 There are a bunch of things I'd like to add to my Elfeed setup that I haven't  yet.
@@ -427,3 +532,16 @@ http://xenodium.com/open-emacs-elfeed-links-in-background/index.html
 * Changes                                         :noexport:
 ** Wednesday May 20, 2020
 - Published
+
+* Captar
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("e" "Elfeed Feed" entry
+                   (file+olp ,(expand-file-name "elfeed.org"
+                                                user-emacs-directory) "Feeds")
+                   "* [[%^{Feed URL}][%^{Title}]]\n%(org-time-stamp-inactive)"
+                   :immediate-finish
+                   :kill-buffer
+                   :empty-lines 1)))
+#+end_src
