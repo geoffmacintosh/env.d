@@ -168,9 +168,13 @@ From  emacs-plus:
     :custom
     (recentf-max-saved-items 1000)
     (recentf-exclude `(,no-littering-var-directory
-                       ,no-littering-etc-directory))
+                       ,no-littering-etc-directory
+                       "^/\\(?:ssh\\|su\\|sudo\\)?:"))
     :hook (midnight-mode . recentf-cleanup))
 #+end_src
+
+#+results:
+: recentf-open-files
 
 
 Plain Font
@@ -282,9 +286,17 @@ Plain Font
 * Eliminate frame title
 #+begin_src emacs-lisp
   (setq ns-use-proxy-icon  nil)
-  (setq frame-title-format nil)
-  (set-frame-parameter (selected-frame) 'name nil)
+  (setq-default frame-title-format nil)
+
   (set-frame-parameter (selected-frame) 'title nil)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun remember-titlebar-settings ()
+    "Get fucked, Emacs"
+    (set-frame-parameter (selected-frame) 'name nil)
+    (set-frame-parameter (selected-frame) 'title nil))
+  (add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
 #+end_src
 
 * Delete by Moving to Trash
