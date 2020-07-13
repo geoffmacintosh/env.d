@@ -1,7 +1,7 @@
 #+title: Mode-line
 
 * Minions
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package minions
     :straight t
     :config
@@ -29,3 +29,27 @@
          (when (not (string= "" oneline))
            (concat " " (propertize oneline 'face 'italic)))))))
 #+end_src
+* Modeline
+
+#+begin_src emacs-lisp :tangle no
+  (setq-default mode-line-format
+                (list
+                 "%e "
+                 "%I "
+                 "%p "
+                 (propertize "%b " 'face 'font-lock-keyword-face)
+                 "%m "
+                 mode-line-misc-info))
+#+end_src
+
+#+results:
+| %e | %I | %p | %b | %m | ((which-function-mode (which-func-mode ( which-func-format  ))) (global-mode-string ( global-mode-string  ))) |
+
+#+begin_src emacs-lisp :tangle no
+  (setq-default mode-line-format
+                (list
+                 (propertize (downcase " %m ") 'face 'font-lock-string-face))))
+#+end_src
+
+#+results:
+| %m |
