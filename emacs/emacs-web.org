@@ -40,4 +40,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including [[file:elfeed.
     (shr-width 75))
 #+end_src
 
+* Open links in background                          :ignore:
+#+begin_src emacs-lisp
+  (when (memq system-type '(darwin))
+    (setq browse-url-generic-program "open")
+    (setq browse-url-generic-args '("--background")))
+#+end_src
 * Metadata                       :noexport:blog:unpublished:
