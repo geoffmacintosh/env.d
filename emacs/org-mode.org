@@ -18,8 +18,10 @@
     (add-hook 'org-mode-hook
               (lambda ()
                 (add-hook 'before-save-hook
-                'actuator-update-all-dynamic-blocks nil
-                'make-it-local)))
+                          'actuator-update-all-dynamic-blocks nil
+                          'make-it-local)))
+    (add-to-list 'org-default-properties "DIR")
+    (add-to-list 'org-default-properties "header-args")
     :bind
     ("C-c c" . counsel-org-capture)
     ("C-c a" . org-agenda)
@@ -59,9 +61,17 @@
                                   (plain-list-item . auto)))
     (org-use-property-inheritance t)
     (org-modules nil)
+    (org-tag-persistent-alist '(("noexport")
+                                ("ignore")
+                                ("unpublished")
+                                ("blog")
+                                ("tbd")))
     :hook
     (org-mode . visual-line-mode))
 #+end_src
+
+#+results:
+: org-store-link
 
 #+begin_src emacs-lisp
   (setq org-agenda-files `(,org-directory
@@ -70,6 +80,7 @@
                               "~/.config")
                            ,user-emacs-directory))
 #+end_src
+
 
 #+begin_src emacs-lisp
   (use-package org-capture
@@ -209,14 +220,20 @@
     :config
     (defun actuator-org-dl-annotate (_link)
       "Minimal org-download header info."
-      (format "#+attached: %s\n"
+      (format "#+downloaded: %s\n"
+              (if (equal link org-download-screenshot-file)
+                  "screenshot"
+                link)
               (format-time-string "%Y-%m-%d")))
     :custom
     (org-download-method 'attach)
-    ;;(org-download-annotate-function #'actuator-org-dl-annotate)
+    (org-download-annotate-function #'actuator-org-dl-annotate)
     (org-download-timestamp "")
     (org-download-screenshot-method "screencapture -i %s"))
 #+end_src
+
+#+results:
+: t
 
 * Clock
 
