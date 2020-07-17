@@ -1,13 +1,9 @@
 #+title: Eshell
 #+property: header-args :results output silent :comments link :noweb no-export :tangle no
 #+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
-#+hugo_draft: true
 #+date:
 
 * Introduction
-:PROPERTIES:
-:ID:       1E5D7A7F-0339-468C-94CE-D0D565392C15
-:END:
 
 #+begin_src emacs-lisp :tangle yes
   (use-package eshell
@@ -83,7 +79,7 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 
 * Completion
 :PROPERTIES:
-:header-args: :tangle yes :results output silent
+:header-args: :tangle no :results output silent
 :ID:       54541C5E-54E8-4D26-8D66-440E11E24A0E
 :END:
 
