@@ -1,7 +1,7 @@
 #+title: Hammerspoon
 * Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/hammerspoon/init.lua
+:header-args: :tangle ~/.hammerspoon/init.lua
 :END:
 ** Hyper
 #+begin_src lua
