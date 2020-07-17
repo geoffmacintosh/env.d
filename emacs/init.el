@@ -10,6 +10,8 @@ identically to setq, setting VARIABLE to VALUE."
                   'set-default)
               ',variable ,value))
 
+  (add-to-list 'exec-path "/usr/local/bin")
+
   (defvar bootstrap-version)
   (let ((bootstrap-file
          (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -26,7 +28,8 @@ identically to setq, setting VARIABLE to VALUE."
   (straight-use-package 'use-package)
   (use-package no-littering
     :straight t)
-  (straight-use-package '(org-plus-contrib :includes (org)))
+  ;;(straight-use-package '(org-plus-contrib :includes (org)))
+  (straight-use-package 'org)
   (mapc #'org-babel-load-file
         (directory-files user-emacs-directory t "\\.org$"))
   (garbage-collect))

@@ -3,7 +3,7 @@
 
 * Introduction
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   (use-package dired
     :straight nil
     :config
