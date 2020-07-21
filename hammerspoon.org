@@ -4,6 +4,7 @@
 :header-args: :tangle ~/.hammerspoon/init.lua
 :END:
 ** Hyper
+
 #+begin_src lua
   local hyper = {"ctrl", "alt", "cmd"}
 #+end_src
@@ -14,11 +15,11 @@
 
     hs.window.animationDuration = 0.0
     spoon.MiroWindowsManager:bindHotkeys({
-          up         = {hyper, "up"   },
-          right      = {hyper, "right"},
-          down       = {hyper, "down" },
-          left       = {hyper, "left" },
-          fullscreen = {hyper, "/"    }
+          up         = {hyper, ";" },
+          right      = {hyper, "'" },
+          down       = {hyper, "o" },
+          left       = {hyper, "i" },
+          fullscreen = {hyper, "/" }
     })
 
   hs.hotkey.bind(hyper, '.', function()

@@ -21,4 +21,4 @@
 [diff]
 	renameLimit = 5000
 [http]
-	sslcainfo = ~/.nix-profile/etc/ssl/certs/ca-bundle.crt
+#	sslcainfo = ~/.nix-profile/etc/ssl/certs/ca-bundle.crt

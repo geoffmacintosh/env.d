@@ -2,7 +2,7 @@
 #+property: header-args :results output silent :comments link :noweb yes :tangle no
 
 * Introduction
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle ibuffer.el
   (use-package ibuffer
     :straight nil
     :config
