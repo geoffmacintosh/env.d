@@ -189,10 +189,13 @@
     (with-eval-after-load 'org-capture
       (add-to-list 'org-capture-templates
                   `("b" "Bookmark" entry (file+olp+datetree ,(expand-file-name "bookmarks.org" org-directory))
-                     "* %(org-cliplink-capture) %^g"
+                     "* %(org-cliplink-capture) %^g "
                      :immediate-finish
                      :kill-buffer))))
 #+end_src
+
+#+results:
+: org-cliplink
 
 * Attach
 :PROPERTIES:
@@ -227,7 +230,7 @@
               (format-time-string "%Y-%m-%d")))
     :custom
     (org-download-method 'attach)
-    (org-download-annotate-function #'actuator-org-dl-annotate)
+    ;;(org-download-annotate-function #'actuator-org-dl-annotate)
     (org-download-timestamp "")
     (org-download-screenshot-method "screencapture -i %s"))
 #+end_src
@@ -250,6 +253,7 @@
 
 #+begin_src emacs-lisp
   (use-package org-mru-clock
+    :disabled t
     :straight t
     :bind
     ("C-c C-x i" . org-mru-clock-in)
