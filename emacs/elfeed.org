@@ -226,12 +226,20 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 [2020-07-26 Sun]
 [[https://www.youtube.com/c/BlissFoster/featured][Youtube Link]]
 
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCmBNsvCS27Tz5ohGleBkNmQ][Minimalist Machinist]]
+[2020-08-04 Tue]
+[[https://www.youtube.com/channel/UCmBNsvCS27Tz5ohGleBkNmQ][Youtube Link]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCMQ_mPIBPi4IMpYEmuyOMqQ][Zoe Hong]]
+[2020-08-04 Tue]
+[[https://www.youtube.com/c/zoehongteaches/videos][Youtube Link]]
+
 ** Misc
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w][Bon Appetit]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbJ1WFUdC4ImBlFReGNHjKQ][Ant's Game Room]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCcGoqh8kLlACkFFpqXm6eSw][Bag Buff]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A][New European Ensemble]]
 *** [[https://twitchrss.appspot.com/vod/dragonfriends][Dragon Friends]]
+*** [[https://twitchrss.appspot.com/vod/itmedave][Dave Harmon]]
 *** https://blog.aaronbieber.com/posts/index.xml
 *** https://www.tchwr.com/feed/
 *** https://www.arp242.net/feed.xml
