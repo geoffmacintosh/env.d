@@ -1,7 +1,6 @@
 #+title: Savehist
 #+property: header-args :results output silent :comments link :noweb tangle
 #+hugo_base_dir: ~/Documents/Projects/mac-into-sh/
-#+hugo_draft: true
 
 * Savehist
 #+begin_src emacs-lisp
@@ -15,19 +14,28 @@
     (message-log-max 1000)
     (savehist-save-minibuffer-history t)
     (savehist-additional-variables
-     '(mark-ring
-       kill-ring
-       Info-history-list
-       last-kbd-macro
-       kmacro-ring
-       register-alist
-       global-mark-ring
-       regexp-search-ring
-       file-name-history
-       shell-command-history
-       compile-history
+     '(buffer-name-history
        command-history
-       extended-command-history)))
+       compile-history
+       extended-command-history
+       file-name-history
+       file-name-history
+       global-mark-ring
+       Info-history-list
+       kill-ring
+       kmacro-ring
+       last-kbd-macro
+       minibuffer-history
+       org-link--history
+       org-read-date-history
+       org-refile-history
+       org-table-formula-history
+       org-tags-history
+       regexp-search-ring
+       register-alist
+       savehist-minibuffer-history-variables
+       shell-command-history
+       mark-ring)))
 #+end_src
 
 1. Quick fixes:
@@ -50,8 +58,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     "It do thing."
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
-
   (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
+  (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
 #+end_src
 
 3. Savehist on kill only
@@ -59,4 +67,5 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (setq savehist-autosave-interval nil)
   (add-hook 'kill-emacs-hook #'savehist-save)
+  (add-hook 'after-save-hook #'savehist-save)
 #+end_src
