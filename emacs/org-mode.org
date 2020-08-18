@@ -220,6 +220,7 @@
 #+begin_src emacs-lisp
   (use-package org-download
     :straight t
+    :bind ("C-M-y" . org-download-screenshot)
     :config
     (defun actuator-org-dl-annotate (_link)
       "Minimal org-download header info."
@@ -231,12 +232,13 @@
     :custom
     (org-download-method 'attach)
     ;;(org-download-annotate-function #'actuator-org-dl-annotate)
-    (org-download-timestamp "")
-    (org-download-screenshot-method "screencapture -i %s"))
+    ;;(org-download-timestamp "")
+    ;;(org-download-screenshot-method "screencapture -i %s")
+    (org-download-heading-lvl nil)
+    (org-download-timestamp "%Y%m%d-%H%M%S-")
+    (org-download-screenshot-method "/usr/local/bin/pngpaste %s")
+    )
 #+end_src
-
-#+results:
-: t
 
 * Clock
 
