@@ -234,9 +234,10 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 [[https://www.youtube.com/c/zoehongteaches/videos][Youtube Link]]
 
 ** Misc
-*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbpMy0Fg74eXXkvxJrtEn3w][Bon Appetit]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCis_G8K3XHk0hyKBcdsckZw][Jellyfish]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbJ1WFUdC4ImBlFReGNHjKQ][Ant's Game Room]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCcGoqh8kLlACkFFpqXm6eSw][Bag Buff]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCis_G8K3XHk0hyKBcdsckZw][The Jason of All Trades]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A][New European Ensemble]]
 *** [[https://twitchrss.appspot.com/vod/dragonfriends][Dragon Friends]]
 *** [[https://twitchrss.appspot.com/vod/itmedave][Dave Harmon]]
