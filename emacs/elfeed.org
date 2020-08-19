@@ -241,6 +241,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC224ep4hRGF54CFcwqapb4A][New European Ensemble]]
 *** [[https://twitchrss.appspot.com/vod/dragonfriends][Dragon Friends]]
 *** [[https://twitchrss.appspot.com/vod/itmedave][Dave Harmon]]
+*** [[https://twitchrss.appspot.com/vod/bendragonfriends][Ben Jenkins]]
 *** https://blog.aaronbieber.com/posts/index.xml
 *** https://www.tchwr.com/feed/
 *** https://www.arp242.net/feed.xml
