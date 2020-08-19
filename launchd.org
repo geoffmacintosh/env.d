@@ -1,5 +1,5 @@
 * Disable Launchd stuff
-#+begin_src shell
+#+begin_src shell :tangle install.sh
   #!/bin/bash
 
   # IMPORTANT: Don't forget to logout from your Apple ID in the settings before running it!
@@ -16,29 +16,7 @@
   # 'com.apple.bird' will prevent saving prompt from being shown
   TODISABLE=()
 
-  # iCloud
-  TODISABLE+=('com.apple.security.cloudkeychainproxy3' \
-          'com.apple.iCloudUserNotifications' \
-          'com.apple.icloud.findmydeviced.findmydevice-user-agent' \
-          'com.apple.icloud.fmfd' \
-          'com.apple.icloud.searchpartyuseragent' \
-          'com.apple.cloudd' \
-          'com.apple.cloudpaird' \
-          'com.apple.cloudphotosd' \
-          'com.apple.followupd' \
-          'com.apple.protectedcloudstorage.protectedcloudkeysyncing')
-
   # Safari useless stuff
-  TODISABLE+=('com.apple.SafariBookmarksSyncAgent' \
-          'com.apple.SafariCloudHistoryPushAgent' \
-          'com.apple.WebKit.PluginAgent')
-
-  # iMessage / Facetime
-  TODISABLE+=('com.apple.imagent' \
-          'com.apple.imautomatichistorydeletionagent' \
-          'com.apple.imklaunchagent' \
-          'com.apple.imtransferagent' \
-          'com.apple.avconferenced')
 
   # Game Center / Passbook / Apple TV / Homekit...
   TODISABLE+=('com.apple.gamed' \
@@ -71,11 +49,6 @@
           'com.apple.accessibility.dfrhud' \
           'com.apple.accessibility.heard')
 
-  # Quicklook
-  TODISABLE+=('com.apple.quicklook.ui.helper' \
-          'com.apple.quicklook.ThumbnailsAgent' \
-          'com.apple.quicklook')
-
   # Sidecar
   TODISABLE+=('com.apple.sidecar-hid-relay' \
           'com.apple.sidecar-relay')
@@ -93,9 +66,7 @@
           'com.apple.UsageTrackingAgent')
 
   # Others
-  TODISABLE+=('com.apple.telephonyutilities.callservicesd' \
-          'com.apple.photoanalysisd' \
-          'com.apple.parsecd' \
+  TODISABLE+=('com.apple.parsecd' \
           'com.apple.AOSPushRelay' \
           'com.apple.AOSHeartbeat' \
           'com.apple.AirPlayUIAgent' \
@@ -104,12 +75,8 @@
           'com.apple.familycontrols.useragent' \
           'com.apple.familynotificationd' \
           'com.apple.findmymacmessenger' \
-          'com.apple.sharingd' \
-          'com.apple.identityservicesd' \
           'com.apple.java.InstallOnDemand' \
           'com.apple.parentalcontrols.check' \
-          'com.apple.security.keychain-circle-notification' \
-          'com.apple.syncdefaultsd' \
           'com.apple.appleseed.seedusaged' \
           'com.apple.appleseed.seedusaged.postinstall' \
           'com.apple.CallHistorySyncHelper' \
@@ -143,9 +110,6 @@
   # Daemons to disable
   TODISABLE=()
 
-  # iCloud
-  TODISABLE+=('com.apple.analyticsd', 'com.apple.icloud.findmydeviced')
-
   # Others
   TODISABLE+=('com.apple.netbiosd' \
           'com.apple.preferences.timezone.admintool' \
@@ -170,6 +134,9 @@
       mv ./System/Library/LaunchDaemons/${daemon}.plist ./System/Library/LaunchDaemons/${daemon}.plist.bak
       echo "[OK] Daemon ${daemon} disabled"
   done
+
+#+end_src
+
   Raw
    enable.sh
   #!/bin/bash
