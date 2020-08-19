@@ -1,7 +1,13 @@
 #+title: Hammerspoon
+
+* Setup
+#+begin_src shell
+  defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
+#+end_src
+
 * Init
 :PROPERTIES:
-:header-args: :tangle ~/.hammerspoon/init.lua
+:header-args: :tangle ~/.config/hammerspoon/init.lua
 :END:
 ** Hyper
 

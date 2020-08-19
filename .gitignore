@@ -23,5 +23,5 @@
 !/emacs/straight/versions/default.el
 /emacs/var
 /emacs/etc
-/hammerspoon
+/hammerspoon/init.lua
 /git
