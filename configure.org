@@ -1,11 +1,7 @@
-* SSH
-#+begin_src conf :tangle ~/.ssh/config
-  Host *
-       AddKeysToAgent yes
-       IdentitiesOnly yes
-       UseKeychain yes
-       IdentityFile ~/.ssh/id_rsa
-  Host router
-       Hostname 192.168.1.1
-       User root
+#+title: Configure
+
+* Hushlogin
+
+#+begin_src text :tangle ~/.hushlogin
+  #hush
 #+end_src
