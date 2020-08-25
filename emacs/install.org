@@ -134,7 +134,7 @@ will work in any project that has an adapter.
 * Vterm
 
 #+begin_src emacs-lisp
-  (when (executable-find "cmake")
-    (use-package vterm
-      :straight t))
+  ;;(when (executable-find "cmake")
+  ;;  (use-package vterm
+  ;;    :straight t))
 #+end_src
