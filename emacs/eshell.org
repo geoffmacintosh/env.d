@@ -178,3 +178,138 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
               (defun actuator-eshell-z ()
                 (require 'eshell-z))))
 #+end_src
+
+
+* History references
+#+begin_src emacs-lisp
+  (add-hook 'eshell-expand-input-functions
+             #'eshell-expand-history-references)
+#+end_src
+
+
+* Extra
+
+https://brettterpstra.com/2019/11/11/fish-further-exploration/
+
+https://ambrevar.xyz/emacs-eshell/
+
+https://masteringemacs.org/article/complete-guide-mastering-eshell
+
+http://ergoemacs.org/emacs/eshell.html
+
+http://www.howardism.org/Technical/Emacs/eshell-fun.html
+
+https://writequit.org/eos/eos-shell.html
+
+https://www.reddit.com/r/emacs/comments/1zkj2d/advanced_usage_of_eshell/
+
+https://github.com/dieggsy/esh-autosuggest/
+
+https://github.com/manateelazycat/aweshell/blob/master/README.md
+
+https://ambrevar.xyz/emacs-eshell/
+
+http://www.modernemacs.com/post/custom-eshell/
+
+https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
+
+https://blog.hoetzel.info/post/eshell-notifications/
+
+https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion#27969
+
+https://github.com/4DA/eshell-toggle
+
+https://melpa.org/#/eshell-z
+
+https://github.com/xuchunyang/eshell-git-prompt/tree/b6bb2d7bd4e393b4170b29891cfefb72ae020aab
+
+https://github.com/manateelazycat/aweshell
+https://masteringemacs.org/article/complete-guide-mastering-eshell
+
+git (CLI), gitk, tig, etc. -> magit
+htop -> symon, proced, helm-top...
+abook -> org-contacts
+mutt -> mu4e, gnus
+ncdu -> dired-du
+cmus/moc -> EMMS
+newsbeuter -> Elfeed, gnus
+weechat, irssi -> ERC, etc.
+rtorrent, transmission-cli -> transmission.el
+
+https://github.com/zwild/eshell-prompt-extras/tree/5a328e1b9112c7f31ce2da7cde340f96626546b6
+
+https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion#27969
+
+  alias cp='cp -i'
+  alias mv='mv -i'
+  alias rm='rm -i'
+
+https://github.com/mickeynp/dirswitch.el
+
+(add-hook 'eshell-expand-input-functions
+              #'eshell-expand-history-references)
+
+(setq eshell-prompt-regexp "^.+@.+:.+> ")
+(setq eshell-prompt-function
+      (lambda ()
+        (concat
+         (user-login-name)
+         "@"
+         (system-name)
+         ":"
+         (eshell/pwd)
+         "> ")))
+
+eshell-cmpl-cycle-completions nil
+      eshell-save-history-on-exit t
+      eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
+
+(add-hook 'eshell-mode-hook
+          '(lambda ()
+             (progn
+               (define-key eshell-mode-map "\C-a" 'eshell-bol)
+               (define-key eshell-mode-map "\C-r" 'counsel-esh-history)
+               (define-key eshell-mode-map [up] 'previous-line)
+               (define-key eshell-mode-map [down] 'next-line)
+               )))
+
+(setq eshell-hist-ignoredups t)
+(setq eshell-cmpl-cycle-completions nil)
+(setq eshell-cmpl-ignore-case t)
+(setq eshell-ask-to-save-history (quote always))
+
+(use-package pcmpl-args
+:ensure t)
+
+(use-package pcmpl-git
+:ensure t)
+
+(use-package pcmpl-homebrew
+:ensure t)
+
+(use-package pcmpl-pip
+:ensure t)
+
+(use-package pcomplete-extension
+:ensure t)
+
+(use-package fish-completion
+:ensure t
+:config...)
+
+https://gitlab.com/ambrevar/emacs-fish-completion/tree/e5b9b65a077319dfdb2faca9ef847db3ef55d0db
+
+https://www.emacswiki.org/emacs/EshellFunctions
+
+https://gist.github.com/ralt/a36288cd748ce185b26237e6b85b27bb
+
+https://emacs.stackexchange.com/questions/16318/drag-and-drop-images-to-auctex
+
+https://emacs.stackexchange.com/questions/20419/how-do-i-show-the-filename-instead-of-the-file-i-drag-into-an-emacs-buffer?r=SearchResults
+
+https://github.com/tom-tan/esh-help/tree/417673ed18a983930a66a6692dbfb288a995cb80
+
+https://github.com/dieggsy/esh-autosuggest/tree/972094808d231a86dc6e43862191167b1997d840
+
+https://github.com/mauforonda/emacs/blob/master/readme.org
+http://xenodium.com/more-reusable-emacs-shell-command-history/
