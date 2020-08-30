@@ -51,5 +51,5 @@
                  (propertize (downcase " %m ") 'face 'font-lock-string-face))))
 #+end_src
 
-#+results:
-| %m |
+* References
+- [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
