@@ -1,0 +1,13 @@
+#+title: Split a FLAC file
+
+* Split a FLAC file
+I didn't actually know that FLAC files could be produced as a single file for an entire album, as that seems insane. In order to turn them into useful files you need ~shntool~ and ~flac~ in Nix. Then run this in the correct directory:
+
+#+begin_src shell
+  shnsplit -f *.cue -t %n-%t -o flac *.flac
+#+end_src
+
+This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to turn the flac files into more playable files or something.
+
+*References*
+- [[https://unix.stackexchange.com/questions/10251/how-do-i-split-a-flac-with-a-cue][command line - How do I split a flac with a cue? - Unix & Linux Stack Exchange]] [2020-05-09 Sat]

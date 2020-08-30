@@ -112,3 +112,6 @@
       end
   end
 #+end_src
+
+* Brace expansion
+convert company-logo.{svg,png} # Convert a SVG vector graphics file into a PNG raster graphics file. This uses brace expansion to generate the names to pass to ImageMagick's convert command.
