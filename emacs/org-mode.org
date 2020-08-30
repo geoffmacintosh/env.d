@@ -222,13 +222,7 @@
     :straight t
     :bind ("C-M-y" . org-download-screenshot)
     :config
-    (defun actuator-org-dl-annotate (_link)
-      "Minimal org-download header info."
-      (format "#+downloaded: %s\n"
-              (if (equal link org-download-screenshot-file)
-                  "screenshot"
-                link)
-              (format-time-string "%Y-%m-%d")))
+    (require 'org-download)
     :custom
     (org-download-method 'attach)
     ;;(org-download-annotate-function #'actuator-org-dl-annotate)
