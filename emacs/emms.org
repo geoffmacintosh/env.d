@@ -4,11 +4,19 @@
     :straight t
     :config
     (require 'emms-setup)
+    (require 'emms-info-libtag)
     (emms-all)
     ;;(emms-default-players)
+    (setq emms-info-functions '(emms-info-libtag))
+    (setq emms-browser-covers 'emms-browser-cache-thumbnail-async)
+    (define-emms-simple-player afplay '(file)
+      (regexp-opt '(".mp3" ".m4a" ".aac"))
+      "afplay")
+    (setq emms-player-list '(emms-player-afplay))
+
     :custom
-    (emms-player-list '(emms-player-mpv))
-    (emms-source-file-default-directory "~/Music/iTunes/iTunes Music/Music/"))
+    ;;(emms-player-list '(emms-player-mpv))
+    (emms-source-file-default-directory "~/Music/Music/"))
 #+end_src
 
 * Emms
