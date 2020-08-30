@@ -131,10 +131,3 @@ will work in any project that has an adapter.
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2))
 #+end_src
-* Vterm
-
-#+begin_src emacs-lisp
-  ;;(when (executable-find "cmake")
-  ;;  (use-package vterm
-  ;;    :straight t))
-#+end_src

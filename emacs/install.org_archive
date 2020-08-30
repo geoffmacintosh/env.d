@@ -1,0 +1,18 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/.config/emacs/install.org
+
+
+* Vterm
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-08-25 Tue 21:16
+  :ARCHIVE_FILE: ~/.config/emacs/install.org
+  :ARCHIVE_CATEGORY: install
+  :END:
+
+#+begin_src emacs-lisp
+  ;;(when (executable-find "cmake")
+  ;;  (use-package vterm
+  ;;    :straight t))
+#+end_src
