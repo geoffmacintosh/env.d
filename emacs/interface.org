@@ -27,13 +27,6 @@
 #+end_src
 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-c i")
-                  (defun actuator-jump-to-inbox ()
-                    (interactive)
-                    (bookmark-jump "inbox.org")))
-#+end_src
-
-#+begin_src emacs-lisp
   (setq bookmark-version-control t)
 #+end_src
 

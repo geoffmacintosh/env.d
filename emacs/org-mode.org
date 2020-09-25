@@ -117,6 +117,38 @@
 #+end_src
 
 #+begin_src emacs-lisp
+  (defmacro actuator-org-make-refile-command (fn-suffix refile-targets)
+    "Generate a command to call `org-refile' with modified targets."
+    `(defun ,(intern (concat "actuator-org-refile-" (symbol-name fn-suffix))) ()
+       ,(format "`org-refile' to %S" refile-targets)
+       (interactive)
+       (org-refile-cache-clear)
+       (let ((org-refile-target-verify-function nil)
+             (org-refile-targets ,refile-targets))
+         (call-interactively 'org-refile))))
+#+end_src
+
+#+results:
+: actuator-org-make-refile-command
+
+#+begin_src emacs-lisp
+  (actuator-org-make-refile-command this-file `((,(buffer-file-name) :maxlevel . 9)))
+#+end_src
+
+#+results:
+: actuator-org-refile-this-file
+
+#+begin_src emacs-lisp
+  (defhydra actuator-org-refile-hydra (:color blue :hint nil)
+    "
+_t_his file"
+    ("t" actuator-org-refile-this-file))
+  (bind-key "C-c r" #'actuator-org-refile-hydra/body org-mode-map)
+#+end_src
+
+https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
+
+#+begin_src emacs-lisp
   (use-package org-src
     :config
     (defun actuator-org-src-line-wrap-setup ()
@@ -218,20 +250,21 @@
 #+results:
 
 #+begin_src emacs-lisp
-  (use-package org-download
-    :straight t
-    :bind ("C-M-y" . org-download-screenshot)
-    :config
-    (require 'org-download)
-    :custom
-    (org-download-method 'attach)
-    ;;(org-download-annotate-function #'actuator-org-dl-annotate)
-    ;;(org-download-timestamp "")
-    ;;(org-download-screenshot-method "screencapture -i %s")
-    (org-download-heading-lvl nil)
-    (org-download-timestamp "%Y%m%d-%H%M%S-")
-    (org-download-screenshot-method "/usr/local/bin/pngpaste %s")
-    )
+    (use-package org-download
+      :straight t
+      :bind ("C-M-y" . org-download-screenshot)
+      :init
+      (require 'org-download)
+      :custom
+      (org-download-method 'directory)
+      (org-download-image-dir nil)
+      ;;(org-download-annotate-function #'actuator-org-dl-annotate)
+      ;;(org-download-timestamp "")
+      (org-download-screenshot-method "screencapture -i %s")
+      (org-download-heading-lvl nil)
+      (org-download-timestamp "%Y%m%d-%H%M%S-")
+      ;;(org-download-screenshot-method "/usr/local/bin/pngpaste %s")
+      )
 #+end_src
 
 * Clock

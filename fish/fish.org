@@ -5,7 +5,7 @@
 :ID:       2F8CA9BB-72E2-49E4-9D82-A64AB298B44D
 :END:
 
-#+begin_src fish :tangle fish/config.fish
+#+begin_src fish :tangle config.fish
   if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
       bax ". ~/.nix-profile/etc/profile.d/nix.sh"
   end
@@ -59,12 +59,12 @@
   end
 #+end_src
 
-#+begin_src fish :tangle fish/fishfile
+#+begin_src fish :tangle fishfile
   jethrokuan/z
   jorgebucaran/fish-bax
 #+end_src
 
-#+begin_src fish :tangle fish/functions/fish_prompt.fish
+#+begin_src fish :tangle functions/fish_prompt.fish
   function prompt_ssh -d "Check to see if in an SSH session."
       if test -n "$SSH_CLIENT"
           printf '%s@%s ' (whoami) (hostname -s)
@@ -89,7 +89,7 @@
   end
 #+end_src
 
-#+begin_src fish :tangle fish/functions/fish_user_key_bindings.fish
+#+begin_src fish :tangle functions/fish_user_key_bindings.fish
   bind \ef forward-bigword
 #+end_src
 
@@ -103,7 +103,7 @@
   end
 #+end_src
 
-#+begin_src fish :tangle fish/functions/flac-alac.fish
+#+begin_src fish :tangle functions/flac-alac.fish
   function flac-alac -d "Convert flac to alac"
       if type ffmpeg > /dev/null 2>&1
           echo yay

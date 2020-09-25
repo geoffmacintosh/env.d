@@ -1,5 +1,5 @@
 #+title: IBuffer
-#+property: header-args :results output silent :comments link :noweb yes :tangle no
+#+property: header-args :results output silent :comments link :noweb yes
 
 * Introduction
 #+begin_src emacs-lisp :tangle ibuffer.el
