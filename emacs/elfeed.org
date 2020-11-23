@@ -278,7 +278,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 *** https://www.kinowear.com/feed/
 *** https://longreads.com/feed/
 *** https://www.macsparky.com/blog?format=rss
-*** http://mbork.pl/?action=rss
 *** https://www.masteringemacs.org/feed
 *** https://fuco1.github.io/rss.xml
 *** https://oremacs.com/atom.xml
