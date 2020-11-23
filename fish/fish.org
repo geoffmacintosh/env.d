@@ -6,57 +6,59 @@
 :END:
 
 #+begin_src fish :tangle config.fish
-  if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
-      bax ". ~/.nix-profile/etc/profile.d/nix.sh"
-  end
+    if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
+        bax ". ~/.nix-profile/etc/profile.d/nix.sh"
+    end
 
-  set -gx XDG_CACHE_HOME $HOME/.cache
-  set -gx XDG_DATA_HOME $HOME/.local/share
-  set -gx XDG_CONFIG_HOME $HOME/.config
+    set -gx XDG_CACHE_HOME $HOME/.cache
+    set -gx XDG_DATA_HOME $HOME/.local/share
+    set -gx XDG_CONFIG_HOME $HOME/.config
 
-  #set -gx WGETRC $XDG_CONFIG_HOME/wgetrc
+    #set -gx WGETRC $XDG_CONFIG_HOME/wgetrc
 
-  set -gx VISUAL "emacsclient -c -a \"\""
-  set -gx EDITOR "emacsclient -tty -a \"\""
+    set -gx VISUAL "emacsclient -c -a \"\""
+    set -gx EDITOR "emacsclient -tty -a \"\""
 
-  function __fish_describe_command; end # Fixes issues with Catalina
+    set -gx QMK_HOME "~/Documents/Projects/qmk_firmware"
 
-  set __fish_git_prompt_show_informative_status "yes"
-  set __fish_git_prompt_char_dirtystate "+"
+    function __fish_describe_command; end # Fixes issues with Catalina
 
-  function fish_greeting; end
-  function fish_title; end
+    set __fish_git_prompt_show_informative_status "yes"
+    set __fish_git_prompt_char_dirtystate "+"
 
-  #alias pass="gopass"
-  alias tmux="tmux -f ~/.config/tmux.conf"
+    function fish_greeting; end
+    function fish_title; end
 
-  abbr -a -- - prevd
-  abbr -a -- = nextd
+    #alias pass="gopass"
+    #alias tmux="tmux -f ~/.config/tmux.conf"
 
-  abbr -a yt  youtube-dl
-  abbr -a yta youtube-dl -x --audio-format best
-  abbr -a dired emacsclient --tty -a "emacs -nw" $PWD
+    abbr -a -- - prevd
+    abbr -a -- = nextd
 
-  if test -e /usr/local/sbin
-      set -gx PATH /usr/local/sbin $PATH
-  end
+    abbr -a yt  youtube-dl
+    abbr -a yta youtube-dl -x --audio-format best
+    abbr -a dired emacsclient --tty -a "emacs -nw" $PWD
 
-#  if test -e /Library/TeX/texbin
-#      set -gx PATH $PATH /Library/TeX/texbin
-#  end
+    if test -e /usr/local/sbin
+        set -gx PATH /usr/local/sbin $PATH
+    end
 
-  # Brew's relationship to ruby is weird but I can't make it work with
-  # Nix yet.
-  if test -e /usr/local/lib/ruby/gems/2.7.0/bin
-      set -gx PATH /usr/local/lib/ruby/gems/2.7.0/bin $PATH
-      set -gx PATH /usr/local/opt/ruby/bin $PATH
-  end
+  #  if test -e /Library/TeX/texbin
+  #      set -gx PATH $PATH /Library/TeX/texbin
+  #  end
 
-  if not functions -q fisher
-      set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
-      curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
-      fish -c fisher
-  end
+    # Brew's relationship to ruby is weird but I can't make it work with
+    # Nix yet.
+    if test -e /usr/local/lib/ruby/gems/2.7.0/bin
+        set -gx PATH /usr/local/lib/ruby/gems/2.7.0/bin $PATH
+        set -gx PATH /usr/local/opt/ruby/bin $PATH
+    end
+
+    if not functions -q fisher
+        set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
+        curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
+        fish -c fisher
+    end
 #+end_src
 
 #+begin_src fish :tangle fishfile
