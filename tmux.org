@@ -1,0 +1,9 @@
+#+title: Tmux
+
+* Tmux
+#+begin_src conf :tangle ~/.tmux.conf
+  set-window-option -g mode-keys emacs
+  unbind-key C-b
+  set-option -g prefix C-']'
+  bind-key r source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded"
+#+end_src
