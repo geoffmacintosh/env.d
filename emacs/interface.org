@@ -141,7 +141,7 @@ From  emacs-plus:
                (fboundp 'menu-bar-mode))
       (menu-bar-mode   -1))
     (when (actuator-font-exists-p "SF Mono")
-      (set-frame-font "SF Mono-11" nil t)))
+      (set-frame-font "SF Mono-12" nil t)))
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
   (actuator-frame-init)
