@@ -14,10 +14,14 @@
 
 ** Make Checklist
 #+begin_src emacs-lisp
-  (fset 'actuator-make-checklist
-     (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ? ] 0 "%d"))
-  (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+(fset 'actuator-make-checklist
+   (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
+    (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
+
+
+#+results:
+: actuator-make-checklist
 
 ** References
 - [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
