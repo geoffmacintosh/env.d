@@ -321,7 +321,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 *** https://affordableearl.com/feed/
 *** https://www.reddit.com/r/MotorsportsReplays/.rss
 *** http://coatchecking.co/blog?format=rss
-
+*** https://karthinks.com/index.xml
 ** Reddit
 *** [[https://reddit-top-rss.herokuapp.com/?subreddit=deusex&averagePostsPerDay=2&view=rss][Deus Ex]]
 *** [[https://reddit-top-rss.herokuapp.com/?subreddit=cyberpunk&averagePostsPerDay=2&view=rss][Cyberpunk]]
