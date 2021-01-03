@@ -1,0 +1,16 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/.config/macos.org
+
+
+* Stop indexing node_modules
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2021-01-03 Sun 19:38
+  :ARCHIVE_FILE: ~/.config/macos.org
+  :ARCHIVE_CATEGORY: macos
+  :END:
+FROM ANDY
+#+begin_src shell
+  find . -type d -name "node_modules" -exec touch "{}/.metadata_never_index" \;
+#+end_src

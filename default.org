@@ -1,0 +1,168 @@
+#+title: Default Config
+
+* ZSH
+#+begin_src shell :tangle ~/.zshrc
+  export XDG_DATA_HOME="$HOME/.local/share"
+  export XDG_CONFIG_HOME="$HOME/.config"
+  export XDG_CACHE_HOME="$HOME/.cache"
+
+  export EDITOR="emacsclient -tty -a \"\""
+  export VISUAL="emacsclient -c -a \"\""
+
+  #export GOPATH="$XDG_DATA_HOME/go"
+
+  if [ -x /bin/kitty ] ; then
+      export $TERMINAL /bin/kitty
+  fi
+
+  export GNUPGHOME="$XDG_DATA_HOME/gnupg"
+  export LESSHISTFILE="$XDG_CACHE_HOME/less/history"
+
+  #export PATH=$GOPATH/bin:$PATH
+  export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+  export PATH="/usr/local/sbin:$PATH"
+
+#+end_src
+
+* NCMPCPP
+:PROPERTIES:
+:header-args: :tangle ~/.config/ncmpcpp/config
+:END:
+
+#+begin_src conf
+  # mpd_host = localhost
+  # mpd_port = 6600
+  # mpd_music_dir = ~/Music/beets
+
+  ignore_leading_the = yes
+  media_library_hide_album_dates = yes
+#+end_src
+
+* MPD
+:PROPERTIES:
+:header-args: :tangle ~/.mpd/mpd.conf
+:END:
+
+#+begin_src conf
+  music_directory    "~/Music/beets"
+  playlist_directory "~/Music/playlists"
+  db_file            "~/.mpd/database"
+  pid_file           "~/.mpd/pid"
+  state_file         "~/.mpd/state"
+  sticker_file       "~/.mpd/sticker.sql"
+  port               "6600"
+  auto_update        "yes"
+#+end_src
+
+* Beets
+:PROPERTIES:
+:header-args: :tangle ~/.config/beets/config.yaml
+:END:
+
+#+begin_src yaml
+  directory: ~/Music/beets
+  library: ~/.config/beets/musiclibrary.blb
+  import:
+    copy: yes
+  #plugins: lastgenre fetchart ftintitle mpdupdate smartplaylist random embedart
+  embedart:
+    auto: yes
+  mpdupdate:
+    host: localhost
+    port: 6600
+  smartplaylist:
+    playlist_dir: ~/.mpd/playlists
+    playlists:
+      - name: all.m3u
+        query: ''                  # Matches all music in your library
+#+end_src
+
+* Hushlogin
+
+#+begin_src text :tangle ~/.hushlogin
+  # Silence
+#+end_src
+* Tmux
+#+begin_src conf :tangle ~/.tmux.conf
+  set-window-option -g mode-keys emacs
+  unbind-key C-b
+  set-option -g prefix C-']'
+  bind-key r source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded"
+#+end_src
+* Youtube DL
+#+begin_src conf :tangle ~/.config/youtube-dl/config
+  -o /Downloads/%(title)s-%(id)s.%(ext)s
+#+end_src
+* SSH
+
+#+begin_src conf
+  Host *
+       ControlPath ~/.ssh/master-%h:%p
+       ControlMaster auto
+       ControlPersist 10m
+       AddKeysToAgent yes
+       IdentitiesOnly yes
+       UseKeychain yes
+       IdentityFile ~/.ssh/id_rsa
+  Host router
+       Hostname 192.168.1.1
+       User root
+#+end_src
+* MPV
+ #+begin_src conf :tangle mpv/mpv.conf
+   screenshot-directory=~/Downloads/
+   screenshot-format=jpg
+   screenshot-template="%F-%whh%wMm%wSs%wT"
+
+   ytdl-format='bestvideo[height<=720][fps<=30]+bestaudio[ext=m4a]/bestvideo[height<=720]+bestaudio'
+
+   save-position-on-quit
+   hwdec
+
+   af="lavfi=[dynaudnorm=f=75:g=25:n=0:p=0.58]"
+ #+end_src
+
+ #+begin_src conf :tangle mpv/input.conf
+   z           no-osd async screenshot video
+   WHEEL_UP    ignore
+   WHEEL_DOWN  ignore
+   WHEEL_RIGHT ignore
+   WHEEL_LEFT  ignore
+ #+end_src
+
+* Git
+#+begin_src gitignore :tangle ~/.config/git/ignore
+  .DS_Store
+  ,*~
+  \#*\#
+  .\#*
+  ,*.elc
+  ,*.pyc
+#+end_src
+
+#+begin_src conf :tangle ~/.config/git/config
+  [core]
+          excludesfile = ~/.config/git/ignore
+          quotepath = false
+          editor = emacsclient
+          ignorecase = false
+
+  [user]
+          name = Geoff MacIntosh
+          email = geoff@mac.into.sh
+
+  [color]
+          diff = auto
+          status = auto
+          branch = auto
+          interactive = auto
+          ui = auto
+
+  [credential]
+          helper = osxkeychain
+
+  [diff]
+          renameLimit = 5000
+  [http]
+  #	sslcainfo = ~/.nix-profile/etc/ssl/certs/ca-bundle.crt
+#+end_src

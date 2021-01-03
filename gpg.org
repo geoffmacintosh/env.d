@@ -1,6 +1,0 @@
-#+title: GPG
-
-* Conf
-#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf
-  pinentry-program /usr/local/bin/pinentry-mac
-#+end_src

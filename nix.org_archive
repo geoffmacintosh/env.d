@@ -1,4 +1,15 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/.config/nix.org
+
+
 * Set up Nix on Catalina
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2021-01-03 Sun 19:36
+  :ARCHIVE_FILE: ~/.config/nix.org
+  :ARCHIVE_CATEGORY: nix
+  :END:
 Here's what I did, for a new multi-user install, after upgrading to Catalina. Check if /nix exists. If not, run the following command and then reboot.
 
 #+begin_src shell
@@ -19,12 +30,3 @@ You might need to use a different diskX number. Check diskutil list for more. In
 #+begin_src shell
   sh <(curl https://nixos.org/nix/install) --daemon
 #+end_src
-
-* Nix Bookmarks
-:LOGBOOK:
-- Refiled on [2020-01-30 Thu 16:27]
-:END:
-- [[https://github.com/jwiegley/nix-config][John Wiegley's Nix Config]]
-- [[https://github.com/NixOS/nixpkgs/blob/8da81465c19fca393a3b17004c743e4d82a98e4f/pkgs/development/libraries/ffmpeg-full/default.nix#L450][ffmpeg]]
-- [[https://github.com/NixOS/nixpkgs/blob/8da81465c19fca393a3b17004c743e4d82a98e4f/pkgs/applications/misc/iterm2/default.nix#L26][iTerm nix]]
-- [[https://github.com/NixOS/nixpkgs/blob/8da81465c19fca393a3b17004c743e4d82a98e4f/pkgs/development/libraries/vid-stab/default.nix#L15][nix fetch]]

@@ -1,7 +1,0 @@
-#+title: Configure
-
-* Hushlogin
-
-#+begin_src text :tangle ~/.hushlogin
-  #hush
-#+end_src
