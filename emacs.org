@@ -2178,6 +2178,33 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
   :straight t)
 #+end_src
 
+*** Split Windows
+#+begin_src emacs-lisp
+    (defun actuator-split-window-right ()
+      "Replacement for `split-window-right'.
+    Moves the point to the newly created window and asks for the
+    buffer."
+      (interactive)
+      (split-window-right)
+      (other-window 1)
+      (when (fboundp 'ivy-switch-buffer)
+        (ivy-switch-buffer)))
+  (global-set-key (kbd "C-x 3") #'actuator-split-window-right)
+#+end_src
+
+#+begin_src emacs-lisp
+    (defun actuator-split-window-below ()
+      "Replacement for `split-window-below'.
+    Moves the point to the newly created window and asks for the
+    buffer."
+      (interactive)
+      (split-window-below)
+      (other-window 1)
+      (when (fboundp 'ivy-switch-buffer)
+        (ivy-switch-buffer)))
+  (global-set-key (kbd "C-x 2") #'actuator-split-window-below)
+#+end_src
+
 ** Disabled
    :PROPERTIES:
    :header-args: :tangle no
