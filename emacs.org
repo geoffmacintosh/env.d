@@ -407,9 +407,6 @@ From  emacs-plus:
   (actuator-frame-init)
 #+end_src
 
-#+begin_src emacs-lisp
-  (auto-save-mode)
-#+end_src
 *** Misc
 
 #+begin_src emacs-lisp
