@@ -702,8 +702,8 @@ Plain Font
     ("C-c l" . org-store-link)
     :custom
     (org-display-custom-times t)
-    (org-time-stamp-custom-formats
-     '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
+    ;;(org-time-stamp-custom-formats
+    ;; '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
     (org-startup-folded 'content)
     (org-ellipsis "→")
     (org-startup-align-all-tables t)
@@ -744,9 +744,6 @@ Plain Font
     (org-mode . visual-line-mode)
     (org-mode . (lambda () (electric-indent-local-mode -1))))
 #+end_src
-
-#+results:
-: org-store-link
 
 #+begin_src emacs-lisp
   (setq org-agenda-files `(,org-directory
