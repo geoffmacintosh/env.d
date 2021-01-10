@@ -30,10 +30,13 @@
 :END:
 
 #+begin_src conf
-  # mpd_host = localhost
-  # mpd_port = 6600
-  # mpd_music_dir = ~/Music/beets
+  mpd_host = localhost
+  mpd_port = 6600
+  mpd_music_dir = ~/Music/beets
 
+  progressbar_look = "─░─"
+  display_volume_level = "no"
+  user_interface = "alternative"
   ignore_leading_the = yes
   media_library_hide_album_dates = yes
 #+end_src
@@ -50,8 +53,15 @@
   pid_file           "~/.mpd/pid"
   state_file         "~/.mpd/state"
   sticker_file       "~/.mpd/sticker.sql"
+  log_file           "~/.mpd/log"
   port               "6600"
-  auto_update        "yes"
+  #auto_update        "yes"
+#+end_src
+
+[[file:macos.org::*MPD][MPD Mac Config]]
+
+#+begin_src conf
+  include_optional "mac.conf"
 #+end_src
 
 * Beets
@@ -64,7 +74,7 @@
   library: ~/.config/beets/musiclibrary.blb
   import:
     copy: yes
-  #plugins: lastgenre fetchart ftintitle mpdupdate smartplaylist random embedart
+  plugins: fetchart ftintitle mpdupdate smartplaylist embedart
   embedart:
     auto: yes
   mpdupdate:
@@ -91,7 +101,7 @@
 #+end_src
 * Youtube DL
 #+begin_src conf :tangle ~/.config/youtube-dl/config
-  -o /Downloads/%(title)s-%(id)s.%(ext)s
+  -o ~/Downloads/%(title)s-%(id)s.%(ext)s
 #+end_src
 * SSH
 
@@ -180,7 +190,7 @@
   set -gx XDG_DATA_HOME $HOME/.local/share
   set -gx XDG_CONFIG_HOME $HOME/.config
 
-  #set -gx WGETRC $XDG_CONFIG_HOME/wgetrc
+  set -gx WGETRC $XDG_CONFIG_HOME/wgetrc
 
   set -gx VISUAL "emacsclient -c -a \"\""
   set -gx EDITOR "emacsclient -tty -a \"\""
@@ -215,8 +225,8 @@
 
   # Brew's relationship to ruby is weird but I can't make it work with
   # Nix yet.
-  if test -e /usr/local/lib/ruby/gems/2.7.0/bin
-      set -gx PATH /usr/local/lib/ruby/gems/2.7.0/bin $PATH
+  if test -e /usr/local/lib/ruby/gems/3.0.0/bin
+      set -gx PATH /usr/local/lib/ruby/gems/3.0.0/bin $PATH
       set -gx PATH /usr/local/opt/ruby/bin $PATH
   end
 
@@ -229,6 +239,10 @@
       set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
       curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
       fish -c fisher
+  end
+
+  if type brew > /dev/null 2>&1
+      set -gx HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK 1
   end
 #+end_src
 

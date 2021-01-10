@@ -1,8 +1,0 @@
-#+title: Temp Emacs-only
-
-* Org Link Minor Mode
-#+begin_src emacs-lisp
-  (use-package org-link-minor-mode
-    :straight t
-    :hook (emacs-lisp-mode . org-link-minor-mode))
-#+end_src

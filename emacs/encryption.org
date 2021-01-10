@@ -1,6 +1,0 @@
-#+title: Emacs Encryption
-
-#+begin_src emacs-lisp
-  (setq epa-file-select-keys 1)
-  (epa-file-enable)
-#+end_src

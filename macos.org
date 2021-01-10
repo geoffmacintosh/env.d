@@ -669,3 +669,12 @@ This script should rysnc-copy my music to my archive  very confusing) but had no
     </dict>
   </plist>
 #+end_src
+
+* MPD
+#+begin_src conf :tangle ~/.mpd/mac.conf
+  audio_output {
+  type       "osx"
+  name       "CoreAudio"
+  mixer_type "software"
+  }
+#+end_src

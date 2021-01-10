@@ -1,6 +1,0 @@
-#+title: Message
-#+date: [2020-06-05 Fri]
-
-#+begin_src emacs-lisp
-;; No
-#+end_src

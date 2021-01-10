@@ -1,0 +1,2230 @@
+#+title: Emacs
+#+PROPERTY: header-args :comments link :noweb yes :padline yes
+
+* Early Init
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/early-init.el :comments link :noweb yes
+:END:
+#+begin_src emacs-lisp
+  ;;; early-init.el -*- lexical-binding: t; no-byte-compile: t; -*-
+
+  (setq load-prefer-newer t)
+  <<debug-on-error>>
+  <<garbage-collection>>
+  <<packages>>
+  (setq frame-inhibit-implied-resize t)
+
+  (provide 'init)
+  ;;; init.el ends here
+#+end_src
+
+* Init
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
+:END:
+** Lexical Binding
+#+begin_src emacs-lisp
+  ;;; init.el -*- lexical-binding: t; no-byte-compile: t; -*-
+#+end_src
+
+** Package Init
+#+name: packages
+#+begin_src emacs-lisp :tangle no
+  (setq package-enable-at-startup nil)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+#+end_src
+
+#+begin_src emacs-lisp
+  (when (fboundp 'straight-use-package)
+    (straight-use-package 'use-package))
+
+  (eval-when-compile
+    (defvar straight-base-dir nil)
+    (defvar straight-build-dir nil)
+    ;;(add-to-list 'load-path (expand-file-name "use-package" (concat straight-base-dir "straight/" straight-build-dir)))
+       (require 'use-package nil t))
+#+end_src
+
+** No Littering
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :straight t)
+#+end_src
+
+** Exec path from shell
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :straight t
+    :custom
+    (exec-path-from-shell-variables '("PATH"
+                                      "MANPATH"
+                                      "NIX_PATH"
+                                      "NIX_SSL_CERT_FILE"))
+    :hook (after-init . exec-path-from-shell-initialize))
+#+end_src
+
+** Enabled
+*** Pulse Line
+#+begin_src emacs-lisp
+  (defun pulse-line (&rest _)
+        "Pulse the current line."
+        (pulse-momentary-highlight-one-line (point)))
+
+  (dolist (command '(scroll-up-command scroll-down-command
+                     recenter-top-bottom other-window))
+    (advice-add command :after #'pulse-line))
+#+end_src
+
+*** Read only
+#+begin_src emacs-lisp
+  (setq view-read-only t)
+#+end_src
+*** Org Link Minor Mode
+#+begin_src emacs-lisp
+  (use-package org-link-minor-mode
+    :straight t
+    :hook (emacs-lisp-mode . org-link-minor-mode))
+#+end_src
+*** Garbage Collection
+#+name: garbage-collection
+#+begin_src emacs-lisp :tangle no
+  (setq gc-cons-threshold (* 5000 1024 1024))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defvar actuator-gc-cons-threshold 800000
+    "Original value for `gc-cons-threshold'.")
+  (defun actuator-restore-gc-cons-threshold ()
+    "Restore `gc-cons-threshold' value."
+    (setq gc-cons-threshold actuator-gc-cons-threshold)
+    (garbage-collect))
+  (add-hook 'after-init-hook #'actuator-restore-gc-cons-threshold)
+#+end_src
+*** Debug on Error
+#+name: debug-on-error
+#+begin_src emacs-lisp :tangle no
+  (setq debug-on-error t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-stop-debug-on-error ()
+    (setq debug-on-error nil))
+  (add-hook 'after-init-hook #'actuator-stop-debug-on-error)
+#+end_src
+
+*** Just one space
+#+begin_src emacs-lisp
+  (defun actuator-just-one-space ()
+    "Insert just one space, killing ALL whitespace."
+    (interactive)
+    (just-one-space -1))
+
+  (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space)
+#+end_src
+*** Unfill paragraph
+#+begin_src emacs-lisp
+  (defun actuator-unfill-paragraph ()
+    "Unfills a paragraph."
+    (interactive)
+    (let ((fill-column most-positive-fixnum))
+      (fill-paragraph)))
+  (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
+#+end_src
+*** Hippie Expand
+
+#+begin_src emacs-lisp
+  (use-package smart-tab
+    :disabled t
+    ;:straight t
+    :functions global-smart-tab-mode
+    :config
+    (global-smart-tab-mode 1)
+    :custom
+    (smart-tab-using-hippie-expand t)
+    (smart-tab-completion-functions-alist nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package hippie-exp
+    :straight nil
+    :bind ("M-/" . hippie-expand)
+    :custom
+    (hippie-expand-verbose t)
+    (hippie-expand-try-functions-list
+     '(try-expand-all-abbrevs
+       try-expand-dabbrev-visible
+       try-expand-dabbrev
+       try-expand-dabbrev-all-buffers
+       try-expand-dabbrev-from-kill
+       try-complete-file-name-partially
+       try-complete-file-name
+       try-expand-line
+       try-complete-lisp-symbol-partially
+       try-complete-lisp-symbol
+       try-expand-list
+       try-expand-list-all-buffers
+       try-expand-whole-kill
+       try-expand-line-all-buffers)))
+#+end_src
+
+- try-complete-lisp-symbol has a lot of completions
+- try-expand-line-all-buffers is very slow
+
+#+begin_src emacs-lisp
+  (defun actuator-hippie-unexpand ()
+    "Remove an expansion without having to loop around."
+    (interactive)
+    (hippie-expand 0))
+  (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
+#+end_src
+*** Fish Mode
+#+begin_src emacs-lisp
+  (use-package fish-mode
+    :straight t)
+#+end_src
+*** Ledger Mode
+#+begin_src emacs-lisp
+  (use-package ledger-mode
+    :straight t
+    :config
+    (setq ledger-default-date-format ledger-iso-date-format))
+#+end_src
+*** Markdown Mode
+#+begin_src emacs-lisp
+    (use-package markdown-mode
+      :straight t)
+#+end_src
+*** YAML Mode
+#+begin_src emacs-lisp
+    (use-package yaml-mode
+      :straight t)
+#+end_src
+*** TOML Mode
+#+begin_src emacs-lisp
+    (use-package toml-mode
+      :straight t)
+#+end_src
+*** Lua Mode
+#+begin_src emacs-lisp
+    (use-package lua-mode
+      :straight t)
+#+end_src
+*** Gitignore Mode
+#+begin_src emacs-lisp
+    (use-package gitignore-mode
+      :straight t)
+#+end_src
+*** Gitconfig Mode
+#+begin_src emacs-lisp
+  (use-package gitconfig-mode
+    :straight t)
+#+end_src
+*** Nov.el
+#+begin_src emacs-lisp
+  (use-package nov
+    :straight t
+    :config
+
+    (defun actuator-novel-setup ()
+      (face-remap-add-relative 'variable-pitch :family "Georgia"
+                               :height 1.3)
+      (setq-local line-spacing 1.2))
+    (add-hook 'nov-mode-hook 'actuator-novel-setup)
+
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+    :custom
+    (nov-text-width 65))
+#+end_src
+*** Ripgrep
+#+begin_src emacs-lisp
+  (use-package rg
+    :straight t)
+#+end_src
+*** Project
+#+begin_src emacs-lisp
+  (use-package project
+    :straight t)
+#+end_src
+
+`project-find-file', `project-find-regexp' and
+`project-or-external-find-regexp' use the current API, and thus
+will work in any project that has an adapter.
+*** HTMLize
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :straight t)
+#+end_src
+*** Personal Stuff
+
+#+begin_src emacs-lisp
+  (setq user-full-name "Geoff MacIntosh")
+  (setq user-mail-address "geoff@mac.into.sh")
+  (setq calendar-latitude [47 33 north])
+  (setq calendar-longitude [52 42 west])
+#+end_src
+
+*** Unfiled Settings
+:PROPERTIES:
+:ID:       3659786E-6B2D-4AF8-8901-434068730FC7
+:END:
+
+#+begin_src emacs-lisp
+  (fringe-mode 12)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq bookmark-version-control t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq window-combination-resize t)
+  (setq undo-limit (* 80 1024 1024))
+#+end_src
+
+From  emacs-plus:
+
+#+begin_src emacs-lisp
+  ;; C source code
+  (setq frame-resize-pixelwise t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-=") #'count-words)
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-unset-key (kbd "<C-wheel-down>"))
+  (global-unset-key (kbd "<C-wheel-up>"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-c") 'capitalize-dwim)
+  (global-set-key (kbd "M-l") 'downcase-dwim)
+  (global-set-key (kbd "M-u") 'upcase-dwim)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq help-window-select t) ; Select help window by default
+  (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  (global-set-key (kbd "M-o") #'other-window)
+
+  (delete-selection-mode t)
+  (midnight-mode 1)
+  (setq sentence-end-double-space nil)
+
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+
+  (setq indent-tabs-mode nil) ; Never insert tabs with tab key
+  (setq require-final-newline t)
+
+  (save-place-mode 1)
+
+  (setq backup-by-copying    t)
+  (setq delete-old-versions  t)
+  (setq kept-new-versions    50)
+  (setq kept-old-versions    5) ; I don't know what an old version is
+  (setq version-control      t)
+  (setq vc-make-backup-files t)
+
+  (setq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
+  (setq uniquify-separator "/")
+  (setq uniquify-after-kill-buffer-p t)
+  (setq uniquify-ignore-buffers-re "^\\*")
+  (setq uniquify-strip-common-suffix nil)
+
+  (setq find-file-visit-truename nil) ; Don't resolve symlinks
+  (setq confirm-kill-emacs 'y-or-n-p)
+
+  ;;(abbrev-mode)
+  (setq-default abbrev-mode t)
+  (setq save-abbrevs 'silently)
+
+  (setq enable-recursive-minibuffers t)
+  (minibuffer-depth-indicate-mode 1)
+
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-defun  'disabled nil)
+
+  (add-hook 'after-save-hook
+            'executable-make-buffer-file-executable-if-script-p)
+
+  (defun display-startup-echo-area-message ()
+    "Remove the GNU info from the minibuffer on startup.
+  All you have to do is create a function with this name.  It's
+  called automatically."
+    (message ""))
+
+  (setq default-frame-alist
+        '((ns-transparent-titlebar . t)
+          (ns-appearance           . 'light)))
+
+  (setq completion-styles
+        '(fuzzy
+          basic
+          partial-completion
+          substring
+          initials
+          emacs22))
+
+  (defun actuator-font-exists-p (font)
+    "Return non-nil if FONT is loaded."
+    (member font (font-family-list)))
+
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
+  These variables need to be set every time a frame is created."
+    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    (when (and (not (display-graphic-p))
+               (fboundp 'menu-bar-mode))
+      (menu-bar-mode   -1))
+    (when (actuator-font-exists-p "SF Mono")
+      (set-frame-font "SF Mono-12" nil t)))
+
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+  (actuator-frame-init)
+#+end_src
+
+#+begin_src emacs-lisp
+  (auto-save-mode)
+#+end_src
+*** Misc
+
+#+begin_src emacs-lisp
+  (use-package recentf
+    :init
+    (recentf-mode)
+    :bind ("C-x C-r" . recentf-open-files)
+    :custom
+    (recentf-max-saved-items 1000)
+    (recentf-exclude `(,no-littering-var-directory
+                       ,no-littering-etc-directory
+                       "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+    :hook (midnight-mode . recentf-cleanup))
+#+end_src
+
+#+results:
+: recentf-open-files
+
+
+Plain Font
+
+#+begin_src emacs-lisp
+  (load-theme 'actuator t)
+
+  (blink-cursor-mode -1)
+  (setq cursor-type 'box)
+
+  (setq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
+  (setq scroll-margin 0)
+  (setq mouse-wheel-scroll-amount '(1))
+
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message "")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package xt-mouse
+    :straight nil
+    :unless window-system
+    :config
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (defun track-mouse (_e))
+    :custom
+    (mouse-sel-mode t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package locate
+    :straight nil
+    :custom
+    (locate-command "mdfind"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package flymake
+    :straight nil
+    :hook (emacs-lisp-mode . flymake-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package cus-edit
+    :straight nil
+    :after no-littering
+    :custom
+    (custom-file (expand-file-name "custom.el" no-littering-var-directory))
+    :config
+    (load custom-file 'noerror))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package vc-hooks
+    :custom
+    (vc-handled-backends nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package paren
+    :straight nil
+    :config
+    (show-paren-mode)
+    (electric-pair-mode 1)
+    :custom
+    (blink-matching-paren nil)
+    (show-paren-delay 0)
+    (show-paren-style 'mixed))
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
+
+  (defun actuator-startup-profile ()
+    "Displays startup time garbage collections in the modeline."
+    (message "Emacs ready in %s with %d garbage collections."
+             (format "%.2f seconds"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))
+             gcs-done))
+#+end_src
+*** Eliminate frame title
+#+begin_src emacs-lisp
+  (setq ns-use-proxy-icon nil)
+  (setq-default frame-title-format nil)
+
+  (set-frame-parameter (selected-frame) 'title nil)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun remember-titlebar-settings ()
+    "Get fucked, Emacs"
+    (set-frame-parameter (selected-frame) 'name nil)
+    (set-frame-parameter (selected-frame) 'title nil))
+  (add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
+#+end_src
+*** Autorevert
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :straight nil
+    :config
+    (global-auto-revert-mode 1)
+    :custom
+    (global-auto-revert-non-file-buffers nil)
+    (auto-revert-verbose nil)
+    (auto-revert-avoid-polling t)
+    (buffer-auto-revert-by-notification t)
+    (auto-revert-interval 60)
+    (revert-without-query t)
+    (auto-revert-check-vc-info nil))
+#+end_src
+*** Eldoc
+
+[[https://www.reddit.com/r/emacs/comments/c1zl0s/weekly_tipstricketc_thread/ergullj/?context=1][Improve eldoc's documentation]]
+
+#+begin_src emacs-lisp
+  (use-package eldoc
+    :straight t
+    :custom
+    (eldoc-echo-area-use-multiline-p t)
+    (eldoc-idle-delay 0)
+    :config
+    (define-advice elisp-get-fnsym-args-string (:around (orig-fun sym &rest r) docstring)
+      "If SYM is a function, append its docstring."
+      (require 'subr-x)
+      (concat
+       (apply orig-fun sym r)
+       (when-let ((doc (and (fboundp sym) (documentation sym 'raw)))
+                  (oneline (substring doc 0 (string-match "\n" doc))))
+         (when (not (string= "" oneline))
+           (concat " " (propertize oneline 'face 'italic)))))))
+#+end_src
+*** Modeline
+
+#+begin_src emacs-lisp :tangle no
+  (setq-default mode-line-format
+                (list
+                 "%e "
+                 "%I "
+                 "%p "
+                 (propertize "%b " 'face 'font-lock-keyword-face)
+                 "%m "
+                 mode-line-misc-info))
+#+end_src
+
+#+results:
+| %e | %I | %p | %b | %m | ((which-function-mode (which-func-mode ( which-func-format  ))) (global-mode-string ( global-mode-string  ))) |
+
+#+begin_src emacs-lisp :tangle no
+  (setq-default mode-line-format
+                (list
+                 (propertize (downcase " %m ") 'face 'font-lock-string-face))))
+#+end_src
+
+**** References
+ - [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
+
+*** Forge
+#+begin_src emacs-lisp
+  (use-package forge
+    :straight t)
+#+end_src
+*** Ivy
+
+#+begin_src emacs-lisp
+  (use-package prescient
+    :straight t
+    :custom
+    (prescient-persist-mode 1)
+    (prescient-history-length 10000)
+    (prescient-aggressive-file-save t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package counsel
+    :straight t
+    :functions counsel-mode
+    :config
+    (setq counsel-find-file-ignore-regexp "\\`\\.")
+    (counsel-mode 1)
+    :bind
+    ("C-x C-r" . counsel-buffer-or-recentf)
+    ("C-x C-f" . counsel-find-file)
+    ("M-x"     . counsel-M-x)
+    ("s-x"     . counsel-M-x)
+  ;;  ("C-x m"   . counsel-semantic-or-imenu)
+    ("C-r"     . counsel-minibuffer-history)
+    ("C-x l"   . counsel-locate)
+    ("C-h f"   . counsel-describe-function)
+    ("C-h v"   . counsel-describe-variable)
+    ;;("C-h k"   . counsel-descbinds)
+    ("C-h x f" . counsel-faces)
+    ("C-c s"   . counsel-search)
+    ("M-y"     . counsel-yank-pop))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package request
+    :straight t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ivy
+    :straight t
+    :defines ivy-minibuffer-map
+    :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
+    :config
+    (ivy-mode 1)
+    :custom
+    (ivy-use-ignore-default 'always)
+    (ivy-ignore-buffers '("*elfeed-log*"
+                          "*straight-process*"
+                          "*Completions*"
+                          "*Compile-Log*"))
+    (ivy-use-virtual-buffers nil)
+    (ivy-count-format "(%d/%d) ")
+    (ivy-extra-directories nil)
+    :bind
+    (("C-x b" . ivy-switch-buffer)
+     :map ivy-minibuffer-map
+     ("<C-return>" . ivy-immediate-done)
+     ("RET"        . ivy-alt-done)
+     ("M-y"        . ivy-next-line)))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package swiper
+  :straight t
+  :bind ("C-s" . swiper-isearch))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package ivy-prescient
+  :straight t
+  :after (ivy prescient)
+  :functions ivy-prescient-mode
+  :config
+  (ivy-prescient-mode 1))
+#+end_src
+
+*** Minions
+#+begin_src emacs-lisp :tangle no
+  (use-package minions
+    :straight t
+    :config
+    (minions-mode))
+#+end_src
+
+
+*** Org
+
+#+begin_src emacs-lisp
+  (defvar org-directory "~/org")
+  (use-package org
+    :config
+    (org-indent-mode 1)
+    (add-to-list 'org-babel-default-header-args
+                 '(:mkdirp . "yes"))
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((emacs-lisp . t)
+                                   (shell      . t)))
+    (defun actuator-update-all-dynamic-blocks ()
+      "Hi"
+      (org-dblock-update 1))
+    (add-hook 'org-mode-hook
+              (lambda ()
+                (add-hook 'before-save-hook
+                          'actuator-update-all-dynamic-blocks nil
+                          'make-it-local)))
+    (add-to-list 'org-default-properties "DIR")
+    (add-to-list 'org-default-properties "header-args")
+    :bind
+    ("C-c c" . counsel-org-capture)
+    ("C-c a" . org-agenda)
+    ("C-c l" . org-store-link)
+    :custom
+    (org-display-custom-times t)
+    (org-time-stamp-custom-formats
+     '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
+    (org-startup-folded 'content)
+    (org-ellipsis "→")
+    (org-startup-align-all-tables t)
+    (org-startup-shrink-all-tables t)
+    (org-startup-with-inline-images t)
+    (org-startup-indented t)
+    (org-hide-leading-stars t)
+    (org-pretty-entities-include-sub-superscripts t)
+    (org-hide-emphasis-markers t)
+    (org-image-actual-width 300)
+    (org-fontify-done-headline t)
+    (org-structure-template-alist '(("e" . "src emacs-lisp")
+                                    ("s" . "src shell")))
+    (org-log-done 'time)
+    (org-log-into-drawer t)
+    (org-closed-keep-when-no-todo t)
+    (org-enforce-todo-dependencies t)
+    (org-enforce-todo-checkbox-dependencies t)
+    (org-complete-tags-always-offer-all-agenda-tags nil)
+    (org-clone-delete-id t)
+    (org-tags-column -60)
+    (org-catch-invisible-edits 'show-and-error)
+    (org-insert-heading-respect-content t)
+    (org-ctrl-k-protect-subtree t)
+    (org-M-RET-may-split-line '((default . nil)))
+    (org-special-ctrl-k t)
+    (org-special-ctrl-a/e t)
+    (org-blank-before-new-entry '((heading         . t)
+                                  (plain-list-item . auto)))
+    (org-use-property-inheritance t)
+    (org-modules nil)
+    (org-tag-persistent-alist '(("noexport")
+                                ("ignore")
+                                ("unpublished")
+                                ("blog")
+                                ("tbd")))
+    :hook
+    (org-mode . visual-line-mode)
+    (org-mode . (lambda () (electric-indent-local-mode -1))))
+#+end_src
+
+#+results:
+: org-store-link
+
+#+begin_src emacs-lisp
+  (setq org-agenda-files `(,org-directory
+                           ,(if (getenv "XDG_CONFIG_HOME")
+                                (getenv "XDG_CONFIG_HOME")
+                              "~/.config")
+                           ,user-emacs-directory))
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :config
+    (defun actuator-org-capture-turn-off-header-line ()
+    "Disable the header-line in a local mode.
+  This is used to disable the help line in `org-capture' buffers as
+  there's no variable that will do it."
+    (setq-local header-line-format nil))
+    :hook (org-capture-mode . actuator-org-capture-turn-off-header-line))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-list
+    :custom
+    (org-list-indent-offset 1))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-keys
+    :custom
+    (org-use-speed-commands t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-refile
+    :custom
+    (org-refile-allow-creating-parent-nodes 'confirm)
+    (org-outline-path-complete-in-steps nil)
+    (org-refile-use-outline-path 'file)
+    (org-refile-targets '((org-agenda-files :maxlevel . 3)))
+    :hook
+    (midnight-mode . org-refile-get-targets))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defmacro actuator-org-make-refile-command (fn-suffix refile-targets)
+    "Generate a command to call `org-refile' with modified targets."
+    `(defun ,(intern (concat "actuator-org-refile-" (symbol-name fn-suffix))) ()
+       ,(format "`org-refile' to %S" refile-targets)
+       (interactive)
+       (org-refile-cache-clear)
+       (let ((org-refile-target-verify-function nil)
+             (org-refile-targets ,refile-targets))
+         (call-interactively 'org-refile))))
+#+end_src
+
+#+results:
+: actuator-org-make-refile-command
+
+#+begin_src emacs-lisp
+  (actuator-org-make-refile-command this-file `((,(buffer-file-name) :maxlevel . 9)))
+#+end_src
+
+#+results:
+: actuator-org-refile-this-file
+
+#+begin_src emacs-lisp :tangle no
+  (defhydra actuator-org-refile-hydra (:color blue :hint nil)
+    "
+_t_his file"
+    ("t" actuator-org-refile-this-file))
+  (bind-key "C-c r" #'actuator-org-refile-hydra/body org-mode-map)
+#+end_src
+
+https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
+
+#+begin_src emacs-lisp
+  (use-package org-src
+    :config
+    (defun actuator-org-src-line-wrap-setup ()
+      "Set truncate-lines-mode in org-source-editing buffers."
+      (setq-local truncate-lines t))
+    :custom
+    (org-edit-src-persistent-message nil)
+    (org-src-tab-acts-natively t)
+    (org-src-window-setup 'current-window)
+    (org-src-ask-before-returning-to-edit-buffer nil)
+    (org-src-fontify-natively t)
+    :hook (org-src-mode . actuator-org-src-line-wrap-setup))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-footnote
+    :custom
+    (org-footnote-auto-adjust t)
+    (org-footnote-define-inline t)
+    (org-footnote-auto-label 'random))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ob-core
+    :custom
+    (org-confirm-babel-evaluate nil)
+    (org-babel-results-keyword "results"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-crypt
+    :init
+    (require 'org-crypt)
+    :config
+    (org-crypt-use-before-save-magic)
+    (add-to-list 'org-modules 'org-crypt)
+    :custom
+    (org-tags-exclude-from-inheritance (quote ("crypt")))
+    (org-crypt-key nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :straight nil
+    :custom
+    (org-agenda-sticky t)
+    (org-agenda-dim-blocked-tasks t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-id
+    :straight nil
+    :custom
+    (org-id-link-to-org-use-id nil)
+    :hook (midnight-mode . org-id-update-id-locations))
+#+end_src
+
+#+results:
+| org-id-update-id-locations | org-refile-get-targets | recentf-cleanup |
+
+*** Cliplink
+:PROPERTIES:
+:ID:       B592B761-0FC7-4954-927A-189783720DD2
+:END:
+#+begin_src emacs-lisp
+  (use-package org-cliplink
+    :straight t
+    :bind ("C-x p i" . org-cliplink)
+    :init
+    (with-eval-after-load 'org-capture
+      (add-to-list 'org-capture-templates
+                  `("b" "Bookmark" entry (file+olp+datetree ,(expand-file-name "bookmarks.org" org-directory))
+                     "* %(org-cliplink-capture) %^g "
+                     :immediate-finish
+                     :kill-buffer))))
+#+end_src
+
+#+results:
+: org-cliplink
+
+*** Attach
+:PROPERTIES:
+:ID:       7542A761-77AB-4B42-B25E-33BFE7A45FE9
+:END:
+
+#+begin_src emacs-lisp
+  (use-package org-attach
+    :straight nil
+    :custom
+    (org-attach-store-link-p t)
+    (org-attach-expert nil)
+    (org-attach-dir-relative t)
+    (org-attach-preferred-new-method 'dir)
+    (org-attach-method 'mv)
+    (org-attach-auto-tag "attach")
+    (org-attach-archive-delete 'query))
+#+end_src
+
+#+results:
+
+#+begin_src emacs-lisp
+    (use-package org-download
+      :straight t
+      :bind ("C-M-y" . org-download-screenshot)
+      :init
+      (require 'org-download)
+      :custom
+      (org-download-method 'directory)
+      (org-download-image-dir nil)
+      ;;(org-download-annotate-function #'actuator-org-dl-annotate)
+      ;;(org-download-timestamp "")
+      (org-download-screenshot-method "screencapture -i %s")
+      (org-download-heading-lvl nil)
+      (org-download-timestamp "%Y%m%d-%H%M%S-")
+      ;;(org-download-screenshot-method "/usr/local/bin/pngpaste %s")
+      )
+#+end_src
+
+*** Clock
+
+#+begin_src emacs-lisp
+  (use-package org-clock
+    :straight nil
+    :init
+    (org-clock-persistence-insinuate)
+    :custom
+    (org-clock-persist t)
+    (org-clock-out-remove-zero-time-clocks t)
+    (org-clock-mode-line-total 'auto))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-mru-clock
+    :disabled t
+    :straight t
+    :bind
+    ("C-c C-x i" . org-mru-clock-in)
+    ("C-c C-x C-j . org-mru-clock-select-recent-task")
+    :custom
+    (org-mru-clock-completing-read 'ivy-completing-read))
+#+end_src
+
+*** Capture Templates
+:PROPERTIES:
+:ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
+:END:
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :straight nil)
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("r" "Run" entry
+                   (file+olp+datetree ,(expand-file-name "run-log.org" org-directory))
+                   "* %<%A %e %B %Y (W%V)> %^{Duration}p %^{Distance}p
+                 %^{Elevation}p %^{Pace}p \n%?"
+                   :time-prompt
+                   :kill-buffer)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("w" "Watched Film" entry
+                   (file+olp+datetree ,(expand-file-name "watch-log.org" org-directory))
+                   "* %^{Title} (%^{Year}) %^{Series}p
+               %^{SeriesNo}p %^{Rating|2|1|3}p"
+                   :time-prompt
+                   :kill-buffer)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("i" "Inbox" entry
+                   (file ,(expand-file-name "inbox.org" org-directory))
+                   "* %^{Title} \n %u \n %i \n\n %a")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("f" "Finished Book" entry
+                   (file+olp+datetree ,(expand-file-name "reading-log.org" org-directory))
+                   "* %^{Author Name} - %^{Title} (%^{Year}) %^{Series}p
+                 %^{SeriesNo}p %^{Author}p %^{Rating|2|1|3}p"
+                   :time-prompt
+                   :kill-buffer)))
+#+end_src
+
+*** Todos
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :straight nil
+    :custom
+    (org-agenda-todo-list-sublevels nil))
+#+end_src
+
+*** Links
+#+begin_src emacs-lisp
+  (use-package ol
+    :straight nil
+    :custom
+    (org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+                            (vm-imap . vm-visit-imap-folder-other-frame)
+                            (gnus . org-gnus-no-new-news)
+                            (file . find-file))))
+#+end_src
+
+*** Agenda
+
+#+begin_src emacs-lisp
+  (setq org-agenda-custom-commands
+        '(("X" agenda ""
+           ((ps-number-of-columns 2)
+            (ps-landscape-mode t)
+            (org-agenda-prefix-format " [ ] ")
+            (org-agenda-with-colors nil)
+            (org-agenda-start-day "Mon")
+            (org-agenda-remove-tags t))
+           ("~/Desktop/theagenda.pdf"))))
+  (setq org-agenda-window-setup 'only-window)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-span 'fortnight)
+  (setq org-agenda-include-diary t)
+  (setq org-agenda-text-search-extra-files nil)
+#+end_src
+
+#+results:
+
+*** Holidays
+:PROPERTIES:
+:CATEGORY: Holiday
+:END:
+#+begin_src emacs-lisp
+  (setq holiday-islamic-holidays nil)
+  ;;(setq holiday-christian-holiday nil)
+  (setq holiday-bahai-holidays nil)
+  (setq holiday-oriental-holidays nil)
+  ;;(setq holiday-other-holidays '((lunar-phases)))
+#+end_src
+*** Habit
+
+#+begin_src emacs-lisp
+  (use-package org-habit
+    :straight nil
+    :config
+    (add-to-list 'org-modules 'org-habit)
+    :custom
+    (org-habit-show-habits-only-for-today nil))
+#+end_src
+
+*** Checklist
+
+#+begin_src emacs-lisp :tangle no
+  (use-package org-checklist
+    :straight nil
+    :config
+    (add-to-list 'org-modules 'org-checklist))
+#+end_src
+
+#+results:
+: t
+*** Backends
+#+begin_src emacs-lisp
+  ;;(setq org-export-backends '(html icalendar latex))
+#+end_src
+
+*** Publish Project
+#+begin_src emacs-lisp
+  (setq org-publish-project-alist
+        `(("blog-org"
+           :base-directory ,org-directory
+           :base-extension "blog\\.org"
+           :publishing-directory "~/Documents/Projects/mac-into-sh"
+           :publishing-function org-md-publish-to-md
+           :with-broken-links mark
+           )
+          ("blog-images"
+           :base-directory ,org-directory
+           :base-extension "jpg\\|gif\\|png\\|jpeg"
+           :publishing-directory "~/Documents/Projects/mac-into-sh/images"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("blog" :components ("blog-org" "blog-images"))))
+#+end_src
+
+*** Hugo
+#+begin_src emacs-lisp
+  (use-package ox-hugo
+    :straight t
+    :custom
+    org-hugo-section "posts")
+#+end_src
+
+#+begin_src emacs-lisp
+  (define-skeleton hugo-header-skeleton
+    "Insert the required Hugo information into a file."
+    > "#+title: " (setq v1 (skeleton-read "Title: ")) \n
+    "#+date: \n"
+    "#+hugo_base_dir: ~/Documents/Projects/mac-into-sh/\n"
+    "#+export_file_name: index\n"
+    "#+hugo_bundle: " (replace-regexp-in-string " " "-" (downcase v1))
+    "\n"
+    "* " v1 "\n" _ "\n\n"
+    "* Metadata                       :noexport:blog:unpublished:")
+#+end_src
+
+*** Prodigy
+#+begin_src emacs-lisp
+  (use-package prodigy
+    :straight t
+    :config
+    (prodigy-define-service
+     :name "Hugo"
+     :command "hugo"
+     :args '("server" "-D")
+     :cwd "~/Documents/Projects/mac-into-sh"
+     :stop-signal 'sigkill
+     :kill-process-buffer-on-stop t))
+#+end_src
+
+*** Ignore headlines
+#+begin_src emacs-lisp :tangle no
+  (use-package ox-extra
+    :straight nil
+    :config
+    (require 'ox-extra)
+    (ox-extras-activate '(ignore-headlines)))
+#+end_src
+
+Then tag a headline with ~:ignore:~ to avoid the headline being exported. The content will be though.
+
+*References*
+- [[https://emacs.stackexchange.com/questions/38184/org-mode-ignore-heading-when-exporting-to-latex#41685][StackExchange]]
+
+*** Savehist
+#+begin_src emacs-lisp
+  (use-package savehist
+    :straight nil
+    :config
+    (savehist-mode)
+    :custom
+    (history-length 1000)
+    (history-delete-duplicates t)
+    (message-log-max 1000)
+    (savehist-save-minibuffer-history t)
+    (savehist-additional-variables
+     '(buffer-name-history
+       command-history
+       compile-history
+       extended-command-history
+       file-name-history
+       file-name-history
+       global-mark-ring
+       Info-history-list
+       kill-ring
+       kmacro-ring
+       last-kbd-macro
+       minibuffer-history
+       org-link--history
+       org-read-date-history
+       org-refile-history
+       org-table-formula-history
+       org-tags-history
+       regexp-search-ring
+       register-alist
+       savehist-minibuffer-history-variables
+       shell-command-history
+       mark-ring)))
+#+end_src
+
+1. Quick fixes:
+
+   ;; the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
+
+https://github.com/syl20bnr/spacemacs/issues/9409
+
+#+begin_src emacs-lisp
+  (put 'minibuffer-history 'history-length 100)
+  (put 'kill-ring 'history-length 25)
+  (setq save-interprogram-paste-before-kill nil)
+#+end_src
+
+https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
+
+2. Unpropertize kill ring on quit
+#+begin_src emacs-lisp
+  (defun actuator-unpropertize-kill-ring ()
+    "It do thing."
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+
+  (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
+  (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
+#+end_src
+
+3. Savehist on kill only
+
+#+begin_src emacs-lisp
+  (setq savehist-autosave-interval nil)
+  (add-hook 'kill-emacs-hook #'savehist-save)
+  (add-hook 'after-save-hook #'savehist-save)
+#+end_src
+
+*** Skeleton
+You can define a skeleton to expand as an abbrev expansion. Add it to the list via ~M-x edit-abbrevs~ as shown here
+
+#+begin_example
+  (c-mode-abbrev-table)
+  "example" 0 "" example-skeleton
+#+end_example
+
+In this, the abbrev is added to C-mode, it is invoked when you type "example," it runs the skeleton defined ~example-skeleton~ and has been run zero times.
+
+*References*
+- [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Skeletons-as-Abbrevs.html][GNU Manual]] [2020-04-26 Sun]
+
+#+begin_src emacs-lisp
+  (define-skeleton use-package-skeleton
+    "Insert use-package template."
+    "Package name: "
+    "(use-package " str "\n  :straight nil\n " _ "  :custom)")
+#+end_src
+
+*** Spell check
+
+#+begin_src emacs-lisp
+;; comment
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (use-package flyspell
+    :straight nil
+    :custom
+    (flyspell-abbrev-p t)
+    (flyspell-use-global-abbrev-table-p t)
+    (flyspell-issue-message-flag nil)
+    (flyspell-issue-welcome-flag nil)
+    (flyspell-mode 1))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (use-package flyspell-correct-ivy
+     :after flyspell
+     :bind (:map flyspell-mode-map
+           ("C-;" . flyspell-correct-word-generic))
+     :custom (flyspell-correct-interface 'flyspell-correct-ivy))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (use-package ispell
+    :straight nil
+    ;;:ensure-system-package hunspell
+    :custom
+    ;; (when (executable-find "hunspell")
+    ;;   (setq-default ispell-program-name "hunspell")
+    ;;   (setq ispell-really-hunspell t))
+    (ispell-current-personal-dictionary "~/.dict"))
+#+end_src
+
+#+results:
+
+*** Server
+
+#+begin_src emacs-lisp
+  (use-package server
+    :straight nil
+    :init
+    (load "server")
+    (unless (server-running-p) (server-start)))
+#+end_src
+
+#+results:
+
+*** Help
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-h x k") #'describe-key)
+#+end_src
+
+*** Delete by Moving to Trash
+#+begin_src emacs-lisp
+  (defun system-move-file-to-trash (file)
+    "Move the file to trash via the `trash` command-line tool."
+    (call-process "trash" nil nil nil file))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq delete-by-moving-to-trash t)
+#+end_src
+
+*** Keyboard Macros
+
+- ~C-x (~ Start defining a keyboard macro.
+- ~C-x )~ End a keyboard macro.
+- ~C-u C-x (~ Replay macro and append keys to the definition.
+- ~C-u C-u C-x (~ Don’t replay but append keys.
+- ~C-x C-k r~ Run the last keyboard macro on each line that begins in the region.
+- ~C-x C-k n~ Name the most recent macro.
+- ~C-x C-k b~ Bind the most recent macro to a keybinding (for the session only).
+- ~M-x insert-kbd-macro~ Insert the most recent macro into the buffer as lisp. That’s how you save it.
+- ~C-x C-k 0-9~ and ~C-x C-k A-Z~ are reserved for keyboard macros
+
+**** Make Checklist
+#+begin_src emacs-lisp
+(fset 'actuator-make-checklist
+   (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
+    (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+#+end_src
+
+
+#+results:
+: actuator-make-checklist
+
+**** References
+- [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
+- [[https://www.emacswiki.org/emacs/KeyboardMacros][EmacsWiki: Keyboard Macros]] [2020-06-08 Mon]
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
+
+*** Magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :straight t
+    :after exec-path-from-shell
+    :bind
+    ("C-c g" . magit-status)
+    ("C-x g" . magit-status)
+    ("C-x G" . magit-list-repositories)
+    :custom
+    (magit-diff-refine-hunk 'all)
+    (magit-save-repository-buffers 'dontask)
+    (magit-section-initial-visibility-alist
+     '((untracked . show)
+       (unstaged  . show)
+       (unpushed  . show)
+       (upstream  . show)))
+    ;;(magit-auto-revert-mode t)
+    (magit-push-always-verify nil)
+    (magit-repository-directories '(("~/org"     . 0)
+                                    ("~/.config" . 0)))
+    (magit-no-confirm '(stage-all-changes
+                        unstage-all-changes))
+    (magit-status-initial-section nil)
+    :config
+    <<magit-status>>
+    <<magit-quit-session>>)
+#+end_src
+
+#+name: magit-status
+#+begin_src emacs-lisp
+  (defadvice magit-status (around magit-fullscreen activate)
+       (window-configuration-to-register :magit-fullscreen)
+       ad-do-it
+       (delete-other-windows))
+#+end_src
+
+#+name: magit-quit-session
+#+begin_src emacs-lisp
+(defun magit-quit-session ()
+      "Restores the previous window configuration and kills the magit buffer"
+      (interactive)
+      (kill-buffer)
+      (auto-revert-mode -1)
+      (jump-to-register :magit-fullscreen))
+#+end_src
+
+*** Minibuffer Resize
+#+begin_src emacs-lisp
+  (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
+
+  (defun actuator-minibuffer-setup ()
+         (set (make-local-variable 'face-remapping-alist)
+            '((org-document-title :height 1.0))))
+#+end_src
+
+*** Cancel GC in Minibuffer
+#+begin_src emacs-lisp
+  (defun actuator-minibuffer-setup-hook ()
+    (setq gc-cons-threshold (* 500 1024 1024)))
+
+  (defun actuator-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
+#+end_src
+
+*** Truncate shit TEST
+#+begin_src emacs-lisp
+  (setq truncate-partial-width-windows nil)
+  (toggle-truncate-lines 1) ; Don't wrap lines by default
+  (add-hook 'text-mode-hook    #'turn-on-visual-line-mode)
+  (add-hook 'prog-mode-hook    #'auto-fill-mode)
+  (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
+#+end_src
+*** Web
+**** Introduction                                :ignore:
+I don't use Emacs to browse the web, although it can be done, and I guess people do. I do a few browser-related things in it though, including storing my bookmarks in an Org-mode file and such. Here's what I've changed.
+
+**** Set up browsing handlers                    :ignore:
+Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
+
+#+begin_src emacs-lisp
+  (use-package browse-url
+    :straight nil
+    :custom
+    (browse-url-handlers '(("wikipedia"   . eww )
+                           ("youtu\\.?be" . actuator-browse-video)
+                           ("twitch"      . actuator-browse-video))))
+#+end_src
+
+**** Handle video urls                           :ignore:
+I want video links to be opened in MPV. This helps my battery life as well as my personal life because I don't have to visit YouTube. This requires [[https://mpv.io][MPV]] to be installed, which is best installed via [[http://brew.sh][Brew]] on macOS. I've tried to use [[https://nixos.org/download.html][Nix]], but it doesn't work well.
+
+#+begin_src emacs-lisp
+    (defun actuator-browse-video (url &rest _args)
+      "Browse a URL with a dedicated video player.
+  Avoids opening a browser window."
+      (start-process "mpv" nil "mpv" url))
+#+end_src
+
+**** Simple HTML renderer                        :ignore:
+SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts and Nov.el books. Normally it wraps at the page width, but that can be adjusted.
+
+#+begin_src emacs-lisp
+  (use-package shr
+    :straight nil
+    :custom
+    (shr-width 75))
+#+end_src
+
+**** Open links in background                    :ignore:
+
+#+begin_src emacs-lisp
+  (when (memq system-type '(darwin))
+    (setq browse-url-browser-function 'browse-url-generic)
+    (setq browse-url-generic-program "open")
+    (setq browse-url-generic-args '("--background")))
+#+end_src
+*** iBuffer
+**** Introduction
+#+begin_src emacs-lisp :tangle ibuffer.el
+  (use-package ibuffer
+    :straight nil
+    :config
+    <<filters>>
+    :bind ("C-x C-b" . ibuffer)
+    :custom
+    (ibuffer-expert t))
+#+end_src
+
+**** Filters
+:PROPERTIES:
+:header-args: :noweb-ref filters
+:END:
+
+#+begin_src emacs-lisp
+  (setq ibuffer-show-empty-filter-groups nil)
+  (setq ibuffer-saved-filter-groups
+        '(("default"
+           ("Misc"      (name . "^\\*.*\\*$"))
+           ("Magit"     (name . "magit"))
+           ("Src"       (name . "\*Org Src"))
+           ("Dired"     (mode . dired-mode))
+           ("My Org"    (directory . "/Users/g/org"))
+           ("Config"    (or
+                         (directory . "/Users/g/.config")
+                         (directory . "/usr/local/share/emacs")))
+           )))
+#+end_src
+
+#+results:
+| default | (Misc (name . ^\*.*\*$)) | (Magit (name . magit)) | (Src (name . *Org Src)) | (Dired (mode . dired-mode)) | (My Org (directory . /Users/g/org)) | (Config (directory . /Users/g/.config)) |
+
+**** Defaults
+
+#+begin_src emacs-lisp :tangle yes
+  (defun actuator-ibuffer-setup ()
+    "Setup ibuffer defaults."
+    (require 'ibuf-ext)
+    (ibuffer-switch-to-saved-filter-groups "default")
+    (ibuffer-auto-mode 1)
+    (toggle-truncate-lines +1))
+  (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
+#+end_src
+
+*** Copy sentence
+#+begin_src emacs-lisp
+  (defun actuator-copy-sentence ()
+    "Save the entire sentence to the clipboard/kill ring."
+    (interactive)
+    (save-excursion
+      (backward-sentence)
+      (mark-end-of-sentence nil)
+      (copy-region-as-kill nil nil t)))
+#+end_src
+
+*** Auctex
+#+begin_src emacs-lisp
+  (use-package tex
+    :straight auctex
+    :custom
+    (TeX-engine 'luatex)
+    (TeX-source-correlate-start-server t))
+#+end_src
+
+*** Hydra
+
+#+begin_src emacs-lisp
+  (use-package hydra
+    :straight t
+    :custom
+    (hydra-hint-display-type 'lv))
+#+end_src
+
+*** Web Mode
+
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :straight t
+    :mode (("\\.html?\\'" . web-mode)
+           ("\\.css\\'"   . web-mode)
+           ("\\.jsx?\\'"  . web-mode)
+           ("\\.tsx?\\'"  . web-mode)
+           ("\\.json\\'"  . web-mode))
+    :custom
+    (web-mode-markup-indent-offset 2)
+    (web-mode-code-indent-offset 2)
+    (web-mode-css-indent-offset 2))
+#+end_src
+
+*** Undo
+- [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
+
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "s-z") #'undo-only)
+    (global-set-key (kbd "s-Z") #'undo-redo)
+  #+end_src
+
+*** Elfeed
+**** Introduction
+Usually people start these things out by explaining what RSS is and all that. I don't think I'll be doing that. I like RSS because I like knowing when new things happen, and I don't want to check a bunch of different services all the time. Beyond that, I also really like the idea of being able to filter out feed items that don't appeal to me. I don't mind if I can only read stuff on my computer, so I haven't set up any sort of sync with my phone, although it should be possible to do that.
+
+I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-package declaration, and I've pulled all the individual functions out into their own bits so as to talk about them separately.
+
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :straight t
+    :bind
+    (("C-x w" . actuator-elfeed-load-db-and-open)
+     :map elfeed-search-mode-map
+     ("A" . actuator-elfeed-show-all)
+     ("U" . actuator-elfeed-show-unread)
+     ("q" . actuator-elfeed-save-db-and-bury)
+     ("R" . actuator-elfeed-mark-all-as-read))
+    :custom
+    (elfeed-search-filter "@1-week-ago +unread ")
+    :config
+    <<shortcuts>>
+    <<faces>>
+    <<filters>>
+    <<load-quit>>
+    <<mark-all-as-read>>)
+#+end_src
+**** Open videos in MPV                          :ignore:
+One feature that people talk about a lot is setting up Elfeed to handle video-feeds separately from others, allowing you to avoid opening---say---a YouTube link in MPV instead of a browser window. That's pretty nice if you think YouTube's site is bad. There are a variety of ways to do that, but my current solution is to adjust how Emacs handles URLs, as documented in my Web config. The advantage of my system is that it affects all links to YouTube, regardless of where they are. It's a general solution, not an Elfeed solution.
+
+**** Shortcuts                                   :ignore:
+:PROPERTIES:
+:header-args: :noweb-ref shortcuts :tangle no :results output silent
+:END:
+I built a few shortcuts to switch between different tag views that I commonly use. Elfeed has support for Emacs' bookmarks, so I just needed to make bookmarks for the views I wanted. I set up the search how I like it (~s~) then made a bookmark entry (~C-x r m~) called, say ~elfeed-all~. I can call that bookmark from anywhere in Emacs to go to that elfeed view, but I also decided to [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][steal some functions from Pragmatic Emacs]] to make single-letter keybindings in elfeed.
+
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-show-all ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-all"))
+  (defun actuator-elfeed-show-unread ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-unread"))
+#+end_src
+
+**** Filters                                     :ignore:
+:PROPERTIES:
+:header-args: :noweb-ref filters :tangle no :results output silent
+:END:
+Filters are kind of the star of Elfeed. I mostly use them to remove items that I don't want to see (or already see in other contexts---podcasts for example). I think it's all pretty straightforward. The only thing of note that I do is adding a debug tag to each hook that hides things. That way I can tell which filter it is that's causing problems when I make a stupid typo and suddenly a specific filter matches all entries.
+
+#+begin_src emacs-lisp
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
+                                :add '(junk debug1)
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :before "2 weeks ago"
+                                :add 'debug2
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-title "MacSparky"
+                                :entry-title "focused\\|Mac Power Users\\|jazz\\|automators\\|podcast"
+                                :add '(junk debug3)
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-title "Six Colors"
+                                :entry-title "podcast\\|macworld\\|member"
+                                :add '(junk debug4)
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-title "Longreads"
+                                :entry-title "longreads"
+                                :add '(junk debug5)
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "youtube\\.com"
+                                :add '(video youtube)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "twitchrss"
+                                :add '(video twitch)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "kijiji\\.ca"
+                                :add '(shop kijiji)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "reddit"
+                                :add 'reddit))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "ikea"
+                                :entry-title "Q\\:"
+                                :remove 'unread
+                                :add '(junk debug6)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "cestlaz"
+                                :entry-title '(not "emacs")
+                                :add '(junk debug7)
+                                :remove 'unread))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "reddit\\.com"
+                                :entry-title '(not "F1")
+                                :add '(junk debug8)
+                                :remove 'unread))
+#+end_src
+
+**** Load and quit Elfeed nicely                 :ignore:
+:PROPERTIES:
+:header-args: :noweb-ref load-quit :tangle no :results output silent
+:END:
+You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
+
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-load-db-and-open ()
+        "Wrapper to load the elfeed database from disk before
+        opening. Taken from Pragmatic Emacs."
+        (interactive)
+        (window-configuration-to-register :elfeed-fullscreen)
+        (delete-other-windows)
+        (elfeed)
+        (elfeed-db-load)
+        (elfeed-search-update 1)
+        (elfeed-update))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-save-db-and-bury ()
+    "Wrapper to save the Elfeed database to disk before burying
+    buffer. Taken from Pragmatic Emacs."
+    (interactive)
+    (elfeed-db-save)
+    (quit-window)
+    (garbage-collect)
+    (jump-to-register :elfeed-fullscreen))
+#+end_src
+
+**** Mark all as read                            :ignore:
+:PROPERTIES:
+:header-args: :noweb-ref mark-all-as-read :tangle no :results output silent
+:END:
+You can just go post-by-post and use ~r~ to mark individual posts as read. I stole this function from [[https://cestlaz-nikola.github.io/posts/using-emacs-29%20elfeed/][Mike Zamansky]] because it seemed like a nice addition.
+
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-mark-all-as-read ()
+      "Mark all feeds in search as read. Taken from Mike Zamansky"
+      (interactive)
+      (mark-whole-buffer)
+      (elfeed-search-untag-all-unread))
+#+end_src
+
+**** Faces                                       :ignore:
+:PROPERTIES:
+:header-args: :noweb-ref faces :tangle no :results output silent
+:END:
+Changing the colours of an entry is neat, but not that useful. I mostly have this set up in order to learn how to do it, and as a vague novelty.
+
+#+begin_src emacs-lisp
+  (add-to-list 'elfeed-search-face-alist
+               '(video actuator-elfeed-video-face))
+  (add-to-list 'elfeed-search-face-alist
+               '(image actuator-elfeed-image-face))
+  (add-to-list 'elfeed-search-face-alist
+               '(comic actuator-elfeed-comic-face))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defface actuator-elfeed-video-face
+    `((t . (:background "gray90" :foreground "blue")))
+    "Face for elfeed video entry."
+    :group 'actuator-elfeed)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defface actuator-elfeed-image-face
+    `((t . (:background "gray90" :foreground "blue")))
+    "Face for elfeed image entry."
+    :group 'actuator-elfeed)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defface actuator-elfeed-comic-face
+    `((t . (:background "gray90" :foreground "blue")))
+    "Face for elfeed comic entry."
+    :group 'actuator-elfeed)
+#+end_src
+
+**** Org-elfeed
+#+begin_src emacs-lisp
+  (use-package elfeed-org
+    :straight t
+    :after elfeed
+    :config
+    (elfeed-org)
+    :custom
+    (rmh-elfeed-org-ignore-tag "disconnected")
+    (rmh-elfeed-org-auto-ignore-invalid-feeds nil)
+    (rmh-elfeed-org-files (list "~/org/feeds.org")))
+#+end_src
+
+**** Changes                                   :noexport:
+***** Wednesday May 20, 2020
+- Published
+
+**** Captar
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("e" "Elfeed Feed" entry
+                   (file+olp ,(expand-file-name "elfeed.org"
+                                                user-emacs-directory) "Feeds")
+                   "* [[%^{Feed URL}][%^{Title}]]\n%(org-time-stamp-inactive)"
+                   :immediate-finish
+                   :kill-buffer
+                   :empty-lines 1)))
+#+end_src
+
+
+*** Encryption
+#+begin_src emacs-lisp
+  (setq epa-file-select-keys 1)
+  (epa-file-enable)
+#+end_src
+*** Eshell
+**** Introduction
+
+#+begin_src emacs-lisp
+  (use-package eshell
+    :straight nil
+    :config
+    <<shortcuts>>
+    <<smart-shell>>
+    <<autocomplete>>
+    <<imenu>>
+    :custom
+    (eshell-history-size 10000)
+    (eshell-destroy-buffer-when-process-dies t)
+    (eshell-banner-message ""))
+#+end_src
+
+**** Shortcuts
+:PROPERTIES:
+:header-args: :noweb-ref shortcuts :results output silent :tangle no
+:END:
+
+#+begin_src emacs-lisp
+  (defalias 'eshell/f  'find-file-other-window)
+  (defalias 'eshell/ff 'find-file)
+  (defalias 'eshell/v  'view-file-other-window)
+  (defalias 'eshell/vv 'view-file)
+#+end_src
+
+**** iMenu
+:PROPERTIES:
+:header-args: :noweb-ref imenu :results output silent :tangle no
+:END:
+
+- [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
+
+In an eshell mode hook function, one can set the imenu-generic-expression to help it find your favorite prompt:
+
+#+begin_src emacs-lisp
+  (defun actuator-eshell-imenu ()
+    "arst"
+    (setq-local imenu-generic-expression
+                '(("Prompt" "^.*?[#❯]" 1))))
+  (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
+#+end_src
+
+**** Smart Shell
+:PROPERTIES:
+:header-args: :noweb-ref smart-shell :results output silent :tangle no
+:END:
+
+#+begin_src emacs-lisp
+  (defun actuator-eshell-smart-shell ()
+    "Set up Plan9/Smart shell stuff."
+    (require 'em-smart)
+    (eshell-smart-initialize))
+  (add-hook 'eshell-mode-hook #'actuator-eshell-smart-shell)
+  (setq eshell-where-to-jump 'begin)
+  (setq eshell-review-quick-commands nil)
+  (setq eshell-smart-space-goes-to-end t)
+  (setq eshell-hist-ignoredups t)
+#+end_src
+
+**** Bookmarks
+:PROPERTIES:
+:header-args: :tangle yes :results output silent
+:ID:       E0275FCE-6275-42E6-B22A-0CEFD19D7FDA
+:END:
+
+#+begin_src emacs-lisp
+  (use-package eshell-bookmark
+    :straight t
+    :hook (eshell-mode . eshell-bookmark-setup))
+#+end_src
+
+**** Completion
+:PROPERTIES:
+:header-args: :tangle no :results output silent
+:ID:       54541C5E-54E8-4D26-8D66-440E11E24A0E
+:END:
+
+#+name: autocomplete
+#+begin_src emacs-lisp :tangle no
+  (defun actuator-eshell-autocomplete ()
+        "Enable tab autocompletion in eshell."
+        (define-key
+          eshell-mode-map (kbd "<tab>")
+          (lambda () (interactive) (pcomplete-std-complete))))
+
+  (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
+#+end_src
+
+- find
+- xargs
+- cd
+- ls
+- hg
+- apt-get
+- sudo
+#+begin_src emacs-lisp
+  (use-package pcomplete-extension
+    :straight t
+    :config
+    (require 'pcomplete-extension))
+#+end_src
+
+- bzip2
+- chgrp
+- chown
+- gdb
+- gzip
+- make
+- rm
+- rmdir
+- tar
+- time
+- which
+- xargs
+#+begin_src emacs-lisp
+  (use-package pcmpl-args
+    :straight t
+    :config
+    (require 'pcmpl-args))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package pcmpl-homebrew
+    :straight t
+    :config
+    (require 'pcmpl-homebrew))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package pcmpl-pip
+    :straight t
+    :config
+    (require 'pcmpl-pip))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package pcmpl-git
+    :straight t
+    :config
+    (require 'pcmpl-git))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package fish-completion
+    :straight t
+    :custom
+    (fish-completion-fallback-on-bash-p t)
+    :config
+    (defun actuator-fish-completion ()
+      "arst"
+      (when (and (executable-find "fish")
+                 (require 'fish-completion nil t))
+        (fish-completion-mode)))
+    :hook (eshell-mode . actuator-fish-completion))
+#+end_src
+
+**** Z
+:PROPERTIES:
+:header-args: :tangle yes :results output silent
+:ID:       6A6BFA1C-6CA9-4AD8-A76B-1478A47CD9AE
+:END:
+
+#+begin_src emacs-lisp
+  (use-package eshell-z
+    :straight t
+    :custom
+    (eshell-z-freq-dir-hash-table-file-name "~/.local/share/z/data")
+    :config
+    (add-hook 'eshell-mode-hook
+              (defun actuator-eshell-z ()
+                (require 'eshell-z))))
+#+end_src
+
+
+**** History references
+#+begin_src emacs-lisp
+  (add-hook 'eshell-expand-input-functions
+             #'eshell-expand-history-references)
+#+end_src
+
+
+**** Extra
+
+https://brettterpstra.com/2019/11/11/fish-further-exploration/
+
+https://ambrevar.xyz/emacs-eshell/
+
+https://masteringemacs.org/article/complete-guide-mastering-eshell
+
+http://ergoemacs.org/emacs/eshell.html
+
+http://www.howardism.org/Technical/Emacs/eshell-fun.html
+
+https://writequit.org/eos/eos-shell.html
+
+https://www.reddit.com/r/emacs/comments/1zkj2d/advanced_usage_of_eshell/
+
+https://github.com/dieggsy/esh-autosuggest/
+
+https://github.com/manateelazycat/aweshell/blob/master/README.md
+
+https://ambrevar.xyz/emacs-eshell/
+
+http://www.modernemacs.com/post/custom-eshell/
+
+https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
+
+https://blog.hoetzel.info/post/eshell-notifications/
+
+https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion#27969
+
+https://github.com/4DA/eshell-toggle
+
+https://melpa.org/#/eshell-z
+
+https://github.com/xuchunyang/eshell-git-prompt/tree/b6bb2d7bd4e393b4170b29891cfefb72ae020aab
+
+https://github.com/manateelazycat/aweshell
+https://masteringemacs.org/article/complete-guide-mastering-eshell
+
+git (CLI), gitk, tig, etc. -> magit
+htop -> symon, proced, helm-top...
+abook -> org-contacts
+mutt -> mu4e, gnus
+ncdu -> dired-du
+cmus/moc -> EMMS
+newsbeuter -> Elfeed, gnus
+weechat, irssi -> ERC, etc.
+rtorrent, transmission-cli -> transmission.el
+
+https://github.com/zwild/eshell-prompt-extras/tree/5a328e1b9112c7f31ce2da7cde340f96626546b6
+
+https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion#27969
+
+  alias cp='cp -i'
+  alias mv='mv -i'
+  alias rm='rm -i'
+
+https://github.com/mickeynp/dirswitch.el
+
+(add-hook 'eshell-expand-input-functions
+              #'eshell-expand-history-references)
+
+(setq eshell-prompt-regexp "^.+@.+:.+> ")
+(setq eshell-prompt-function
+      (lambda ()
+        (concat
+         (user-login-name)
+         "@"
+         (system-name)
+         ":"
+         (eshell/pwd)
+         "> ")))
+
+eshell-cmpl-cycle-completions nil
+      eshell-save-history-on-exit t
+      eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
+
+(add-hook 'eshell-mode-hook
+          '(lambda ()
+             (progn
+               (define-key eshell-mode-map "\C-a" 'eshell-bol)
+               (define-key eshell-mode-map "\C-r" 'counsel-esh-history)
+               (define-key eshell-mode-map [up] 'previous-line)
+               (define-key eshell-mode-map [down] 'next-line)
+               )))
+
+(setq eshell-hist-ignoredups t)
+(setq eshell-cmpl-cycle-completions nil)
+(setq eshell-cmpl-ignore-case t)
+(setq eshell-ask-to-save-history (quote always))
+
+(use-package pcmpl-args
+:ensure t)
+
+(use-package pcmpl-git
+:ensure t)
+
+(use-package pcmpl-homebrew
+:ensure t)
+
+(use-package pcmpl-pip
+:ensure t)
+
+(use-package pcomplete-extension
+:ensure t)
+
+(use-package fish-completion
+:ensure t
+:config...)
+
+https://gitlab.com/ambrevar/emacs-fish-completion/tree/e5b9b65a077319dfdb2faca9ef847db3ef55d0db
+
+https://www.emacswiki.org/emacs/EshellFunctions
+
+https://gist.github.com/ralt/a36288cd748ce185b26237e6b85b27bb
+
+https://emacs.stackexchange.com/questions/16318/drag-and-drop-images-to-auctex
+
+https://emacs.stackexchange.com/questions/20419/how-do-i-show-the-filename-instead-of-the-file-i-drag-into-an-emacs-buffer?r=SearchResults
+
+https://github.com/tom-tan/esh-help/tree/417673ed18a983930a66a6692dbfb288a995cb80
+
+https://github.com/dieggsy/esh-autosuggest/tree/972094808d231a86dc6e43862191167b1997d840
+
+https://github.com/mauforonda/emacs/blob/master/readme.org
+http://xenodium.com/more-reusable-emacs-shell-command-history/
+
+*** Dired
+**** Introduction
+
+#+begin_src emacs-lisp
+  (use-package dired
+    :straight nil
+    :config
+    (require 'dired-x)
+    (require 'ls-lisp)
+    (require 'wdired)
+    (with-eval-after-load 'savehist
+      (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
+    :custom
+    (dired-dwim-target t)
+    (ls-lisp-use-insert-directory-program nil)
+    (ls-lisp-ignore-case t)
+    (ls-lisp-use-string-collate nil)
+    (ls-lisp-verbosity '(links uid))
+    (ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
+    (ls-lisp-use-localized-time-format t)
+    (dired-listing-switches "-alhG") ; Not use for ls-lisp?
+
+    (dired-dwim-target t)
+    (wdired-allow-to-change-permissions t)
+
+    (dired-recursive-copies 'always)
+    :hook (dired-mode . dired-hide-details-mode))
+#+end_src
+
+**** Dired subtree
+
+#+begin_src emacs-lisp
+  (use-package dired-subtree
+    :disabled t
+    :config
+    :bind (:map dired-mode-map
+               ("i" . dired-subtree-cycle)))
+#+end_src
+
+**** Dired git info
+
+#+begin_src emacs-lisp
+  (use-package dired-git-info
+    :disabled t
+    :straight t
+    :bind (:map dired-mode-map
+                (")" . dired-git-info-mode)))
+#+end_src
+
+**** Diredfl
+
+#+begin_src emacs-lisp
+  (use-package diredfl
+    :disabled t
+    :straight t
+    :config
+    (diredfl-global-mode 1))
+#+end_src
+
+**** Dired Open
+
+#+begin_src emacs-lisp
+  (defun actuator-dired-open ()
+    "Open the file at point with open."
+    (interactive)
+    (let* ((files (dired-get-marked-files t current-prefix-arg))
+           (nfiles (length files)))
+      (when (or (< nfiles 8)
+                (y-or-n-p (format "Really open %d files?" nfiles)))
+        (dolist (file files) (start-process "open" nil "open" file)))))
+  (bind-key "e" #'actuator-dired-open dired-mode-map)
+#+end_src
+
+*** Anki
+#+begin_src emacs-lisp
+  (use-package anki-editor
+    :straight t)
+#+end_src
+
+*** Mingus
+#+begin_src emacs-lisp
+  (use-package mingus
+  :straight t)
+#+end_src
+
+** Disabled
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+*** Completion at point
+#+begin_src emacs-lisp
+  (setq tab-always-indent 'complete)
+#+end_src
+
+https://with-emacs.com/posts/tutorials/customize-completion-at-point/
+
+#+begin_src emacs-lisp
+  (autoload 'ffap-file-at-point "ffap")
+  (defun complete-path-at-point+ ()
+    "Return completion data for UNIX path at point."
+    (let ((fn (ffap-file-at-point))
+          (fap (thing-at-point 'filename)))
+      (when (and (or fn (equal "/" fap))
+                 (save-excursion
+                   (search-backward fap (line-beginning-position) t)))
+        (list (match-beginning 0)
+              (match-end 0)
+              #'completion-file-name-table :exclusive 'no))))
+
+  (add-hook 'completion-at-point-functions
+            #'complete-path-at-point+
+            'append)
+#+end_src
+
+#+results:
+| tags-completion-at-point-function | complete-path-at-point+ |
+
+*** Matrix
+#+begin_src emacs-lisp
+  (use-package matrix-client
+    :straight (matrix-client :host github
+                             :repo "alphapapa/matrix-client.el"))
+#+end_src
+
+** Provide
+#+begin_src emacs-lisp :noweb yes
+  (provide 'init)
+  ;;; init.el ends here
+#+end_src
