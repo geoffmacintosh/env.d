@@ -1463,11 +1463,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 *** iBuffer
 **** Introduction
-#+begin_src emacs-lisp :tangle ibuffer.el
+#+begin_src emacs-lisp
   (use-package ibuffer
     :straight nil
     :config
-    <<filters>>
+    <<ibuffer-filters>>
     :bind ("C-x C-b" . ibuffer)
     :custom
     (ibuffer-expert t))
@@ -1475,7 +1475,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 **** Filters
 :PROPERTIES:
-:header-args: :noweb-ref filters
+:header-args: :noweb-ref ibuffer-filters
 :END:
 
 #+begin_src emacs-lisp
@@ -1498,7 +1498,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 **** Defaults
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
   (defun actuator-ibuffer-setup ()
     "Setup ibuffer defaults."
     (require 'ibuf-ext)
@@ -1582,7 +1582,7 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     :config
     <<shortcuts>>
     <<faces>>
-    <<filters>>
+    <<elfeed-filters>>
     <<load-quit>>
     <<mark-all-as-read>>)
 #+end_src
@@ -1608,7 +1608,7 @@ I built a few shortcuts to switch between different tag views that I commonly us
 
 **** Filters                                     :ignore:
 :PROPERTIES:
-:header-args: :noweb-ref filters :tangle no :results output silent
+:header-args: :noweb-ref elfeed-filters :tangle no :results output silent
 :END:
 Filters are kind of the star of Elfeed. I mostly use them to remove items that I don't want to see (or already see in other contexts---podcasts for example). I think it's all pretty straightforward. The only thing of note that I do is adding a debug tag to each hook that hides things. That way I can tell which filter it is that's causing problems when I make a stupid typo and suddenly a specific filter matches all entries.
 
@@ -1845,11 +1845,6 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 #+end_src
 
 **** Bookmarks
-:PROPERTIES:
-:header-args: :tangle yes :results output silent
-:ID:       E0275FCE-6275-42E6-B22A-0CEFD19D7FDA
-:END:
-
 #+begin_src emacs-lisp
   (use-package eshell-bookmark
     :straight t
@@ -1942,11 +1937,6 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 #+end_src
 
 **** Z
-:PROPERTIES:
-:header-args: :tangle yes :results output silent
-:ID:       6A6BFA1C-6CA9-4AD8-A76B-1478A47CD9AE
-:END:
-
 #+begin_src emacs-lisp
   (use-package eshell-z
     :straight t
