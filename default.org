@@ -35,10 +35,11 @@
   mpd_music_dir = ~/Music/beets
 
   progressbar_look = "─░─"
-  display_volume_level = "no"
-  user_interface = "alternative"
+  display_volume_level = no
+  user_interface = alternative
   ignore_leading_the = yes
   media_library_hide_album_dates = yes
+  media_library_primary_tag = album_artist
 #+end_src
 
 * MPD
