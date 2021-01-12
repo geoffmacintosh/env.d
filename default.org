@@ -173,8 +173,15 @@
 
   [diff]
           renameLimit = 5000
+
   [http]
   #	sslcainfo = ~/.nix-profile/etc/ssl/certs/ca-bundle.crt
+
+  [pull]
+          rebase = false
+
+  [init]
+          defaultBranch = main
 #+end_src
 * Fish
 :PROPERTIES:
