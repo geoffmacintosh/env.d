@@ -183,6 +183,10 @@
 
   [init]
           defaultBranch = main
+
+  [fetch]
+          prune = true
+          pruneTags = true
 #+end_src
 * Fish
 :PROPERTIES:
