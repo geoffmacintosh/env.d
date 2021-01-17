@@ -701,7 +701,7 @@ Plain Font
     ("C-c a" . org-agenda)
     ("C-c l" . org-store-link)
     :custom
-    (org-display-custom-times t)
+    ;;(setq-local org-display-custom-times nil)
     ;;(org-time-stamp-custom-formats
     ;; '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
     (org-startup-folded 'content)
