@@ -986,6 +986,15 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
+                 '("c" "Current" entry
+                   (file+olp+datetree "activity.org")
+                   "* %^{Task} %^g"
+                   :clock-in)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
                  `("w" "Watched Film" entry
                    (file+olp+datetree ,(expand-file-name "watch-log.org" org-directory))
                    "* %^{Title} (%^{Year}) %^{Series}p
