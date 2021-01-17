@@ -77,8 +77,11 @@
     :hook (after-init . exec-path-from-shell-initialize))
 #+end_src
 
-** Enabled
-*** Pulse Line
+* Enabled
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
+:END:
+** Pulse Line
 #+begin_src emacs-lisp
   (defun pulse-line (&rest _)
         "Pulse the current line."
@@ -89,17 +92,17 @@
     (advice-add command :after #'pulse-line))
 #+end_src
 
-*** Read only
+** Read only
 #+begin_src emacs-lisp
   (setq view-read-only t)
 #+end_src
-*** Org Link Minor Mode
+** Org Link Minor Mode
 #+begin_src emacs-lisp
   (use-package org-link-minor-mode
     :straight t
     :hook (emacs-lisp-mode . org-link-minor-mode))
 #+end_src
-*** Garbage Collection
+** Garbage Collection
 #+name: garbage-collection
 #+begin_src emacs-lisp :tangle no
   (setq gc-cons-threshold (* 5000 1024 1024))
@@ -114,7 +117,7 @@
     (garbage-collect))
   (add-hook 'after-init-hook #'actuator-restore-gc-cons-threshold)
 #+end_src
-*** Debug on Error
+** Debug on Error
 #+name: debug-on-error
 #+begin_src emacs-lisp :tangle no
   (setq debug-on-error t)
@@ -126,7 +129,7 @@
   (add-hook 'after-init-hook #'actuator-stop-debug-on-error)
 #+end_src
 
-*** Just one space
+** Just one space
 #+begin_src emacs-lisp
   (defun actuator-just-one-space ()
     "Insert just one space, killing ALL whitespace."
@@ -135,7 +138,7 @@
 
   (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space)
 #+end_src
-*** Unfill paragraph
+** Unfill paragraph
 #+begin_src emacs-lisp
   (defun actuator-unfill-paragraph ()
     "Unfills a paragraph."
@@ -144,7 +147,7 @@
       (fill-paragraph)))
   (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
 #+end_src
-*** Hippie Expand
+** Hippie Expand
 
 #+begin_src emacs-lisp
   (use-package smart-tab
@@ -191,49 +194,49 @@
     (hippie-expand 0))
   (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
 #+end_src
-*** Fish Mode
+** Fish Mode
 #+begin_src emacs-lisp
   (use-package fish-mode
     :straight t)
 #+end_src
-*** Ledger Mode
+** Ledger Mode
 #+begin_src emacs-lisp
   (use-package ledger-mode
     :straight t
     :config
     (setq ledger-default-date-format ledger-iso-date-format))
 #+end_src
-*** Markdown Mode
+** Markdown Mode
 #+begin_src emacs-lisp
     (use-package markdown-mode
       :straight t)
 #+end_src
-*** YAML Mode
+** YAML Mode
 #+begin_src emacs-lisp
     (use-package yaml-mode
       :straight t)
 #+end_src
-*** TOML Mode
+** TOML Mode
 #+begin_src emacs-lisp
     (use-package toml-mode
       :straight t)
 #+end_src
-*** Lua Mode
+** Lua Mode
 #+begin_src emacs-lisp
     (use-package lua-mode
       :straight t)
 #+end_src
-*** Gitignore Mode
+** Gitignore Mode
 #+begin_src emacs-lisp
     (use-package gitignore-mode
       :straight t)
 #+end_src
-*** Gitconfig Mode
+** Gitconfig Mode
 #+begin_src emacs-lisp
   (use-package gitconfig-mode
     :straight t)
 #+end_src
-*** Nov.el
+** Nov.el
 #+begin_src emacs-lisp
   (use-package nov
     :straight t
@@ -249,12 +252,12 @@
     :custom
     (nov-text-width 65))
 #+end_src
-*** Ripgrep
+** Ripgrep
 #+begin_src emacs-lisp
   (use-package rg
     :straight t)
 #+end_src
-*** Project
+** Project
 #+begin_src emacs-lisp
   (use-package project
     :straight t)
@@ -263,12 +266,12 @@
 `project-find-file', `project-find-regexp' and
 `project-or-external-find-regexp' use the current API, and thus
 will work in any project that has an adapter.
-*** HTMLize
+** HTMLize
 #+begin_src emacs-lisp
   (use-package htmlize
     :straight t)
 #+end_src
-*** Personal Stuff
+** Personal Stuff
 
 #+begin_src emacs-lisp
   (setq user-full-name "Geoff MacIntosh")
@@ -277,7 +280,7 @@ will work in any project that has an adapter.
   (setq calendar-longitude [52 42 west])
 #+end_src
 
-*** Unfiled Settings
+** Unfiled Settings
 :PROPERTIES:
 :ID:       3659786E-6B2D-4AF8-8901-434068730FC7
 :END:
@@ -407,7 +410,7 @@ From  emacs-plus:
   (actuator-frame-init)
 #+end_src
 
-*** Misc
+** Misc
 
 #+begin_src emacs-lisp
   (use-package recentf
@@ -506,7 +509,7 @@ Plain Font
                       (time-subtract after-init-time before-init-time)))
              gcs-done))
 #+end_src
-*** Eliminate frame title
+** Eliminate frame title
 #+begin_src emacs-lisp
   (setq ns-use-proxy-icon nil)
   (setq-default frame-title-format nil)
@@ -521,7 +524,7 @@ Plain Font
     (set-frame-parameter (selected-frame) 'title nil))
   (add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
 #+end_src
-*** Autorevert
+** Autorevert
 #+begin_src emacs-lisp
   (use-package autorevert
     :straight nil
@@ -536,7 +539,7 @@ Plain Font
     (revert-without-query t)
     (auto-revert-check-vc-info nil))
 #+end_src
-*** Eldoc
+** Eldoc
 
 [[https://www.reddit.com/r/emacs/comments/c1zl0s/weekly_tipstricketc_thread/ergullj/?context=1][Improve eldoc's documentation]]
 
@@ -557,7 +560,7 @@ Plain Font
          (when (not (string= "" oneline))
            (concat " " (propertize oneline 'face 'italic)))))))
 #+end_src
-*** Modeline
+** Modeline
 
 #+begin_src emacs-lisp :tangle no
   (setq-default mode-line-format
@@ -579,15 +582,15 @@ Plain Font
                  (propertize (downcase " %m ") 'face 'font-lock-string-face))))
 #+end_src
 
-**** References
+*** References
  - [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
 
-*** Forge
+** Forge
 #+begin_src emacs-lisp
   (use-package forge
     :straight t)
 #+end_src
-*** Ivy
+** Ivy
 
 #+begin_src emacs-lisp
   (use-package prescient
@@ -665,7 +668,7 @@ Plain Font
   (ivy-prescient-mode 1))
 #+end_src
 
-*** Minions
+** Minions
 #+begin_src emacs-lisp :tangle no
   (use-package minions
     :straight t
@@ -673,8 +676,7 @@ Plain Font
     (minions-mode))
 #+end_src
 
-
-*** Org
+** Org
 
 #+begin_src emacs-lisp
   (defvar org-directory "~/org")
@@ -881,7 +883,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 #+results:
 | org-id-update-id-locations | org-refile-get-targets | recentf-cleanup |
 
-*** Cliplink
+** Cliplink
 :PROPERTIES:
 :ID:       B592B761-0FC7-4954-927A-189783720DD2
 :END:
@@ -901,7 +903,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 #+results:
 : org-cliplink
 
-*** Attach
+** Attach
 :PROPERTIES:
 :ID:       7542A761-77AB-4B42-B25E-33BFE7A45FE9
 :END:
@@ -939,7 +941,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
       )
 #+end_src
 
-*** Clock
+** Clock
 
 #+begin_src emacs-lisp
   (use-package org-clock
@@ -963,7 +965,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     (org-mru-clock-completing-read 'ivy-completing-read))
 #+end_src
 
-*** Capture Templates
+** Capture Templates
 :PROPERTIES:
 :ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
 :END:
@@ -1022,7 +1024,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
                    :kill-buffer)))
 #+end_src
 
-*** Todos
+** Todos
 #+begin_src emacs-lisp
   (use-package org-agenda
     :straight nil
@@ -1030,7 +1032,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     (org-agenda-todo-list-sublevels nil))
 #+end_src
 
-*** Links
+** Links
 #+begin_src emacs-lisp
   (use-package ol
     :straight nil
@@ -1041,7 +1043,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
                             (file . find-file))))
 #+end_src
 
-*** Agenda
+** Agenda
 
 #+begin_src emacs-lisp
   (setq org-agenda-custom-commands
@@ -1062,7 +1064,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 
 #+results:
 
-*** Holidays
+** Holidays
 :PROPERTIES:
 :CATEGORY: Holiday
 :END:
@@ -1073,7 +1075,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
   (setq holiday-oriental-holidays nil)
   ;;(setq holiday-other-holidays '((lunar-phases)))
 #+end_src
-*** Habit
+** Habit
 
 #+begin_src emacs-lisp
   (use-package org-habit
@@ -1084,7 +1086,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     (org-habit-show-habits-only-for-today nil))
 #+end_src
 
-*** Checklist
+** Checklist
 
 #+begin_src emacs-lisp :tangle no
   (use-package org-checklist
@@ -1095,12 +1097,12 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 
 #+results:
 : t
-*** Backends
+** Backends
 #+begin_src emacs-lisp
   ;;(setq org-export-backends '(html icalendar latex))
 #+end_src
 
-*** Publish Project
+** Publish Project
 #+begin_src emacs-lisp
   (setq org-publish-project-alist
         `(("blog-org"
@@ -1119,7 +1121,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
           ("blog" :components ("blog-org" "blog-images"))))
 #+end_src
 
-*** Hugo
+** Hugo
 #+begin_src emacs-lisp
   (use-package ox-hugo
     :straight t
@@ -1140,7 +1142,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     "* Metadata                       :noexport:blog:unpublished:")
 #+end_src
 
-*** Prodigy
+** Prodigy
 #+begin_src emacs-lisp
   (use-package prodigy
     :straight t
@@ -1154,7 +1156,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
      :kill-process-buffer-on-stop t))
 #+end_src
 
-*** Ignore headlines
+** Ignore headlines
 #+begin_src emacs-lisp :tangle no
   (use-package ox-extra
     :straight nil
@@ -1168,7 +1170,7 @@ Then tag a headline with ~:ignore:~ to avoid the headline being exported. The co
 *References*
 - [[https://emacs.stackexchange.com/questions/38184/org-mode-ignore-heading-when-exporting-to-latex#41685][StackExchange]]
 
-*** Savehist
+** Savehist
 #+begin_src emacs-lisp
   (use-package savehist
     :straight nil
@@ -1236,7 +1238,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (add-hook 'after-save-hook #'savehist-save)
 #+end_src
 
-*** Skeleton
+** Skeleton
 You can define a skeleton to expand as an abbrev expansion. Add it to the list via ~M-x edit-abbrevs~ as shown here
 
 #+begin_example
@@ -1256,7 +1258,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     "(use-package " str "\n  :straight nil\n " _ "  :custom)")
 #+end_src
 
-*** Spell check
+** Spell check
 
 #+begin_src emacs-lisp
 ;; comment
@@ -1294,7 +1296,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 
 #+results:
 
-*** Server
+** Server
 
 #+begin_src emacs-lisp
   (use-package server
@@ -1306,12 +1308,12 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 
 #+results:
 
-*** Help
+** Help
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-h x k") #'describe-key)
 #+end_src
 
-*** Delete by Moving to Trash
+** Delete by Moving to Trash
 #+begin_src emacs-lisp
   (defun system-move-file-to-trash (file)
     "Move the file to trash via the `trash` command-line tool."
@@ -1322,7 +1324,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
   (setq delete-by-moving-to-trash t)
 #+end_src
 
-*** Keyboard Macros
+** Keyboard Macros
 
 - ~C-x (~ Start defining a keyboard macro.
 - ~C-x )~ End a keyboard macro.
@@ -1334,7 +1336,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 - ~M-x insert-kbd-macro~ Insert the most recent macro into the buffer as lisp. That’s how you save it.
 - ~C-x C-k 0-9~ and ~C-x C-k A-Z~ are reserved for keyboard macros
 
-**** Make Checklist
+*** Make Checklist
 #+begin_src emacs-lisp
 (fset 'actuator-make-checklist
    (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
@@ -1345,12 +1347,12 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 #+results:
 : actuator-make-checklist
 
-**** References
+*** References
 - [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
 - [[https://www.emacswiki.org/emacs/KeyboardMacros][EmacsWiki: Keyboard Macros]] [2020-06-08 Mon]
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
 
-*** Magit
+** Magit
 #+begin_src emacs-lisp
   (use-package magit
     :straight t
@@ -1397,7 +1399,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
       (jump-to-register :magit-fullscreen))
 #+end_src
 
-*** Minibuffer Resize
+** Minibuffer Resize
 #+begin_src emacs-lisp
   (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
 
@@ -1406,7 +1408,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
             '((org-document-title :height 1.0))))
 #+end_src
 
-*** Cancel GC in Minibuffer
+** Cancel GC in Minibuffer
 #+begin_src emacs-lisp
   (defun actuator-minibuffer-setup-hook ()
     (setq gc-cons-threshold (* 500 1024 1024)))
@@ -1418,7 +1420,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
   (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
 #+end_src
 
-*** Truncate shit TEST
+** Truncate shit TEST
 #+begin_src emacs-lisp
   (setq truncate-partial-width-windows nil)
   (toggle-truncate-lines 1) ; Don't wrap lines by default
@@ -1426,11 +1428,11 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
   (add-hook 'prog-mode-hook    #'auto-fill-mode)
   (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
 #+end_src
-*** Web
-**** Introduction                                :ignore:
+** Web
+*** Introduction                                  :ignore:
 I don't use Emacs to browse the web, although it can be done, and I guess people do. I do a few browser-related things in it though, including storing my bookmarks in an Org-mode file and such. Here's what I've changed.
 
-**** Set up browsing handlers                    :ignore:
+*** Set up browsing handlers                      :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
 #+begin_src emacs-lisp
@@ -1442,7 +1444,7 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
                            ("twitch"      . actuator-browse-video))))
 #+end_src
 
-**** Handle video urls                           :ignore:
+*** Handle video urls                             :ignore:
 I want video links to be opened in MPV. This helps my battery life as well as my personal life because I don't have to visit YouTube. This requires [[https://mpv.io][MPV]] to be installed, which is best installed via [[http://brew.sh][Brew]] on macOS. I've tried to use [[https://nixos.org/download.html][Nix]], but it doesn't work well.
 
 #+begin_src emacs-lisp
@@ -1452,7 +1454,7 @@ I want video links to be opened in MPV. This helps my battery life as well as my
       (start-process "mpv" nil "mpv" url))
 #+end_src
 
-**** Simple HTML renderer                        :ignore:
+*** Simple HTML renderer                          :ignore:
 SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts and Nov.el books. Normally it wraps at the page width, but that can be adjusted.
 
 #+begin_src emacs-lisp
@@ -1462,7 +1464,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (shr-width 75))
 #+end_src
 
-**** Open links in background                    :ignore:
+*** Open links in background                      :ignore:
 
 #+begin_src emacs-lisp
   (when (memq system-type '(darwin))
@@ -1470,8 +1472,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (setq browse-url-generic-program "open")
     (setq browse-url-generic-args '("--background")))
 #+end_src
-*** iBuffer
-**** Introduction
+** iBuffer
+*** Introduction
 #+begin_src emacs-lisp
   (use-package ibuffer
     :straight nil
@@ -1482,7 +1484,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (ibuffer-expert t))
 #+end_src
 
-**** Filters
+*** Filters
 :PROPERTIES:
 :header-args: :noweb-ref ibuffer-filters
 :END:
@@ -1505,7 +1507,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+results:
 | default | (Misc (name . ^\*.*\*$)) | (Magit (name . magit)) | (Src (name . *Org Src)) | (Dired (mode . dired-mode)) | (My Org (directory . /Users/g/org)) | (Config (directory . /Users/g/.config)) |
 
-**** Defaults
+*** Defaults
 
 #+begin_src emacs-lisp
   (defun actuator-ibuffer-setup ()
@@ -1517,7 +1519,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
 #+end_src
 
-*** Copy sentence
+** Copy sentence
 #+begin_src emacs-lisp
   (defun actuator-copy-sentence ()
     "Save the entire sentence to the clipboard/kill ring."
@@ -1528,7 +1530,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
       (copy-region-as-kill nil nil t)))
 #+end_src
 
-*** Auctex
+** Auctex
 #+begin_src emacs-lisp
   (use-package tex
     :straight auctex
@@ -1537,7 +1539,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (TeX-source-correlate-start-server t))
 #+end_src
 
-*** Hydra
+** Hydra
 
 #+begin_src emacs-lisp
   (use-package hydra
@@ -1546,7 +1548,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (hydra-hint-display-type 'lv))
 #+end_src
 
-*** Web Mode
+** Web Mode
 
 #+begin_src emacs-lisp
   (use-package web-mode
@@ -1562,7 +1564,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (web-mode-css-indent-offset 2))
 #+end_src
 
-*** Undo
+** Undo
 - [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
 
   #+begin_src emacs-lisp
@@ -1570,8 +1572,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (global-set-key (kbd "s-Z") #'undo-redo)
   #+end_src
 
-*** Elfeed
-**** Introduction
+** Elfeed
+*** Introduction
 Usually people start these things out by explaining what RSS is and all that. I don't think I'll be doing that. I like RSS because I like knowing when new things happen, and I don't want to check a bunch of different services all the time. Beyond that, I also really like the idea of being able to filter out feed items that don't appeal to me. I don't mind if I can only read stuff on my computer, so I haven't set up any sort of sync with my phone, although it should be possible to do that.
 
 I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-package declaration, and I've pulled all the individual functions out into their own bits so as to talk about them separately.
@@ -1595,10 +1597,10 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     <<load-quit>>
     <<mark-all-as-read>>)
 #+end_src
-**** Open videos in MPV                          :ignore:
+*** Open videos in MPV                            :ignore:
 One feature that people talk about a lot is setting up Elfeed to handle video-feeds separately from others, allowing you to avoid opening---say---a YouTube link in MPV instead of a browser window. That's pretty nice if you think YouTube's site is bad. There are a variety of ways to do that, but my current solution is to adjust how Emacs handles URLs, as documented in my Web config. The advantage of my system is that it affects all links to YouTube, regardless of where they are. It's a general solution, not an Elfeed solution.
 
-**** Shortcuts                                   :ignore:
+*** Shortcuts                                     :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref shortcuts :tangle no :results output silent
 :END:
@@ -1615,7 +1617,7 @@ I built a few shortcuts to switch between different tag views that I commonly us
     (bookmark-jump "elfeed-unread"))
 #+end_src
 
-**** Filters                                     :ignore:
+*** Filters                                       :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref elfeed-filters :tangle no :results output silent
 :END:
@@ -1674,7 +1676,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
                                 :remove 'unread))
 #+end_src
 
-**** Load and quit Elfeed nicely                 :ignore:
+*** Load and quit Elfeed nicely                   :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref load-quit :tangle no :results output silent
 :END:
@@ -1704,7 +1706,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
     (jump-to-register :elfeed-fullscreen))
 #+end_src
 
-**** Mark all as read                            :ignore:
+*** Mark all as read                              :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref mark-all-as-read :tangle no :results output silent
 :END:
@@ -1718,7 +1720,7 @@ You can just go post-by-post and use ~r~ to mark individual posts as read. I sto
       (elfeed-search-untag-all-unread))
 #+end_src
 
-**** Faces                                       :ignore:
+*** Faces                                         :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref faces :tangle no :results output silent
 :END:
@@ -1754,7 +1756,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     :group 'actuator-elfeed)
 #+end_src
 
-**** Org-elfeed
+*** Org-elfeed
 #+begin_src emacs-lisp
   (use-package elfeed-org
     :straight t
@@ -1767,11 +1769,11 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+end_src
 
-**** Changes                                   :noexport:
-***** Wednesday May 20, 2020
+*** Changes                                     :noexport:
+**** Wednesday May 20, 2020
 - Published
 
-**** Captar
+*** Captar
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
@@ -1784,14 +1786,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
                    :empty-lines 1)))
 #+end_src
 
-
-*** Encryption
+** Encryption
 #+begin_src emacs-lisp
   (setq epa-file-select-keys 1)
   (epa-file-enable)
 #+end_src
-*** Eshell
-**** Introduction
+** Eshell
+*** Introduction
 
 #+begin_src emacs-lisp
   (use-package eshell
@@ -1807,7 +1808,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (eshell-banner-message ""))
 #+end_src
 
-**** Shortcuts
+*** Shortcuts
 :PROPERTIES:
 :header-args: :noweb-ref shortcuts :results output silent :tangle no
 :END:
@@ -1819,7 +1820,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defalias 'eshell/vv 'view-file)
 #+end_src
 
-**** iMenu
+*** iMenu
 :PROPERTIES:
 :header-args: :noweb-ref imenu :results output silent :tangle no
 :END:
@@ -1836,7 +1837,7 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
   (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
 #+end_src
 
-**** Smart Shell
+*** Smart Shell
 :PROPERTIES:
 :header-args: :noweb-ref smart-shell :results output silent :tangle no
 :END:
@@ -1853,14 +1854,14 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
   (setq eshell-hist-ignoredups t)
 #+end_src
 
-**** Bookmarks
+*** Bookmarks
 #+begin_src emacs-lisp
   (use-package eshell-bookmark
     :straight t
     :hook (eshell-mode . eshell-bookmark-setup))
 #+end_src
 
-**** Completion
+*** Completion
 :PROPERTIES:
 :header-args: :tangle no :results output silent
 :ID:       54541C5E-54E8-4D26-8D66-440E11E24A0E
@@ -1945,7 +1946,7 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
     :hook (eshell-mode . actuator-fish-completion))
 #+end_src
 
-**** Z
+*** Z
 #+begin_src emacs-lisp
   (use-package eshell-z
     :straight t
@@ -1958,14 +1959,14 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 #+end_src
 
 
-**** History references
+*** History references
 #+begin_src emacs-lisp
   (add-hook 'eshell-expand-input-functions
              #'eshell-expand-history-references)
 #+end_src
 
 
-**** Extra
+*** Extra
 
 https://brettterpstra.com/2019/11/11/fish-further-exploration/
 
@@ -2092,8 +2093,8 @@ https://github.com/dieggsy/esh-autosuggest/tree/972094808d231a86dc6e43862191167b
 https://github.com/mauforonda/emacs/blob/master/readme.org
 http://xenodium.com/more-reusable-emacs-shell-command-history/
 
-*** Dired
-**** Introduction
+** Dired
+*** Introduction
 
 #+begin_src emacs-lisp
   (use-package dired
@@ -2121,7 +2122,7 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
     :hook (dired-mode . dired-hide-details-mode))
 #+end_src
 
-**** Dired subtree
+*** Dired subtree
 
 #+begin_src emacs-lisp
   (use-package dired-subtree
@@ -2131,7 +2132,7 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
                ("i" . dired-subtree-cycle)))
 #+end_src
 
-**** Dired git info
+*** Dired git info
 
 #+begin_src emacs-lisp
   (use-package dired-git-info
@@ -2141,7 +2142,7 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
                 (")" . dired-git-info-mode)))
 #+end_src
 
-**** Diredfl
+*** Diredfl
 
 #+begin_src emacs-lisp
   (use-package diredfl
@@ -2151,7 +2152,7 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
     (diredfl-global-mode 1))
 #+end_src
 
-**** Dired Open
+*** Dired Open
 
 #+begin_src emacs-lisp
   (defun actuator-dired-open ()
@@ -2165,19 +2166,19 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
   (bind-key "e" #'actuator-dired-open dired-mode-map)
 #+end_src
 
-*** Anki
+** Anki
 #+begin_src emacs-lisp
   (use-package anki-editor
     :straight t)
 #+end_src
 
-*** Mingus
+** Mingus
 #+begin_src emacs-lisp
   (use-package mingus
   :straight t)
 #+end_src
 
-*** Split Windows
+** Split Windows
 #+begin_src emacs-lisp
     (defun actuator-split-window-right ()
       "Replacement for `split-window-right'.
@@ -2204,11 +2205,11 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
   (global-set-key (kbd "C-x 2") #'actuator-split-window-below)
 #+end_src
 
-** Disabled
+* Disabled
    :PROPERTIES:
    :header-args: :tangle no
    :END:
-*** Completion at point
+** Completion at point
 #+begin_src emacs-lisp
   (setq tab-always-indent 'complete)
 #+end_src
@@ -2236,14 +2237,17 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 #+results:
 | tags-completion-at-point-function | complete-path-at-point+ |
 
-*** Matrix
+** Matrix
 #+begin_src emacs-lisp
   (use-package matrix-client
     :straight (matrix-client :host github
                              :repo "alphapapa/matrix-client.el"))
 #+end_src
 
-** Provide
+* Provide
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
+:END:
 #+begin_src emacs-lisp :noweb yes
   (provide 'init)
   ;;; init.el ends here
