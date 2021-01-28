@@ -32,7 +32,7 @@
 #+begin_src conf
   mpd_host = localhost
   mpd_port = 6600
-  mpd_music_dir = ~/Music/beets
+  mpd_music_dir = "~/Music/Music Files"
 
   progressbar_look = "─░─"
   display_volume_level = no
@@ -48,8 +48,8 @@
 :END:
 
 #+begin_src conf
-  music_directory    "~/Music/beets"
-  playlist_directory "~/Music/playlists"
+  music_directory    "~/Music/Music Files"
+  playlist_directory "~/Music/Playlists"
   db_file            "~/.mpd/database"
   pid_file           "~/.mpd/pid"
   state_file         "~/.mpd/state"
@@ -71,7 +71,7 @@
 :END:
 
 #+begin_src yaml
-  directory: ~/Music/Music/
+  directory: "~/Music/Music Files"
   library: ~/.config/beets/musiclibrary.blb
   import:
     move: yes
@@ -97,6 +97,7 @@
 #+begin_src text :tangle ~/.hushlogin
   # Silence
 #+end_src
+
 * Tmux
 #+begin_src conf :tangle ~/.tmux.conf
   set-window-option -g mode-keys emacs
@@ -104,10 +105,12 @@
   set-option -g prefix C-']'
   bind-key r source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded"
 #+end_src
+
 * Youtube DL
 #+begin_src conf :tangle ~/.config/youtube-dl/config
   -o ~/Downloads/%(title)s-%(id)s.%(ext)s
 #+end_src
+
 * SSH
 
 #+begin_src conf
@@ -346,3 +349,20 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 
 *References*
 - [[https://unix.stackexchange.com/questions/10251/how-do-i-split-a-flac-with-a-cue][command line - How do I split a flac with a cue? - Unix & Linux Stack Exchange]] [2020-05-09 Sat]
+
+* Kitty
+:PROPERTIES:
+:header-args: :tangle ~/.config/kitty/kitty.conf
+:END:
+
+#+begin_src conf
+  cursor_blink_interval 0
+  shell fish
+  close_on_child_death yes
+  editor emacs
+  tab_bar_style separator
+  tab_separator "  "
+  # tab_activity_symbol "*"
+  foreground #000000
+  background #FFFFFF
+#+end_src
