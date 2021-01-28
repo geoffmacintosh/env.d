@@ -3,7 +3,7 @@
 
 * Early Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/early-init.el :comments link :noweb yes
+:header-args: :tangle ~/.config/emacs/early-init.el :comments link :noweb yes :mkdirp yes
 :END:
 #+begin_src emacs-lisp
   ;;; early-init.el -*- lexical-binding: t; no-byte-compile: t; -*-
@@ -20,7 +20,7 @@
 
 * Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
+:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes :mkdirp yes
 :END:
 ** Lexical Binding
 #+begin_src emacs-lisp
@@ -236,6 +236,7 @@
 *** Nov.el
 #+begin_src emacs-lisp
   (use-package nov
+    :disabled t
     :straight t
     :config
 
@@ -429,7 +430,7 @@ From  emacs-plus:
 Plain Font
 
 #+begin_src emacs-lisp
-  (load-theme 'actuator t)
+  ;;(load-theme 'actuator t)
 
   (blink-cursor-mode -1)
   (setq cursor-type 'box)
@@ -679,23 +680,25 @@ Plain Font
 #+begin_src emacs-lisp
   (defvar org-directory "~/org")
   (use-package org
+    :straight t
     :config
     (org-indent-mode 1)
     (add-to-list 'org-babel-default-header-args
-                 '(:mkdirp . "yes"))
+		 '(:mkdirp . "yes"))
     (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((emacs-lisp . t)
-                                   (shell      . t)))
+				 '((emacs-lisp . t)
+				   (shell      . t)))
     (defun actuator-update-all-dynamic-blocks ()
       "Hi"
       (org-dblock-update 1))
     (add-hook 'org-mode-hook
-              (lambda ()
-                (add-hook 'before-save-hook
-                          'actuator-update-all-dynamic-blocks nil
-                          'make-it-local)))
+	      (lambda ()
+		(add-hook 'before-save-hook
+			  'actuator-update-all-dynamic-blocks nil
+			  'make-it-local)))
     (add-to-list 'org-default-properties "DIR")
     (add-to-list 'org-default-properties "header-args")
+    (add-to-list 'org-babel-default-header-args '(:mkdirp . "yes"))
     :bind
     ("C-c c" . counsel-org-capture)
     ("C-c a" . org-agenda)
@@ -716,7 +719,7 @@ Plain Font
     (org-image-actual-width 300)
     (org-fontify-done-headline t)
     (org-structure-template-alist '(("e" . "src emacs-lisp")
-                                    ("s" . "src shell")))
+				    ("s" . "src shell")))
     (org-log-done 'time)
     (org-log-into-drawer t)
     (org-closed-keep-when-no-todo t)
@@ -732,18 +735,21 @@ Plain Font
     (org-special-ctrl-k t)
     (org-special-ctrl-a/e t)
     (org-blank-before-new-entry '((heading         . t)
-                                  (plain-list-item . auto)))
+				  (plain-list-item . auto)))
     (org-use-property-inheritance t)
     (org-modules nil)
     (org-tag-persistent-alist '(("noexport")
-                                ("ignore")
-                                ("unpublished")
-                                ("blog")
-                                ("tbd")))
+				("ignore")
+				("unpublished")
+				("blog")
+				("tbd")))
     :hook
     (org-mode . visual-line-mode)
     (org-mode . (lambda () (electric-indent-local-mode -1))))
 #+end_src
+
+#+results:
+: org-store-link
 
 #+begin_src emacs-lisp
   (setq org-agenda-files `(,org-directory
@@ -1569,6 +1575,7 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
 
 #+begin_src emacs-lisp
   (use-package elfeed
+    :disabled t
     :straight t
     :bind
     (("C-x w" . actuator-elfeed-load-db-and-open)
@@ -1749,6 +1756,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (use-package elfeed-org
     :straight t
+    :disabled t
     :after elfeed
     :config
     (elfeed-org)
