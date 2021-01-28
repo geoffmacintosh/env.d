@@ -71,10 +71,10 @@
 :END:
 
 #+begin_src yaml
-  directory: ~/Music/beets
+  directory: ~/Music/Music/
   library: ~/.config/beets/musiclibrary.blb
   import:
-    copy: yes
+    move: yes
   plugins: fetchart ftintitle mpdupdate smartplaylist embedart
   embedart:
     auto: yes
@@ -82,10 +82,14 @@
     host: localhost
     port: 6600
   smartplaylist:
-    playlist_dir: ~/.mpd/playlists
+    playlist_dir: ~/Music/playlists
     playlists:
       - name: all.m3u
         query: ''                  # Matches all music in your library
+  playlist:
+      auto: no
+      relative_to: ~/Music
+      playlist_dir: ~/Music/playlists
 #+end_src
 
 * Hushlogin
