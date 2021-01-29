@@ -73,6 +73,8 @@
 #+begin_src yaml
   directory: "~/Music/Music Files"
   library: ~/.config/beets/musiclibrary.blb
+  original_date: yes
+  languages: en
   import:
     move: yes
   plugins: fetchart ftintitle mpdupdate smartplaylist embedart
@@ -82,14 +84,26 @@
     host: localhost
     port: 6600
   smartplaylist:
-    playlist_dir: ~/Music/playlists
+    playlist_dir: ~/Music/Playlists
     playlists:
       - name: all.m3u
         query: ''                  # Matches all music in your library
   playlist:
-      auto: no
-      relative_to: ~/Music
-      playlist_dir: ~/Music/playlists
+    auto: no
+    relative_to: ~/Music
+    playlist_dir: ~/Music/Playlists
+  replace:
+    '[\\/]': _
+    '^\.': _
+    '[\x00-\x1f]': _
+    '[<>:"\?\*\|]': _
+    '\s+$': ''
+    '^\s+': ''
+    '^-': _
+  paths:
+      default: $albumartist/$album%aunique{}/$track $title
+      singleton: Non-Album/$artist/$title
+      comp: Compilations/$album%aunique{}/$track $title
 #+end_src
 
 * Hushlogin
