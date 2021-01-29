@@ -1,5 +1,4 @@
 #+title: Emacs
-#+PROPERTY: header-args :comments link :noweb yes :padline yes
 
 * Early Init
 :PROPERTIES:
@@ -2313,13 +2312,4 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     :straight t
     :custom
     (hydra-hint-display-type 'lv))
-#+end_src
-
-* Provide
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
-:END:
-#+begin_src emacs-lisp :noweb yes
-  (provide 'init)
-  ;;; init.el ends here
 #+end_src
