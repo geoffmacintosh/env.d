@@ -986,6 +986,13 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
+* Org Randomnote
+#+begin_src emacs-lisp
+  (use-package org-randomnote
+    :straight t)
+#+end_src
+
+
 ** Org
 
 #+begin_src emacs-lisp
