@@ -982,11 +982,32 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (org-clock-mode-line-total 'auto))
 #+end_src
 
+** World Time
+#+begin_src emacs-lisp
+  (use-package time
+    :straight nil
+    :custom
+    (display-time-world-list '(("America/New_York" "New York")
+                               ("Europe/London"    "London")
+                               ("Australia/Sydney" "Sydney")
+                               ("America/Edmonton" "Calgary")
+                               ("America/St_Johns" "St. John's"))))
+#+end_src
+
+** Ediff
+#+begin_src emacs-lisp
+  (setq ediff-diff-options “”)
+  (setq ediff-custom-diff-options “-u”)
+  (setq ediff-window-setup-function ‘ediff-setup-windows-plain)
+  (setq ediff-split-window-function ‘split-window-vertically)
+#+end_src
+
+
 * Unstable packages
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
-* Org Randomnote
+** Org Randomnote
 #+begin_src emacs-lisp
   (use-package org-randomnote
     :straight t)
