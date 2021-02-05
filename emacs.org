@@ -178,9 +178,201 @@
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
 :END:
+** Read only
+#+begin_src emacs-lisp
+  (setq view-read-only t)
+#+end_src
+
 ** Reset garbage collection
 #+begin_src emacs-lisp
   <<init-garbage-collection>>
+#+end_src
+** Ctrl-Z
+#+begin_src emacs-lisp
+  (global-unset-key (kbd "C-z"))
+#+end_src
+** Just one space
+#+begin_src emacs-lisp
+  (defun actuator-just-one-space ()
+    "Insert just one space, killing ALL whitespace."
+    (interactive)
+    (just-one-space -1))
+
+  (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space)
+#+end_src
+** Unfill paragraph
+#+begin_src emacs-lisp
+  (defun actuator-unfill-paragraph ()
+    "Unfills a paragraph."
+    (interactive)
+    (let ((fill-column most-positive-fixnum))
+      (fill-paragraph)))
+  (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
+#+end_src
+** Savehist
+#+begin_src emacs-lisp
+  (use-package savehist
+    :straight nil
+    :config
+    (savehist-mode)
+    :custom
+    (history-length 1000)
+    (history-delete-duplicates t)
+    (message-log-max 1000)
+    (savehist-save-minibuffer-history t)
+    (savehist-additional-variables
+     '(buffer-name-history
+       command-history
+       compile-history
+       extended-command-history
+       file-name-history
+       file-name-history
+       global-mark-ring
+       Info-history-list
+       kill-ring
+       kmacro-ring
+       last-kbd-macro
+       minibuffer-history
+       org-link--history
+       org-read-date-history
+       org-refile-history
+       org-table-formula-history
+       org-tags-history
+       regexp-search-ring
+       register-alist
+       savehist-minibuffer-history-variables
+       shell-command-history
+       mark-ring)))
+#+end_src
+
+1. Quick fixes:
+
+   ;; the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
+
+https://github.com/syl20bnr/spacemacs/issues/9409
+
+#+begin_src emacs-lisp
+  (put 'minibuffer-history 'history-length 100)
+  (put 'kill-ring 'history-length 25)
+  (setq save-interprogram-paste-before-kill nil)
+#+end_src
+
+https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
+
+2. Unpropertize kill ring on quit
+#+begin_src emacs-lisp
+  (defun actuator-unpropertize-kill-ring ()
+    "It do thing."
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+
+  (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
+  (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
+#+end_src
+
+3. Savehist on kill only
+
+#+begin_src emacs-lisp
+  (setq savehist-autosave-interval nil)
+  (add-hook 'kill-emacs-hook #'savehist-save)
+  (add-hook 'after-save-hook #'savehist-save)
+#+end_src
+** Autorevert
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :straight nil
+    :config
+    (global-auto-revert-mode 1)
+    :custom
+    (global-auto-revert-non-file-buffers nil)
+    (auto-revert-verbose nil)
+    (auto-revert-avoid-polling t)
+    (buffer-auto-revert-by-notification t)
+    (auto-revert-interval 60)
+    (revert-without-query t)
+    (auto-revert-check-vc-info nil))
+#+end_src
+** Server
+
+#+begin_src emacs-lisp
+  (use-package server
+    :straight nil
+    :init
+    (load "server")
+    (unless (server-running-p) (server-start)))
+#+end_src
+
+#+results:
+** Undo
+- [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
+
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "s-z") #'undo-only)
+    (global-set-key (kbd "s-Z") #'undo-redo)
+  #+end_src
+** Cancel GC in Minibuffer
+#+begin_src emacs-lisp
+  (defun actuator-minibuffer-setup-hook ()
+    (setq gc-cons-threshold (* 500 1024 1024)))
+
+  (defun actuator-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
+#+end_src
+** Minibuffer Resize
+#+begin_src emacs-lisp
+  (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
+
+  (defun actuator-minibuffer-setup ()
+         (set (make-local-variable 'face-remapping-alist)
+            '((org-document-title :height 1.0))))
+#+end_src
+** Hippie Expand
+
+#+begin_src emacs-lisp
+  (use-package hippie-exp
+    :straight nil
+    :bind ("M-/" . hippie-expand)
+    :custom
+    (hippie-expand-verbose t)
+    (hippie-expand-try-functions-list
+     '(try-expand-all-abbrevs
+       try-expand-dabbrev-visible
+       try-expand-dabbrev
+       try-expand-dabbrev-all-buffers
+       try-expand-dabbrev-from-kill
+       try-complete-file-name-partially
+       try-complete-file-name
+       try-expand-line
+       try-complete-lisp-symbol-partially
+       try-complete-lisp-symbol
+       try-expand-list
+       try-expand-list-all-buffers
+       try-expand-whole-kill
+       try-expand-line-all-buffers)))
+#+end_src
+
+- try-complete-lisp-symbol has a lot of completions
+- try-expand-line-all-buffers is very slow
+
+#+begin_src emacs-lisp
+  (defun actuator-hippie-unexpand ()
+    "Remove an expansion without having to loop around."
+    (interactive)
+    (hippie-expand 0))
+  (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
+#+end_src
+
+** Open org-links in new window or not
+#+begin_src emacs-lisp
+  (use-package ol
+    :straight nil
+    :custom
+    (org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+                            (vm-imap . vm-visit-imap-folder-other-frame)
+                            (gnus . org-gnus-no-new-news)
+                            (file . find-file))))
 #+end_src
 * Stable packages
 :PROPERTIES:
@@ -190,21 +382,6 @@
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
-** Pulse Line
-#+begin_src emacs-lisp
-  (defun pulse-line (&rest _)
-        "Pulse the current line."
-        (pulse-momentary-highlight-one-line (point)))
-
-  (dolist (command '(scroll-up-command scroll-down-command
-                     recenter-top-bottom other-window))
-    (advice-add command :after #'pulse-line))
-#+end_src
-** Read only
-#+begin_src emacs-lisp
-  (setq view-read-only t)
-#+end_src
-
 ** Capture Templates
 :PROPERTIES:
 :ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
@@ -264,29 +441,6 @@
                    :kill-buffer)))
 #+end_src
 
-** Ctrl-Z
-#+begin_src emacs-lisp
-  (global-unset-key (kbd "C-z"))
-#+end_src
-
-** Just one space
-#+begin_src emacs-lisp
-  (defun actuator-just-one-space ()
-    "Insert just one space, killing ALL whitespace."
-    (interactive)
-    (just-one-space -1))
-
-  (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space)
-#+end_src
-** Unfill paragraph
-#+begin_src emacs-lisp
-  (defun actuator-unfill-paragraph ()
-    "Unfills a paragraph."
-    (interactive)
-    (let ((fill-column most-positive-fixnum))
-      (fill-paragraph)))
-  (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
-#+end_src
 ** Personal Stuff
 
 #+begin_src emacs-lisp
@@ -528,7 +682,6 @@ Plain Font
 #+begin_src emacs-lisp
   (setq ns-use-proxy-icon nil)
   (setq-default frame-title-format nil)
-
   (set-frame-parameter (selected-frame) 'title nil)
 #+end_src
 
@@ -539,99 +692,7 @@ Plain Font
     (set-frame-parameter (selected-frame) 'title nil))
   (add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
 #+end_src
-** Autorevert
-#+begin_src emacs-lisp
-  (use-package autorevert
-    :straight nil
-    :config
-    (global-auto-revert-mode 1)
-    :custom
-    (global-auto-revert-non-file-buffers nil)
-    (auto-revert-verbose nil)
-    (auto-revert-avoid-polling t)
-    (buffer-auto-revert-by-notification t)
-    (auto-revert-interval 60)
-    (revert-without-query t)
-    (auto-revert-check-vc-info nil))
-#+end_src
-** Savehist
-#+begin_src emacs-lisp
-  (use-package savehist
-    :straight nil
-    :config
-    (savehist-mode)
-    :custom
-    (history-length 1000)
-    (history-delete-duplicates t)
-    (message-log-max 1000)
-    (savehist-save-minibuffer-history t)
-    (savehist-additional-variables
-     '(buffer-name-history
-       command-history
-       compile-history
-       extended-command-history
-       file-name-history
-       file-name-history
-       global-mark-ring
-       Info-history-list
-       kill-ring
-       kmacro-ring
-       last-kbd-macro
-       minibuffer-history
-       org-link--history
-       org-read-date-history
-       org-refile-history
-       org-table-formula-history
-       org-tags-history
-       regexp-search-ring
-       register-alist
-       savehist-minibuffer-history-variables
-       shell-command-history
-       mark-ring)))
-#+end_src
 
-1. Quick fixes:
-
-   ;; the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
-
-https://github.com/syl20bnr/spacemacs/issues/9409
-
-#+begin_src emacs-lisp
-  (put 'minibuffer-history 'history-length 100)
-  (put 'kill-ring 'history-length 25)
-  (setq save-interprogram-paste-before-kill nil)
-#+end_src
-
-https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
-
-2. Unpropertize kill ring on quit
-#+begin_src emacs-lisp
-  (defun actuator-unpropertize-kill-ring ()
-    "It do thing."
-    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
-
-  (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
-  (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
-#+end_src
-
-3. Savehist on kill only
-
-#+begin_src emacs-lisp
-  (setq savehist-autosave-interval nil)
-  (add-hook 'kill-emacs-hook #'savehist-save)
-  (add-hook 'after-save-hook #'savehist-save)
-#+end_src
-** Server
-
-#+begin_src emacs-lisp
-  (use-package server
-    :straight nil
-    :init
-    (load "server")
-    (unless (server-running-p) (server-start)))
-#+end_src
-
-#+results:
 ** Help
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-h x k") #'describe-key)
@@ -647,33 +708,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (setq delete-by-moving-to-trash t)
 #+end_src
-** Undo
-- [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
-
-  #+begin_src emacs-lisp
-    (global-set-key (kbd "s-z") #'undo-only)
-    (global-set-key (kbd "s-Z") #'undo-redo)
-  #+end_src
-** Minibuffer Resize
-#+begin_src emacs-lisp
-  (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
-
-  (defun actuator-minibuffer-setup ()
-         (set (make-local-variable 'face-remapping-alist)
-            '((org-document-title :height 1.0))))
-#+end_src
-** Cancel GC in Minibuffer
-#+begin_src emacs-lisp
-  (defun actuator-minibuffer-setup-hook ()
-    (setq gc-cons-threshold (* 500 1024 1024)))
-
-  (defun actuator-minibuffer-exit-hook ()
-    (setq gc-cons-threshold 800000))
-
-  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
-#+end_src
-
 ** Copy sentence
 #+begin_src emacs-lisp
   (defun actuator-copy-sentence ()
@@ -685,41 +719,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
       (copy-region-as-kill nil nil t)))
 #+end_src
 
-** Hippie Expand
-
-#+begin_src emacs-lisp
-  (use-package hippie-exp
-    :straight nil
-    :bind ("M-/" . hippie-expand)
-    :custom
-    (hippie-expand-verbose t)
-    (hippie-expand-try-functions-list
-     '(try-expand-all-abbrevs
-       try-expand-dabbrev-visible
-       try-expand-dabbrev
-       try-expand-dabbrev-all-buffers
-       try-expand-dabbrev-from-kill
-       try-complete-file-name-partially
-       try-complete-file-name
-       try-expand-line
-       try-complete-lisp-symbol-partially
-       try-complete-lisp-symbol
-       try-expand-list
-       try-expand-list-all-buffers
-       try-expand-whole-kill
-       try-expand-line-all-buffers)))
-#+end_src
-
-- try-complete-lisp-symbol has a lot of completions
-- try-expand-line-all-buffers is very slow
-
-#+begin_src emacs-lisp
-  (defun actuator-hippie-unexpand ()
-    "Remove an expansion without having to loop around."
-    (interactive)
-    (hippie-expand 0))
-  (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
-#+end_src
 ** Org Todos
 #+begin_src emacs-lisp
   (use-package org-agenda
@@ -727,16 +726,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     :custom
     (org-agenda-todo-list-sublevels nil))
 #+end_src
-** Open org-links in new window or not
-#+begin_src emacs-lisp
-  (use-package ol
-    :straight nil
-    :custom
-    (org-link-frame-setup '((vm . vm-visit-folder-other-frame)
-                            (vm-imap . vm-visit-imap-folder-other-frame)
-                            (gnus . org-gnus-no-new-news)
-                            (file . find-file))))
-#+end_src
+
 ** Agenda
 
 #+begin_src emacs-lisp
@@ -961,6 +951,41 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
         (ivy-switch-buffer)))
   (global-set-key (kbd "C-x 2") #'actuator-split-window-below)
 #+end_src
+
+** Attach
+:PROPERTIES:
+:ID:       7542A761-77AB-4B42-B25E-33BFE7A45FE9
+:END:
+
+#+begin_src emacs-lisp
+  (use-package org-attach
+    :straight nil
+    :custom
+    (org-attach-store-link-p t)
+    (org-attach-expert nil)
+    (org-attach-dir-relative t)
+    (org-attach-preferred-new-method 'dir)
+    (org-attach-method 'mv)
+    (org-attach-auto-tag "attach")
+    (org-attach-archive-delete 'query))
+#+end_src
+** Clock
+
+#+begin_src emacs-lisp
+  (use-package org-clock
+    :straight nil
+    :init
+    (org-clock-persistence-insinuate)
+    :custom
+    (org-clock-persist t)
+    (org-clock-out-remove-zero-time-clocks t)
+    (org-clock-mode-line-total 'auto))
+#+end_src
+
+* Unstable packages
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/init.el :noweb yes
+:END:
 ** Org
 
 #+begin_src emacs-lisp
@@ -1003,6 +1028,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (org-hide-leading-stars t)
     (org-pretty-entities-include-sub-superscripts t)
     (org-hide-emphasis-markers t)
+    (org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
     (org-image-actual-width 300)
     (org-fontify-done-headline t)
     (org-structure-template-alist '(("e" . "src emacs-lisp")
@@ -1034,6 +1060,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (org-mode . visual-line-mode)
     (org-mode . (lambda () (electric-indent-local-mode -1))))
 #+end_src
+
+#+results:
+: org-store-link
 
 #+begin_src emacs-lisp
   (setq org-agenda-files `(,org-directory
@@ -1143,40 +1172,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (org-id-link-to-org-use-id nil)
     :hook (midnight-mode . org-id-update-id-locations))
 #+end_src
-** Attach
-:PROPERTIES:
-:ID:       7542A761-77AB-4B42-B25E-33BFE7A45FE9
-:END:
-
-#+begin_src emacs-lisp
-  (use-package org-attach
-    :straight nil
-    :custom
-    (org-attach-store-link-p t)
-    (org-attach-expert nil)
-    (org-attach-dir-relative t)
-    (org-attach-preferred-new-method 'dir)
-    (org-attach-method 'mv)
-    (org-attach-auto-tag "attach")
-    (org-attach-archive-delete 'query))
-#+end_src
-** Clock
-
-#+begin_src emacs-lisp
-  (use-package org-clock
-    :straight nil
-    :init
-    (org-clock-persistence-insinuate)
-    :custom
-    (org-clock-persist t)
-    (org-clock-out-remove-zero-time-clocks t)
-    (org-clock-mode-line-total 'auto))
-#+end_src
-
-* Unstable packages
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :noweb yes
-:END:
 ** Fish Mode
 #+begin_src emacs-lisp
   (use-package fish-mode
@@ -1488,7 +1483,6 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
 
 #+begin_src emacs-lisp
   (use-package elfeed
-    :disabled t
     :straight t
     :bind
     (("C-x w" . actuator-elfeed-load-db-and-open)
@@ -1506,6 +1500,9 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     <<load-quit>>
     <<mark-all-as-read>>)
 #+end_src
+
+#+results:
+
 *** Open videos in MPV                            :ignore:
 One feature that people talk about a lot is setting up Elfeed to handle video-feeds separately from others, allowing you to avoid opening---say---a YouTube link in MPV instead of a browser window. That's pretty nice if you think YouTube's site is bad. There are a variety of ways to do that, but my current solution is to adjust how Emacs handles URLs, as documented in my Web config. The advantage of my system is that it affects all links to YouTube, regardless of where they are. It's a general solution, not an Elfeed solution.
 
@@ -1668,7 +1665,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (use-package elfeed-org
     :straight t
-    :disabled t
     :after elfeed
     :config
     (elfeed-org)
@@ -1677,6 +1673,10 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (rmh-elfeed-org-auto-ignore-invalid-feeds nil)
     (rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+end_src
+
+#+results:
+
+
 
 *** Changes                                     :noexport:
 **** Wednesday May 20, 2020
@@ -2220,7 +2220,6 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 
 #+results:
 
-
 ** Dired subtree
 
 #+begin_src emacs-lisp
@@ -2308,4 +2307,15 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     :straight t
     :custom
     (hydra-hint-display-type 'lv))
+#+end_src
+
+** Pulse Line
+#+begin_src emacs-lisp
+  (defun pulse-line (&rest _)
+        "Pulse the current line."
+        (pulse-momentary-highlight-one-line (point)))
+
+  (dolist (command '(scroll-up-command scroll-down-command
+                     recenter-top-bottom other-window))
+    (advice-add command :after #'pulse-line))
 #+end_src
