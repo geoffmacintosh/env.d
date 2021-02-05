@@ -210,9 +210,7 @@
           pruneTags = true
 #+end_src
 * Fish
-:PROPERTIES:
-:ID:       2F8CA9BB-72E2-49E4-9D82-A64AB298B44D
-:END:
+** Main Config
 
 #+begin_src fish :tangle ~/.config/fish/config.fish
   if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
@@ -309,6 +307,8 @@
   end
 #+end_src
 
+** Manp
+
 #+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish
   bind \ef forward-bigword
 #+end_src
@@ -323,10 +323,12 @@
   end
 #+end_src
 
+** FLAC/ALAC
+
 #+begin_src fish :tangle ~/.config/fish/functions/flac-alac.fish
   function flac-alac -d "Convert flac to alac"
       if type ffmpeg > /dev/null 2>&1
-          echo yay
+           for f in *.flac; ffmpeg -i $f -acodec alac -vsync 2 -c:v copy $f.m4a; end;
       else
           echo "Install FFMPEG with ALAC support."
       end
@@ -373,6 +375,7 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 
 #+end_src
 
+**
 * Kitty
 :PROPERTIES:
 :header-args: :tangle ~/.config/kitty/kitty.conf
