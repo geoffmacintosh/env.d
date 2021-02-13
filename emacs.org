@@ -492,7 +492,7 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (setq help-window-select t) ; Select help window by default
   (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
-  (fset 'yes-or-no-p 'y-or-n-p)
+  ;;(fset 'yes-or-no-p 'y-or-n-p)
 
   (global-set-key (kbd "M-o") #'other-window)
 
@@ -996,10 +996,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Ediff
 #+begin_src emacs-lisp
-  (setq ediff-diff-options “”)
-  (setq ediff-custom-diff-options “-u”)
-  (setq ediff-window-setup-function ‘ediff-setup-windows-plain)
-  (setq ediff-split-window-function ‘split-window-vertically)
+  (setq ediff-diff-options "")
+  (setq ediff-custom-diff-options "-u")
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (setq ediff-split-window-function 'split-window-vertically)
 #+end_src
 
 
@@ -1250,7 +1250,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Nov.el
 #+begin_src emacs-lisp
   (use-package nov
-    :disabled t
     :straight t
     :config
 
@@ -1258,12 +1257,16 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
       (face-remap-add-relative 'variable-pitch :family "Georgia"
                                :height 1.3)
       (setq-local line-spacing 1.2))
-    (add-hook 'nov-mode-hook 'actuator-novel-setup)
+    ;;(add-hook 'nov-mode-hook 'actuator-novel-setup)
 
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
     :custom
     (nov-text-width 65))
 #+end_src
+
+#+results:
+: t
+
 ** Project
 #+begin_src emacs-lisp
   (use-package project
