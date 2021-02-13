@@ -390,3 +390,30 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
   foreground #000000
   background #FFFFFF
 #+end_src
+
+* Nyxt
+#+begin_src emacs-lisp :tangle ~/.config/nyxt/init.lisp
+  (define-configuration (buffer web-buffer)
+    ((default-modes (append '(emacs-mode) %slot-default))))
+
+  (defun old-reddit-handler (request-data)
+    (let ((url (url request-data)))
+      (setf (url request-data)
+            (if (search "reddit.com" (quri:uri-host url))
+                (progn
+                  (setf (quri:uri-host url) "old.reddit.com")
+                  (log:info "Switching to old Reddit: ~s" (object-display url))
+                  url)
+                url)))
+    request-data)
+
+  (define-configuration web-buffer
+    ((request-resource-hook
+      (add-hook %slot-default (make-handler-resource #'old-reddit-handler)))))
+
+  (define-command bookmark-url ()
+    "Allow the user to bookmark a URL via minibuffer input."
+    (let ((url (prompt-minibuffer
+                :input-prompt "Bookmark URL")))
+      (bookmark-add url)))
+#+end_src
