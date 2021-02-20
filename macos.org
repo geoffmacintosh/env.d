@@ -280,7 +280,7 @@
 
   local inflates = {
      {
-        ["text"] = "Principles of Anatomy and Physiology 14th Ed. Chapter 15",
+        ["text"] = "Principles of Anatomy and Physiology 14th Ed. Chapter 28",
         ["subText"] = "citation",
         ["uuid"] = "0001"
      },
@@ -677,4 +677,29 @@ This script should rysnc-copy my music to my archive  very confusing) but had no
   name       "CoreAudio"
   mixer_type "software"
   }
+#+end_src
+
+#+begin_src xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+  <dict>
+      <key>Label</key>
+      <string>actuator.mpd</string>
+      <key>WorkingDirectory</key>
+      <string>/usr/local</string>
+      <key>ProgramArguments</key>
+      <array>
+          <string>XDG_CONFIG_HOME=/Users/g/.config</string>
+          <string>/usr/local/opt/mpd/bin/mpd</string>
+          <string>--no-daemon</string>
+      </array>
+      <key>RunAtLoad</key>
+      <true/>
+      <key>KeepAlive</key>
+      <true/>
+      <key>ProcessType</key>
+      <string>Interactive</string>
+  </dict>
+  </plist>
 #+end_src
