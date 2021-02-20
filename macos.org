@@ -280,7 +280,7 @@
 
   local inflates = {
      {
-        ["text"] = "Principles of Anatomy and Physiology 14th Ed. Chapter 25",
+        ["text"] = "Principles of Anatomy and Physiology 14th Ed. Chapter 28",
         ["subText"] = "citation",
         ["uuid"] = "0001"
      },
