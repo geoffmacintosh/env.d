@@ -1060,6 +1060,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (setq comp-async-report-warnings-errors nil))
 #+end_src
 
+** Package Quickstart
+#+begin_src emacs-lisp :tangle no
+  (advice-add 'package-menu-execute :after-while #'package-quickstart-refresh)
+#+end_src
+
 * Unstable packages
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
