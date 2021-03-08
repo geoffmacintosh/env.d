@@ -10,8 +10,8 @@
   <<early-init-garbage-collection>>
   <<early-init-packages>>
   (setq frame-inhibit-implied-resize t)
-  (provide 'init)
-  ;;; init.el ends here
+  (provide 'early-init)
+  ;;; early-init.el ends here
 #+end_src
 
 ** Garbage Collection
