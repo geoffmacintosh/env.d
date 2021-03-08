@@ -146,7 +146,7 @@
    screenshot-format=jpg
    screenshot-template="%F-%whh%wMm%wSs%wT"
 
-   ytdl-format='bestvideo[height<=720][fps<=30]+bestaudio[ext=m4a]/bestvideo[height<=720]+bestaudio'
+   #ytdl-format='bestvideo[height<=720][fps<=30]+bestaudio[ext=m4a]/bestvideo[height<=720]+bestaudio'
 
    save-position-on-quit
    hwdec
