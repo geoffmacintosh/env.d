@@ -2,13 +2,14 @@
 
 * Early Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/early-init.el :comments none :noweb yes
+:header-args: :tangle ~/.config/emacs/early-init.el :noweb yes
 :END:
 #+begin_src emacs-lisp
-  ;;; early-init.el -*- lexical-binding: t; no-byte-compile: t; -*-
+  ;;; early-init.el -*- lexical-binding: t; -*-
   (setq load-prefer-newer t)
   <<early-init-garbage-collection>>
-  <<early-init-packages>>
+  (setq package-quickstart t)
+  (require 'package)
   (setq frame-inhibit-implied-resize t)
   (provide 'early-init)
   ;;; early-init.el ends here
