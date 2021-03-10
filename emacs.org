@@ -38,39 +38,26 @@
 :END:
 ** Lexical Binding
 #+begin_src emacs-lisp
-  ;;; init.el -*- lexical-binding: t; no-byte-compile: t; -*-
+  ;;; init.el -*- lexical-binding: t; -*-
 #+end_src
 
 ** Package Init
-#+name: early-init-packages
-#+begin_src emacs-lisp :tangle no
-  (setq package-enable-at-startup nil)
-#+end_src
 
 #+begin_src emacs-lisp
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-#+end_src
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/"))
 
-#+begin_src emacs-lisp
-  (when (fboundp 'straight-use-package)
-    (straight-use-package 'use-package))
+  ;;(package-initialize)
+
+  ;; Bootstrap `use-package'
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
 
   (eval-when-compile
-    (defvar straight-base-dir nil)
-    (defvar straight-build-dir nil)
-    ;;(add-to-list 'load-path (expand-file-name "use-package" (concat straight-base-dir "straight/" straight-build-dir)))
-       (require 'use-package nil t))
+    (require 'use-package nil t))
+  (require 'use-package-ensure nil t)
+  (setq use-package-always-ensure t)
 #+end_src
 
 ** No Littering
