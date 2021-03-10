@@ -76,13 +76,12 @@
 ** No Littering
 #+begin_src emacs-lisp
   (use-package no-littering
-    :straight t)
+    :ensure t)
 #+end_src
 
 ** Exec path from shell
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
-    :straight t
     :custom
     (exec-path-from-shell-variables '("PATH"
                                       "MANPATH"
@@ -92,9 +91,7 @@
 #+end_src
 
 ** Org
-#+begin_src emacs-lisp
-  (straight-use-package 'org)
-#+end_src
+
 * Theme
 #+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el
   (deftheme actuator)
@@ -187,10 +184,12 @@
 #+begin_src emacs-lisp
   <<init-garbage-collection>>
 #+end_src
+
 ** Ctrl-Z
 #+begin_src emacs-lisp
   (global-unset-key (kbd "C-z"))
 #+end_src
+
 ** Just one space
 #+begin_src emacs-lisp
   (defun actuator-just-one-space ()
@@ -212,7 +211,7 @@
 ** Savehist
 #+begin_src emacs-lisp
   (use-package savehist
-    :straight nil
+    :ensure nil
     :config
     (savehist-mode)
     :custom
@@ -279,7 +278,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Autorevert
 #+begin_src emacs-lisp
   (use-package autorevert
-    :straight nil
+    :ensure nil
     :config
     (global-auto-revert-mode 1)
     :custom
@@ -295,13 +294,12 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (use-package server
-    :straight nil
+    :ensure nil
     :init
     (load "server")
     (unless (server-running-p) (server-start)))
 #+end_src
 
-#+results:
 ** Undo
 - [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
 
@@ -332,7 +330,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (use-package hippie-exp
-    :straight nil
+    :ensure nil
     :bind ("M-/" . hippie-expand)
     :custom
     (hippie-expand-verbose t)
@@ -367,7 +365,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Open org-links in new window or not
 #+begin_src emacs-lisp
   (use-package ol
-    :straight nil
+    :ensure nil
     :custom
     (org-link-frame-setup '((vm . vm-visit-folder-other-frame)
                             (vm-imap . vm-visit-imap-folder-other-frame)
@@ -388,7 +386,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :END:
 #+begin_src emacs-lisp
   (use-package org-capture
-    :straight nil)
+    :ensure nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -593,11 +591,7 @@ From  emacs-plus:
     :hook (midnight-mode . recentf-cleanup))
 #+end_src
 
-#+results:
-: recentf-open-files
-
-
-Plain Font
+** Plain Font
 
 #+begin_src emacs-lisp
   (load-theme 'actuator t)
@@ -615,7 +609,7 @@ Plain Font
 
 #+begin_src emacs-lisp
   (use-package xt-mouse
-    :straight nil
+    :ensure nil
     :unless window-system
     :config
     (require 'mouse)
@@ -627,20 +621,20 @@ Plain Font
 
 #+begin_src emacs-lisp
   (use-package locate
-    :straight nil
+    :ensure nil
     :custom
     (locate-command "mdfind"))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package flymake
-    :straight nil
+    :ensure nil
     :hook (emacs-lisp-mode . flymake-mode))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package cus-edit
-    :straight nil
+    :ensure nil
     :after no-littering
     :custom
     (custom-file (expand-file-name "custom.el" no-littering-var-directory))
@@ -650,14 +644,14 @@ Plain Font
 
 #+begin_src emacs-lisp
   (use-package vc-hooks
-    :straight nil
+    :ensure nil
     :custom
     (vc-handled-backends nil))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package paren
-    :straight nil
+    :ensure nil
     :config
     (show-paren-mode)
     (electric-pair-mode 1)
@@ -722,7 +716,7 @@ Plain Font
 ** Org Todos
 #+begin_src emacs-lisp
   (use-package org-agenda
-    :straight nil
+    :ensure nil
     :custom
     (org-agenda-todo-list-sublevels nil))
 #+end_src
@@ -746,7 +740,6 @@ Plain Font
   (setq org-agenda-text-search-extra-files nil)
 #+end_src
 
-#+results:
 ** Holidays
 :PROPERTIES:
 :CATEGORY: Holiday
@@ -762,7 +755,7 @@ Plain Font
 
 #+begin_src emacs-lisp
   (use-package org-habit
-    :straight nil
+    :ensure nil
     :config
     (add-to-list 'org-modules 'org-habit)
     :custom
@@ -788,10 +781,6 @@ Plain Font
     (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
 
-
-#+results:
-: actuator-make-checklist
-
 *** References
 - [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
 - [[https://www.emacswiki.org/emacs/KeyboardMacros][EmacsWiki: Keyboard Macros]] [2020-06-08 Mon]
@@ -813,7 +802,7 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
 
 #+begin_src emacs-lisp
   (use-package browse-url
-    :straight nil
+    :ensure nil
     :custom
     (browse-url-handlers '(("wikipedia"   . eww )
                            ("youtu\\.?be" . actuator-browse-video)
@@ -835,7 +824,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package shr
-    :straight nil
+    :ensure nil
     :custom
     (shr-width 75))
 #+end_src
@@ -852,7 +841,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 *** Introduction
 #+begin_src emacs-lisp
   (use-package ibuffer
-    :straight nil
+    :ensure nil
     :config
     <<ibuffer-filters>>
     :bind ("C-x C-b" . ibuffer)
@@ -880,9 +869,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
            )))
 #+end_src
 
-#+results:
-| default | (Misc (name . ^\*.*\*$)) | (Magit (name . magit)) | (Src (name . *Org Src)) | (Dired (mode . dired-mode)) | (My Org (directory . /Users/g/org)) | (Config (directory . /Users/g/.config)) |
-
 *** Defaults
 
 #+begin_src emacs-lisp
@@ -902,7 +888,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Dired
 #+begin_src emacs-lisp
   (use-package dired
-    :straight nil
+    :ensure nil
     :config
     (require 'dired-x)
     (require 'ls-lisp)
@@ -959,7 +945,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-attach
-    :straight nil
+    :ensure nil
     :custom
     (org-attach-store-link-p t)
     (org-attach-expert nil)
@@ -973,7 +959,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-clock
-    :straight nil
+    :ensure nil
     :init
     (org-clock-persistence-insinuate)
     :custom
@@ -985,7 +971,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** World Time
 #+begin_src emacs-lisp
   (use-package time
-    :straight nil
+    :ensure nil
     :custom
     (display-time-world-list '(("America/New_York" "New York")
                                ("Europe/London"    "London")
@@ -1008,7 +994,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package mu4e
-    :straight nil
+    :ensure nil
     :init
     (require 'mu4e)
     :config
@@ -1032,14 +1018,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (mu4e-get-mail-command "mbsync -a"))
 #+end_src
 
-#+results:
-: t
-
 ** SMTP Mail
 
 #+begin_src emacs-lisp
   (use-package smtpmail
-    :straight nil
+
     :custom
     (smtpmail-default-smtp-server "smtp.fastmail.com")
     (smtpmail-smtp-server "smtp.fastmail.com")
@@ -1050,7 +1033,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package message
-    :straight nil
+    :ensure nil
     :custom
     (message-send-mail-function 'smtpmail-send-it))
 #+end_src
@@ -1073,14 +1056,14 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Org Randomnote
 #+begin_src emacs-lisp
   (use-package org-randomnote
-    :straight t)
+    )
 #+end_src
 
 ** Auth Source
 
 #+begin_src emacs-lisp :tangle no
   (use-package auth-source-pass
-    :straight t
+
     :config
     (auth-source-pass-enable))
 #+end_src
@@ -1090,7 +1073,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (defvar org-directory "~/org")
   (use-package org
-    :straight nil
+
     :config
     (org-indent-mode 1)
     (add-to-list 'org-babel-default-header-args
@@ -1160,9 +1143,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (org-mode . (lambda () (electric-indent-local-mode -1))))
 #+end_src
 
-#+results:
-: org-store-link
-
 #+begin_src emacs-lisp
   (setq org-agenda-files `(,org-directory
                            ,(if (getenv "XDG_CONFIG_HOME")
@@ -1174,7 +1154,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-capture
-    :straight nil
+    :ensure nil
     :config
     (defun actuator-org-capture-turn-off-header-line ()
     "Disable the header-line in a local mode.
@@ -1186,21 +1166,21 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-list
-    :straight nil
+    :ensure nil
     :custom
     (org-list-indent-offset 1))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package org-keys
-    :straight nil
+    :ensure nil
     :custom
     (org-use-speed-commands t))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package org-refile
-    :straight nil
+    :ensure nil
     :custom
     (org-refile-allow-creating-parent-nodes 'confirm)
     (org-outline-path-complete-in-steps nil)
@@ -1212,7 +1192,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-src
-    :straight nil
+    :ensure nil
     :config
     (defun actuator-org-src-line-wrap-setup ()
       "Set truncate-lines-mode in org-source-editing buffers."
@@ -1228,7 +1208,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-footnote
-    :straight nil
+    :ensure nil
     :custom
     (org-footnote-auto-adjust t)
     (org-footnote-define-inline t)
@@ -1237,7 +1217,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package ob-core
-    :straight nil
+    :ensure nil
     :custom
     (org-confirm-babel-evaluate nil)
     (org-babel-results-keyword "results"))
@@ -1245,7 +1225,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-crypt
-    :straight nil
+    :ensure nil
     :init
     (require 'org-crypt)
     :config
@@ -1258,7 +1238,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-agenda
-    :straight nil
+    :ensure nil
     :custom
     (org-agenda-sticky t)
     (org-agenda-dim-blocked-tasks t))
@@ -1266,7 +1246,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-id
-    :straight nil
+    :ensure nil
     :custom
     (org-id-link-to-org-use-id nil)
     :hook (midnight-mode . org-id-update-id-locations))
@@ -1274,54 +1254,54 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Fish Mode
 #+begin_src emacs-lisp
   (use-package fish-mode
-    :straight t)
+    )
 #+end_src
 ** Ledger Mode
 #+begin_src emacs-lisp
   (use-package ledger-mode
-    :straight t
+
     :config
     (setq ledger-default-date-format ledger-iso-date-format))
 #+end_src
 ** Markdown Mode
 #+begin_src emacs-lisp
     (use-package markdown-mode
-      :straight t)
+      )
 #+end_src
 ** YAML Mode
 #+begin_src emacs-lisp
     (use-package yaml-mode
-      :straight t)
+      )
 #+end_src
 ** TOML Mode
 #+begin_src emacs-lisp
     (use-package toml-mode
-      :straight t)
+      )
 #+end_src
 ** Lua Mode
 #+begin_src emacs-lisp
     (use-package lua-mode
-      :straight t)
+      )
 #+end_src
 ** Gitignore Mode
 #+begin_src emacs-lisp
     (use-package gitignore-mode
-      :straight t)
+      )
 #+end_src
 ** Gitconfig Mode
 #+begin_src emacs-lisp
   (use-package gitconfig-mode
-    :straight t)
+    )
 #+end_src
 ** Ripgrep
 #+begin_src emacs-lisp
   (use-package rg
-    :straight t)
+    )
 #+end_src
 ** Nov.el
 #+begin_src emacs-lisp
   (use-package nov
-    :straight t
+
     :config
 
     (defun actuator-novel-setup ()
@@ -1335,13 +1315,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (nov-text-width 65))
 #+end_src
 
-#+results:
-: t
-
 ** Project
 #+begin_src emacs-lisp
   (use-package project
-    :straight t)
+    )
 #+end_src
 
 `project-find-file', `project-find-regexp' and
@@ -1350,15 +1327,17 @@ will work in any project that has an adapter.
 ** Org Link Minor Mode
 #+begin_src emacs-lisp
   (use-package org-link-minor-mode
-    :straight t
+    :disabled t
+    :ensure nil
     :hook (emacs-lisp-mode . org-link-minor-mode))
 #+end_src
 
 ** HTMLize
 #+begin_src emacs-lisp
   (use-package htmlize
-    :straight t)
+    )
 #+end_src
+
 
 ** Eldoc
 
@@ -1366,7 +1345,7 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
   (use-package eldoc
-    :straight t
+
     :custom
     (eldoc-echo-area-use-multiline-p t)
     (eldoc-idle-delay 0)
@@ -1384,13 +1363,13 @@ will work in any project that has an adapter.
 ** Forge
 #+begin_src emacs-lisp
   (use-package forge
-    :straight t)
+    )
 #+end_src
 ** Ivy
 
 #+begin_src emacs-lisp
   (use-package prescient
-    :straight t
+
     :custom
     (prescient-persist-mode 1)
     (prescient-history-length 10000)
@@ -1399,7 +1378,7 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
   (use-package counsel
-    :straight t
+
     :functions counsel-mode
     :config
     (setq counsel-find-file-ignore-regexp "\\`\\.")
@@ -1422,12 +1401,12 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
   (use-package request
-    :straight t)
+    )
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package ivy
-    :straight t
+
     :defines ivy-minibuffer-map
     :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
     :config
@@ -1451,13 +1430,13 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
 (use-package swiper
-  :straight t
+
   :bind ("C-s" . swiper-isearch))
 #+end_src
 
 #+begin_src emacs-lisp
 (use-package ivy-prescient
-  :straight t
+
   :after (ivy prescient)
   :functions ivy-prescient-mode
   :config
@@ -1469,7 +1448,7 @@ will work in any project that has an adapter.
 :END:
 #+begin_src emacs-lisp
   (use-package org-cliplink
-    :straight t
+
     :bind ("C-x p i" . org-cliplink)
     :init
     (with-eval-after-load 'org-capture
@@ -1480,18 +1459,16 @@ will work in any project that has an adapter.
                      :kill-buffer))))
 #+end_src
 
-#+results:
-: org-cliplink
 ** Anki
 #+begin_src emacs-lisp
   (use-package anki-editor
-    :straight t)
+    )
 #+end_src
 
 ** Auctex
 #+begin_src emacs-lisp
   (use-package tex
-    :straight auctex
+    :ensure auctex
     :custom
     (TeX-engine 'luatex)
     (TeX-source-correlate-start-server t))
@@ -1499,7 +1476,7 @@ will work in any project that has an adapter.
 ** Magit
 #+begin_src emacs-lisp
   (use-package magit
-    :straight t
+
     :after exec-path-from-shell
     :bind
     ("C-c g" . magit-status)
@@ -1547,7 +1524,7 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
     (use-package org-download
-      :straight t
+
       :bind ("C-M-y" . org-download-screenshot)
       :init
       (require 'org-download)
@@ -1566,7 +1543,7 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
   (use-package web-mode
-    :straight t
+
     :mode (("\\.html?\\'" . web-mode)
            ("\\.css\\'"   . web-mode)
            ("\\.jsx?\\'"  . web-mode)
@@ -1585,7 +1562,7 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
 
 #+begin_src emacs-lisp
   (use-package elfeed
-    :straight t
+
     :bind
     (("C-x w" . actuator-elfeed-load-db-and-open)
      :map elfeed-search-mode-map
@@ -1602,8 +1579,6 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     <<load-quit>>
     <<mark-all-as-read>>)
 #+end_src
-
-#+results:
 
 *** Open videos in MPV                            :ignore:
 One feature that people talk about a lot is setting up Elfeed to handle video-feeds separately from others, allowing you to avoid opening---say---a YouTube link in MPV instead of a browser window. That's pretty nice if you think YouTube's site is bad. There are a variety of ways to do that, but my current solution is to adjust how Emacs handles URLs, as documented in my Web config. The advantage of my system is that it affects all links to YouTube, regardless of where they are. It's a general solution, not an Elfeed solution.
@@ -1766,7 +1741,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 *** Org-elfeed
 #+begin_src emacs-lisp
   (use-package elfeed-org
-    :straight t
+
     :after elfeed
     :config
     (elfeed-org)
@@ -1775,10 +1750,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (rmh-elfeed-org-auto-ignore-invalid-feeds nil)
     (rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+end_src
-
-#+results:
-
-
 
 *** Changes                                     :noexport:
 **** Wednesday May 20, 2020
@@ -1801,7 +1772,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (use-package eshell
-    :straight nil
+
     :config
     <<shortcuts>>
     <<smart-shell>>
@@ -1862,7 +1833,7 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 *** Bookmarks
 #+begin_src emacs-lisp
   (use-package eshell-bookmark
-    :straight t
+
     :hook (eshell-mode . eshell-bookmark-setup))
 #+end_src
 
@@ -1892,7 +1863,7 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 - sudo
 #+begin_src emacs-lisp
   (use-package pcomplete-extension
-    :straight t
+
     :config
     (require 'pcomplete-extension))
 #+end_src
@@ -1911,35 +1882,35 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 - xargs
 #+begin_src emacs-lisp
   (use-package pcmpl-args
-    :straight t
+
     :config
     (require 'pcmpl-args))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package pcmpl-homebrew
-    :straight t
+
     :config
     (require 'pcmpl-homebrew))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package pcmpl-pip
-    :straight t
+
     :config
     (require 'pcmpl-pip))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package pcmpl-git
-    :straight t
+
     :config
     (require 'pcmpl-git))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package fish-completion
-    :straight t
+
     :custom
     (fish-completion-fallback-on-bash-p t)
     :config
@@ -1954,7 +1925,7 @@ In an eshell mode hook function, one can set the imenu-generic-expression to hel
 *** Z
 #+begin_src emacs-lisp
   (use-package eshell-z
-    :straight t
+
     :custom
     (eshell-z-freq-dir-hash-table-file-name "~/.local/share/z/data")
     :config
@@ -2100,7 +2071,7 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
 ** Mingus
 #+begin_src emacs-lisp
   (use-package mingus
-  :straight t)
+  )
 #+end_src
 
 * Disabled
@@ -2132,9 +2103,6 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
             'append)
 #+end_src
 
-#+results:
-| tags-completion-at-point-function | complete-path-at-point+ |
-
 ** Matrix
 #+begin_src emacs-lisp
   (use-package matrix-client
@@ -2147,7 +2115,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 #+begin_src emacs-lisp
   (use-package smart-tab
     :disabled t
-    ;:straight t
+    ;
     :functions global-smart-tab-mode
     :config
     (global-smart-tab-mode 1)
@@ -2168,9 +2136,6 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
                  mode-line-misc-info))
 #+end_src
 
-#+results:
-| %e | %I | %p | %b | %m | ((which-function-mode (which-func-mode ( which-func-format  ))) (global-mode-string ( global-mode-string  ))) |
-
 #+begin_src emacs-lisp :tangle no
   (setq-default mode-line-format
                 (list
@@ -2182,7 +2147,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 ** Minions
 #+begin_src emacs-lisp :tangle no
   (use-package minions
-    :straight t
+
     :config
     (minions-mode))
 #+end_src
@@ -2190,13 +2155,11 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 
 #+begin_src emacs-lisp :tangle no
   (use-package org-checklist
-    :straight nil
+
     :config
     (add-to-list 'org-modules 'org-checklist))
 #+end_src
 
-#+results:
-: t
 ** Backends
 #+begin_src emacs-lisp
   ;;(setq org-export-backends '(html icalendar latex))
@@ -2222,7 +2185,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 ** Hugo
 #+begin_src emacs-lisp
   (use-package ox-hugo
-    :straight t
+
     :custom
     org-hugo-section "posts")
 #+end_src
@@ -2242,7 +2205,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 ** Prodigy
 #+begin_src emacs-lisp
   (use-package prodigy
-    :straight t
+
     :config
     (prodigy-define-service
      :name "Hugo"
@@ -2255,7 +2218,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 ** Ignore headlines
 #+begin_src emacs-lisp :tangle no
   (use-package ox-extra
-    :straight nil
+
     :config
     (require 'ox-extra)
     (ox-extras-activate '(ignore-headlines)))
@@ -2292,7 +2255,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 
 #+begin_src emacs-lisp :tangle no
   (use-package flyspell
-    :straight nil
+
     :custom
     (flyspell-abbrev-p t)
     (flyspell-use-global-abbrev-table-p t)
@@ -2311,7 +2274,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 
 #+begin_src emacs-lisp :tangle no
   (use-package ispell
-    :straight nil
+
     ;;:ensure-system-package hunspell
     :custom
     ;; (when (executable-find "hunspell")
@@ -2319,8 +2282,6 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     ;;   (setq ispell-really-hunspell t))
     (ispell-current-personal-dictionary "~/.dict"))
 #+end_src
-
-#+results:
 
 ** Dired subtree
 
@@ -2336,7 +2297,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 #+begin_src emacs-lisp
   (use-package dired-git-info
     :disabled t
-    :straight t
+
     :bind (:map dired-mode-map
                 (")" . dired-git-info-mode)))
 #+end_src
@@ -2345,7 +2306,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 #+begin_src emacs-lisp
   (use-package diredfl
     :disabled t
-    :straight t
+
     :config
     (diredfl-global-mode 1))
 #+end_src
@@ -2395,7 +2356,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 #+begin_src emacs-lisp
   (use-package org-mru-clock
     :disabled t
-    :straight t
+
     :bind
     ("C-c C-x i" . org-mru-clock-in)
     ("C-c C-x C-j . org-mru-clock-select-recent-task")
@@ -2406,7 +2367,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 
 #+begin_src emacs-lisp
   (use-package hydra
-    :straight t
+
     :custom
     (hydra-hint-display-type 'lv))
 #+end_src
