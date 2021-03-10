@@ -491,7 +491,7 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (setq help-window-select t) ; Select help window by default
   (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
-  ;;(fset 'yes-or-no-p 'y-or-n-p)
+  (fset 'yes-or-no-p 'y-or-n-p)
 
   (global-set-key (kbd "M-o") #'other-window)
 
@@ -1014,10 +1014,13 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (fset 'actuator-move-to-trash "mTrash")
     (define-key mu4e-headers-mode-map (kbd "d") 'actuator-move-to-trash)
     (define-key mu4e-view-mode-map (kbd "d") 'actuator-move-to-trash)
+    (cond ((eq system-type 'gnu/linux)
+           (setq mu4e-mu-binary "/usr/bin/mu"))
+          ((eq system-type 'darwin)
+           (setq mu4e-mu-binary "/usr/local/bin/mu")))
     :custom
-    (mu4e-mu-binary "/usr/local/bin/mu")
     (mu4e-refile-folder "/Archive")
-    (mu4e-sent-folder   "/Sent")
+    (mu4e-sent-folder   "/Sent Items")
     (mu4e-drafts-folder "/Drafts")
     (mu4e-trash-folder  "/Trash")
     (mu4e-attachments-dir "~/Downloads")
@@ -1025,7 +1028,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (mu4e-view-show-addresses t)
     (mu4e-change-filenames-when-moving t)
     (mu4e-headers-skip-duplicates t)
-    (mu4e-compose-format-flowed nil)
+    (mu4e-compose-format-flowed t)
     (mu4e-date-format "%y-%m-%d")
     (mu4e-headers-date-format "%y-%m-%d")
     (mu4e-get-mail-command "mbsync -a"))
