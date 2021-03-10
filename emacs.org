@@ -1040,7 +1040,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Native Compile
 #+begin_src emacs-lisp
-  (when 'comp-async-report-warnings-errors
+  (when (boundp 'comp-async-report-warnings-errors)
     (setq comp-async-report-warnings-errors nil))
 #+end_src
 
