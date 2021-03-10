@@ -2241,12 +2241,6 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 *References*
 - [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Skeletons-as-Abbrevs.html][GNU Manual]] [2020-04-26 Sun]
 
-#+begin_src emacs-lisp
-  (define-skeleton use-package-skeleton
-    "Insert use-package template."
-    "Package name: "
-    "(use-package " str "\n  :straight nil\n " _ "  :custom)")
-#+end_src
 ** Spell check
 
 #+begin_src emacs-lisp
