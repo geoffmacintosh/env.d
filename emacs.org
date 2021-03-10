@@ -491,7 +491,7 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (setq help-window-select t) ; Select help window by default
   (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
-  ;;(fset 'yes-or-no-p 'y-or-n-p)
+  (fset 'yes-or-no-p 'y-or-n-p)
 
   (global-set-key (kbd "M-o") #'other-window)
 
