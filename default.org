@@ -1,4 +1,5 @@
 #+title: Default Config
+#+property: :header-args: :comments none
 
 * ZSH
 #+begin_src shell :tangle ~/.zshrc
@@ -473,7 +474,7 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 
 * Mbsync
 
-#+begin_src conf :tangle ~/.mbsyncrc
+#+begin_src conf :tangle ~/.mbsyncrc :comments none
     IMAPAccount fastmail
     Host imap.fastmail.com
     Port 993
@@ -490,12 +491,12 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
     SubFolders Verbatim
 
     Channel fastmail
-    Master :fastmail-remote:
-    Slave :fastmail-local:
+    Far :fastmail-remote:
+    Near :fastmail-local:
     Patterns *
     Expunge None
     CopyArrivalDate yes
     Sync All
-    Create Slave
+    Create Far
     SyncState *
 #+end_src
