@@ -77,7 +77,6 @@
     :hook (after-init . exec-path-from-shell-initialize))
 #+end_src
 
-** Org
 
 * Theme
 #+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el
@@ -1327,7 +1326,6 @@ will work in any project that has an adapter.
   (use-package htmlize
     )
 #+end_src
-
 
 ** Eldoc
 
