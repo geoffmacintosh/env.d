@@ -869,7 +869,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Encryption
 #+begin_src emacs-lisp
   (setq epa-file-select-keys 1)
-  (epa-file-enable)
+  ;;(epa-file-enable)
 #+end_src
 ** Dired
 #+begin_src emacs-lisp
@@ -992,6 +992,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
           ((eq system-type 'darwin)
            (setq mu4e-mu-binary "/usr/local/bin/mu")))
     :custom
+    (mu4e-update-interval (* 60 15))
     (mu4e-refile-folder "/Archive")
     (mu4e-sent-folder   "/Sent Items")
     (mu4e-drafts-folder "/Drafts")
@@ -2062,6 +2063,35 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
   )
 #+end_src
 
+** Mu4e Alert
+#+begin_src emacs-lisp
+  (use-package mu4e-alert
+    :ensure t
+    :config
+    (cond ((eq system-type 'gnu/linux)
+           (mu4e-alert-set-default-style 'libnotify))
+          ((eq system-type 'darwin)
+           (mu4e-alert-set-default-style 'osx-notifier)))
+    :hook
+    (after-init . mu4e-alert-enable-notifications)
+    (after-init . mu4e-alert-enable-mode-line-display))
+#+end_src
+** Alert
+
+#+begin_src emacs-lisp
+  (use-package alert
+    :ensure t
+    :config
+      (cond ((eq system-type 'gnu/linux)
+             (setq alert-default-style 'libnotify))
+            ((eq system-type 'darwin)
+             (setq alert-default-style 'osx-notifier))))
+#+end_src
+** Systemd
+#+begin_src emacs-lisp
+  (use-package systemd
+    :ensure t)
+#+end_src
 * Disabled
    :PROPERTIES:
    :header-args: :tangle no
