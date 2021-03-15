@@ -7,29 +7,30 @@
 #+begin_src emacs-lisp
   ;;; early-init.el -*- lexical-binding: t; -*-
   (setq load-prefer-newer t)
-  <<early-init-garbage-collection>>
   (setq package-quickstart t)
-  ;;(require 'package)
   (setq frame-inhibit-implied-resize t)
-  (provide 'early-init)
-  ;;; early-init.el ends here
 #+end_src
 
-** Garbage Collection
-#+name: early-init-garbage-collection
-#+begin_src emacs-lisp :tangle no
-  (setq gc-cons-threshold (* 5000 1024 1024))
+#+begin_src emacs-lisp
+  ;; (when (boundp 'comp-eln-load-path)
+  ;;   (setq comp-eln-load-path
+  ;;    (expand-file-name "var/eln-cache/" user-emacs-directory)))
 #+end_src
 
-#+name: init-garbage-collection
-#+begin_src emacs-lisp :tangle no
-  (defvar actuator-gc-cons-threshold 800000
+#+begin_src emacs-lisp
+  (defvar actuator-gc-cons-threshold gc-cons-threshold
     "Original value for `gc-cons-threshold'.")
   (defun actuator-restore-gc-cons-threshold ()
     "Restore `gc-cons-threshold' value."
     (setq gc-cons-threshold actuator-gc-cons-threshold)
     (garbage-collect))
   (add-hook 'after-init-hook #'actuator-restore-gc-cons-threshold)
+  (setq gc-cons-threshold (* 5 1024 1024 1024))
+#+end_src
+
+#+begin_src emacs-lisp
+  (provide 'early-init)
+  ;;; early-init.el ends here
 #+end_src
 
 * Init
