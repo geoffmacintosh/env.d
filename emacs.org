@@ -86,7 +86,6 @@
     :hook (after-init . exec-path-from-shell-initialize))
 #+end_src
 
-
 * Theme
 #+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el
   (deftheme actuator)
@@ -575,6 +574,7 @@ From  emacs-plus:
 
 #+begin_src emacs-lisp
   (use-package recentf
+    :ensure nil
     :init
     (recentf-mode)
     :bind ("C-x C-r" . recentf-open-files)
@@ -789,9 +789,6 @@ From  emacs-plus:
   (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
 #+end_src
 ** Web
-*** Introduction                                  :ignore:
-I don't use Emacs to browse the web, although it can be done, and I guess people do. I do a few browser-related things in it though, including storing my bookmarks in an Org-mode file and such. Here's what I've changed.
-
 *** Set up browsing handlers                      :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
@@ -1078,7 +1075,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (defvar org-directory "~/org")
   (use-package org
-
+    :ensure t
     :config
     (org-indent-mode 1)
     (add-to-list 'org-babel-default-header-args
@@ -1323,12 +1320,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Project
 #+begin_src emacs-lisp
   (use-package project
-    )
+    :ensure t)
 #+end_src
 
-`project-find-file', `project-find-regexp' and
-`project-or-external-find-regexp' use the current API, and thus
-will work in any project that has an adapter.
 ** Org Link Minor Mode
 #+begin_src emacs-lisp
   (use-package org-link-minor-mode
@@ -1340,7 +1334,7 @@ will work in any project that has an adapter.
 ** HTMLize
 #+begin_src emacs-lisp
   (use-package htmlize
-    )
+    :ensure t)
 #+end_src
 
 ** Eldoc
@@ -1349,7 +1343,7 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
   (use-package eldoc
-
+    :ensure t
     :custom
     (eldoc-echo-area-use-multiline-p t)
     (eldoc-idle-delay 0)
@@ -1364,6 +1358,7 @@ will work in any project that has an adapter.
          (when (not (string= "" oneline))
            (concat " " (propertize oneline 'face 'italic)))))))
 #+end_src
+
 ** Forge
 #+begin_src emacs-lisp
   (use-package forge
