@@ -1023,7 +1023,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package smtpmail
-
+    :ensure nil
     :custom
     (smtpmail-default-smtp-server "smtp.fastmail.com")
     (smtpmail-smtp-server "smtp.fastmail.com")
