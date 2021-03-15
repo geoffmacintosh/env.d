@@ -1001,6 +1001,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
           ((eq system-type 'darwin)
            (setq mu4e-mu-binary "/usr/local/bin/mu")))
     :custom
+    (mail-user-agent 'mu4e-user-agent)
+    (mu4e-hide-index-messages t)
     (mu4e-update-interval (* 60 15))
     (mu4e-refile-folder "/Archive")
     (mu4e-sent-folder   "/Sent Items")
