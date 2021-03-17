@@ -993,6 +993,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
           ((eq system-type 'darwin)
            (setq mu4e-mu-binary "/usr/local/bin/mu")))
     :custom
+    (mu4e-maildir-shortcuts
+     '((:maildir "/Archive" :key ?a)
+       (:maildir "/Inbox"   :key ?i)))
+    (mail-user-agent 'mu4e-user-agent)
     (mu4e-refile-folder "/Archive")
     (mu4e-sent-folder   "/Sent Items")
     (mu4e-drafts-folder "/Drafts")
