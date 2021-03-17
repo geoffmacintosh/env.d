@@ -109,7 +109,7 @@
 
 * Hushlogin
 
-#+begin_src text :tangle ~/.hushlogin
+#+begin_src conf :tangle ~/.hushlogin
   # Silence
 #+end_src
 
