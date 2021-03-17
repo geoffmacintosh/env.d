@@ -109,7 +109,7 @@
 
 * Hushlogin
 
-#+begin_src text :tangle ~/.hushlogin
+#+begin_src conf :tangle ~/.hushlogin
   # Silence
 #+end_src
 
@@ -390,86 +390,6 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
   # tab_activity_symbol "*"
   foreground #000000
   background #FFFFFF
-#+end_src
-
-* Nyxt
-#+begin_src lisp :tangle ~/.config/nyxt/init.lisp
-  (define-configuration browser
-    ((startup-function (make-startup-function :buffer-fn #'dashboard))))
-
-  (define-configuration browser
-      ((section-restore-prompt :always-restore)))
-
-  (define-configuration (buffer web-buffer)
-      ((default-modes (append '(emacs-mode auto-mode blocker-mode
-                                force-https-mode reduce-tracting-mode)
-                              %slot-default))))
-
-  (defun old-reddit-handler (request-data)
-    (let ((url (url request-data)))
-      (setf (url request-data)
-            (if (search "reddit.com" (quri:uri-host url))
-                (progn
-                  (setf (quri:uri-host url) "old.reddit.com")
-                  (log:info "Switching to old Reddit: ~s" (object-display url))
-                  url)
-                url)))
-    request-data)
-
-  (define-configuration web-buffer
-      ((request-resource-hook
-        (add-hook %slot-default (make-handler-resource #'old-reddit-handler)))))
-
-  (define-command bookmark-url ()
-    "Allow the user to bookmark a URL via minibuffer input."
-    (let ((url (prompt-minibuffer
-                :input-prompt "Bookmark URL")))
-      (bookmark-add url)))
-#+end_src
-
-#+begin_src lisp :tangle no
-  (defparameter magnet-handler
-    (url-dispatching-handler
-     'transmission-magnet-links
-     (match-scheme "magnet")
-     (lambda (url)
-       (uiop:launch-program
-        (list "transmission-remote" "—add"
-              (object-string url)))
-       (echo "Magnet link opened in Transmission.")
-       nil)))
-#+end_src
-
-#+begin_src lisp :tangle no
-  (define-command org-capture (&optional (buffer (current-buffer)))
-    "Org-capture current page."
-    (eval-in-emacs
-     `(org-link-set-parameters
-       "next"
-       :store (lambda ()
-                (org-store-link-props
-                 :type "next"
-                 :link ,(url buffer)
-                 :description ,(title buffer))))
-     `(org-capture)))
-  (define-key *my-keymap* "C-M-o" 'org-capture)
-#+end_src
-
-#+begin_src lisp :tangle no
- (define-command youtube-dl-current-page (&optional (buffer (current-buffer)))
-  "Download a video in the currently open buffer."
-  (eval-in-emacs
-   (if (search "youtu" (url buffer))
-       `(progn (youtube-dl ,(url buffer)) (youtube-dl-list))
-       `(ambrevar/youtube-dl-url ,(url buffer)))))
-(define-key *my-keymap* "C-M-c d" 'youtube-dl-current-page)
-#+end_src
-
-#+begin_src lisp :tangle no
- (define-command play-video-in-current-page (&optional (buffer (current-buffer)))
-  "Play video in the currently open buffer."
-  (uiop:run-program (list "mpv" (url buffer))))
-(define-key *my-keymap* "C-M-c v" 'play-video-in-current-page)
 #+end_src
 
 * Mbsync
