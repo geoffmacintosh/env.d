@@ -2,13 +2,15 @@
 
 * Early Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/early-init.el :noweb yes
+:header-args: :tangle ~/.config/emacs/early-init.el
 :END:
 #+begin_src emacs-lisp
   ;;; early-init.el -*- lexical-binding: t; -*-
   (setq load-prefer-newer t)
-  (setq package-quickstart t)
+  ;;(setq package-quickstart t)
   (setq frame-inhibit-implied-resize t)
+  (require 'package)
+  (package-initialize)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -45,9 +47,6 @@
 ** Package Init
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-archives
-               '("melpa" . "https://melpa.org/packages/"))
-
   (setq package-archives
         '(("org"    . "https://orgmode.org/elpa/")
           ("melpa"  . "https://melpa.org/packages/")
@@ -975,10 +974,23 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Ediff
 #+begin_src emacs-lisp
-  (setq ediff-diff-options "")
-  (setq ediff-custom-diff-options "-u")
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-  (setq ediff-split-window-function 'split-window-vertically)
+  (use-package ediff
+    :ensure nil
+    :custom
+    ;;(ediff-diff-options "")
+    ;;(ediff-custom-diff-options "-u")
+    (ediff-window-setup-function 'ediff-setup-windows-plain)
+    (ediff-split-window-function 'split-window-horizontally)
+    :config
+    (defun actuator-ediff-startup ()
+      "Prep Ediff for success."
+      (window-configuration-to-register :ediff))
+    (defun actuator-ediff-quit ()
+      "Restore files after diffing."
+      (jump-to-register :ediff))
+    :hook
+    (ediff-startup . actuator-ediff-startup)
+    (ediff-quit    . actuator-ediff-quit))
 #+end_src
 
 ** Mu4e
@@ -1100,20 +1112,29 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     :ensure t
     :config
     (org-indent-mode 1)
-    (add-to-list 'org-babel-default-header-args
-                 '(:mkdirp . "yes"))
-    (add-to-list 'org-babel-default-header-args '(:comments . "link"))
+    ;; (add-to-list 'org-babel-default-header-args
+    ;; 	       '(:mkdirp . "yes"))
+    ;; (add-to-list 'org-babel-default-header-args '(:comments . "link"))
+    (setq org-babel-default-header-args '((:mkdirp   . "yes")
+					  (:comments . "link")
+					  (:session  . "none")
+					  (:results  . "none")
+					  (:exports  . "code")
+					  (:cache    . "no")
+					  (:noweb    . "no")
+					  (:hlines   . "no")
+					  (:tangle   . "no")))
     (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((emacs-lisp . t)
-                                   (shell      . t)))
+				 '((emacs-lisp . t)
+				   (shell      . t)))
     (defun actuator-update-all-dynamic-blocks ()
       "Hi"
       (org-dblock-update 1))
     (add-hook 'org-mode-hook
-              (lambda ()
-                (add-hook 'before-save-hook
-                          'actuator-update-all-dynamic-blocks nil
-                          'make-it-local)))
+	      (lambda ()
+		(add-hook 'before-save-hook
+			  'actuator-update-all-dynamic-blocks nil
+			  'make-it-local)))
     (add-to-list 'org-default-properties "DIR")
     (add-to-list 'org-default-properties "header-args")
     ;;(add-to-list 'org-babel-default-header-args '(:mkdirp . "yes"))
@@ -1138,7 +1159,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (org-image-actual-width 300)
     (org-fontify-done-headline t)
     (org-structure-template-alist '(("e" . "src emacs-lisp")
-                                    ("s" . "src shell")))
+				    ("s" . "src shell")))
     (org-log-done 'time)
     (org-log-into-drawer t)
     (org-closed-keep-when-no-todo t)
@@ -1154,14 +1175,14 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (org-special-ctrl-k t)
     (org-special-ctrl-a/e t)
     (org-blank-before-new-entry '((heading         . t)
-                                  (plain-list-item . auto)))
+				  (plain-list-item . auto)))
     (org-use-property-inheritance t)
     (org-modules nil)
     (org-tag-persistent-alist '(("noexport")
-                                ("ignore")
-                                ("unpublished")
-                                ("blog")
-                                ("tbd")))
+				("ignore")
+				("unpublished")
+				("blog")
+				("tbd")))
     :hook
     (org-mode . visual-line-mode)
     (org-mode . (lambda () (electric-indent-local-mode -1))))
@@ -1497,7 +1518,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Magit
 #+begin_src emacs-lisp
   (use-package magit
-
+    :ensure t
     :after exec-path-from-shell
     :bind
     ("C-c g" . magit-status)
@@ -1522,6 +1543,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     <<magit-status>>
     <<magit-quit-session>>)
 #+end_src
+
+#+RESULTS:
 
 #+name: magit-status
 #+begin_src emacs-lisp
