@@ -45,9 +45,6 @@
 ** Package Init
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-archives
-               '("melpa" . "https://melpa.org/packages/"))
-
   (setq package-archives
         '(("org"    . "https://orgmode.org/elpa/")
           ("melpa"  . "https://melpa.org/packages/")
