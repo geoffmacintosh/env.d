@@ -7,29 +7,30 @@
 #+begin_src emacs-lisp
   ;;; early-init.el -*- lexical-binding: t; -*-
   (setq load-prefer-newer t)
-  <<early-init-garbage-collection>>
   (setq package-quickstart t)
-  ;;(require 'package)
   (setq frame-inhibit-implied-resize t)
-  (provide 'early-init)
-  ;;; early-init.el ends here
 #+end_src
 
-** Garbage Collection
-#+name: early-init-garbage-collection
-#+begin_src emacs-lisp :tangle no
-  (setq gc-cons-threshold (* 5000 1024 1024))
+#+begin_src emacs-lisp
+  ;; (when (boundp 'comp-eln-load-path)
+  ;;   (setq comp-eln-load-path
+  ;;    (expand-file-name "var/eln-cache/" user-emacs-directory)))
 #+end_src
 
-#+name: init-garbage-collection
-#+begin_src emacs-lisp :tangle no
-  (defvar actuator-gc-cons-threshold 800000
+#+begin_src emacs-lisp
+  (defvar actuator-gc-cons-threshold gc-cons-threshold
     "Original value for `gc-cons-threshold'.")
   (defun actuator-restore-gc-cons-threshold ()
     "Restore `gc-cons-threshold' value."
     (setq gc-cons-threshold actuator-gc-cons-threshold)
     (garbage-collect))
   (add-hook 'after-init-hook #'actuator-restore-gc-cons-threshold)
+  (setq gc-cons-threshold (* 5 1024 1024 1024))
+#+end_src
+
+#+begin_src emacs-lisp
+  (provide 'early-init)
+  ;;; early-init.el ends here
 #+end_src
 
 * Init
@@ -47,9 +48,17 @@
   (add-to-list 'package-archives
                '("melpa" . "https://melpa.org/packages/"))
 
-  ;;(package-initialize)
+  (setq package-archives
+        '(("org"    . "https://orgmode.org/elpa/")
+          ("melpa"  . "https://melpa.org/packages/")
+          ("gnu"    . "https://elpa.gnu.org/packages/")
+          ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-  ;; Bootstrap `use-package'
+  (setq package-archive-priorities '(("org"   . 40)
+                                     ("melpa" . 30)
+                                     ("gnu"   . 20)
+                                     ("nongnu". 10)))
+
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
     (package-install 'use-package))
@@ -76,8 +85,6 @@
                                       "NIX_SSL_CERT_FILE"))
     :hook (after-init . exec-path-from-shell-initialize))
 #+end_src
-
-** Org
 
 * Theme
 #+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el
@@ -477,7 +484,7 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (setq help-window-select t) ; Select help window by default
   (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
-  (fset 'yes-or-no-p 'y-or-n-p)
+  (defalias 'yes-or-no-p 'y-or-n-p)
 
   (global-set-key (kbd "M-o") #'other-window)
 
@@ -489,6 +496,7 @@ From  emacs-plus:
   (set-default-coding-systems 'utf-8)
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
+  (set-language-environment "UTF-8")
 
   (add-hook 'before-save-hook 'whitespace-cleanup)
 
@@ -567,6 +575,7 @@ From  emacs-plus:
 
 #+begin_src emacs-lisp
   (use-package recentf
+    :ensure nil
     :init
     (recentf-mode)
     :bind ("C-x C-r" . recentf-open-files)
@@ -781,9 +790,6 @@ From  emacs-plus:
   (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
 #+end_src
 ** Web
-*** Introduction                                  :ignore:
-I don't use Emacs to browse the web, although it can be done, and I guess people do. I do a few browser-related things in it though, including storing my bookmarks in an Org-mode file and such. Here's what I've changed.
-
 *** Set up browsing handlers                      :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
@@ -819,7 +825,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 *** Open links in background                      :ignore:
 
 #+begin_src emacs-lisp
-  (when (memq system-type '(darwin))
+  (when (eq system-type 'darwin)
     (setq browse-url-browser-function 'browse-url-generic)
     (setq browse-url-generic-program "open")
     (setq browse-url-generic-args '("--background")))
@@ -870,7 +876,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Encryption
 #+begin_src emacs-lisp
   (setq epa-file-select-keys 1)
-  (epa-file-enable)
+  ;;(epa-file-enable)
 #+end_src
 ** Dired
 #+begin_src emacs-lisp
@@ -997,6 +1003,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
      '((:maildir "/Archive" :key ?a)
        (:maildir "/Inbox"   :key ?i)))
     (mail-user-agent 'mu4e-user-agent)
+    (mu4e-hide-index-messages t)
+    (mu4e-update-interval (* 60 15))
     (mu4e-refile-folder "/Archive")
     (mu4e-sent-folder   "/Sent Items")
     (mu4e-drafts-folder "/Drafts")
@@ -1016,7 +1024,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package smtpmail
-
+    :ensure nil
     :custom
     (smtpmail-default-smtp-server "smtp.fastmail.com")
     (smtpmail-smtp-server "smtp.fastmail.com")
@@ -1043,6 +1051,28 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (advice-add 'package-menu-execute :after-while #'package-quickstart-refresh)
 #+end_src
 
+#+begin_src emacs-lisp
+  (add-hook 'kill-emacs-hook #'package-quickstart-refresh)
+#+end_src
+
+** Modeline time
+#+begin_src emacs-lisp
+  (use-package time
+    :ensure nil
+    :custom
+    (display-time-24hr-format t)
+    (display-time-default-load-average nil))
+#+end_src
+
+** Allow different places in the same buffer
+#+begin_src emacs-lisp
+  (use-package window
+    :ensure nil
+    :custom
+    (switch-to-buffer-preserve-window-point t))
+#+end_src
+
+
 * Unstable packages
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
@@ -1067,7 +1097,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (defvar org-directory "~/org")
   (use-package org
-
+    :ensure t
     :config
     (org-indent-mode 1)
     (add-to-list 'org-babel-default-header-args
@@ -1312,12 +1342,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Project
 #+begin_src emacs-lisp
   (use-package project
-    )
+    :ensure t)
 #+end_src
 
-`project-find-file', `project-find-regexp' and
-`project-or-external-find-regexp' use the current API, and thus
-will work in any project that has an adapter.
 ** Org Link Minor Mode
 #+begin_src emacs-lisp
   (use-package org-link-minor-mode
@@ -1329,9 +1356,8 @@ will work in any project that has an adapter.
 ** HTMLize
 #+begin_src emacs-lisp
   (use-package htmlize
-    )
+    :ensure t)
 #+end_src
-
 
 ** Eldoc
 
@@ -1339,7 +1365,7 @@ will work in any project that has an adapter.
 
 #+begin_src emacs-lisp
   (use-package eldoc
-
+    :ensure t
     :custom
     (eldoc-echo-area-use-multiline-p t)
     (eldoc-idle-delay 0)
@@ -1354,6 +1380,7 @@ will work in any project that has an adapter.
          (when (not (string= "" oneline))
            (concat " " (propertize oneline 'face 'italic)))))))
 #+end_src
+
 ** Forge
 #+begin_src emacs-lisp
   (use-package forge
@@ -2068,6 +2095,35 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
   )
 #+end_src
 
+** Mu4e Alert
+#+begin_src emacs-lisp
+  (use-package mu4e-alert
+    :ensure t
+    :config
+    (cond ((eq system-type 'gnu/linux)
+           (mu4e-alert-set-default-style 'libnotify))
+          ((eq system-type 'darwin)
+           (mu4e-alert-set-default-style 'osx-notifier)))
+    :hook
+    (after-init . mu4e-alert-enable-notifications)
+    (after-init . mu4e-alert-enable-mode-line-display))
+#+end_src
+** Alert
+
+#+begin_src emacs-lisp
+  (use-package alert
+    :ensure t
+    :config
+      (cond ((eq system-type 'gnu/linux)
+             (setq alert-default-style 'libnotify))
+            ((eq system-type 'darwin)
+             (setq alert-default-style 'osx-notifier))))
+#+end_src
+** Systemd
+#+begin_src emacs-lisp
+  (use-package systemd
+    :ensure t)
+#+end_src
 * Disabled
    :PROPERTIES:
    :header-args: :tangle no
