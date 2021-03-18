@@ -1059,9 +1059,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 ** Package Quickstart
-#+begin_src emacs-lisp :tangle no
-  (advice-add 'package-menu-execute :after-while #'package-quickstart-refresh)
-#+end_src
 
 #+begin_src emacs-lisp
   (add-hook 'kill-emacs-hook #'package-quickstart-refresh)
