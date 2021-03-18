@@ -1064,6 +1064,18 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (add-hook 'kill-emacs-hook #'package-quickstart-refresh)
 #+end_src
 
+** Byte compile init
+
+#+begin_src emacs-lisp
+  (defun actuator-byte-recompile-init ()
+    "Recompiles the inits. I dunno why I want to"
+    (interactive)
+    (byte-recompile-file (expand-file-name "init.el"
+                                           user-emacs-directory) nil 0)
+    (byte-recompile-file (expand-file-name "early-init.el"
+                                           user-emacs-directory) nil 0))
+#+end_src
+
 ** Modeline time
 #+begin_src emacs-lisp
   (use-package time
