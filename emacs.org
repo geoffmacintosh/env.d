@@ -1764,7 +1764,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
   (defun actuator-elfeed-mark-all-as-read ()
       "Mark all feeds in search as read. Taken from Mike Zamansky"
       (interactive)
-      (mark-whole-buffer)
+      (with-no-warnings (mark-whole-buffer))
       (elfeed-search-untag-all-unread))
 #+end_src
 
@@ -1838,7 +1838,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (use-package eshell
-
+    :ensure nil
     :config
     <<shortcuts>>
     <<smart-shell>>
