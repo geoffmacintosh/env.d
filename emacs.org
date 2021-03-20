@@ -1127,9 +1127,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Auth Source
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package auth-source-pass
-
+    :ensure
     :config
     (auth-source-pass-enable))
 #+end_src
