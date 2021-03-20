@@ -781,7 +781,7 @@ From  emacs-plus:
 - [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
 - [[https://www.emacswiki.org/emacs/KeyboardMacros][EmacsWiki: Keyboard Macros]] [2020-06-08 Mon]
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
-** Truncate shit TEST
+** Truncate
 #+begin_src emacs-lisp
   (setq truncate-partial-width-windows nil)
   (toggle-truncate-lines 1) ; Don't wrap lines by default
