@@ -2,7 +2,7 @@
 #+property: :header-args: :comments none
 
 * ZSH
-#+begin_src shell :tangle ~/.zshrc
+#+begin_src shell :tangle ~/.zshenv
   export XDG_DATA_HOME="$HOME/.local/share"
   export XDG_CONFIG_HOME="$HOME/.config"
   export XDG_CACHE_HOME="$HOME/.cache"
@@ -10,19 +10,21 @@
   export EDITOR="emacsclient -tty -a \"\""
   export VISUAL="emacsclient -c -a \"\""
 
-  #export GOPATH="$XDG_DATA_HOME/go"
+  export QMK_HOME="~/Documents/Projects/qmk_firmware"
 
-  if [ -x /bin/kitty ] ; then
-      export $TERMINAL /bin/kitty
-  fi
+  [ -d /usr/local/opt/ruby/bin ] && \
+      path=( /usr/local/opt/ruby/bin $path )
 
-  export GNUPGHOME="$XDG_DATA_HOME/gnupg"
-  export LESSHISTFILE="$XDG_CACHE_HOME/less/history"
+  [ -d /usr/local/opt/ruby/libexec/gembin ] && \
+      path=( /usr/local/opt/ruby/libexec/gembin $path )
 
-  #export PATH=$GOPATH/bin:$PATH
-  export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-  export PATH="/usr/local/sbin:$PATH"
+  [ -d /Library/TeX/texbin ] && \
+      path=( /Library/TeX/texbin $path )
 
+  [ -d /usr/local/sbin ] && \
+      path=( /usr/local/sbin $path )
+
+  typeset -U PATH path
 #+end_src
 
 * NCMPCPP
