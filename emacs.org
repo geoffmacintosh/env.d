@@ -1969,12 +1969,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 ;;(setq eshell-ask-to-save-history (quote always))
-** Mingus
-#+begin_src emacs-lisp
-  (use-package mingus
-  )
-#+end_src
-
 ** Mu4e Alert
 #+begin_src emacs-lisp
   (use-package mu4e-alert
