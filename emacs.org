@@ -1848,26 +1848,26 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (use-package eshell
     :ensure nil
-    :bind (:map eshell-mode-map
-                ("\C-a" . eshell-bol)
-                ("\C-r" . counsel-esh-history)
-                ([up]   . previous-line)
-                ([down] . next-line))
+    ;; :bind (:map eshell-mode-map
+    ;;             ("\C-a" . eshell-bol)
+    ;;             ("\C-r" . counsel-esh-history)
+    ;;             ([up]   . previous-line)
+    ;;             ([down] . next-line))
     :config
     (defalias 'eshell/f  'find-file-other-window)
     (defalias 'eshell/ff 'find-file)
     (defalias 'eshell/v  'view-file-other-window)
     (defalias 'eshell/vv 'view-file)
     :custom
-    (eshell-history-size 10000)
-    (eshell-destroy-buffer-when-process-dies t)
-    (eshell-banner-message ""))
+    (eshell-destroy-buffer-when-process-dies t) ;;em-term
+    (eshell-banner-message "")) ;;em-banner
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package em-hist
     :ensure nil
     :custom
+    (eshell-history-size 10000)
     (eshell-hist-ignoredups t))
 #+end_src
 
