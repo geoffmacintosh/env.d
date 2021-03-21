@@ -1221,11 +1221,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq org-agenda-files `(,org-directory
-                           ,(if (getenv "XDG_CONFIG_HOME")
-                                (getenv "XDG_CONFIG_HOME")
-                              "~/.config")
-                           ,user-emacs-directory))
+  (setq org-agenda-files `(,org-directory))
 #+end_src
 
 
@@ -1970,7 +1966,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
          " ❯ ")))
 #+end_src
 
-;;(setq eshell-ask-to-save-history (quote always))
 ** Mu4e Alert
 #+begin_src emacs-lisp
   (use-package mu4e-alert
@@ -1999,6 +1994,23 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (use-package systemd
     :ensure t)
+#+end_src
+
+** EMMS
+Or could just use mingus?
+#+begin_src emacs-lisp
+  (use-package emms
+    :ensure t
+    :config
+    (require 'emms-player-mpd)
+    (require 'emms-setup)
+    (emms-minimalistic)
+    (setq emms-player-mpd-server-name "localhost")
+    (setq emms-player-mpd-server-port "6600")
+    (add-to-list 'emms-info-functions 'emms-info-mpd)
+    :custom
+    (emms-player-list '(emms-player-mpd))
+    (emms-source-file-default-directory "~/Music/Music Files"))
 #+end_src
 * Disabled
    :PROPERTIES:
