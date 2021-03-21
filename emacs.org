@@ -1842,11 +1842,11 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (use-package eshell
     :ensure nil
-    :bind (:map eshell-mode-map
-                ("\C-a" . eshell-bol)
-                ("\C-r" . counsel-esh-history)
-                ([up]   . previous-line)
-                ([down] . next-line))
+    ;; :bind (:map eshell-mode-map
+    ;;             ("\C-a" . eshell-bol)
+    ;;             ("\C-r" . counsel-esh-history)
+    ;;             ([up]   . previous-line)
+    ;;             ([down] . next-line))
     :config
     (defalias 'eshell/f  'find-file-other-window)
     (defalias 'eshell/ff 'find-file)
@@ -1963,18 +1963,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
          (eshell/pwd)
          " ❯ ")))
 #+end_src
-
-<<<<<<< HEAD
-https://github.com/mauforonda/emacs/blob/master/readme.org
-http://xenodium.com/more-reusable-emacs-shell-command-history/
-=======
-;;(setq eshell-ask-to-save-history (quote always))
-** Mingus
-#+begin_src emacs-lisp
-  (use-package mingus
-  )
-#+end_src
->>>>>>> edea542dd970c73e32277bb070bb11cb903b5578
 
 ** Mu4e Alert
 #+begin_src emacs-lisp
