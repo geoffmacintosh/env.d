@@ -2108,11 +2108,6 @@ https://github.com/dieggsy/esh-autosuggest/tree/972094808d231a86dc6e43862191167b
 
 https://github.com/mauforonda/emacs/blob/master/readme.org
 http://xenodium.com/more-reusable-emacs-shell-command-history/
-** Mingus
-#+begin_src emacs-lisp
-  (use-package mingus
-  )
-#+end_src
 
 ** Mu4e Alert
 #+begin_src emacs-lisp
