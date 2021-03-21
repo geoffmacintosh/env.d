@@ -216,21 +216,6 @@
 ** Main Config
 
 #+begin_src fish :tangle ~/.config/fish/config.fish
-  if functions -q bax; and test -e ~/.nix-profile/etc/profile.d/nix.sh
-      bax ". ~/.nix-profile/etc/profile.d/nix.sh"
-  end
-
-  set -gx XDG_CACHE_HOME $HOME/.cache
-  set -gx XDG_DATA_HOME $HOME/.local/share
-  set -gx XDG_CONFIG_HOME $HOME/.config
-
-  set -gx WGETRC $XDG_CONFIG_HOME/wgetrc
-
-  set -gx VISUAL "emacsclient -c -a \"\""
-  set -gx EDITOR "emacsclient -tty -a \"\""
-
-  set -gx QMK_HOME "~/Documents/Projects/qmk_firmware"
-
   function __fish_describe_command; end # Fixes issues with Catalina
 
   # set __fish_git_prompt_show_informative_status "yes"
@@ -239,35 +224,12 @@
   function fish_greeting; end
   function fish_title; end
 
-  #alias pass="gopass"
-  #alias tmux="tmux -f ~/.config/tmux.conf"
-
   abbr -a -- - prevd
   abbr -a -- = nextd
 
   abbr -a yt  youtube-dl
   abbr -a yta youtube-dl -x --audio-format best
   abbr -a dired emacsclient --tty -a "emacs -nw" $PWD
-
-  if test -e /usr/local/sbin
-      set -gx PATH /usr/local/sbin $PATH
-  end
-
-  #  if test -e /Library/TeX/texbin
-  #      set -gx PATH $PATH /Library/TeX/texbin
-  #  end
-
-  # Brew's relationship to ruby is weird but I can't make it work with
-  # Nix yet.
-  if test -e /usr/local/lib/ruby/gems/3.0.0/bin
-      set -gx PATH /usr/local/lib/ruby/gems/3.0.0/bin $PATH
-      set -gx PATH /usr/local/opt/ruby/bin $PATH
-  end
-
-  if test -e /opt/local/bin
-      set -gx PATH /opt/local/bin $PATH
-      set -gx PATH /opt/local/sbin $PATH
-  end
 
   if not functions -q fisher
       set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
@@ -281,8 +243,8 @@
 #+end_src
 
 #+begin_src fish :tangle ~/.config/fish/fishfile
-  jethrokuan/z
-  jorgebucaran/fish-bax
+   jethrokuan/z
+  # jorgebucaran/fish-bax
 #+end_src
 
 #+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
