@@ -2138,6 +2138,23 @@ http://xenodium.com/more-reusable-emacs-shell-command-history/
   (use-package systemd
     :ensure t)
 #+end_src
+
+** EMMS
+Or could just use mingus?
+#+begin_src emacs-lisp
+  (use-package emms
+    :ensure t
+    :config
+    (require 'emms-player-mpd)
+    (require 'emms-setup)
+    (emms-minimalistic)
+    (setq emms-player-mpd-server-name "localhost")
+    (setq emms-player-mpd-server-port "6600")
+    (add-to-list 'emms-info-functions 'emms-info-mpd)
+    :custom
+    (emms-player-list '(emms-player-mpd))
+    (emms-source-file-default-directory "~/Music/Music Files"))
+#+end_src
 * Disabled
    :PROPERTIES:
    :header-args: :tangle no
