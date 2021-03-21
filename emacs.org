@@ -1189,11 +1189,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq org-agenda-files `(,org-directory
-                           ,(if (getenv "XDG_CONFIG_HOME")
-                                (getenv "XDG_CONFIG_HOME")
-                              "~/.config")
-                           ,user-emacs-directory))
+  (setq org-agenda-files `(,org-directory))
 #+end_src
 
 
