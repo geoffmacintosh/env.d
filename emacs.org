@@ -78,13 +78,15 @@
 ** Exec path from shell
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
+    :ensure
+    :demand t
     :custom
-    (exec-path-from-shell-variables '("PATH"
-                                      "MANPATH"
-                                      "NIX_PATH"
-                                      "NIX_SSL_CERT_FILE"))
-    :hook (after-init . exec-path-from-shell-initialize))
+    (exec-path-from-shell-arguments '("-l" "-i"))
+    :config
+    (when (eq system-type 'darwin)
+      (exec-path-from-shell-initialize)))
 #+end_src
+
 
 * Theme
 #+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el
