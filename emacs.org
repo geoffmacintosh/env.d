@@ -1116,6 +1116,21 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
                  :password (auth-source-pass-get "oauth" "twitch.tv"))))
 #+end_src
 
+** Doc View
+#+begin_src emacs-lisp
+  (use-package doc-view
+    :ensure nil
+    :custom
+    (doc-view-resolution 150 ))
+#+end_src
+
+** Sync stuff
+#+begin_src emacs-lisp
+  (setq elfeed-db-directory "~/Sync/library/elfeed")
+  (setq abbrev-file-name    "~/Sync/library/abbrev.el")
+  (setq bookmark-file       "~/Sync/library/bookmark.el")
+#+end_src
+
 * Unstable packages
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
