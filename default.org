@@ -62,12 +62,20 @@
   #auto_update        "yes"
 #+end_src
 
-[[file:macos.org::*MPD][MPD Mac Config]]
-
-#+begin_src conf
-  include_optional "mac.conf"
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.mpd/mpd.conf" "no")
+  audio_output {
+  type       "osx"
+  name       "CoreAudio"
+  mixer_type "software"
+  }
 #+end_src
 
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.mpd/mpd.conf" "no")
+  audio_output {
+  type "pulse"
+  name "pulse audio"
+  }
+#+end_src
 * Beets
 :PROPERTIES:
 :header-args: :tangle ~/.config/beets/config.yaml

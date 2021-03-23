@@ -325,8 +325,8 @@
         textInflaterChooser:show()
      end)
 #+end_src
-* Disable Launchd stuff
-#+begin_src shell :tangle install.sh
+* Disable  Launchd stuff
+#+begin_src shell
   #!/bin/bash
 
   # IMPORTANT: Don't forget to logout from your Apple ID in the settings before running it!
@@ -671,14 +671,6 @@ This script should rysnc-copy my music to my archive  very confusing) but had no
 #+end_src
 
 * MPD
-#+begin_src conf :tangle ~/.mpd/mac.conf
-  audio_output {
-  type       "osx"
-  name       "CoreAudio"
-  mixer_type "software"
-  }
-#+end_src
-
 #+begin_src xml
   <?xml version="1.0" encoding="UTF-8"?>
   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
