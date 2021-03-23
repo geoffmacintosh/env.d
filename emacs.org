@@ -87,7 +87,6 @@
       (exec-path-from-shell-initialize)))
 #+end_src
 
-
 * Theme
 #+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el
   (deftheme actuator)
@@ -1030,7 +1029,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (mu4e-sent-folder   "/Sent Items")
     (mu4e-drafts-folder "/Drafts")
     (mu4e-trash-folder  "/Trash")
-    (mu4e-attachments-dir "~/Downloads")
+    (mu4e-attachment-dir "~/Downloads/")
     (mu4e-view-show-images t)
     (mu4e-view-show-addresses t)
     (mu4e-change-filenames-when-moving t)
