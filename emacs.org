@@ -367,14 +367,99 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
                             (gnus . org-gnus-no-new-news)
                             (file . find-file))))
 #+end_src
-* Stable packages
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
-:END:
 * Unstable
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
+** Auto-upgrade
+#+begin_src emacs-lisp
+    (use-package auto-package-update
+      :ensure t
+      :demand t
+      :config
+      (require 'auto-package-update)
+      :hook (auto-package-update-before . actuator-backup-emacs-directory))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-backup-emacs-directory ()
+    "It does."
+    (shell-command "BORG_REPO=~/Backup/emacs borg create --stats --verbose \\
+  --compression zstd,22 ::{hostname}-{now} \\
+  ~/.config/emacs" "*Package backup log*")
+    (shell-command "BORG_REPO=~/Backup/emacs borg prune --stats --keep-last 10 \\
+  --save-space" "*Package backup log*"))
+#+end_src
+
+** SVG Screenshot
+#+begin_src emacs-lisp
+  (defun screenshot-svg ()
+    “Save a screenshot of the current frame as an SVG image.
+  Saves to a temp file and puts the filename in the kill ring.”
+    (interactive)
+    (let* ((filename (make-temp-file “Emacs” nil “.svg”))
+           (data (x-export-frames nil ‘svg)))
+      (with-temp-file filename
+        (insert data))
+      (kill-new filename)
+      (message filename)))
+#+end_src
+** Git autocommit
+#+begin_src emacs-lisp
+  (use-package git-auto-commit-mode
+    :ensure t)
+#+end_src
+
+** Sunrise/set
+
+#+begin_src emacs-lisp
+  (require 'solar)
+  (setq calendar-location-name "St. John's, NL")
+
+  (defun solar-sunrise-string (date &optional nolocation)
+    "String of *local* time of sunrise and daylight on Gregorian DATE."
+    (let ((l (solar-sunrise-sunset date)))
+      (format
+       "%s (%s hours daylight)"
+       (if (car l)
+       (concat "Sunrise " (apply 'solar-time-string (car l)))
+         "no sunrise")
+       (nth 2 l)
+       )))
+  ;; To be called from diary-list-sexp-entries, where DATE is bound.
+  ;;;###diary-autoload
+  (defun diary-sunrise ()
+    "Local time of sunrise as a diary entry.
+    Accurate to a few seconds."
+    (or (and calendar-latitude calendar-longitude calendar-time-zone)
+        (solar-setup))
+    (solar-sunrise-string date))
+
+    (defun solar-sunset-string (date &optional nolocation)
+    "String of *local* time of sunset and daylight on Gregorian DATE."
+    (let ((l (solar-sunrise-sunset date)))
+      (format
+       "%s (%s hours daylight)"
+       (if (cadr l)
+       (concat "Sunset " (apply 'solar-time-string (cadr l)))
+         "no sunset")
+       (nth 2 l)
+       )))
+  ;; To be called from diary-list-sexp-entries, where DATE is bound.
+  ;;;###diary-autoload
+  (defun diary-sunset ()
+    "Local time of sunset as a diary entry.
+    Accurate to a few seconds."
+    (or (and calendar-latitude calendar-longitude calendar-time-zone)
+        (solar-setup))
+    (solar-sunset-string date))
+#+end_src
+
+[[https://www.reddit.com/r/orgmode/comments/a1z26t/sunrise_sunset_as_separate_entries_on_agenda_view/][Sunrise Sunset as Separate Entries on Agenda View (SUPPORT) : orgmode]]
+[[https://stackoverflow.com/questions/22889036/custom-diary-sunrise-function-not-working-autoload-diary-emacs][elisp - Custom diary-sunrise function not working. `autoload-diary`? (Emacs.)...]]
+
+
+
 ** Capture Templates
 :PROPERTIES:
 :ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
