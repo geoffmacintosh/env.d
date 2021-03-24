@@ -1124,9 +1124,28 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (use-package doc-view
     :ensure nil
+    :config
+    (defvar actuator-doc-view-bookmark-push-p t
+      "Whether to push automatic doc-view bookmarks, or clobber them.")
+    (defun actuator-doc-view-open-handler ()
+      "Stuff."
+      (require 'bookmark)
+      (bookmark-maybe-load-default-file)
+      (bookmark-jump (buffer-name)))
+
+    (defun actuator-doc-view-save-handler ()
+      "Stuff"
+      (when (eq major-mode 'doc-view-mode)
+        (require 'bookmark)
+        (bookmark-maybe-load-default-file)
+        (bookmark-set (buffer-name) actuator-doc-view-bookmark-push-p)))
+    :hook
+    (doc-view-mode . actuator-doc-view-open-handler)
+    (kill-buffer-hook . actuator-doc-viwe-save-handler)
     :custom
     (doc-view-resolution 150 ))
 #+end_src
+https://gist.github.com/spacebat/5500966
 
 ** Sync stuff
 #+begin_src emacs-lisp
@@ -1135,10 +1154,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (setq bookmark-file       "~/Sync/library/bookmark.el")
 #+end_src
 
-* Unstable packages
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :noweb yes
-:END:
 ** Org Randomnote
 #+begin_src emacs-lisp
   (use-package org-randomnote
