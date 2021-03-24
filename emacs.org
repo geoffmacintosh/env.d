@@ -991,13 +991,28 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (defun actuator-ediff-startup ()
       "Prep Ediff for success."
       (window-configuration-to-register :ediff))
+
     (defun actuator-ediff-quit ()
       "Restore files after diffing."
       (jump-to-register :ediff))
+
+    (defun ediff-org-reveal-around-difference (&rest _)
+      (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
+        (ediff-with-current-buffer buf
+          (when (derived-mode-p 'org-mode)
+            (org-reveal t)))))
+
+    (advice-add 'ediff-next-difference :after
+    #'ediff-org-reveal-around-difference)
+    (advice-add 'ediff-previous-difference :after
+    #'ediff-org-reveal-around-difference)
     :hook
     (ediff-startup . actuator-ediff-startup)
     (ediff-quit    . actuator-ediff-quit))
 #+end_src
+
+[[https://www.reddit.com/r/emacs/comments/dxzi96/have_some_code_make_ediffing_folded_org_files/][Have some code: make ediffing folded org files better : emacs]]
+
 
 ** Mu4e
 
