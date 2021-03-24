@@ -30,10 +30,6 @@
   duti -s org.gnu.Emacs public.yaml all
 #+end_src
 
-* GPG
-#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf
-  pinentry-program /usr/local/bin/pinentry-mac
-#+end_src
 * Defaults Write
 
 #+begin_src shell

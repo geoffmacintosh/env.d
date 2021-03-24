@@ -963,10 +963,12 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (toggle-truncate-lines +1))
   (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
 #+end_src
-** Encryption
+** Encryption (EPG)
 #+begin_src emacs-lisp
-  (setq epa-file-select-keys 1)
-  ;;(epa-file-enable)
+  (use-package epg
+    :ensure nil
+    :custom
+    (epg-pinentry-mode 'loopback))
 #+end_src
 ** Dired
 #+begin_src emacs-lisp
