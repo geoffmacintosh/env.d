@@ -452,7 +452,11 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq bookmark-version-control t)
+  (use-package bookmark
+    :ensure nil
+    :custom
+    (bookmark-version-control t)
+    (bookmark-save-flag 1))
 #+end_src
 
 #+begin_src emacs-lisp
