@@ -673,7 +673,8 @@ From  emacs-plus:
     (recentf-max-saved-items 1000)
     (recentf-exclude `(,no-littering-var-directory
                        ,no-littering-etc-directory
-                       "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+                       "^/\\(?:ssh\\|su\\|sudo\\)?:"
+                       "/var/folders/"))
     :hook (midnight-mode . recentf-cleanup))
 #+end_src
 
