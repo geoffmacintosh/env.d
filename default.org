@@ -213,12 +213,27 @@
   [fetch]
           prune = true
           pruneTags = true
+
+  [diff "org"]
+        xfuncname = "^\\*+.*"
+
+  [diff "lisp"]
+        xfuncname = "^\\([^ ]+ [^ ]+"
 #+end_src
 
-#+begin_src conf :tangle (if (eq system-type 'darwin) ":tangle ~/.config/git/config" "no")
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.config/git/config" "no")
   [credential]
             helper = osxkeychain
 #+end_src
+
+#+begin_src conf :tangle ~/.config/git/attributes
+  ,,*.org   diff=org
+  ,,*.lisp  diff=lisp
+  ,,*.el    diff=lisp
+  ,,*.hy    diff=lisp
+  ,,*.scm   diff=lisp
+#+end_src
+
 * Fish
 ** Main Config
 
