@@ -201,14 +201,8 @@
           interactive = auto
           ui = auto
 
-  [credential]
-          helper = osxkeychain
-
   [diff]
           renameLimit = 5000
-
-  [http]
-  #	sslcainfo = ~/.nix-profile/etc/ssl/certs/ca-bundle.crt
 
   [pull]
           rebase = false
@@ -219,6 +213,11 @@
   [fetch]
           prune = true
           pruneTags = true
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'darwin) ":tangle ~/.config/git/config" "no")
+  [credential]
+            helper = osxkeychain
 #+end_src
 * Fish
 ** Main Config
