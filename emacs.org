@@ -67,6 +67,10 @@
     (require 'use-package nil t))
   (require 'use-package-ensure nil t)
   (setq use-package-always-ensure t)
+  (use-package bind-key
+    :ensure
+    :init
+    (require 'bind-key))
 #+end_src
 
 ** No Littering
