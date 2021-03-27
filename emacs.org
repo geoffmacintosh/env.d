@@ -382,10 +382,11 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
       :demand t
       :config
       (require 'auto-package-update)
-      :hook (auto-package-update-before . actuator-backup-emacs-directory))
+      ;;:hook (auto-package-update-before . actuator-backup-emacs-directory)
+)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-backup-emacs-directory ()
     "It does."
     (shell-command "BORG_REPO=~/Backup/emacs borg create --stats --verbose \\
