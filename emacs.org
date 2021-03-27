@@ -1270,7 +1270,9 @@ https://gist.github.com/spacebat/5500966
   (use-package auth-source-pass
     :ensure
     :config
-    (auth-source-pass-enable))
+    (auth-source-pass-enable)
+    :custom
+    (auth-sources '(password-store)))
 #+end_src
 
 ** Org
