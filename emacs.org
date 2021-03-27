@@ -1165,7 +1165,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (use-package message
     :ensure nil
     :custom
-    (message-send-mail-function 'smtpmail-send-it))
+    (send-mail-function 'sendmail-send-it)
+    (message-send-mail-function 'sendmail-send-it))
 #+end_src
 
 ** Native Compile
