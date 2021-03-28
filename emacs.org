@@ -1204,6 +1204,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Modeline time
 #+begin_src emacs-lisp
   (use-package time
+    :config
+    (display-time)
     :ensure nil
     :custom
     (display-time-24hr-format t)
