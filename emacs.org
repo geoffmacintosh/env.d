@@ -1328,7 +1328,7 @@ https://gist.github.com/spacebat/5500966
     ;;(org-time-stamp-custom-formats
     ;; '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
     (org-startup-folded 'content)
-    (org-ellipsis "→")
+    (org-ellipsis " →")
     (org-startup-align-all-tables t)
     (org-startup-shrink-all-tables t)
     (org-startup-with-inline-images t)
