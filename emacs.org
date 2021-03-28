@@ -2161,9 +2161,11 @@ Or could just use mingus?
 #+end_src
 ** Rainbow
 #+begin_src emacs-lisp
-    (use-package rainbow-mode
-      :ensure
-      :hook (prog-mode . rainbow-mode))
+  (use-package rainbow-mode
+    :ensure
+    :demand
+    :config
+    (rainbow-mode))
 #+end_src
 ** Modeline
 
