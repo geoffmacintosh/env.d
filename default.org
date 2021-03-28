@@ -416,3 +416,44 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 #+begin_src conf :tangle (if (eq system-type 'darwin) "~/.gnupg/gpg-agent.conf" "no")
   pinentry-program /usr/local/bin/pinentry-mac
 #+end_src
+
+* Postfix
+Append the following to the end of ~/etc/postfix/main.cf~.
+
+#+begin_src conf
+  relayhost = [smtp.fastmail.com]:587
+  smtp_sasl_auth_enable = yes
+  smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+  smtp_sasl_security_options = noanonymous
+  smtp_sasl_mechanism_filter = plain
+  smtp_use_tls = yes
+  smtp_tls_security_level = encrypt
+  # smtp_tls_mandatory_ciphers = high
+  # smtp_tls_verify_cert_match = nexthop
+  # smtp_sasl_tls_security_options = noanonymous
+  # smtp_tls_CAfile = /etc/postfix/ssl/ca-bundle.crt
+#+end_src
+
+You can test the syntax of the config via the following command:
+
+#+begin_src shell :dir /sudo:: :results replace
+  sudo postfix check
+#+end_src
+
+Create a ~/etc/postfix/sasl_passwd~ file with the following setup.
+
+#+begin_src conf :tangle /sudo::/etc/postfix/sasl_passwd
+  [smtp.fastmail.com]:587 gmacintosh#fastmail.fm:applicationspecificpassword
+#+end_src
+
+Then turn the password into the correct format. After running the command a file called ~sasl_passwd.db~ should be created. This means that you should be able to delete the sasl_passwd file, thus no-longer storing your password in plain text, but I have not tested this.
+
+#+begin_src shell :dir /sudo:: :results replace
+  sudo postmap /etc/postfix/sasl_passwd
+#+end_src
+
+Then I had a lot of errors with aliases that I don't understand, but this fixes it:
+
+#+begin_src shell :dir /sudo:: :results replace
+  sudo postalias /etc/postfix/aliases
+#+end_src
