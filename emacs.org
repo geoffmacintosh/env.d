@@ -767,8 +767,11 @@ From  emacs-plus:
 ** Eliminate frame title
 #+begin_src emacs-lisp
   (setq ns-use-proxy-icon nil)
-  (setq-default frame-title-format nil)
-  (set-frame-parameter (selected-frame) 'title nil)
+  (setq frame-title-format
+        '((:eval (when (buffer-file-name)
+                   (abbreviate-file-name default-directory)))
+          "%b" ))
+  ;;(set-frame-parameter (selected-frame) 'title nil)
 #+end_src
 
 #+begin_src emacs-lisp
