@@ -779,7 +779,7 @@ From  emacs-plus:
     "Get fucked, Emacs"
     (set-frame-parameter (selected-frame) 'name nil)
     (set-frame-parameter (selected-frame) 'title nil))
-  (add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
+  ;;(add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
 #+end_src
 
 ** Help
