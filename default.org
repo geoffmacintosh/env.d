@@ -1,32 +1,6 @@
 #+title: Default Config
 #+property: :header-args: :comments none
 
-* ZSH
-#+begin_src shell :tangle ~/.zshenv
-  export XDG_DATA_HOME="$HOME/.local/share"
-  export XDG_CONFIG_HOME="$HOME/.config"
-  export XDG_CACHE_HOME="$HOME/.cache"
-
-  export EDITOR="emacsclient -tty -a \"\""
-  export VISUAL="emacsclient -c -a \"\""
-
-  export QMK_HOME="~/Documents/Projects/qmk_firmware"
-
-  [ -d /usr/local/opt/ruby/bin ] && \
-      path=( /usr/local/opt/ruby/bin $path )
-
-  [ -d /usr/local/opt/ruby/libexec/gembin ] && \
-      path=( /usr/local/opt/ruby/libexec/gembin $path )
-
-  [ -d /Library/TeX/texbin ] && \
-      path=( /Library/TeX/texbin $path )
-
-  [ -d /usr/local/sbin ] && \
-      path=( /usr/local/sbin $path )
-
-  typeset -U PATH path
-#+end_src
-
 * NCMPCPP
 :PROPERTIES:
 :header-args: :tangle ~/.config/ncmpcpp/config
@@ -238,6 +212,20 @@
 ** Main Config
 
 #+begin_src fish :tangle ~/.config/fish/config.fish
+  set -gx XDG_DATA_HOME   $HOME/.local/share
+  set -gx XDG_CONFIG_HOME $HOME/.config
+  set -gx XDG_CACHE_HOME  $HOME/.cache
+
+  set -gx EDITOR "emacsclient -tty -a \"\""
+  set -gx VISUAL "emacsclient -c -a \"\""
+
+  test -e "/usr/local/sbin" && fish_add_path "/usr/local/sbin"
+  test -e "/Library/TeX/texbin" && fish_add_path "/Library/TeX/texbin"
+  test -e "/usr/local/opt/ruby/libexec/gembin" && fish_add_path "/usr/local/opt/ruby/libexec/gembin"
+  test -e "/usr/local/opt/ruby/bin" && fish_add_path "/usr/local/opt/ruby/bin"
+  test -e "/opt/local/bin" && fish_add_path "/opt/local/bin"
+  test -e "/opt/local/sbin" && fish_add_path "/opt/local/sbin"
+
   function __fish_describe_command; end # Fixes issues with Catalina
 
   # set __fish_git_prompt_show_informative_status "yes"
@@ -266,7 +254,7 @@
 
 #+begin_src fish :tangle ~/.config/fish/fishfile
    jethrokuan/z
-  # jorgebucaran/fish-bax
+   jorgebucaran/fish-bax
 #+end_src
 
 #+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
