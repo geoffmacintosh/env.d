@@ -67,6 +67,10 @@
     (require 'use-package nil t))
   (require 'use-package-ensure nil t)
   (setq use-package-always-ensure t)
+  (use-package bind-key
+    :ensure
+    :init
+    (require 'bind-key))
 #+end_src
 
 ** No Littering
@@ -378,10 +382,11 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
       :demand t
       :config
       (require 'auto-package-update)
-      :hook (auto-package-update-before . actuator-backup-emacs-directory))
+      ;;:hook (auto-package-update-before . actuator-backup-emacs-directory)
+)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-backup-emacs-directory ()
     "It does."
     (shell-command "BORG_REPO=~/Backup/emacs borg create --stats --verbose \\
@@ -394,11 +399,11 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** SVG Screenshot
 #+begin_src emacs-lisp
   (defun screenshot-svg ()
-    “Save a screenshot of the current frame as an SVG image.
-  Saves to a temp file and puts the filename in the kill ring.”
+    "Save a screenshot of the current frame as an SVG image.
+  Saves to a temp file and puts the filename in the kill ring."
     (interactive)
-    (let* ((filename (make-temp-file “Emacs” nil “.svg”))
-           (data (x-export-frames nil ‘svg)))
+    (let* ((filename (make-temp-file "Emacs" nil ".svg"))
+           (data (x-export-frames nil 'svg)))
       (with-temp-file filename
         (insert data))
       (kill-new filename)
@@ -762,8 +767,11 @@ From  emacs-plus:
 ** Eliminate frame title
 #+begin_src emacs-lisp
   (setq ns-use-proxy-icon nil)
-  (setq-default frame-title-format nil)
-  (set-frame-parameter (selected-frame) 'title nil)
+  (setq frame-title-format
+        '((:eval (when (buffer-file-name)
+                   (abbreviate-file-name default-directory)))
+          "%b" ))
+  ;;(set-frame-parameter (selected-frame) 'title nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -771,7 +779,7 @@ From  emacs-plus:
     "Get fucked, Emacs"
     (set-frame-parameter (selected-frame) 'name nil)
     (set-frame-parameter (selected-frame) 'title nil))
-  (add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
+  ;;(add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
 #+end_src
 
 ** Help
@@ -1165,7 +1173,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (use-package message
     :ensure nil
     :custom
-    (message-send-mail-function 'smtpmail-send-it))
+    (send-mail-function 'sendmail-send-it)
+    (message-send-mail-function 'sendmail-send-it))
 #+end_src
 
 ** Native Compile
@@ -1195,6 +1204,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Modeline time
 #+begin_src emacs-lisp
   (use-package time
+    :config
+    (display-time)
     :ensure nil
     :custom
     (display-time-24hr-format t)
@@ -1252,9 +1263,9 @@ https://gist.github.com/spacebat/5500966
 
 ** Sync stuff
 #+begin_src emacs-lisp
-  (setq elfeed-db-directory "~/Sync/library/elfeed")
-  (setq abbrev-file-name    "~/Sync/library/abbrev.el")
-  (setq bookmark-file       "~/Sync/library/bookmark.el")
+  (setq elfeed-db-directory   "~/Sync/library/elfeed")
+  (setq abbrev-file-name      "~/Sync/library/abbrev.el")
+  (setq bookmark-default-file "~/Sync/library/bookmark.el")
 #+end_src
 
 ** Org Randomnote
@@ -1269,7 +1280,9 @@ https://gist.github.com/spacebat/5500966
   (use-package auth-source-pass
     :ensure
     :config
-    (auth-source-pass-enable))
+    (auth-source-pass-enable)
+    :custom
+    (auth-sources '(password-store)))
 #+end_src
 
 ** Org
@@ -1315,7 +1328,7 @@ https://gist.github.com/spacebat/5500966
     ;;(org-time-stamp-custom-formats
     ;; '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
     (org-startup-folded 'content)
-    (org-ellipsis "→")
+    (org-ellipsis " →")
     (org-startup-align-all-tables t)
     (org-startup-shrink-all-tables t)
     (org-startup-with-inline-images t)
@@ -2146,6 +2159,46 @@ Or could just use mingus?
     (emms-player-list '(emms-player-mpd))
     (emms-source-file-default-directory "~/Music/Music Files"))
 #+end_src
+** Rainbow
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :ensure
+    :demand
+    :config
+    (rainbow-mode))
+#+end_src
+** Modeline
+
+#+begin_src emacs-lisp
+  (setq-default mode-line-format
+                (list
+                 " %e"
+                 mode-line-mule-info
+                 mode-line-client
+                 mode-line-modified
+                 "   "
+                 '(:eval (when (buffer-file-name)
+                           (abbreviate-file-name default-directory)))
+                 ;;mode-line-buffer-identification
+                 (propertize "%b" 'face 'mode-line-buffer-id)
+                 " %IB "
+                 mode-line-position
+                 "  "
+                 mode-line-misc-info
+                 '(:eval (when (featurep 'minions)
+                           minions-mode-line-modes))))
+#+end_src
+
+*** References
+ - [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
+** Minions
+#+begin_src emacs-lisp
+  (use-package minions
+    :ensure
+    :demand t
+    :config
+    (minions-mode))
+#+end_src
 * Disabled
    :PROPERTIES:
    :header-args: :tangle no
@@ -2195,34 +2248,8 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
     (smart-tab-using-hippie-expand t)
     (smart-tab-completion-functions-alist nil))
 #+end_src
-** Modeline
 
-#+begin_src emacs-lisp :tangle no
-  (setq-default mode-line-format
-                (list
-                 "%e "
-                 "%I "
-                 "%p "
-                 (propertize "%b " 'face 'font-lock-keyword-face)
-                 "%m "
-                 mode-line-misc-info))
-#+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (setq-default mode-line-format
-                (list
-                 (propertize (downcase " %m ") 'face 'font-lock-string-face))))
-#+end_src
-
-*** References
- - [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
-** Minions
-#+begin_src emacs-lisp :tangle no
-  (use-package minions
-
-    :config
-    (minions-mode))
-#+end_src
 ** Checklist
 
 #+begin_src emacs-lisp :tangle no
