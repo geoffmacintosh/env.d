@@ -126,18 +126,26 @@
        User root
 #+end_src
 * MPV
+*Defaults*
+
+
  #+begin_src conf :tangle ~/.config/mpv/mpv.conf
    screenshot-directory=~/Downloads/
-   screenshot-format=jpg
+   screenshot-format=png
    screenshot-template="%F-%whh%wMm%wSs%wT"
-
-   #ytdl-format='bestvideo[height<=720][fps<=30]+bestaudio[ext=m4a]/bestvideo[height<=720]+bestaudio'
 
    save-position-on-quit
    hwdec
-
-   af="lavfi=[dynaudnorm=f=75:g=25:n=0:p=0.58]"
  #+end_src
+
+*Audio level normalization*
+
+ #+begin_src conf :tangle ~/.config/mpv/mpv.conf
+   #af="lavfi=[dynaudnorm=f=75:g=25:n=0:p=0.58]"
+   af=loudnorm=I=-30
+ #+end_src
+
+*Keybindings*
 
  #+begin_src conf :tangle ~/.config/mpv/input.conf
    z           no-osd async screenshot video
@@ -428,10 +436,12 @@ You can test the syntax of the config via the following command:
   sudo postfix check
 #+end_src
 
+#+results:
+
 Create a ~/etc/postfix/sasl_passwd~ file with the following setup.
 
-#+begin_src conf :tangle /sudo::/etc/postfix/sasl_passwd
-  [smtp.fastmail.com]:587 gmacintosh#fastmail.fm:applicationspecificpassword
+#+begin_src conf :tangle /sudo::/etc/postfix/sasl_passwd :var pass=password=(auth-source-pass-get 'secret "smtp.fastmail.com")
+  [smtp.fastmail.com]:587 gmacintosh#fastmail.fm:$password
 #+end_src
 
 Then turn the password into the correct format. After running the command a file called ~sasl_passwd.db~ should be created. This means that you should be able to delete the sasl_passwd file, thus no-longer storing your password in plain text, but I have not tested this.
@@ -440,8 +450,12 @@ Then turn the password into the correct format. After running the command a file
   sudo postmap /etc/postfix/sasl_passwd
 #+end_src
 
+#+results:
+
 Then I had a lot of errors with aliases that I don't understand, but this fixes it:
 
 #+begin_src shell :dir /sudo:: :results replace
   sudo postalias /etc/postfix/aliases
 #+end_src
+
+#+results:
