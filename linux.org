@@ -1,7 +1,14 @@
 #+title: Linux
 
 * Paccache Clean
-#+begin_src conf
+
+Install pacman-contrib.
+
+#+begin_src shell :dir /sudo:: :results replace
+  pacman --sync --noconfirm pacman-contrib
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/pacman.d/hooks/clean_cache.hook
   [Trigger]
   Operation = Upgrade
   Operation = Install
