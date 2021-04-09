@@ -401,9 +401,20 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
     Expunge None
     CopyArrivalDate yes
     Sync All
-    Create Far
+    Create Both
+    Remove Both
     SyncState *
 #+end_src
+
+Before everything works, you'll still need to set up mbsync and mu, so run the following commands:
+
+#+begin_src shell :tangle no
+  mbsync --all
+  mu init --maildir=~/Mail --my-address=geoff@mac.into.sh
+  mu index
+#+end_src
+
+I think mu will actually index correctly on its own the first time you launch mu4e, but I'm not sure.
 
 * GPG
 #+begin_src conf :tangle ~/.gnupg/gpg-agent.conf
