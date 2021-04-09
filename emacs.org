@@ -1177,9 +1177,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
         (bookmark-set (buffer-name) actuator-doc-view-bookmark-push-p)))
     :hook
     (doc-view-mode . actuator-doc-view-open-handler)
-    (kill-buffer-hook . actuator-doc-viwe-save-handler)
+    (kill-buffer-hook . actuator-doc-view-save-handler)
     :custom
-    (doc-view-resolution 150 ))
+    (doc-view-resolution 150))
 #+end_src
 https://gist.github.com/spacebat/5500966
 
