@@ -480,3 +480,430 @@ Then I had a lot of errors with aliases that I don't understand, but this fixes 
 #+end_src
 
 #+results:
+
+For Arch, enable the systemd unit:
+
+#+begin_src shell
+  systemctl enable postfix
+  systemctl start postfix
+#+end_src
+
+You can then check to see if mail is in the queue via =mailq=.
+
+* Power Button
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/logind.conf.d/10-logind.conf" "no") :comments no
+  [Login]
+  HandlePowerKey=suspend
+#+end_src
+
+* Sway
+:PROPERTIES:
+:header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")
+:END:
+
+#+begin_src conf
+
+  set $mod Mod4
+
+  # Home row direction keys, like vim
+  set $left h
+  set $down j
+  set $up k
+  set $right l
+
+  set $term kitty
+
+  # on the original workspace that the command was run on.
+  set $menu dmenu_path | dmenu | xargs swaymsg exec --
+
+  ### Output configuration
+  #
+  # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
+  output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+  #
+  # Example configuration:
+  #
+  #   output HDMI-A-1 resolution 1920x1080 position 1920,0
+  #
+  # You can get the names of your outputs by running: swaymsg -t get_outputs
+
+  ### Idle configuration
+  #
+  # Example configuration:
+  #
+  # exec swayidle -w \
+  #          timeout 300 'swaylock -f -c 000000' \
+  #          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+  #          before-sleep 'swaylock -f -c 000000'
+  #
+  # This will lock your screen after 300 seconds of inactivity, then turn off
+  # your displays after another 300 seconds, and turn your screens back on when
+  # resumed. It will also lock your screen before your computer goes to sleep.
+
+  ### Input configuration
+  #
+  # Example configuration:
+  #
+  #   input "2:14:SynPS/2_Synaptics_TouchPad" {
+  #       dwt enabled
+  #       tap enabled
+  #       natural_scroll enabled
+  #       middle_emulation enabled
+  #   }
+
+  input * {
+          natural_scroll enabled
+  }
+
+
+  #
+  # You can get the names of your inputs by running: swaymsg -t get_inputs
+  # Read `man 5 sway-input` for more information about this section.
+
+  input * {
+          xkb_layout "us"
+          xkb_variant "colemak"
+          xkb_options ctrl:nocaps
+  }
+
+
+  ### Key bindings
+  #
+  # Basics:
+  #
+      # Start a terminal
+      bindsym $mod+Return exec $term
+
+      # Kill focused window
+      bindsym $mod+Shift+q kill
+
+      # Start your launcher
+      bindsym $mod+space exec --no-startup-id wofi --show=drun
+
+      # Drag floating windows by holding down $mod and left mouse button.
+      # Resize them with right mouse button + $mod.
+      # Despite the name, also works for non-floating windows.
+      # Change normal to inverse to use left mouse button for resizing and right
+      # mouse button for dragging.
+      floating_modifier $mod normal
+
+      # Reload the configuration file
+      bindsym $mod+Shift+c reload
+
+      # Exit sway (logs you out of your Wayland session)
+      bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+  #
+  # Moving around:
+  #
+      # Move your focus around
+      bindsym $mod+$left focus left
+      bindsym $mod+$down focus down
+      bindsym $mod+$up focus up
+      bindsym $mod+$right focus right
+      # Or use $mod+[up|down|left|right]
+      bindsym $mod+Left focus left
+      bindsym $mod+Down focus down
+      bindsym $mod+Up focus up
+      bindsym $mod+Right focus right
+
+      # Move the focused window with the same, but add Shift
+      bindsym $mod+Shift+$left move left
+      bindsym $mod+Shift+$down move down
+      bindsym $mod+Shift+$up move up
+      bindsym $mod+Shift+$right move right
+      # Ditto, with arrow keys
+      bindsym $mod+Shift+Left move left
+      bindsym $mod+Shift+Down move down
+      bindsym $mod+Shift+Up move up
+      bindsym $mod+Shift+Right move right
+  #
+  # Workspaces:
+  #
+      # Switch to workspace
+      bindsym $mod+1 workspace number 1
+      bindsym $mod+2 workspace number 2
+      bindsym $mod+3 workspace number 3
+      bindsym $mod+4 workspace number 4
+      bindsym $mod+5 workspace number 5
+      bindsym $mod+6 workspace number 6
+      bindsym $mod+7 workspace number 7
+      bindsym $mod+8 workspace number 8
+      bindsym $mod+9 workspace number 9
+      bindsym $mod+0 workspace number 10
+      # Move focused container to workspace
+      bindsym $mod+Shift+1 move container to workspace number 1
+      bindsym $mod+Shift+2 move container to workspace number 2
+      bindsym $mod+Shift+3 move container to workspace number 3
+      bindsym $mod+Shift+4 move container to workspace number 4
+      bindsym $mod+Shift+5 move container to workspace number 5
+      bindsym $mod+Shift+6 move container to workspace number 6
+      bindsym $mod+Shift+7 move container to workspace number 7
+      bindsym $mod+Shift+8 move container to workspace number 8
+      bindsym $mod+Shift+9 move container to workspace number 9
+      bindsym $mod+Shift+0 move container to workspace number 10
+      # Note: workspaces can have any name you want, not just numbers.
+      # We just use 1-10 as the default.
+  #
+  # Layout stuff:
+  #
+      # You can "split" the current object of your focus with
+      # $mod+b or $mod+v, for horizontal and vertical splits
+      # respectively.
+      bindsym $mod+b splith
+      bindsym $mod+v splitv
+
+      # Switch the current container between different layout styles
+      bindsym $mod+s layout stacking
+      bindsym $mod+w layout tabbed
+      bindsym $mod+e layout toggle split
+
+      # Make the current focus fullscreen
+      bindsym $mod+f fullscreen
+
+      # Toggle the current focus between tiling and floating mode
+      bindsym $mod+Shift+space floating toggle
+
+      # Swap focus between the tiling area and the floating area
+      # bindsym $mod+space focus mode_toggle
+
+      # Move focus to the parent container
+      bindsym $mod+a focus parent
+  #
+  # Scratchpad:
+  #
+      # Sway has a "scratchpad", which is a bag of holding for windows.
+      # You can send windows there and get them back later.
+
+      # Move the currently focused window to the scratchpad
+      bindsym $mod+Shift+minus move scratchpad
+
+      # Show the next scratchpad window or hide the focused scratchpad window.
+      # If there are multiple scratchpad windows, this command cycles through them.
+      bindsym $mod+minus scratchpad show
+  #
+  # Resizing containers:
+  #
+  mode "resize" {
+      # left will shrink the containers width
+      # right will grow the containers width
+      # up will shrink the containers height
+      # down will grow the containers height
+      bindsym $left resize shrink width 10px
+      bindsym $down resize grow height 10px
+      bindsym $up resize shrink height 10px
+      bindsym $right resize grow width 10px
+
+      # Ditto, with arrow keys
+      bindsym Left resize shrink width 10px
+      bindsym Down resize grow height 10px
+      bindsym Up resize shrink height 10px
+      bindsym Right resize grow width 10px
+
+      # Return to default mode
+      bindsym Return mode "default"
+      bindsym Escape mode "default"
+  }
+  bindsym $mod+r mode "resize"
+
+  #
+  # Status Bar:
+  #
+  # Read `man 5 sway-bar` for more information about this section.
+  bar {
+      position top
+
+      font pango:SourceCodePro Medium 13
+
+      # When the status_command prints a new line to stdout, swaybar updates.
+      # The default just shows the current date and time.
+      # The hyphen means don't pad that entry.
+      status_command while date +'%A %-e %B %Y %k:%M'; do sleep 30; done
+
+      colors {
+          statusline #ffffff
+          background #323232
+          inactive_workspace #32323200 #32323200 #5c5c5c
+      }
+  }
+
+  include /etc/sway/config.d/*
+#+end_src
+
+#+begin_src conf
+  default_border pixel 3
+#+end_src
+
+* Wofi
+** Config
+:PROPERTIES:
+:header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/wofi/config" "no")
+:END:
+
+#+begin_src conf
+  prompt=Run
+
+#+end_src
+
+
+** CSS
+:PROPERTIES:
+:header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/wofi/style.css" "no")
+:END:
+
+#+begin_src css
+  window {
+  #margin: 5px;
+  #border: 2px solid red;
+  background-color: #bdc4cc;
+  }
+
+  #input {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #inner-box {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #outer-box {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #scroll {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #text {
+  margin: 5px;
+  color: black;
+  #border: 2px solid white;
+  #background-color: white;
+  }
+
+  #entry:selected {
+      background-color: #bdc4cc;
+      #color: red;
+  }
+
+  #text:selected {
+      #background-color: blue;
+  }
+#+end_src
+
+* Automatic Login
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/system/getty@tty1.service.d/override.conf" "no") :comments no
+  [Service]
+  ExecStart=
+  ExecStart=-/usr/bin/agetty --autologin g --noclear %I $TERM
+#+end_src
+
+#+begin_src shell :tangle ~/.bash_profile
+  export MOZ_ENABLE_WAYLAND=1
+  if [ "$(tty)" = "/dev/tty1" ]; then
+      exec sway
+  fi
+#+end_src
+
+* Journal
+#+begin_src conf  :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/journald.conf.d/00-journal-size.conf" "no") :comments no
+  [Journal]
+  SystemMaxUse=100M
+#+end_src
+
+* Game Mode
+#+begin_src conf :tangle ~/.config/gamemode.ini
+  [general]
+  ; The reaper thread will check every 5 seconds for exited clients, for config file changes, and for the CPU/iGPU power balance
+  reaper_freq=15
+
+  ; The desired governor is used when entering GameMode instead of "performance"
+  desiredgov=performance
+
+  ; GameMode can change the scheduler policy to SCHED_ISO on kernels which support it (currently
+  ; not supported by upstream kernels). Can be set to "auto", "on" or "off". "auto" will enable
+  ; with 4 or more CPU cores. "on" will always enable. Defaults to "off".
+  softrealtime=off
+
+  ; GameMode can renice game processes. You can put any value between 0 and 20 here, the value
+  ; will be negated and applied as a nice value (0 means no change). Defaults to 0.
+  renice=10
+
+  ; By default, GameMode adjusts the iopriority of clients to BE/0, you can put any value
+  ; between 0 and 7 here (with 0 being highest priority), or one of the special values
+  ; "off" (to disable) or "reset" (to restore Linux default behavior based on CPU priority),
+  ; currently, only the best-effort class is supported thus you cannot set it here
+  ioprio=0
+
+  ; Sets whether gamemode will inhibit the screensaver when active
+  ; Defaults to 1
+  inhibit_screensaver=1
+
+  [filter]
+  ; If "whitelist" entry has a value(s)
+  ; gamemode will reject anything not in the whitelist
+  ;whitelist=RiseOfTheTombRaider
+
+  ; Gamemode will always reject anything in the blacklist
+  ;blacklist=HalfLife3
+  ;    glxgears
+
+  [gpu]
+  ; Here Be Dragons!
+  ; Warning: Use these settings at your own risk
+  ; Any damage to hardware incurred due to this feature is your responsibility and yours alone
+  ; It is also highly recommended you try these settings out first manually to find the sweet spots
+
+  ; Setting this to the keyphrase "accept-responsibility" will allow gamemode to apply GPU optimisations such as overclocks
+  ;apply_gpu_optimisations=0
+
+  ; The DRM device number on the system (usually 0), ie. the number in /sys/class/drm/card0/
+  ;gpu_device=0
+
+  ; Nvidia specific settings
+  ; Requires the coolbits extension activated in nvidia-xconfig
+  ; This corresponds to the desired GPUPowerMizerMode
+  ; "Adaptive"=0 "Prefer Maximum Performance"=1 and "Auto"=2
+  ; See NV_CTRL_GPU_POWER_MIZER_MODE and friends in https://github.com/NVIDIA/nvidia-settings/blob/master/src/libXNVCtrl/NVCtrl.h
+  ;nv_powermizer_mode=1
+
+  ; These will modify the core and mem clocks of the highest perf state in the Nvidia PowerMizer
+  ; They are measured as Mhz offsets from the baseline, 0 will reset values to default, -1 or unset will not modify values
+  ;nv_core_clock_mhz_offset=0
+  ;nv_mem_clock_mhz_offset=0
+
+  ; AMD specific settings
+  ; Requires a relatively up to date AMDGPU kernel module
+  ; See: https://dri.freedesktop.org/docs/drm/gpu/amdgpu.html#gpu-power-thermal-controls-and-monitoring
+  ; It is also highly recommended you use lm-sensors (or other available tools) to verify card temperatures
+  ; This corresponds to power_dpm_force_performance_level, "manual" is not supported for now
+  ;amd_performance_level=high
+
+  [supervisor]
+  ; This section controls the new gamemode functions gamemode_request_start_for and gamemode_request_end_for
+  ; The whilelist and blacklist control which supervisor programs are allowed to make the above requests
+  ;supervisor_whitelist=
+  ;supervisor_blacklist=
+
+  ; In case you want to allow a supervisor to take full control of gamemode, this option can be set
+  ; This will only allow gamemode clients to be registered by using the above functions by a supervisor client
+  ;require_supervisor=0
+
+  [custom]
+  ; Custom scripts (executed using the shell) when gamemode starts and ends
+  ;start=notify-send "GameMode started"
+  ;    /home/me/bin/stop_ethmining.sh
+
+  ;end=notify-send "GameMode ended"
+  ;    /home/me/bin/start_ethmining.sh
+
+  ; Timeout for scripts (seconds). Scripts will be killed if they do not complete within this time.
+  ;script_timeout=10
+#+end_src
