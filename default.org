@@ -453,8 +453,16 @@ You can test the syntax of the config via the following command:
 
 Create a ~/etc/postfix/sasl_passwd~ file with the following setup.
 
-#+begin_src conf :tangle /sudo::/etc/postfix/sasl_passwd :var pass=password=(auth-source-pass-get 'secret "smtp.fastmail.com")
-  [smtp.fastmail.com]:587 gmacintosh#fastmail.fm:$password
+#+begin_src emacs-lisp
+  (with-temp-buffer
+    (insert "[smtp.fastmail.com]:"
+            (auth-source-pass-get "port" "smtp.fastmail.com")
+            " "
+            (auth-source-pass-get "user" "smtp.fastmail.com")
+            ":"
+            (auth-source-pass-get 'secret "smtp.fastmail.com"))
+    (format-replace-strings '(("@" . "#")))
+    (write-region (point-min) (point-max) "/sudo::/etc/postfix/sasl_passwd"))
 #+end_src
 
 Then turn the password into the correct format. After running the command a file called ~sasl_passwd.db~ should be created. This means that you should be able to delete the sasl_passwd file, thus no-longer storing your password in plain text, but I have not tested this.
