@@ -1160,6 +1160,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (use-package doc-view
     :ensure nil
     :config
+    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
     (defvar actuator-doc-view-bookmark-push-p t
       "Whether to push automatic doc-view bookmarks, or clobber them.")
     (defun actuator-doc-view-open-handler ()
