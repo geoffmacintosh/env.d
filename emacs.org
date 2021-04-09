@@ -1446,7 +1446,7 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (use-package nov
     :ensure t
-    :mode ("\\.epub\\' .nov-mode")
+    :mode ("\\.epub\\'" . nov-mode)
     :config
     (defun actuator-novel-setup ()
       (face-remap-add-relative 'variable-pitch :family "Georgia"
