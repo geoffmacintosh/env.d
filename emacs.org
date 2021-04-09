@@ -1160,6 +1160,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (use-package doc-view
     :ensure nil
     :config
+    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
     (defvar actuator-doc-view-bookmark-push-p t
       "Whether to push automatic doc-view bookmarks, or clobber them.")
     (defun actuator-doc-view-open-handler ()
@@ -1176,9 +1177,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
         (bookmark-set (buffer-name) actuator-doc-view-bookmark-push-p)))
     :hook
     (doc-view-mode . actuator-doc-view-open-handler)
-    (kill-buffer-hook . actuator-doc-viwe-save-handler)
+    (kill-buffer-hook . actuator-doc-view-save-handler)
     :custom
-    (doc-view-resolution 150 ))
+    (doc-view-resolution 150))
 #+end_src
 https://gist.github.com/spacebat/5500966
 
@@ -1445,7 +1446,7 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (use-package nov
     :ensure t
-    :mode ("\\.epub\\' .nov-mode")
+    :mode ("\\.epub\\'" . nov-mode)
     :config
     (defun actuator-novel-setup ()
       (face-remap-add-relative 'variable-pitch :family "Georgia"
