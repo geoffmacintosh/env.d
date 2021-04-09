@@ -22,16 +22,17 @@ Install pacman-contrib.
   Exec = /usr/bin/paccache -r
 #+end_src
 
+*
+
 * Reflector
-#+begin_src conf :tangle /sudo::/etc/xdg/reflectory/reflector.conf
+Enable the timer via =systemctl enable reflector.timer=.
+
+#+begin_src conf :tangle /sudo::/etc/xdg/reflector/reflector.conf :comments no
   --save /etc/pacman.d/mirrorlist
   --protocol https
-  # --country Canada
-  --latest 15
-  --age 24
+  --country CA
+  --country US
+  --latest 25
+  --age 12
   --sort rate
-#+end_src
-
-#+begin_src xml :tangle no ~/.config/fontconfig/fonts.conf
- # OH GOD DO NOT TANGLE THERE IS NO CONFIG HERE
 #+end_src
