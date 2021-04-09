@@ -367,6 +367,8 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
   shell fish
   close_on_child_death yes
   editor emacs
+  font_size 13.0
+  font_family SF Mono
   tab_bar_style separator
   tab_separator "  "
   # tab_activity_symbol "*"
