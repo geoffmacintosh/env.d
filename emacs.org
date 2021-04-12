@@ -2120,6 +2120,22 @@ Or could just use mingus?
     :config
     (minions-mode))
 #+end_src
+** Sudoers
+
+#+begin_src emacs-lisp
+  (use-package etc-sudoers-mode
+    :ensure t)
+#+end_src
+
+** VTerm
+
+#+begin_src emacs-lisp
+  (use-package vterm
+    :ensure t
+    :custom
+    (vterm-shell "fish"))
+#+end_src
+
 * Disabled
    :PROPERTIES:
    :header-args: :tangle no
