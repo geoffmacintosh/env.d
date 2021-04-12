@@ -385,7 +385,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 [[https://stackoverflow.com/questions/22889036/custom-diary-sunrise-function-not-working-autoload-diary-emacs][elisp - Custom diary-sunrise function not working. `autoload-diary`? (Emacs.)...]]
 
 
-
 ** Capture Templates
 :PROPERTIES:
 :ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
@@ -1185,9 +1184,9 @@ https://gist.github.com/spacebat/5500966
 
 ** Sync stuff
 #+begin_src emacs-lisp
-  (setq elfeed-db-directory   "~/Sync/library/elfeed")
-  (setq abbrev-file-name      "~/Sync/library/abbrev.el")
-  (setq bookmark-default-file "~/Sync/library/bookmark.el")
+  (setq elfeed-db-directory   "~/.sync/elfeed")
+  (setq abbrev-file-name      "~/.sync/abbrev.el")
+  (setq bookmark-default-file "~/.sync/bookmark.el")
 #+end_src
 
 ** Org Randomnote
