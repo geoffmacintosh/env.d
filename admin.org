@@ -1,0 +1,123 @@
+#+title: Administrative
+
+* Automatic Login
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/system/getty@tty1.service.d/override.conf" "no") :comments no
+  [Service]
+  ExecStart=
+  ExecStart=-/usr/bin/agetty --autologin g --noclear %I $TERM
+#+end_src
+
+#+begin_src shell :tangle ~/.bash_profile
+  export MOZ_ENABLE_WAYLAND=1
+  if [ "$(tty)" = "/dev/tty1" ]; then
+      exec sway
+  fi
+#+end_src
+* Postfix
+Append the following to the end of ~/etc/postfix/main.cf~.
+
+#+begin_src conf
+  relayhost = [smtp.fastmail.com]:587
+  smtp_sasl_auth_enable = yes
+  smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+  smtp_sasl_security_options = noanonymous
+  smtp_sasl_mechanism_filter = plain
+  smtp_use_tls = yes
+  smtp_tls_security_level = encrypt
+  # smtp_tls_mandatory_ciphers = high
+  # smtp_tls_verify_cert_match = nexthop
+  # smtp_sasl_tls_security_options = noanonymous
+  # smtp_tls_CAfile = /etc/postfix/ssl/ca-bundle.crt
+#+end_src
+
+You can test the syntax of the config via the following command:
+
+#+begin_src shell :dir /sudo:: :results replace
+  sudo postfix check
+#+end_src
+
+#+results:
+
+Create a ~/etc/postfix/sasl_passwd~ file with the following setup.
+
+#+begin_src emacs-lisp
+  (with-temp-buffer
+    (insert "[smtp.fastmail.com]:"
+            (auth-source-pass-get "port" "smtp.fastmail.com")
+            " "
+            (auth-source-pass-get "user" "smtp.fastmail.com")
+            ":"
+            (auth-source-pass-get 'secret "smtp.fastmail.com"))
+    (format-replace-strings '(("@" . "#")))
+    (write-region (point-min) (point-max) "/sudo::/etc/postfix/sasl_passwd"))
+#+end_src
+
+Then turn the password into the correct format. After running the command a file called ~sasl_passwd.db~ should be created. This means that you should be able to delete the sasl_passwd file, thus no-longer storing your password in plain text, but I have not tested this.
+
+#+begin_src shell :dir /sudo:: :results replace
+  sudo postmap /etc/postfix/sasl_passwd
+#+end_src
+
+#+results:
+
+Then I had a lot of errors with aliases that I don't understand, but this fixes it:
+
+#+begin_src shell :dir /sudo:: :results replace
+  sudo postalias /etc/postfix/aliases
+#+end_src
+
+#+results:
+
+For Arch, enable the systemd unit:
+
+#+begin_src shell
+  systemctl enable postfix
+  systemctl start postfix
+#+end_src
+
+You can then check to see if mail is in the queue via =mailq=.
+* Power Button
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/logind.conf.d/10-logind.conf" "no") :comments no
+  [Login]
+  HandlePowerKey=suspend
+#+end_src
+* Journal
+#+begin_src conf  :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/journald.conf.d/00-journal-size.conf" "no") :comments no
+  [Journal]
+  SystemMaxUse=100M
+#+end_src
+* Reflector
+Enable the timer via =systemctl enable reflector.timer=.
+
+#+begin_src conf :tangle /sudo::/etc/xdg/reflector/reflector.conf :comments no
+  --save /etc/pacman.d/mirrorlist
+  --protocol https
+  --country CA
+  --country US
+  --latest 25
+  --age 12
+  --sort rate
+#+end_src
+* Paccache Clean
+
+Install pacman-contrib.
+
+#+begin_src shell :dir /sudo:: :results replace
+  pacman --sync --noconfirm pacman-contrib
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/pacman.d/hooks/clean_cache.hook
+  [Trigger]
+  Operation = Upgrade
+  Operation = Install
+  Operation = Remove
+  Type = Package
+  Target = *
+
+  [Action]
+  Description = Cleaning pacman cache...
+  When = PostTransaction
+  Exec = /usr/bin/paccache -r
+#+end_src
+
+*
