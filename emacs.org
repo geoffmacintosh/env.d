@@ -392,7 +392,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 [[https://www.reddit.com/r/orgmode/comments/a1z26t/sunrise_sunset_as_separate_entries_on_agenda_view/][Sunrise Sunset as Separate Entries on Agenda View (SUPPORT) : orgmode]]
 [[https://stackoverflow.com/questions/22889036/custom-diary-sunrise-function-not-working-autoload-diary-emacs][elisp - Custom diary-sunrise function not working. `autoload-diary`? (Emacs.)...]]
 
-
 ** Capture Templates
 :PROPERTIES:
 :ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
@@ -1036,7 +1035,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 [[https://www.reddit.com/r/emacs/comments/dxzi96/have_some_code_make_ediffing_folded_org_files/][Have some code: make ediffing folded org files better : emacs]]
-
 
 ** Mu4e
 
