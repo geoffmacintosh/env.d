@@ -14,7 +14,24 @@
   fi
 #+end_src
 * Postfix
-Append the following to the end of ~/etc/postfix/main.cf~.
+
+#+begin_src shell :results replace
+  tail /etc/postfix/main.cf
+#+end_src
+
+#+results:
+| inet_protocols             | = | ipv4                          |
+| meta_directory             | = | /etc/postfix                  |
+| shlib_directory            | = | /usr/lib/postfix              |
+| relayhost                  | = | [smtp.fastmail.com]:587       |
+| smtp_sasl_auth_enable      | = | yes                           |
+| smtp_sasl_password_maps    | = | hash:/etc/postfix/sasl_passwd |
+| smtp_sasl_security_options | = | noanonymous                   |
+| smtp_sasl_mechanism_filter | = | plain                         |
+| smtp_use_tls               | = | yes                           |
+| smtp_tls_security_level    | = | encrypt                       |
+
+Append the following to the end of ~/etc/postfix/main.cf~
 
 #+begin_src conf
   relayhost = [smtp.fastmail.com]:587
@@ -24,10 +41,6 @@ Append the following to the end of ~/etc/postfix/main.cf~.
   smtp_sasl_mechanism_filter = plain
   smtp_use_tls = yes
   smtp_tls_security_level = encrypt
-  # smtp_tls_mandatory_ciphers = high
-  # smtp_tls_verify_cert_match = nexthop
-  # smtp_sasl_tls_security_options = noanonymous
-  # smtp_tls_CAfile = /etc/postfix/ssl/ca-bundle.crt
 #+end_src
 
 You can test the syntax of the config via the following command:
