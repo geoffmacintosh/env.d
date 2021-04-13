@@ -18,14 +18,22 @@
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar actuator-gc-cons-threshold gc-cons-threshold
+  (defvar actuator-original-gc-cons-threshold gc-cons-threshold
     "Original value for `gc-cons-threshold'.")
-  (defun actuator-restore-gc-cons-threshold ()
-    "Restore `gc-cons-threshold' value."
-    (setq gc-cons-threshold actuator-gc-cons-threshold)
+  (defvar actuator-original-gc-cons-percentage gc-cons-percentage
+    "Original value for `gc-cons-percentage'.")
+  (defvar actuator-engorged-gc-cons-threshold (* 5 1024 1024 1024)
+    "Enlarged `gc-cons-threshold'.")
+  (defvar actuator-engorged-gc-cons-percentage 0.6
+    "Enlarged `gc-cons-percentage'.")
+  (defun actuator-restore-gc-cons ()
+    "Restore `gc-cons-threshold' and `gc-cons-percentage' value."
+    (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
+    (setq gc-cons-percentage actuator-original-gc-cons-percentage)
     (garbage-collect))
-  (add-hook 'after-init-hook #'actuator-restore-gc-cons-threshold)
-  (setq gc-cons-threshold (* 5 1024 1024 1024))
+  (add-hook 'after-init-hook #'actuator-restore-gc-cons)
+  (setq gc-cons-threshold actuator-engorged-gc-cons-threshold)
+  (setq gc-cons-percentage actuator-engorged-gc-cons-percentage)
 #+end_src
 
 #+begin_src emacs-lisp
