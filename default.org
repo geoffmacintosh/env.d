@@ -24,6 +24,10 @@
 :header-args: :tangle ~/.mpd/mpd.conf
 :END:
 
+#+begin_src shell
+  touch ~/.mpd/{database,pid,state,sticker.sql,log}
+#+end_src
+
 #+begin_src conf
   music_directory    "~/Music/Music Files"
   playlist_directory "~/Music/Playlists"
