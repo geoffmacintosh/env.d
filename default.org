@@ -105,7 +105,7 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
 
 * Hushlogin
 
-#+begin_src conf :tangle ~/.hushlogin
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.hushlogin" "no")
   # Silence
 #+end_src
 
