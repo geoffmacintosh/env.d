@@ -908,30 +908,51 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 ** Dired
 #+begin_src emacs-lisp
+  (with-eval-after-load 'dired
+    (require 'dired-x))
+  (add-hook 'dired-mode-hook #'dired-omit-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq image-dired-thumb-size 100)
+  (setq image-dired-thumb-width 300)
+  (setq image-dired-thumb-height 300)
+  (setq image-dired-thumb-margin 5)
+#+end_src
+
+
+#+begin_src emacs-lisp
   (use-package dired
     :ensure nil
     :config
     (require 'dired-x)
-    (require 'ls-lisp)
+    ;;(require 'ls-lisp)
     (require 'wdired)
+    (setq dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
     (with-eval-after-load 'savehist
       (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
     :custom
     (dired-dwim-target t)
-    (ls-lisp-use-insert-directory-program nil)
+    (ls-lisp-use-insert-directory-program t)
     (ls-lisp-ignore-case t)
     (ls-lisp-use-string-collate nil)
     (ls-lisp-verbosity '(links uid))
     (ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
-    (ls-lisp-use-localized-time-format t)
-    (dired-listing-switches "-alhG") ; Not use for ls-lisp?
+    (ls-lisp-use-localized-time-format nil)
 
-    (dired-dwim-target t)
+    (dired-listing-switches "-alhFo") ; Not use for ls-lisp?
+    ;; a :: include files beginning with dots
+    ;; l :: display as list
+    ;; h :: human-readable filenames
+    ;; F :: display a slash after directories
+    ;; S :: sort by size
+
     (wdired-allow-to-change-permissions t)
 
-    (dired-recursive-copies 'always)
-    :hook (dired-mode . dired-hide-details-mode))
+    (dired-recursive-copies 'always))
 #+end_src
+
+
 ** Split Windows
 #+begin_src emacs-lisp
     (defun actuator-split-window-right ()
@@ -2191,7 +2212,6 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
     (smart-tab-using-hippie-expand t)
     (smart-tab-completion-functions-alist nil))
 #+end_src
-
 
 ** Checklist
 
