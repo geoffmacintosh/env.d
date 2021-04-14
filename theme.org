@@ -69,8 +69,23 @@
                 :underline t)))
      `(org-document-title ((t (:foreground ,dark
                                :height 220))))
-     `(org-level-1 ((t
-                       :weight bold)))
+     `(org-level-1 ((t :weight bold)))
+
+     ;; `(dired-filename ((t :foreground red)))
+     ;; `(dired-header ((t :foreground red)))
+     ;; `(dired-hide-details-information ((t :foreground red)))
+     ;; `(dired-hide-details-detail ((t :foreground red)))
+     ;; `(dired-ignored ((t :foreground red)))
+     ;; `(dired-broken-symlink ((t :foreground red)))
+     ;; `(dired-directory ((t :foreground red)))
+     ;; `(dired-symlink ((t :foreground red)))
+
+     ;; `(elfeed-search-date-face ((t :foreground red)))
+     ;; `(elfeed-search-title-face ((t :foreground red)))
+     ;; `(elfeed-search-unread-title-face ((t :foreground red)))
+     ;; `(elfeed-search-last-update-face ((t :foreground red)))
+     ;; `(elfeed-search-feed-face ((t :foreground red)))
+     ;; `(elfeed-search-tag-face ((t :foreground red)))
 
      `(ivy-current-match ((t (:background ,grey :foreground ,white :extend t))))
      `(minibuffer-prompt ((t (:inherit default))))
