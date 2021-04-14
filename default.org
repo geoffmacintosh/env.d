@@ -240,6 +240,10 @@
 
   function __fish_describe_command; end # Fixes issues with Catalina
 
+  function fish_command_not_found
+      __fish_default_command_not_found_handler $argv[1]
+  end
+
   # set __fish_git_prompt_show_informative_status "yes"
   # set __fish_git_prompt_char_dirtystate "+"
 
