@@ -21,11 +21,19 @@
 
 * MPD
 :PROPERTIES:
-:header-args: :tangle ~/.mpd/mpd.conf
+:header-args: :tangle ~/.mpd/mpd.conf :comments no
 :END:
 
-#+begin_src shell
+MPD hates to create its own files.
+
+#+begin_src shell :tangle no
   touch ~/.mpd/{database,pid,state,sticker.sql,log}
+#+end_src
+
+You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and will not work. Do not do this.
+
+#+begin_src shell :tangle no
+  systemctl enable --user mpd
 #+end_src
 
 #+begin_src conf
