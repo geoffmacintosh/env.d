@@ -23,7 +23,9 @@
 
 #+begin_src emacs-lisp
   (defvar actuator-cache-directory
-    (expand-file-name (convert-standard-filename "cache/") user-emacs-directory))
+    (expand-file-name (convert-standard-filename "cache/")
+                      user-emacs-directory)
+    "Documented.")
 #+end_src
 
 #+begin_src emacs-lisp
@@ -37,18 +39,24 @@
     "Original value for `gc-cons-threshold'.")
   (defvar actuator-original-gc-cons-percentage gc-cons-percentage
     "Original value for `gc-cons-percentage'.")
-  (defvar actuator-engorged-gc-cons-threshold (* 5 1024 1024 1024)
+  (defvar actuator-engorged-gc-cons-threshold (* 5 1000 1000 1000)
     "Enlarged `gc-cons-threshold'.")
   (defvar actuator-engorged-gc-cons-percentage 0.6
     "Enlarged `gc-cons-percentage'.")
-  (defun actuator-restore-gc-cons ()
+
+  (defun actuator-restore-gc ()
     "Restore `gc-cons-threshold' and `gc-cons-percentage' value."
-    (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
-    (setq gc-cons-percentage actuator-original-gc-cons-percentage)
+    (csetq gc-cons-threshold  actuator-original-gc-cons-threshold)
+    (csetq gc-cons-percentage actuator-original-gc-cons-percentage)
     (garbage-collect))
-  (add-hook 'after-init-hook #'actuator-restore-gc-cons)
-  (setq gc-cons-threshold actuator-engorged-gc-cons-threshold)
-  (setq gc-cons-percentage actuator-engorged-gc-cons-percentage)
+
+  (defun actuator-engorge-gc ()
+    "Set `gc-cons-threshold' and `gc-cons-percentage' to huge numbers."
+    (csetq gc-cons-threshold actuator-engorged-gc-cons-threshold)
+    (csetq gc-cons-percentage actuator-engorged-gc-cons-percentage))
+
+  (actuator-engorge-gc)
+  (add-hook 'after-init-hook #'actuator-restore-gc)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -63,13 +71,6 @@
 ** Lexical Binding
 #+begin_src emacs-lisp
   ;;; init.el -*- lexical-binding: t; -*-
-#+end_src
-
-** Custom-set Variables
-
-#+begin_src emacs-lisp
-  (csetq custom-file (expand-file-name "custom.el" actuator-cache-directory))
-  (load custom-file 'noerror)
 #+end_src
 
 ** Package Init
@@ -125,14 +126,16 @@
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
 :END:
-** Read only
+** Custom-set Variables
+
 #+begin_src emacs-lisp
-  (setq view-read-only t)
+  (csetq custom-file (expand-file-name "custom.el" actuator-cache-directory))
+  (load custom-file 'noerror)
 #+end_src
 
-** Reset garbage collection
+** Read only
 #+begin_src emacs-lisp
-  <<init-garbage-collection>>
+  (csetq view-read-only t)
 #+end_src
 
 ** Ctrl-Z
@@ -141,14 +144,15 @@
 #+end_src
 
 ** Just one space
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results replace
   (defun actuator-just-one-space ()
     "Insert just one space, killing ALL whitespace."
     (interactive)
     (just-one-space -1))
 
-  (global-set-key (kbd "<M-SPC>") 'actuator-just-one-space)
+  (global-set-key (kbd "<M-SPC>") #'actuator-just-one-space)
 #+end_src
+
 ** Unfill paragraph
 #+begin_src emacs-lisp
   (defun actuator-unfill-paragraph ()
@@ -156,8 +160,10 @@
     (interactive)
     (let ((fill-column most-positive-fixnum))
       (fill-paragraph)))
-  (global-set-key (kbd "C-M-q") 'actuator-unfill-paragraph)
+
+  (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
 #+end_src
+
 ** Savehist
 #+begin_src emacs-lisp
   (use-package savehist
@@ -227,27 +233,23 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 ** Autorevert
 #+begin_src emacs-lisp
-  (use-package autorevert
-    :ensure nil
-    :config
-    (global-auto-revert-mode 1)
-    :custom
-    (global-auto-revert-non-file-buffers nil)
-    (auto-revert-verbose nil)
-    (auto-revert-avoid-polling t)
-    (buffer-auto-revert-by-notification t)
-    (auto-revert-interval 60)
-    (revert-without-query t)
-    (auto-revert-check-vc-info nil))
+  (require 'autorevert)
+  (global-auto-revert-mode 1)
+
+  (csetq global-auto-revert-non-file-buffers nil)
+  (csetq auto-revert-verbose nil)
+  (csetq auto-revert-avoid-polling t)
+  (csetq buffer-auto-revert-by-notification t)
+  (csetq auto-revert-interval 60)
+  (csetq revert-without-query t)
+  (csetq auto-revert-check-vc-info nil)
 #+end_src
+
 ** Server
 
 #+begin_src emacs-lisp
-  (use-package server
-    :ensure nil
-    :init
-    (load "server")
-    (unless (server-running-p) (server-start)))
+  (require 'server)
+  (unless (server-running-p) (server-start))
 #+end_src
 
 ** Undo
@@ -257,24 +259,20 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (global-set-key (kbd "s-z") #'undo-only)
     (global-set-key (kbd "s-Z") #'undo-redo)
   #+end_src
+
 ** Cancel GC in Minibuffer
 #+begin_src emacs-lisp
-  (defun actuator-minibuffer-setup-hook ()
-    (setq gc-cons-threshold (* 500 1024 1024)))
-
-  (defun actuator-minibuffer-exit-hook ()
-    (setq gc-cons-threshold 800000))
-
-  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook  #'actuator-minibuffer-exit-hook)
+  ;;(add-hook 'minibuffer-setup-hook #'actuator-engorge-gc)
+  ;;(add-hook 'minibuffer-exit-hook  #'actuator-restore-gc)
 #+end_src
+
 ** Minibuffer Resize
 #+begin_src emacs-lisp
-  (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
-
   (defun actuator-minibuffer-setup ()
          (set (make-local-variable 'face-remapping-alist)
             '((org-document-title :height 1.0))))
+
+  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup)
 #+end_src
 ** Hippie Expand
 
@@ -326,27 +324,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
-** Auto-upgrade
-#+begin_src emacs-lisp
-    (use-package auto-package-update
-      :ensure t
-      :demand t
-      :config
-      (require 'auto-package-update)
-      ;;:hook (auto-package-update-before . actuator-backup-emacs-directory)
-)
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (defun actuator-backup-emacs-directory ()
-    "It does."
-    (shell-command "BORG_REPO=~/Backup/emacs borg create --stats --verbose \\
-  --compression zstd,22 ::{hostname}-{now} \\
-  ~/.config/emacs" "*Package backup log*")
-    (shell-command "BORG_REPO=~/Backup/emacs borg prune --stats --keep-last 10 \\
-  --save-space" "*Package backup log*"))
-#+end_src
-
 ** SVG Screenshot
 #+begin_src emacs-lisp
   (defun screenshot-svg ()
@@ -360,59 +337,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
       (kill-new filename)
       (message filename)))
 #+end_src
-** Git autocommit
-#+begin_src emacs-lisp
-  (use-package git-auto-commit-mode
-    :ensure t)
-#+end_src
-
-** Sunrise/set
-
-#+begin_src emacs-lisp
-  (require 'solar)
-  (setq calendar-location-name "St. John's, NL")
-
-  (defun solar-sunrise-string (date &optional nolocation)
-    "String of *local* time of sunrise and daylight on Gregorian DATE."
-    (let ((l (solar-sunrise-sunset date)))
-      (format
-       "%s (%s hours daylight)"
-       (if (car l)
-       (concat "Sunrise " (apply 'solar-time-string (car l)))
-         "no sunrise")
-       (nth 2 l)
-       )))
-  ;; To be called from diary-list-sexp-entries, where DATE is bound.
-  ;;;###diary-autoload
-  (defun diary-sunrise ()
-    "Local time of sunrise as a diary entry.
-    Accurate to a few seconds."
-    (or (and calendar-latitude calendar-longitude calendar-time-zone)
-        (solar-setup))
-    (solar-sunrise-string date))
-
-    (defun solar-sunset-string (date &optional nolocation)
-    "String of *local* time of sunset and daylight on Gregorian DATE."
-    (let ((l (solar-sunrise-sunset date)))
-      (format
-       "%s (%s hours daylight)"
-       (if (cadr l)
-       (concat "Sunset " (apply 'solar-time-string (cadr l)))
-         "no sunset")
-       (nth 2 l)
-       )))
-  ;; To be called from diary-list-sexp-entries, where DATE is bound.
-  ;;;###diary-autoload
-  (defun diary-sunset ()
-    "Local time of sunset as a diary entry.
-    Accurate to a few seconds."
-    (or (and calendar-latitude calendar-longitude calendar-time-zone)
-        (solar-setup))
-    (solar-sunset-string date))
-#+end_src
-
-[[https://www.reddit.com/r/orgmode/comments/a1z26t/sunrise_sunset_as_separate_entries_on_agenda_view/][Sunrise Sunset as Separate Entries on Agenda View (SUPPORT) : orgmode]]
-[[https://stackoverflow.com/questions/22889036/custom-diary-sunrise-function-not-working-autoload-diary-emacs][elisp - Custom diary-sunrise function not working. `autoload-diary`? (Emacs.)...]]
 
 ** Capture Templates
 :PROPERTIES:
@@ -829,14 +753,7 @@ From  emacs-plus:
 - [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
 - [[https://www.emacswiki.org/emacs/KeyboardMacros][EmacsWiki: Keyboard Macros]] [2020-06-08 Mon]
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
-** Truncate
-#+begin_src emacs-lisp
-  (setq truncate-partial-width-windows nil)
-  (toggle-truncate-lines 1) ; Don't wrap lines by default
-  (add-hook 'text-mode-hook    #'turn-on-visual-line-mode)
-  (add-hook 'prog-mode-hook    #'auto-fill-mode)
-  (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
-#+end_src
+
 ** Web
 *** Set up browsing handlers                      :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
@@ -973,7 +890,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
     (dired-recursive-copies 'always))
 #+end_src
-
 
 ** Split Windows
 #+begin_src emacs-lisp
@@ -1123,17 +1039,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (mu4e-headers-date-format "%y-%m-%d")
     (mu4e-get-mail-command "mbsync -a")
     (mu4e-mu-binary (executable-find "mu")))
-#+end_src
-
-** SMTP Mail
-
-#+begin_src emacs-lisp
-  (use-package smtpmail
-    :ensure nil
-    :custom
-    (smtpmail-default-smtp-server "smtp.fastmail.com")
-    (smtpmail-smtp-server "smtp.fastmail.com")
-    (smtpmail-smtp-service 587))
 #+end_src
 
 ** Message
@@ -1616,7 +1521,7 @@ https://gist.github.com/spacebat/5500966
      ("M-y"        . ivy-next-line)))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package swiper
 
   :bind ("C-s" . swiper-isearch))
@@ -2460,4 +2365,98 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
   (dolist (command '(scroll-up-command scroll-down-command
                      recenter-top-bottom other-window))
     (advice-add command :after #'pulse-line))
+#+end_src
+
+** Auto-upgrade
+#+begin_src emacs-lisp
+    (use-package auto-package-update
+      :ensure t
+      :demand t
+      :config
+      (require 'auto-package-update)
+      ;;:hook (auto-package-update-before . actuator-backup-emacs-directory)
+)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (defun actuator-backup-emacs-directory ()
+    "It does."
+    (shell-command "BORG_REPO=~/Backup/emacs borg create --stats --verbose \\
+  --compression zstd,22 ::{hostname}-{now} \\
+  ~/.config/emacs" "*Package backup log*")
+    (shell-command "BORG_REPO=~/Backup/emacs borg prune --stats --keep-last 10 \\
+  --save-space" "*Package backup log*"))
+#+end_src
+
+** Git autocommit
+#+begin_src emacs-lisp
+  (use-package git-auto-commit-mode
+    :ensure t)
+#+end_src
+
+** Sunrise/set
+
+#+begin_src emacs-lisp :tangle no
+  (require 'solar)
+  (setq calendar-location-name "St. John's, NL")
+
+  (defun solar-sunrise-string (date &optional nolocation)
+    "String of *local* time of sunrise and daylight on Gregorian DATE."
+    (let ((l (solar-sunrise-sunset date)))
+      (format
+       "%s (%s hours daylight)"
+       (if (car l)
+       (concat "Sunrise " (apply 'solar-time-string (car l)))
+         "no sunrise")
+       (nth 2 l)
+       )))
+  ;; To be called from diary-list-sexp-entries, where DATE is bound.
+  ;;;###diary-autoload
+  (defun diary-sunrise ()
+    "Local time of sunrise as a diary entry.
+    Accurate to a few seconds."
+    (or (and calendar-latitude calendar-longitude calendar-time-zone)
+        (solar-setup))
+    (solar-sunrise-string date))
+
+    (defun solar-sunset-string (date &optional nolocation)
+    "String of *local* time of sunset and daylight on Gregorian DATE."
+    (let ((l (solar-sunrise-sunset date)))
+      (format
+       "%s (%s hours daylight)"
+       (if (cadr l)
+       (concat "Sunset " (apply 'solar-time-string (cadr l)))
+         "no sunset")
+       (nth 2 l)
+       )))
+  ;; To be called from diary-list-sexp-entries, where DATE is bound.
+  ;;;###diary-autoload
+  (defun diary-sunset ()
+    "Local time of sunset as a diary entry.
+    Accurate to a few seconds."
+    (or (and calendar-latitude calendar-longitude calendar-time-zone)
+        (solar-setup))
+    (solar-sunset-string date))
+#+end_src
+
+[[https://www.reddit.com/r/orgmode/comments/a1z26t/sunrise_sunset_as_separate_entries_on_agenda_view/][Sunrise Sunset as Separate Entries on Agenda View (SUPPORT) : orgmode]]
+[[https://stackoverflow.com/questions/22889036/custom-diary-sunrise-function-not-working-autoload-diary-emacs][elisp - Custom diary-sunrise function not working. `autoload-diary`? (Emacs.)...]]
+
+** Truncate
+#+begin_src emacs-lisp
+  (setq truncate-partial-width-windows nil)
+  (toggle-truncate-lines 1) ; Don't wrap lines by default
+  (add-hook 'text-mode-hook    #'turn-on-visual-line-mode)
+  (add-hook 'prog-mode-hook    #'auto-fill-mode)
+  (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
+#+end_src
+** SMTP Mail
+
+#+begin_src emacs-lisp
+  (use-package smtpmail
+    :ensure nil
+    :custom
+    (smtpmail-default-smtp-server "smtp.fastmail.com")
+    (smtpmail-smtp-server "smtp.fastmail.com")
+    (smtpmail-smtp-service 587))
 #+end_src
