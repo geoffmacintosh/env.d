@@ -4,17 +4,32 @@
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/early-init.el
 :END:
+
 #+begin_src emacs-lisp
   ;;; early-init.el -*- lexical-binding: t; -*-
-  (setq load-prefer-newer t)
-  (setq package-quickstart t)
-  (setq frame-inhibit-implied-resize t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+    "A thing that custom-sets a VARIABLE to a VALUE."
+  `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq load-prefer-newer t)
+  (csetq package-quickstart t)
+  (csetq frame-inhibit-implied-resize t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defvar actuator-cache-directory
+    (expand-file-name (convert-standard-filename "cache/") user-emacs-directory))
 #+end_src
 
 #+begin_src emacs-lisp
   (when (boundp 'comp-eln-load-path)
     (setcar (nthcdr 0 comp-eln-load-path)
-     (expand-file-name "var/eln-cache/" user-emacs-directory)))
+     (expand-file-name "/eln/" actuator-cache-directory)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -48,6 +63,13 @@
 ** Lexical Binding
 #+begin_src emacs-lisp
   ;;; init.el -*- lexical-binding: t; -*-
+#+end_src
+
+** Custom-set Variables
+
+#+begin_src emacs-lisp
+  (csetq custom-file (expand-file-name "custom.el" actuator-cache-directory))
+  (load custom-file 'noerror)
 #+end_src
 
 ** Package Init
@@ -443,12 +465,22 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("f" "Finished Book" entry
-                   (file+olp+datetree ,(expand-file-name "reading-log.org" org-directory))
-                   "* %^{Author Name} - %^{Title} (%^{Year}) %^{Series}p
-                 %^{SeriesNo}p %^{Author}p %^{Rating|2|1|3}p"
-                   :time-prompt
-                   :kill-buffer)))
+                 `("t" "Todo" entry
+                   (file+headline ,(expand-file-name "quest-log.org" org-directory) "Inbox")
+                   "* TODO %?\n%i\n%a\nAdded on %U")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (require 'org-contacts)
+    (add-to-list 'org-capture-templates
+                 `("c" "Contact" entry
+                   (file ,(expand-file-name "contacts.org" org-directory))
+                   "* %(org-contacts-template-name)
+  :PROPERTIES:
+  :EMAIL: %(org-contacts-template-email)
+  :PHONE:
+  :END:")))
 #+end_src
 
 ** Personal Stuff
@@ -649,16 +681,6 @@ From  emacs-plus:
   (use-package flymake
     :ensure nil
     :hook (emacs-lisp-mode . flymake-mode))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package cus-edit
-    :ensure nil
-    :after no-littering
-    :custom
-    (custom-file (expand-file-name "custom.el" no-littering-var-directory))
-    :config
-    (load custom-file 'noerror))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1238,7 +1260,7 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (defvar org-directory "~/org")
   (use-package org
-    :ensure t
+    :ensure org-plus-contrib
     :config
     (org-indent-mode 1)
     ;; (add-to-list 'org-babel-default-header-args
