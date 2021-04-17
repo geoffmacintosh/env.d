@@ -1212,7 +1212,7 @@ https://gist.github.com/spacebat/5500966
     (setq org-babel-default-header-args '((:mkdirp   . "yes")
                                           (:comments . "link")
                                           (:session  . "none")
-                                          (:results  . "none")
+                                          (:results  . "replace")
                                           (:exports  . "code")
                                           (:cache    . "no")
                                           (:noweb    . "no")
