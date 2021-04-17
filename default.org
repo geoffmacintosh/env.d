@@ -466,7 +466,7 @@ I think mu will actually index correctly on its own the first time you launch mu
   ### Output configuration
   #
   # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-  output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+  output * bg #525252 solid_color
   #
   # Example configuration:
   #
