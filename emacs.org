@@ -295,8 +295,11 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 ** Cancel GC in Minibuffer
 #+begin_src emacs-lisp
-  ;;(add-hook 'minibuffer-setup-hook #'actuator-engorge-gc)
-  ;;(add-hook 'minibuffer-exit-hook  #'actuator-restore-gc)
+  (when (and (fboundp 'actuator-engorge-gc)
+             (fboundp 'actuator-restore-gc))
+    (add-hook 'minibuffer-setup-hook #'actuator-engorge-gc)
+    (add-hook 'minibuffer-exit-hook  #'actuator-restore-gc))
+
 #+end_src
 
 ** Minibuffer Resize
