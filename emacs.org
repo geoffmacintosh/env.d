@@ -177,13 +177,13 @@ Which means that =var= and =etc= directories aren't super useful for my purposes
 #+end_src
 
 ** Just one space
-#+begin_src emacs-lisp :results replace
+#+begin_src emacs-lisp
   (defun actuator-just-one-space ()
     "Insert just one space, killing ALL whitespace."
     (interactive)
     (just-one-space -1))
 
-  (global-set-key (kbd "<M-SPC>") #'actuator-just-one-space)
+  (global-set-key (kbd "M-/") #'actuator-just-one-space)
 #+end_src
 
 ** Unfill paragraph
@@ -313,26 +313,23 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Hippie Expand
 
 #+begin_src emacs-lisp
-  (use-package hippie-exp
-    :ensure nil
-    :bind ("M-/" . hippie-expand)
-    :custom
-    (hippie-expand-verbose t)
-    (hippie-expand-try-functions-list
-     '(try-expand-all-abbrevs
-       try-expand-dabbrev-visible
-       try-expand-dabbrev
-       try-expand-dabbrev-all-buffers
-       try-expand-dabbrev-from-kill
-       try-complete-file-name-partially
-       try-complete-file-name
-       try-expand-line
-       try-complete-lisp-symbol-partially
-       try-complete-lisp-symbol
-       try-expand-list
-       try-expand-list-all-buffers
-       try-expand-whole-kill
-       try-expand-line-all-buffers)))
+  (csetq hippie-expand-verbose t)
+  (csetq hippie-expand-try-functions-list
+         '(try-expand-all-abbrevs
+           try-expand-dabbrev-visible
+           try-expand-dabbrev
+           try-expand-dabbrev-all-buffers
+           try-expand-dabbrev-from-kill
+           try-complete-file-name-partially
+           try-complete-file-name
+           try-expand-line
+           try-complete-lisp-symbol-partially
+           try-complete-lisp-symbol
+           try-expand-list
+           try-expand-list-all-buffers
+           try-expand-whole-kill
+           try-expand-line-all-buffers))
+  (global-set-key (kbd "<M-SPC>") #'hippie-expand)
 #+end_src
 
 - try-complete-lisp-symbol has a lot of completions
