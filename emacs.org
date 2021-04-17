@@ -98,7 +98,7 @@ Which means that =var= and =etc= directories aren't super useful for my purposes
 
 * Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes :mkdirp yes
+:header-args: :tangle ~/.config/emacs/init.el :comments none :noweb yes :mkdirp yes
 :END:
 ** Lexical Binding
 #+begin_src emacs-lisp
