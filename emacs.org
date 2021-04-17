@@ -1106,6 +1106,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
                                            user-emacs-directory) nil 0)
     (byte-recompile-file (expand-file-name "early-init.el"
                                            user-emacs-directory) nil 0))
+
+  (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
 #+end_src
 
 ** Modeline time
