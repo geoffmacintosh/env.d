@@ -652,26 +652,32 @@ I think mu will actually index correctly on its own the first time you launch mu
   }
   bindsym $mod+r mode "resize"
 
+  bar {
+      swaybar_command waybar
+  }
+
   #
   # Status Bar:
   #
   # Read `man 5 sway-bar` for more information about this section.
-  bar {
-      position top
+  # bar {
+  #     position top
 
-      font pango:SourceCodePro Medium 13
+  #     font pango:SourceCodePro Medium 13
 
-      # When the status_command prints a new line to stdout, swaybar updates.
-      # The default just shows the current date and time.
-      # The hyphen means don't pad that entry.
-      status_command while date +'%A %-e %B %Y %k:%M'; do sleep 30; done
+  #     # When the status_command prints a new line to stdout, swaybar updates.
+  #     # The default just shows the current date and time.
+  #     # The hyphen means don't pad that entry.
+  #     status_command while date +'%A %-e %B %Y %k:%M'; do sleep 30; done
 
-      colors {
-          statusline #ffffff
-          background #323232
-          inactive_workspace #32323200 #32323200 #5c5c5c
-      }
-  }
+  #     colors {
+  #         statusline #ffffff
+  #         background #323232
+  #         inactive_workspace #32323200 #32323200 #5c5c5c
+  #     }
+  # }
+
+
 
   include /etc/sway/config.d/*
 #+end_src
@@ -744,7 +750,12 @@ I think mu will actually index correctly on its own the first time you launch mu
   }
 #+end_src
 
+** Waybar
+#+begin_src json :tangle ~/.config/waybar/config
+#+end_src
 
+#+begin_src css :tangle ~/.config/waybar/style.css
+#+end_src
 ** Game Mode
 #+begin_src conf :tangle ~/.config/gamemode.ini
   [general]
