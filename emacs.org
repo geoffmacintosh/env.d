@@ -357,6 +357,12 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
+** Diary
+#+begin_src emacs-lisp
+  (csetq diary-file (expand-file-name "diary" org-directory))
+  (csetq calendar-date-style 'iso)
+#+end_src
+
 ** SVG Screenshot
 #+begin_src emacs-lisp
   (defun screenshot-svg ()
