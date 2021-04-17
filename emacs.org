@@ -25,6 +25,7 @@ I have been attempting to reduce the number of packages and magical features tha
   (csetq load-prefer-newer t)
   (csetq package-quickstart t)
   (csetq frame-inhibit-implied-resize t)
+  (csetq org-directory (expand-file-name "~/org/"))
 #+end_src
 
 #+begin_src emacs-lisp
