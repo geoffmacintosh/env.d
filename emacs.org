@@ -146,6 +146,16 @@ Which means that =var= and =etc= directories aren't super useful for my purposes
     :ensure t)
 #+end_src
 
+#+begin_src emacs-lisp
+  (defvar actuator-var-directory (expand-file-name (convert-standard-filename "var/") user-emacs-directory))
+  (make-directory actuator-var-directory t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defvar actuator-backup-directory (expand-file-name (convert-standard-filename "backup/") user-emacs-directory))
+  (make-directory actuator-backup-directory t)
+#+end_src
+
 ** Exec path from shell
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
@@ -365,6 +375,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
+
 ** Diary
 #+begin_src emacs-lisp
   (csetq diary-file (expand-file-name "diary" org-directory))
@@ -651,8 +662,11 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (use-package flymake
     :ensure nil
+    :disabled t
     :hook (emacs-lisp-mode . flymake-mode))
 #+end_src
+
+#+results:
 
 #+begin_src emacs-lisp
   (use-package vc-hooks
@@ -1512,7 +1526,7 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package prescient
-
+    :ensure t
     :custom
     (prescient-persist-mode 1)
     (prescient-history-length 10000)
@@ -1580,7 +1594,7 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
 (use-package ivy-prescient
-
+  :ensure t
   :after (ivy prescient)
   :functions ivy-prescient-mode
   :config
