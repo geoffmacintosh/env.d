@@ -1521,35 +1521,36 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package counsel
-
-    :functions counsel-mode
-    :config
-    (setq counsel-find-file-ignore-regexp "\\`\\.")
-    (counsel-mode 1)
-    :bind
-    ("C-x C-r" . counsel-buffer-or-recentf)
-    ("C-x C-f" . counsel-find-file)
-    ("M-x"     . counsel-M-x)
-    ("s-x"     . counsel-M-x)
-  ;;  ("C-x m"   . counsel-semantic-or-imenu)
-    ("C-r"     . counsel-minibuffer-history)
-    ("C-x l"   . counsel-locate)
-    ("C-h f"   . counsel-describe-function)
-    ("C-h v"   . counsel-describe-variable)
-    ;;("C-h k"   . counsel-descbinds)
-    ("C-h x f" . counsel-faces)
-    ("C-c s"   . counsel-search)
-    ("M-y"     . counsel-yank-pop))
+    :ensure t
+    :init
+    (add-to-list 'package-selected-packages 'counsel)
+    (with-eval-after-load 'counsel
+      (csetq counsel-find-file-ignore-regexp "\\`\\."))
+    (when (fboundp 'counsel-mode)
+      (require 'counsel)
+      (require 'ivy)
+      (require 'swiper)
+      (counsel-mode 1)
+      (global-set-key (kbd "C-x C-r") #'counsel-buffer-or-recentf)
+      (global-set-key (kbd "C-x C-f") #'counsel-find-file)
+      (global-set-key (kbd "M-x")     #'counsel-M-x)
+      (global-set-key (kbd "C-h f")   #'counsel-describe-function)
+      (global-set-key (kbd "C-h v")   #'counsel-describe-variable)
+      (global-set-key (kbd "C-c s")   #'counsel-search)
+      (global-set-key (kbd "M-y")     #'counsel-yank-pop)))
 #+end_src
+
+#+results:
+: t
 
 #+begin_src emacs-lisp
   (use-package request
-    )
+    :disabled t)
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package ivy
-
+    :ensure t
     :defines ivy-minibuffer-map
     :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
     :config
