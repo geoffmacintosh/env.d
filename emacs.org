@@ -22,10 +22,14 @@ I have been attempting to reduce the number of packages and magical features tha
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq load-prefer-newer t)
-  (csetq package-quickstart t)
-  (csetq frame-inhibit-implied-resize t)
-  (csetq org-directory (expand-file-name "~/org/"))
+  (customize-set-variable 'load-prefer-newer t "Load the newer el/c instead of preferring the elc.")
+  (customize-set-variable 'frame-inhibit-implied-resize t)
+  (customize-set-variable 'org-directory (expand-file-name "~/org/"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (when (file-exists-p package-quickstart-file)
+    (customize-set-variable 'package-quickstart t))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -104,8 +108,6 @@ Which means that =var= and =etc= directories aren't super useful for my purposes
 #+begin_src emacs-lisp
   ;;; init.el -*- lexical-binding: t; -*-
 #+end_src
-
-** Garbage collection
 
 ** Package Init
 
