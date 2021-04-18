@@ -997,11 +997,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** World Time
 #+begin_src emacs-lisp
-  (csetq display-time-world-list '(("America/New_York" "New York")
-                                   ("Europe/London"    "London")
-                                   ("Australia/Sydney" "Sydney")
-                                   ("America/Edmonton" "Calgary")
-                                   ("America/St_Johns" "St. John's")))
+  (csetq world-clock-list '(("America/New_York" "New York")
+                            ("Europe/London"    "London")
+                            ("Australia/Sydney" "Sydney")
+                            ("America/Edmonton" "Calgary")
+                            ("America/St_Johns" "St. John's")))
 #+end_src
 
 ** Ediff
