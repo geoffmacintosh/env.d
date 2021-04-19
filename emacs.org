@@ -543,6 +543,7 @@ From  emacs-plus:
   (setq require-final-newline t)
 
   (save-place-mode 1)
+  (customize-set-variable 'save-place-file (expand-file-name "save-place.el" actuator-var-directory))
 
   (setq backup-by-copying    t)
   (setq delete-old-versions  t)
