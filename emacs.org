@@ -927,6 +927,15 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
+  (make-directory (expand-file-name "image-dired/gallery/" actuator-cache-directory) t)
+  (customize-set-variable 'image-dired-dir (expand-file-name "image-dired/" actuator-cache-directory))
+  (customize-set-variable 'image-dired-db-file (expand-file-name "image-dired/image-dired.db" actuator-cache-directory))
+  (customize-set-variable 'image-dired-gallery (expand-file-name "image-dired/gallery/" actuator-cache-directory))
+  (customize-set-variable 'image-dired-temp-image-file (expand-file-name "image-dired/temp-image" actuator-cache-directory))
+  (customize-set-variable 'image-dired-temp-rotate-image-file (expand-file-name "image-dired/temp-rotate-image" actuator-cache-directory))
+#+end_src
+
+#+begin_src emacs-lisp
   (setq image-dired-thumb-size 100)
   (setq image-dired-thumb-width 300)
   (setq image-dired-thumb-height 300)
