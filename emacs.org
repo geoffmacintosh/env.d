@@ -375,7 +375,10 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
-
+** NSM
+#+begin_src emacs-lisp
+  (customize-set-variable 'nsm-settings-file (expand-file-name "nsm.el" actuator-cache-directory))
+#+end_src
 ** Diary
 #+begin_src emacs-lisp
   (csetq diary-file (expand-file-name "diary" org-directory))
