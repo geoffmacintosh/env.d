@@ -816,6 +816,14 @@ From  emacs-plus:
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
 
 ** Web
+*** URL
+#+begin_src emacs-lisp
+  (make-directory (expand-file-name "url/" actuator-var-directory) t)
+  (make-directory (expand-file-name "url/" actuator-cache-directory) t)
+  (customize-set-variable 'url-cache-directory (expand-file-name "url/" actuator-cache-directory))
+  (customize-set-variable 'url-configuration-directory (expand-file-name "url/" actuator-var-directory))
+#+end_src
+
 *** Set up browsing handlers                      :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
