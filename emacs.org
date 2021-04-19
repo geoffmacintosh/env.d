@@ -2031,21 +2031,24 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 - [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
 
 #+begin_src emacs-lisp
-  (defun actuator-eshell-imenu ()
-    "Set up eshell-imenu integration"
-    (setq-local imenu-generic-expression
-                '(("Prompt" "^.*?[#❯]" 1))))
-  (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
+    (defun actuator-eshell-imenu ()
+      "Set up eshell-imenu integration"
+      (setq-local imenu-generic-expression
+                  '(("Prompt" "^.*?[#❯]" 1))))
+    (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-eshell-autocomplete ()
-        "Enable tab autocompletion in eshell."
-        (define-key
-          eshell-mode-map (kbd "<tab>")
-          (lambda () (interactive) (pcomplete-std-complete))))
-  (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
+    (defun actuator-eshell-autocomplete ()
+          "Enable tab autocompletion in eshell."
+          (define-key
+            eshell-mode-map (kbd "<tab>")
+            (lambda () (interactive) (pcomplete-std-complete))))
+    (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
 #+end_src
+
+#+results:
+| tramp-eshell-directory-change | actuator-eshell-z | actuator-fish-completion | actuator-eshell-autocomplete | actuator-eshell-imenu |
 
 #+begin_src emacs-lisp
   (use-package pcmpl-args
@@ -2149,7 +2152,18 @@ Or could just use mingus?
     :custom
     (emms-player-list '(emms-player-mpd))
     (emms-source-file-default-directory "~/Music/Music Files"))
+
+  (make-directory (expand-file-name "emms/" actuator-var-directory) t)
+  (customize-set-variable 'emms-directory (expand-file-name "emms/" actuator-var-directory))
 #+end_src
+
+** Tramp
+#+begin_src emacs-lisp
+  (make-directory (expand-file-name "tramp/" actuator-var-directory) t)
+  (customize-set-variable 'tramp-auto-save-directory (expand-file-name "tramp/auto-save/" actuator-var-directory))
+  (customize-set-variable 'tramp-persistency-file-name (expand-file-name "tramp.el" actuator-cache-directory))
+#+end_src
+
 ** Rainbow
 #+begin_src emacs-lisp
   (use-package rainbow-mode
