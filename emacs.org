@@ -572,7 +572,7 @@ From  emacs-plus:
   (put 'narrow-to-defun  'disabled nil)
 
   (add-hook 'after-save-hook
-            'executable-make-buffer-file-executable-if-script-p)
+            #'executable-make-buffer-file-executable-if-script-p)
 
   (defun display-startup-echo-area-message ()
     "Remove the GNU info from the minibuffer on startup.
