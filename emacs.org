@@ -1443,6 +1443,7 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package org-id
+    :disabled t
     :ensure nil
     :custom
     (org-id-link-to-org-use-id nil)
