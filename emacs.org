@@ -1553,18 +1553,31 @@ https://gist.github.com/spacebat/5500966
 
 ** Forge
 #+begin_src emacs-lisp
-  (use-package forge
-    )
+  (add-to-list 'package-selected-packages 'forge)
+  (make-directory (expand-file-name "forge/post/" actuator-cache-directory) t)
+  (customize-set-variable 'forge-database-file (expand-file-name "forge/forge.db" actuator-cache-directory))
+  (customize-set-variable 'forge-post-directory (expand-file-name "forge/post/" actuator-cache-directory))
 #+end_src
+
+#+results:
+
+** Transient
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'transient)
+  (make-directory (expand-file-name "transient" actuator-var-directory) t)
+  (customize-set-variable 'transient-history-file (expand-file-name "transient/history.el" actuator-var-directory))
+  (customize-set-variable 'transient-levels-file (expand-file-name "transient/levels.el" actuator-var-directory))
+  (customize-set-variable 'transient-values-file (expand-file-name "transient/values.el" actuator-var-directory))
+#+end_src
+
 ** Ivy
 
 #+begin_src emacs-lisp
-  (use-package prescient
-    :ensure t
-    :custom
-    (prescient-persist-mode 1)
-    (prescient-history-length 10000)
-    (prescient-aggressive-file-save t))
+  (add-to-list 'package-selected-packages 'prescient)
+  (customize-set-variable 'prescient-save-file (expand-file-name "prescient.el" actuator-var-directory))
+  (customize-set-variable 'prescient-persist-mode 1)
+  (customize-set-variable 'prescient-history-length 10000)
+  (customize-set-variable 'prescient-aggressive-file-save t)
 #+end_src
 
 #+begin_src emacs-lisp
