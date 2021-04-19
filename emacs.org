@@ -1246,6 +1246,22 @@ https://gist.github.com/spacebat/5500966
 ** Org
 
 #+begin_src emacs-lisp
+  (make-directory (expand-file-name "org/" actuator-var-directory) t)
+
+  (make-directory (expand-file-name "org-publish/"
+                                    actuator-cache-directory) t)
+  (customize-set-variable
+  'org-clock-persist-file (expand-file-name "org/org-clock-persist.el"
+                                            actuator-var-directory))
+  (customize-set-variable
+  'org-publish-timestamp-directory (expand-file-name "org-publish/"
+  actuator-cache-directory))
+#+end_src
+
+#+results:
+: /home/g/.config/emacs/cache/org-publish/
+
+#+begin_src emacs-lisp
   (defvar org-directory "~/org")
   (use-package org
     :ensure org-plus-contrib
