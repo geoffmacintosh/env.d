@@ -1182,16 +1182,13 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** ERC
 #+begin_src emacs-lisp
-    (use-package erc
-      :ensure nil
-      :config
-      (defun twitch-start-irc ()
-        "Connect to Twitch IRC."
-        (interactive)
-        (erc-tls :server "irc.chat.twitch.tv"
-                 :port 6697
-                 :nick (auth-source-pass-get "user" "twitch.tv")
-                 :password (auth-source-pass-get "oauth" "twitch.tv"))))
+  (defun actuator-twitch-start-irc ()
+    "Connect to Twitch IRC."
+    (interactive)
+    (erc-tls :server "irc.chat.twitch.tv"
+             :port 6697
+             :nick (auth-source-pass-get "user" "twitch.tv")
+             :password (auth-source-pass-get "oauth" "twitch.tv")))
 #+end_src
 
 ** Doc View
