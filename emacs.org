@@ -1977,6 +1977,12 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Eshell
 
 #+begin_src emacs-lisp
+  (make-directory (expand-file-name "elfeed" actuator-var-directory) t)
+  (customize-set-variable 'eshell-directory-name (expand-file-name "elfeed" actuator-var-directory))
+  (customize-set-variable 'eshell-history-file-name (expand-file-name "history" eshell-directory-name))
+#+end_src
+
+#+begin_src emacs-lisp
   (use-package eshell
     :ensure nil
     ;; :bind (:map eshell-mode-map
