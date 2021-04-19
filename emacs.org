@@ -212,39 +212,39 @@ Which means that =var= and =etc= directories aren't super useful for my purposes
 
 ** Savehist
 #+begin_src emacs-lisp
-  (use-package savehist
-    :ensure nil
-    :config
-    (savehist-mode)
-    :custom
-    (history-length 1000)
-    (history-delete-duplicates t)
-    (message-log-max 1000)
-    (savehist-save-minibuffer-history t)
-    (savehist-additional-variables
-     '(buffer-name-history
-       command-history
-       compile-history
-       extended-command-history
-       file-name-history
-       file-name-history
-       global-mark-ring
-       Info-history-list
-       kill-ring
-       kmacro-ring
-       last-kbd-macro
-       minibuffer-history
-       org-link--history
-       org-read-date-history
-       org-refile-history
-       org-table-formula-history
-       org-tags-history
-       regexp-search-ring
-       register-alist
-       savehist-minibuffer-history-variables
-       shell-command-history
-       mark-ring)))
+  (savehist-mode)
+  (customize-set-variable 'history-length 1000)
+  (customize-set-variable 'history-delete-duplicates t)
+  (customize-set-variable 'message-log-max 1000)
+  (customize-set-variable 'savehist-save-minibuffer-history t)
+  (customize-set-variable 'savehist-additional-variables
+                          '(buffer-name-history
+                            command-history
+                            compile-history
+                            extended-command-history
+                            file-name-history
+                            file-name-history
+                            global-mark-ring
+                            Info-history-list
+                            kill-ring
+                            kmacro-ring
+                            last-kbd-macro
+                            minibuffer-history
+                            org-link--history
+                            org-read-date-history
+                            org-refile-history
+                            org-table-formula-history
+                            org-tags-history
+                            regexp-search-ring
+                            register-alist
+                            savehist-minibuffer-history-variables
+                            shell-command-history
+                            mark-ring))
+  (customize-set-variable 'savehist-file (expand-file-name "savehist.el" actuator-var-directory))
 #+end_src
+
+#+results:
+: /home/g/.config/emacs/var/savehist.el
 
 1. Quick fixes:
 
