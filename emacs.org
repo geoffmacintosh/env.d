@@ -105,20 +105,9 @@
     (require 'bind-key))
 #+end_src
 
-** No Littering
-#+begin_src emacs-lisp :tangle no
-  (use-package no-littering
-    :ensure t)
-#+end_src
-
 #+begin_src emacs-lisp
   (defvar actuator-var-directory (expand-file-name (convert-standard-filename "var/") user-emacs-directory))
   (make-directory actuator-var-directory t)
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (defvar actuator-backup-directory (expand-file-name (convert-standard-filename "backup/") user-emacs-directory))
-  (make-directory actuator-backup-directory t)
 #+end_src
 
 ** Exec path from shell
@@ -834,21 +823,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (setq browse-url-generic-args '("--background")))
 #+end_src
 ** iBuffer
-*** Introduction
 #+begin_src emacs-lisp
-  (use-package ibuffer
-    :ensure nil
-    :config
-    <<ibuffer-filters>>
-    :bind ("C-x C-b" . ibuffer)
-    :custom
-    (ibuffer-expert t))
+  (global-set-key (kbd "C-x C-b") #'ibuffer)
+  (customize-set-variable 'ibuffer-expert t)
 #+end_src
-
-*** Filters
-:PROPERTIES:
-:header-args: :noweb-ref ibuffer-filters
-:END:
 
 #+begin_src emacs-lisp
   (setq ibuffer-show-empty-filter-groups nil)
@@ -865,8 +843,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
            )))
 #+end_src
 
-*** Defaults
-
 #+begin_src emacs-lisp
   (defun actuator-ibuffer-setup ()
     "Setup ibuffer defaults."
@@ -876,6 +852,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (toggle-truncate-lines +1))
   (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
 #+end_src
+
 ** Encryption (EPG)
 #+begin_src emacs-lisp
   (use-package epg
@@ -1226,7 +1203,7 @@ https://gist.github.com/spacebat/5500966
 : /home/g/.config/emacs/cache/org-publish/
 
 #+begin_src emacs-lisp
-  (defvar org-directory "~/org")
+  ;;(defvar org-directory "~/org")
   (use-package org
     :ensure org-plus-contrib
     :config
@@ -1257,10 +1234,9 @@ https://gist.github.com/spacebat/5500966
     (add-to-list 'org-default-properties "DIR")
     (add-to-list 'org-default-properties "header-args")
     ;;(add-to-list 'org-babel-default-header-args '(:mkdirp . "yes"))
-    :bind
-    ("C-c c" . counsel-org-capture)
-    ("C-c a" . org-agenda)
-    ("C-c l" . org-store-link)
+    (global-set-key (kbd "C-c c") #'counsel-org-capture)
+    (global-set-key (kbd "C-c a") #'org-agenda)
+    (global-set-key (kbd "C-c l") #'org-store-link)
     :custom
     ;;(setq-local org-display-custom-times nil)
     ;;(org-time-stamp-custom-formats
@@ -1405,14 +1381,6 @@ https://gist.github.com/spacebat/5500966
     (org-agenda-dim-blocked-tasks t))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (use-package org-id
-    :disabled t
-    :ensure nil
-    :custom
-    (org-id-link-to-org-use-id nil)
-    :hook (midnight-mode . org-id-update-id-locations))
-#+end_src
 ** Fish Mode
 #+begin_src emacs-lisp
   (use-package fish-mode
@@ -1580,6 +1548,11 @@ https://gist.github.com/spacebat/5500966
     :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
     :config
     (ivy-mode 1)
+    :init
+    (global-set-key (kbd "C-x b") #'ivy-switch-buffer)
+    (define-key ivy-minibuffer-map (kbd "<C-return>") #'ivy-immediate-done)
+    (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
+    (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line)
     :custom
     (ivy-use-ignore-default 'always)
     (ivy-ignore-buffers '("*elfeed-log*"
@@ -1589,19 +1562,17 @@ https://gist.github.com/spacebat/5500966
     (ivy-use-virtual-buffers nil)
     (ivy-count-format "(%d/%d) ")
     (ivy-extra-directories nil)
-    :bind
-    (("C-x b" . ivy-switch-buffer)
-     :map ivy-minibuffer-map
-     ("<C-return>" . ivy-immediate-done)
-     ("RET"        . ivy-alt-done)
-     ("M-y"        . ivy-next-line)))
+    ;; :bind
+    ;; (("C-x b" . ivy-switch-buffer)
+    ;;  :map ivy-minibuffer-map
+    ;;  ("<C-return>" . ivy-immediate-done)
+    ;;  ("RET"        . ivy-alt-done)
+    ;;  ("M-y"        . ivy-next-line)))
+  )
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-(use-package swiper
-
-  :bind ("C-s" . swiper-isearch))
-#+end_src
+#+results:
+: t
 
 #+begin_src emacs-lisp
 (use-package ivy-prescient
@@ -1617,9 +1588,8 @@ https://gist.github.com/spacebat/5500966
 :END:
 #+begin_src emacs-lisp
   (use-package org-cliplink
-
-    :bind ("C-x p i" . org-cliplink)
     :init
+    (global-set-key (kbd "C-x p i") #'org-cliplink)
     (with-eval-after-load 'org-capture
       (add-to-list 'org-capture-templates
                   `("b" "Bookmark" entry (file+olp+datetree ,(expand-file-name "bookmarks.org" org-directory))
@@ -1647,10 +1617,10 @@ https://gist.github.com/spacebat/5500966
   (use-package magit
     :ensure t
     :after exec-path-from-shell
-    :bind
-    ("C-c g" . magit-status)
-    ("C-x g" . magit-status)
-    ("C-x G" . magit-list-repositories)
+    :init
+    (global-set-key (kbd "C-c g") #'magit-status)
+    (global-set-key (kbd "C-x g") #'magit-status)
+    (global-set-key (kbd "C-x G") #'magit-list-repositories)
     :custom
     (magit-diff-refine-hunk 'all)
     (magit-save-repository-buffers 'dontask)
@@ -1694,21 +1664,21 @@ https://gist.github.com/spacebat/5500966
 ** Org download
 
 #+begin_src emacs-lisp
-    (use-package org-download
-      :ensure t
-      :bind ("C-M-y" . org-download-screenshot)
-      :init
-      (require 'org-download)
-      :custom
-      (org-download-method 'directory)
-      (org-download-image-dir nil)
-      ;;(org-download-annotate-function #'actuator-org-dl-annotate)
-      ;;(org-download-timestamp "")
-      (org-download-screenshot-method "screencapture -i %s")
-      (org-download-heading-lvl nil)
-      (org-download-timestamp "%Y%m%d-%H%M%S-")
-      ;;(org-download-screenshot-method "/usr/local/bin/pngpaste %s")
-      )
+  (use-package org-download
+    :ensure t
+    :init
+    (global-set-key (kbd "C-M-y") #'org-download-screenshot)
+    (require 'org-download)
+    :custom
+    (org-download-method 'directory)
+    (org-download-image-dir nil)
+    ;;(org-download-annotate-function #'actuator-org-dl-annotate)
+    ;;(org-download-timestamp "")
+    (org-download-screenshot-method "screencapture -i %s")
+    (org-download-heading-lvl nil)
+    (org-download-timestamp "%Y%m%d-%H%M%S-")
+    ;;(org-download-screenshot-method "/usr/local/bin/pngpaste %s")
+    )
 #+end_src
 ** Web Mode
 
@@ -1733,43 +1703,35 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
 
 #+begin_src emacs-lisp
   (use-package elfeed
-
-    :bind
-    (("C-x w" . actuator-elfeed-load-db-and-open)
-     :map elfeed-search-mode-map
-     ("A" . actuator-elfeed-show-all)
-     ("U" . actuator-elfeed-show-unread)
-     ("q" . actuator-elfeed-save-db-and-bury)
-     ("R" . actuator-elfeed-mark-all-as-read))
+    :init
+    (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
+    ;; :bind
+    ;; (("C-x w" . actuator-elfeed-load-db-and-open)
+    ;;  :map elfeed-search-mode-map
+    ;;  ("A" . actuator-elfeed-show-all)
+    ;;  ("U" . actuator-elfeed-show-unread)
+    ;;  ("q" . actuator-elfeed-save-db-and-bury)
+    ;;  ("R" . actuator-elfeed-mark-all-as-read))
     :custom
     (elfeed-search-filter "@1-week-ago +unread ")
     :config
-    <<shortcuts>>
     <<faces>>
     <<elfeed-filters>>
     <<load-quit>>
     <<mark-all-as-read>>)
+
+  (with-eval-after-load 'elfeed
+    (define-key elfeed-search-mode-map (kbd "A") #'actuator-elfeed-show-all)
+    (define-key elfeed-search-mode-map (kbd "U") #'actuator-elfeed-show-unread)
+    (define-key elfeed-search-mode-map (kbd "q") #'actuator-elfeed-save-db-and-bury)
+    (define-key elfeed-search-mode-map (kbd "R") #'actuator-elfeed-mark-all-as-read))
 #+end_src
+
+#+results:
+: actuator-elfeed-mark-all-as-read
 
 *** Open videos in MPV                            :ignore:
 One feature that people talk about a lot is setting up Elfeed to handle video-feeds separately from others, allowing you to avoid opening---say---a YouTube link in MPV instead of a browser window. That's pretty nice if you think YouTube's site is bad. There are a variety of ways to do that, but my current solution is to adjust how Emacs handles URLs, as documented in my Web config. The advantage of my system is that it affects all links to YouTube, regardless of where they are. It's a general solution, not an Elfeed solution.
-
-*** Shortcuts                                     :ignore:
-:PROPERTIES:
-:header-args: :noweb-ref shortcuts :tangle no :results output silent
-:END:
-I built a few shortcuts to switch between different tag views that I commonly use. Elfeed has support for Emacs' bookmarks, so I just needed to make bookmarks for the views I wanted. I set up the search how I like it (~s~) then made a bookmark entry (~C-x r m~) called, say ~elfeed-all~. I can call that bookmark from anywhere in Emacs to go to that elfeed view, but I also decided to [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][steal some functions from Pragmatic Emacs]] to make single-letter keybindings in elfeed.
-
-#+begin_src emacs-lisp
-  (defun actuator-elfeed-show-all ()
-    (interactive)
-    (bookmark-maybe-load-default-file)
-    (bookmark-jump "elfeed-all"))
-  (defun actuator-elfeed-show-unread ()
-    (interactive)
-    (bookmark-maybe-load-default-file)
-    (bookmark-jump "elfeed-unread"))
-#+end_src
 
 *** Filters                                       :ignore:
 :PROPERTIES:
@@ -2043,17 +2005,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package eshell-z
-    :ensure
-    :custom
-    (eshell-z-freq-dir-hash-table-file-name "~/.local/share/z/data")
-    :config
-    (add-hook 'eshell-mode-hook
-              (defun actuator-eshell-z ()
-                (require 'eshell-z))))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
   (add-hook 'eshell-expand-input-functions
              #'eshell-expand-history-references)
 #+end_src

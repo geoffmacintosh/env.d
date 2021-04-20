@@ -23,24 +23,24 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
   (defun complete-path-at-point+ ()
     "Return completion data for UNIX path at point."
     (let ((fn (ffap-file-at-point))
-	  (fap (thing-at-point 'filename)))
+          (fap (thing-at-point 'filename)))
       (when (and (or fn (equal "/" fap))
-		 (save-excursion
-		   (search-backward fap (line-beginning-position) t)))
-	(list (match-beginning 0)
-	      (match-end 0)
-	      #'completion-file-name-table :exclusive 'no))))
+                 (save-excursion
+                   (search-backward fap (line-beginning-position) t)))
+        (list (match-beginning 0)
+              (match-end 0)
+              #'completion-file-name-table :exclusive 'no))))
 
   (add-hook 'completion-at-point-functions
-	    #'complete-path-at-point+
-	    'append)
+            #'complete-path-at-point+
+            'append)
 #+end_src
 
 ** Matrix
 #+begin_src emacs-lisp
   (use-package matrix-client
     :straight (matrix-client :host github
-			     :repo "alphapapa/matrix-client.el"))
+                             :repo "alphapapa/matrix-client.el"))
 #+end_src
 
 ** Smart Tab
@@ -73,20 +73,20 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
 ** Publish Project
 #+begin_src emacs-lisp
   (setq org-publish-project-alist
-	`(("blog-org"
-	   :base-directory ,org-directory
-	   :base-extension "blog\\.org"
-	   :publishing-directory "~/Documents/Projects/mac-into-sh"
-	   :publishing-function org-md-publish-to-md
-	   :with-broken-links mark
-	   )
-	  ("blog-images"
-	   :base-directory ,org-directory
-	   :base-extension "jpg\\|gif\\|png\\|jpeg"
-	   :publishing-directory "~/Documents/Projects/mac-into-sh/images"
-	   :recursive t
-	   :publishing-function org-publish-attachment)
-	  ("blog" :components ("blog-org" "blog-images"))))
+        `(("blog-org"
+           :base-directory ,org-directory
+           :base-extension "blog\\.org"
+           :publishing-directory "~/Documents/Projects/mac-into-sh"
+           :publishing-function org-md-publish-to-md
+           :with-broken-links mark
+           )
+          ("blog-images"
+           :base-directory ,org-directory
+           :base-extension "jpg\\|gif\\|png\\|jpeg"
+           :publishing-directory "~/Documents/Projects/mac-into-sh/images"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("blog" :components ("blog-org" "blog-images"))))
 #+end_src
 ** Hugo
 #+begin_src emacs-lisp
@@ -168,7 +168,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
   (use-package flyspell-correct-ivy
      :after flyspell
      :bind (:map flyspell-mode-map
-	   ("C-;" . flyspell-correct-word-generic))
+           ("C-;" . flyspell-correct-word-generic))
      :custom (flyspell-correct-interface 'flyspell-correct-ivy))
 #+end_src
 
@@ -190,7 +190,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     :disabled t
     :config
     :bind (:map dired-mode-map
-	       ("i" . dired-subtree-cycle)))
+               ("i" . dired-subtree-cycle)))
 #+end_src
 ** Dired git info
 
@@ -199,7 +199,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     :disabled t
 
     :bind (:map dired-mode-map
-		(")" . dired-git-info-mode)))
+                (")" . dired-git-info-mode)))
 #+end_src
 ** Diredfl
 
@@ -217,10 +217,10 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     "Open the file at point with open."
     (interactive)
     (let* ((files (dired-get-marked-files t current-prefix-arg))
-	   (nfiles (length files)))
+           (nfiles (length files)))
       (when (or (< nfiles 8)
-		(y-or-n-p (format "Really open %d files?" nfiles)))
-	(dolist (file files) (start-process "open" nil "open" file)))))
+                (y-or-n-p (format "Really open %d files?" nfiles)))
+        (dolist (file files) (start-process "open" nil "open" file)))))
   (bind-key "e" #'actuator-dired-open dired-mode-map)
 #+end_src
 
@@ -234,8 +234,8 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
        (interactive)
        (org-refile-cache-clear)
        (let ((org-refile-target-verify-function nil)
-	     (org-refile-targets ,refile-targets))
-	 (call-interactively 'org-refile))))
+             (org-refile-targets ,refile-targets))
+         (call-interactively 'org-refile))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -275,11 +275,11 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 ** Pulse Line
 #+begin_src emacs-lisp
   (defun pulse-line (&rest _)
-	"Pulse the current line."
-	(pulse-momentary-highlight-one-line (point)))
+        "Pulse the current line."
+        (pulse-momentary-highlight-one-line (point)))
 
   (dolist (command '(scroll-up-command scroll-down-command
-		     recenter-top-bottom other-window))
+                     recenter-top-bottom other-window))
     (advice-add command :after #'pulse-line))
 #+end_src
 
@@ -323,7 +323,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
        "%s (%s hours daylight)"
        (if (car l)
        (concat "Sunrise " (apply 'solar-time-string (car l)))
-	 "no sunrise")
+         "no sunrise")
        (nth 2 l)
        )))
   ;; To be called from diary-list-sexp-entries, where DATE is bound.
@@ -332,7 +332,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     "Local time of sunrise as a diary entry.
     Accurate to a few seconds."
     (or (and calendar-latitude calendar-longitude calendar-time-zone)
-	(solar-setup))
+        (solar-setup))
     (solar-sunrise-string date))
 
     (defun solar-sunset-string (date &optional nolocation)
@@ -342,7 +342,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
        "%s (%s hours daylight)"
        (if (cadr l)
        (concat "Sunset " (apply 'solar-time-string (cadr l)))
-	 "no sunset")
+         "no sunset")
        (nth 2 l)
        )))
   ;; To be called from diary-list-sexp-entries, where DATE is bound.
@@ -351,7 +351,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     "Local time of sunset as a diary entry.
     Accurate to a few seconds."
     (or (and calendar-latitude calendar-longitude calendar-time-zone)
-	(solar-setup))
+        (solar-setup))
     (solar-sunset-string date))
 #+end_src
 
@@ -375,4 +375,25 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     (smtpmail-default-smtp-server "smtp.fastmail.com")
     (smtpmail-smtp-server "smtp.fastmail.com")
     (smtpmail-smtp-service 587))
+#+end_src
+
+* Shortcuts                                         :ignore:
+:PROPERTIES:
+:header-args: :noweb-ref shortcuts :tangle no :results output silent
+:ARCHIVE_TIME: 2021-04-20 Tue 11:09
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable/Elfeed
+:ARCHIVE_CATEGORY: emacs
+:END:
+I built a few shortcuts to switch between different tag views that I commonly use. Elfeed has support for Emacs' bookmarks, so I just needed to make bookmarks for the views I wanted. I set up the search how I like it (~s~) then made a bookmark entry (~C-x r m~) called, say ~elfeed-all~. I can call that bookmark from anywhere in Emacs to go to that elfeed view, but I also decided to [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][steal some functions from Pragmatic Emacs]] to make single-letter keybindings in elfeed.
+
+#+begin_src emacs-lisp
+  (defun actuator-elfeed-show-all ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-all"))
+  (defun actuator-elfeed-show-unread ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-unread"))
 #+end_src
