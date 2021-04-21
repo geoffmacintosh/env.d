@@ -1284,7 +1284,7 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 
 #+begin_src emacs-lisp
-  ;;(setq org-agenda-files `(,org-directory))
+  (setq org-agenda-files `(,org-directory))
   (setq org-agenda-files (expand-file-name "agenda" org-directory))
 #+end_src
 
