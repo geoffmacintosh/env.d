@@ -98,7 +98,7 @@
   (setq use-package-always-ensure t)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package bind-key
     :ensure
     :init
