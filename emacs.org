@@ -2172,3 +2172,8 @@ Or could just use mingus?
   (customize-set-variable 'backup-directory-alist
                           `(("." . ,(expand-file-name "backups" actuator-var-directory))))
 #+end_src
+
+** Ignore disabled commands
+#+begin_src emacs-lisp
+  (setq disabled-command-function 'ignore)
+#+end_src
