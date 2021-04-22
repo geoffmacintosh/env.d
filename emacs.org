@@ -111,7 +111,7 @@
 #+end_src
 
 ** Exec path from shell
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package exec-path-from-shell
     :ensure t
     :demand t
@@ -120,6 +120,23 @@
     :config
     (when (eq system-type 'darwin)
       (exec-path-from-shell-initialize)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (when (file-attributes "/usr/local/sbin" t)
+    (add-to-list 'exec-path "/usr/local/sbin"))
+
+  (when (file-attributes "/usr/local/bin" t)
+    (add-to-list 'exec-path "/usr/local/bin"))
+
+  (when (file-attributes "/Library/TeX/texbin" t)
+    (add-to-list 'exec-path "/Library/TeX/texbin"))
+
+  (when (file-attributes "/opt/local/bin" t)
+    (add-to-list 'exec-path "/opt/local/bin"))
+
+  (when (file-attributes "/opt/local/sbin" t)
+    (add-to-list 'exec-path "/opt/local/sbin"))
 #+end_src
 
 * Stable
