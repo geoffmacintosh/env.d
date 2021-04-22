@@ -699,7 +699,7 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq delete-by-moving-to-trash t)
+  (setq delete-by-moving-to-trash nil)
 #+end_src
 ** Copy sentence
 #+begin_src emacs-lisp
