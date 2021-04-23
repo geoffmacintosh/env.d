@@ -371,72 +371,78 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 
 ** Capture Templates
-:PROPERTIES:
-:ID:       105E87F2-7E4C-44A1-94BE-1DD64B9F01A2
-:END:
-#+begin_src emacs-lisp
-  (use-package org-capture
-    :ensure nil)
-#+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("r" "Run" entry
-                   (file+olp+datetree ,(expand-file-name "run-log.org" org-directory))
-                   "* %<%A %e %B %Y (W%V)> %^{Duration}p %^{Distance}p
-                 %^{Elevation}p %^{Pace}p \n%?"
-                   :time-prompt
-                   :kill-buffer)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 '("c" "Current" entry
-                   (file+olp+datetree "activity.org")
-                   "* %^{Task} %^g"
-                   :clock-in)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("w" "Watched Film" entry
-                   (file+olp+datetree ,(expand-file-name "watch-log.org" org-directory))
-                   "* %^{Title} (%^{Year}) %^{Series}p
-               %^{SeriesNo}p %^{Rating|2|1|3}p"
-                   :time-prompt
-                   :kill-buffer)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("i" "Inbox" entry
-                   (file ,(expand-file-name "inbox.org" org-directory))
-                   "* %^{Title} \n %u \n %i \n\n %a")))
+                 `("i" "Inbox" entry (file "inbox.org")
+                   "* %^{Title}\n%u\n%i\n\n%a")))
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
                  `("t" "Todo" entry
-                   (file+headline ,(expand-file-name "quest-log.org" org-directory) "Inbox")
+                   (file+headline "quests.org" "Inbox")
                    "* TODO %?\n%i\n%a\nAdded on %U")))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
-    (require 'org-contacts)
+    (defun actuator-date-stamp ()
+      (format-time-string "%A %-e %B %Y %H:%M %Z"))
     (add-to-list 'org-capture-templates
-                 `("c" "Contact" entry
-                   (file ,(expand-file-name "contacts.org" org-directory))
-                   "* %(org-contacts-template-name)
+                 `("j" "Journal" entry
+                   (file+olp+datetree "journal.org")
+                   "* %(actuator-date-stamp)\n%?")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 '("c" "Contact" entry (file "contacts.org")
+                   "* %^{Name}
   :PROPERTIES:
-  :EMAIL: %(org-contacts-template-email)
-  :PHONE:
-  :END:")))
+  :EMAIL: %^{Email}
+  :PHONE: %^{Phone}
+  :END:\n\n%?")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-capture-inbox ()
+    (interactive)
+    (org-capture nil "i"))
+
+  (defun actuator-capture-todo ()
+    (interactive)
+    (org-capture nil "t"))
+
+  (defun actuator-capture-journal ()
+    (interactive)
+    (org-capture nil "j"))
+
+  (defun actuator-capture-bookmark ()
+    (interactive)
+    (org-capture nil "b"))
+
+  (defun actuator-capture-contact ()
+    (interactive)
+    (org-capture nil "c"))
+
+  (defun actuator-capture-feed ()
+    (interactive)
+    (org-capture nil "f"))
+
+  (with-eval-after-load 'transient
+    (define-transient-command actuator-org-capture ()
+      "Click"
+      ["Capture"
+       ("i" "Inbox" actuator-capture-inbox)
+       ("t" "Todo"  actuator-capture-todo)
+       ("j" "Journal" actuator-capture-journal)
+       ("c" "Contact" actuator-capture-contact)
+       ("b" "Bookmark" actuator-capture-bookmark)]))
+  (global-set-key (kbd "C-c c") #'actuator-org-capture)
 #+end_src
 
 ** Personal Stuff
@@ -1119,6 +1125,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
 #+end_src
 
+#+RESULTS:
+| actuator-byte-recompile-init | org-id-locations-save | bookmark-exit-hook-internal | elfeed-db-save-safe | org-babel-remove-temporary-directory | savehist-save | actuator-unpropertize-kill-ring | savehist-autosave | server-force-stop | elfeed-db-gc-safe |
+
 ** Modeline time
 #+begin_src emacs-lisp
   (use-package time
@@ -1251,7 +1260,8 @@ https://gist.github.com/spacebat/5500966
     (add-to-list 'org-default-properties "DIR")
     (add-to-list 'org-default-properties "header-args")
     ;;(add-to-list 'org-babel-default-header-args '(:mkdirp . "yes"))
-    (global-set-key (kbd "C-c c") #'counsel-org-capture)
+    ;;(global-set-key (kbd "C-c c") #'counsel-org-capture)
+    ;;(global-set-key (kbd "C-c c") #'org-capture)
     (global-set-key (kbd "C-c a") #'org-agenda)
     (global-set-key (kbd "C-c l") #'org-store-link)
     :custom
@@ -1601,19 +1611,17 @@ https://gist.github.com/spacebat/5500966
   (ivy-prescient-mode 1))
 #+end_src
 ** Cliplink
-:PROPERTIES:
-:ID:       B592B761-0FC7-4954-927A-189783720DD2
-:END:
+
 #+begin_src emacs-lisp
-  (use-package org-cliplink
-    :init
-    (global-set-key (kbd "C-x p i") #'org-cliplink)
+  (add-to-list 'package-selected-packages 'org-cliplink)
+  (global-set-key (kbd "C-x p i") #'org-cliplink)
     (with-eval-after-load 'org-capture
       (add-to-list 'org-capture-templates
-                  `("b" "Bookmark" entry (file+olp+datetree ,(expand-file-name "bookmarks.org" org-directory))
-                     "* %(org-cliplink-capture) %^g "
-                     :immediate-finish
-                     :kill-buffer))))
+                   `("b" "Bookmark" entry
+                     (file "bookmarks.org")
+                     "* %(org-cliplink-capture) %^g\nSAVED ON: %U\n\?"
+                     :prepend
+                     :kill-buffer)))
 #+end_src
 
 ** Anki
@@ -1910,12 +1918,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 - Published
 
 *** Captar
-#+begin_src emacs-lisp
+
+#+begin_src emacs-lisp :tangle no
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
                  `("e" "Elfeed Feed" entry
-                   (file+olp ,(expand-file-name "elfeed.org"
-                                                user-emacs-directory) "Feeds")
+                   (file+olp ,(expand-file-name "feeds.org"
+                                                org-directory) "Feeds")
                    "* [[%^{Feed URL}][%^{Title}]]\n%(org-time-stamp-inactive)"
                    :immediate-finish
                    :kill-buffer
