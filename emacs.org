@@ -5,7 +5,7 @@
 :header-args: :tangle ~/.config/emacs/early-init.el
 :END:
 
-#+begin_src emacs-lisp :comments none
+#+begin_src emacs-lisp :comments no
   ;;; early-init.el -*- lexical-binding: t; -*-
 #+end_src
 
@@ -62,7 +62,7 @@
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes :mkdirp yes
 :END:
 ** Lexical Binding
-#+begin_src emacs-lisp :comments none
+#+begin_src emacs-lisp :comments no
   ;;; init.el -*- lexical-binding: t; -*-
 #+end_src
 
