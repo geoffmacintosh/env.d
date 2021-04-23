@@ -1617,10 +1617,11 @@ https://gist.github.com/spacebat/5500966
   (global-set-key (kbd "C-x p i") #'org-cliplink)
     (with-eval-after-load 'org-capture
       (add-to-list 'org-capture-templates
-                   `("b" "Bookmark" entry
+                   '("b" "Bookmark" entry
                      (file "bookmarks.org")
-                     "* %(org-cliplink-capture) %^g\nSAVED ON: %U\n\?"
+                     "* %(org-cliplink-capture) %^g\nSaved on: %U\n\n%?"
                      :prepend
+                     :empty-lines-after 1
                      :kill-buffer)))
 #+end_src
 
