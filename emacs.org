@@ -1616,7 +1616,7 @@ https://gist.github.com/spacebat/5500966
                      (file "bookmarks.org")
                      "* %(org-cliplink-capture) %^g\nSaved on: %U\n\n%?"
                      :prepend
-                     :empty-lines-after 1
+                     :empty-lines 1
                      :kill-buffer)))
 #+end_src
 
