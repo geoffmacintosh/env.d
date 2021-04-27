@@ -432,11 +432,11 @@ Before everything works, you'll still need to set up mbsync and mu, so run the f
 I think mu will actually index correctly on its own the first time you launch mu4e, but I'm not sure.
 
 * GPG
-#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf
+#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf :comments no
   allow-emacs-pinentry
-  #allow-loopback-entry
 #+end_src
+  #allow-loopback-entry
 
-#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.gnupg/gpg-agent.conf" "no")
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.gnupg/gpg-agent.conf" "no") :comments no
   pinentry-program /usr/local/bin/pinentry-mac
 #+end_src
