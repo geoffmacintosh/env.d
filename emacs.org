@@ -1530,10 +1530,17 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'prescient)
   (customize-set-variable 'prescient-save-file (expand-file-name "prescient.el" actuator-var-directory))
-  (customize-set-variable 'prescient-persist-mode 1)
+  ;;(customize-set-variable 'prescient-persist-mode 1)
   (customize-set-variable 'prescient-history-length 10000)
   (customize-set-variable 'prescient-aggressive-file-save t)
+  (when (featurep 'prescient)
+    (require 'counsel)
+    (require 'prescient)
+    (require 'ivy-prescient)
+    (ivy-prescient-mode +1)
+    (prescient-persist-mode +1))
 #+end_src
+
 
 #+begin_src emacs-lisp
   (use-package counsel
@@ -1542,7 +1549,7 @@ https://gist.github.com/spacebat/5500966
     (add-to-list 'package-selected-packages 'counsel)
     (with-eval-after-load 'counsel
       (setq counsel-find-file-ignore-regexp "\\`\\."))
-    (when (fboundp 'counsel-mode)
+    (when (featurep 'counsel)
       (require 'counsel)
       (require 'ivy)
       (require 'swiper)
