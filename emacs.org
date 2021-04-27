@@ -1533,34 +1533,35 @@ https://gist.github.com/spacebat/5500966
   ;;(customize-set-variable 'prescient-persist-mode 1)
   (customize-set-variable 'prescient-history-length 10000)
   (customize-set-variable 'prescient-aggressive-file-save t)
-  (when (featurep 'prescient)
-    (require 'counsel)
-    (require 'prescient)
-    (require 'ivy-prescient)
+  (require 'counsel nil t)
+  (require 'prescient nil t)
+  (require 'ivy-prescient nil t)
+  (when (featurep 'ivy-prescient)
     (ivy-prescient-mode +1)
     (prescient-persist-mode +1))
 #+end_src
 
 
 #+begin_src emacs-lisp
-  (use-package counsel
-    :ensure t
-    :init
-    (add-to-list 'package-selected-packages 'counsel)
-    (with-eval-after-load 'counsel
-      (setq counsel-find-file-ignore-regexp "\\`\\."))
-    (when (featurep 'counsel)
-      (require 'counsel)
-      (require 'ivy)
-      (require 'swiper)
-      (counsel-mode 1)
-      (global-set-key (kbd "C-x C-r") #'counsel-buffer-or-recentf)
-      (global-set-key (kbd "C-x C-f") #'counsel-find-file)
-      (global-set-key (kbd "M-x")     #'counsel-M-x)
-      (global-set-key (kbd "C-h f")   #'counsel-describe-function)
-      (global-set-key (kbd "C-h v")   #'counsel-describe-variable)
-      (global-set-key (kbd "C-c s")   #'counsel-search)
-      (global-set-key (kbd "M-y")     #'counsel-yank-pop)))
+  (add-to-list 'package-selected-packages 'counsel)
+  (add-to-list 'package-selected-packages 'ivy)
+  (add-to-list 'package-selected-packages 'swiper)
+  (with-eval-after-load 'counsel
+    (setq counsel-find-file-ignore-regexp "\\`\\."))
+  (when (featurep 'counsel)
+    (require 'counsel)
+    (require 'ivy)
+    (require 'swiper)
+    (counsel-mode 1)
+    (global-set-key (kbd "C-x C-r") #'counsel-buffer-or-recentf)
+    (global-set-key (kbd "C-x C-f") #'counsel-find-file)
+    (global-set-key (kbd "M-x")     #'counsel-M-x)
+    (global-set-key (kbd "C-h f")   #'counsel-describe-function)
+    (global-set-key (kbd "C-h v")   #'counsel-describe-variable)
+    (global-set-key (kbd "C-c s")   #'counsel-search)
+    (global-set-key (kbd "M-y")     #'counsel-yank-pop))
+
+
 #+end_src
 
 #+results:
@@ -1668,12 +1669,10 @@ https://gist.github.com/spacebat/5500966
     :config
     <<magit-status>>
     <<magit-quit-session>>)
-
-  (with-eval-after-load 'magit
     (customize-set-variable 'magit-repository-directories
                             `((,org-directory . 0)
                               ("~/env.d"      . 0)
-                              ("~/Projects"   . 1))))
+                              ("~/Projects"   . 1)))
 #+end_src
 
 #+RESULTS:
