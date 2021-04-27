@@ -1668,6 +1668,12 @@ https://gist.github.com/spacebat/5500966
     :config
     <<magit-status>>
     <<magit-quit-session>>)
+
+  (with-eval-after-load 'magit
+    (customize-set-variable 'magit-repository-directories
+                            `((,org-directory . 0)
+                              ("~/env.d"      . 0)
+                              ("~/Projects"   . 1))))
 #+end_src
 
 #+RESULTS:
