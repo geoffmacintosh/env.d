@@ -1769,8 +1769,6 @@ I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-packa
     <<mark-all-as-read>>)
 
   (with-eval-after-load 'elfeed
-    (define-key elfeed-search-mode-map (kbd "A") #'actuator-elfeed-show-all)
-    (define-key elfeed-search-mode-map (kbd "U") #'actuator-elfeed-show-unread)
     (define-key elfeed-search-mode-map (kbd "q") #'actuator-elfeed-save-db-and-bury)
     (define-key elfeed-search-mode-map (kbd "R") #'actuator-elfeed-mark-all-as-read))
 #+end_src
