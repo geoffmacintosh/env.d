@@ -357,7 +357,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 
 ** SVG Screenshot
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun screenshot-svg ()
     "Save a screenshot of the current frame as an SVG image.
   Saves to a temp file and puts the filename in the kill ring."
