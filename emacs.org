@@ -2060,17 +2060,20 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-(setq eshell-prompt-regexp "^.+@.+:.+❯ ")
-(setq eshell-prompt-function
-      (lambda ()
-        (concat
-         ;;(user-login-name)
-         ;;"@"
-         ;;(system-name)
-         ;;":"
-         (eshell/pwd)
-         " ❯ ")))
+  (with-eval-after-load 'eshell
+    (defun actuator-eshell-prompt ()
+      ;;(require 'em-dirs)
+      (concat
+       ;;(user-login-name)
+       ;;"@"
+       ;;(system-name)
+       ;;":"
+       (eshell/pwd)
+       " ❯ "))
+    (setq eshell-prompt-regexp "^.+@.+:.+❯ ")
+    (setq eshell-prompt-function #'actuator-eshell-prompt))
 #+end_src
+
 
 ** Mu4e Alert
 #+begin_src emacs-lisp
