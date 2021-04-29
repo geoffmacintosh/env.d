@@ -734,10 +734,8 @@ From  emacs-plus:
 
 ** Org Todos
 #+begin_src emacs-lisp
-  (use-package org-agenda
-    :ensure nil
-    :custom
-    (org-agenda-todo-list-sublevels nil))
+  (setq org-todo-keywords
+        '((sequence "NEXT(n)" "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
 #+end_src
 
 ** Agenda
@@ -747,11 +745,17 @@ From  emacs-plus:
         '(("h" "Agenda Plus"
            ((agenda "")
             (tags-todo "current")))))
-  (setq org-agenda-window-setup 'only-window)
+  (setq org-agenda-window-setup 'reorganize-frame)
   (setq org-agenda-restore-windows-after-quit t)
-  (setq org-agenda-span 'fortnight)
+  (setq org-agenda-span 'week) ;; fortnight
   (setq org-agenda-include-diary t)
   (setq org-agenda-text-search-extra-files nil)
+  (setq org-agenda-todo-list-sublevels t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+      (org-agenda-follow-mode))
 #+end_src
 
 ** Holidays
