@@ -122,9 +122,42 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
 #+end_src
 
 * SSH
+The =~/.ssh= config is a strange thing. The user-editable =~/.ssh/config=
+file, (as tangled by this org file) is only semi-private, while the
+other files in the directory are something to avoid putting on the
+internet at all.
 
-#+begin_src conf
+I hope I never have to do this again, because I plan never to lose my
+generated keys. But if its needed, it's pretty easy. The current key
+I'm using was generated via =ssh-keygen -t rsa -b 2048=.
+
+That's also pretty easy, especially if the current machine only has
+one key. The command is =ssh-copy-id user@host=.
+
+First, [[https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent][generate]] a new SSH key. The =ssh-keygen= command will ask for a
+location to save it in, I tend to use the default of =~/.ssh/id_rsa=.
+
+#+BEGIN_SRC sh
+  ssh-keygen -t rsa -b 4096 -C "geoff@mac.into.sh"
+#+END_SRC
+
+Then copy the key to the [[https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/][clipboard]].
+
+#+BEGIN_SRC sh
+  pbcopy < ~/.ssh/id_rsa.pub
+#+END_SRC
+
+Paste the key into the =GitHub > Settings > SSH and GPG keys= section.
+
+As per [[https://github.com/jirsbek/SSH-keys-in-macOS-Sierra-keychain][jirsbek]] and [[https://developer.apple.com/library/content/technotes/tn2449/_index.html#//apple_ref/doc/uid/DTS40017589][Apple]], the behaviour of SSH in macOS Sierra has
+changed. It's pretty easy to make things work correctly, so I've done
+that.
+
+#+begin_src conf  :mkdirp yes :tangle ~/.ssh/config
   Host *
+       AddKeysToAgent yes
+       UseKeychain yes
+       IdentityFile ~/.ssh/id_rsa
        ControlPath ~/.ssh/master-%h:%p
        ControlMaster auto
        ControlPersist 10m
@@ -262,7 +295,7 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
 
   abbr -a yt  youtube-dl
   abbr -a yta youtube-dl -x --audio-format best
-  abbr -a dired emacsclient --tty -a "emacs -nw" $PWD
+  abbr -a mg  mg -n
 
   if not functions -q fisher
       set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
