@@ -2213,3 +2213,13 @@ Or could just use mingus?
 #+begin_src emacs-lisp
   (setq disabled-command-function 'ignore)
 #+end_src
+
+** MPDel
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'mpdel)
+  (require 'mpdel)
+  (mpdel-mode)
+  (customize-set-variable 'mpdel-prefix-key (kbd "C-z"))
+#+end_src
+
+https://gitea.petton.fr/mpdel/mpdel
