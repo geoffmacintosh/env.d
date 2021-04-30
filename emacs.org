@@ -735,7 +735,7 @@ From  emacs-plus:
 ** Org Todos
 #+begin_src emacs-lisp
   (setq org-todo-keywords
-        '((sequence "NEXT(n)" "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
+        '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
 #+end_src
 
 ** Agenda
