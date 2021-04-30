@@ -10,15 +10,15 @@
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'load-prefer-newer t "Load the newer el/c instead of preferring the elc.")
-  (customize-set-variable 'frame-inhibit-implied-resize t)
-  (customize-set-variable 'org-directory (expand-file-name "~/org/"))
+  (setq load-prefer-newer t "Load the newer el/c instead of preferring the elc.")
+  (setq frame-inhibit-implied-resize t)
+  (setq org-directory (expand-file-name "~/org/"))
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'package-quickstart-file (expand-file-name "var/package-quickstart.el" user-emacs-directory))
+  (setq package-quickstart-file (expand-file-name "var/package-quickstart.el" user-emacs-directory))
   (when (file-exists-p package-quickstart-file)
-    (customize-set-variable 'package-quickstart t))
+    (setq package-quickstart t))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -86,13 +86,13 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (require 'package)
   (package-initialize)
 
-  (setq package-archives
+  (csetq package-archives
         '(("org"    . "https://orgmode.org/elpa/")
           ("melpa"  . "https://melpa.org/packages/")
           ("gnu"    . "https://elpa.gnu.org/packages/")
           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-  (setq package-archive-priorities '(("org"   . 40)
+  (csetq package-archive-priorities '(("org"   . 40)
                                      ("melpa" . 30)
                                      ("gnu"   . 20)
                                      ("nongnu". 10)))
@@ -114,17 +114,6 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 #+end_src
 
 ** Exec path from shell
-#+begin_src emacs-lisp :tangle no
-  (use-package exec-path-from-shell
-    :ensure t
-    :demand t
-    :custom
-    (exec-path-from-shell-arguments '("-l" "-i"))
-    :config
-    (when (eq system-type 'darwin)
-      (exec-path-from-shell-initialize)))
-#+end_src
-
 #+begin_src emacs-lisp
   (when (file-attributes "/usr/local/sbin" t)
     (add-to-list 'exec-path "/usr/local/sbin"))
@@ -149,7 +138,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 ** Custom-set Variables
 
 #+begin_src emacs-lisp
-  (setq custom-file (expand-file-name "custom.el" actuator-var-directory))
+  (csetq custom-file (expand-file-name "custom.el" actuator-var-directory))
   (load custom-file 'noerror)
 #+end_src
 
@@ -187,11 +176,11 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 ** Savehist
 #+begin_src emacs-lisp
   (savehist-mode)
-  (customize-set-variable 'history-length 1000)
-  (customize-set-variable 'history-delete-duplicates t)
-  (customize-set-variable 'message-log-max 1000)
-  (customize-set-variable 'savehist-save-minibuffer-history t)
-  (customize-set-variable 'savehist-additional-variables
+  (csetq history-length 1000)
+  (csetq history-delete-duplicates t)
+  (csetq message-log-max 1000)
+  (csetq savehist-save-minibuffer-history t)
+  (csetq savehist-additional-variables
                           '(buffer-name-history
                             command-history
                             compile-history
@@ -214,7 +203,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
                             savehist-minibuffer-history-variables
                             shell-command-history
                             mark-ring))
-  (customize-set-variable 'savehist-file (expand-file-name "savehist.el" actuator-var-directory))
+  (csetq savehist-file (expand-file-name "savehist.el" actuator-var-directory))
 #+end_src
 
 #+results:
@@ -302,7 +291,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   ;;(declare-function setq early-init)
   (with-eval-after-load 'hippie-exp
-    (customize-set-variable 'hippie-expand-verbose t)
+    (csetq hippie-expand-verbose t)
     (setq hippie-expand-try-functions-list
            '(try-expand-all-abbrevs
              try-expand-dabbrev-visible
@@ -350,7 +339,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :END:
 ** NSM
 #+begin_src emacs-lisp
-  (customize-set-variable 'nsm-settings-file (expand-file-name "nsm.el" actuator-var-directory))
+  (csetq nsm-settings-file (expand-file-name "nsm.el" actuator-var-directory))
 #+end_src
 ** Diary
 #+begin_src emacs-lisp
@@ -535,7 +524,7 @@ From  emacs-plus:
   (setq require-final-newline t)
 
   (save-place-mode 1)
-  (customize-set-variable 'save-place-file (expand-file-name "save-place.el" actuator-var-directory))
+  (csetq save-place-file (expand-file-name "save-place.el" actuator-var-directory))
 
   (setq backup-by-copying    t)
   (setq delete-old-versions  t)
@@ -608,8 +597,8 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (recentf-mode)
   (global-set-key (kbd "C-x C-r") #'recentf-open-files)
-  (customize-set-variable 'recentf-max-saved-items 1000)
-  (customize-set-variable 'recentf-exclude `(,actuator-var-directory
+  (csetq recentf-max-saved-items 1000)
+  (csetq recentf-exclude `(,actuator-var-directory
                        "^/\\(?:ssh\\|su\\|sudo\\)?:"
                        "/var/folders/"))
   (add-hook 'midnight-mode-hook #'recentf-cleanup)
@@ -730,8 +719,8 @@ From  emacs-plus:
 
 ** Org Todos
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-use-fast-todo-selection 'expert)
-  (customize-set-variable 'org-todo-keywords
+  (csetq org-use-fast-todo-selection 'expert)
+  (csetq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
 #+end_src
 
@@ -803,8 +792,8 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "url/" actuator-var-directory) t)
   (make-directory (expand-file-name "url/" actuator-var-directory) t)
-  (customize-set-variable 'url-cache-directory (expand-file-name "url/" actuator-var-directory))
-  (customize-set-variable 'url-configuration-directory (expand-file-name "url/" actuator-var-directory))
+  (csetq url-cache-directory (expand-file-name "url/" actuator-var-directory))
+  (csetq url-configuration-directory (expand-file-name "url/" actuator-var-directory))
 #+end_src
 
 *** Set up browsing handlers                      :ignore:
@@ -820,7 +809,7 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
 
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "eww" actuator-var-directory) t)
-  (customize-set-variable 'eww-bookmarks-directory (expand-file-name "eww" actuator-var-directory))
+  (csetq eww-bookmarks-directory (expand-file-name "eww" actuator-var-directory))
 #+end_src
 
 *** Handle video urls                             :ignore:
@@ -853,7 +842,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** iBuffer
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x C-b") #'ibuffer)
-  (customize-set-variable 'ibuffer-expert t)
+  (csetq ibuffer-expert t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -896,11 +885,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "image-dired/gallery/" actuator-var-directory) t)
-  (customize-set-variable 'image-dired-dir (expand-file-name "image-dired/" actuator-var-directory))
-  (customize-set-variable 'image-dired-db-file (expand-file-name "image-dired/image-dired.db" actuator-var-directory))
-  (customize-set-variable 'image-dired-gallery (expand-file-name "image-dired/gallery/" actuator-var-directory))
-  (customize-set-variable 'image-dired-temp-image-file (expand-file-name "image-dired/temp-image" actuator-var-directory))
-  (customize-set-variable 'image-dired-temp-rotate-image-file (expand-file-name "image-dired/temp-rotate-image" actuator-var-directory))
+  (csetq image-dired-dir (expand-file-name "image-dired/" actuator-var-directory))
+  (csetq image-dired-db-file (expand-file-name "image-dired/image-dired.db" actuator-var-directory))
+  (csetq image-dired-gallery (expand-file-name "image-dired/gallery/" actuator-var-directory))
+  (csetq image-dired-temp-image-file (expand-file-name "image-dired/temp-image" actuator-var-directory))
+  (csetq image-dired-temp-rotate-image-file (expand-file-name "image-dired/temp-rotate-image" actuator-var-directory))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1123,8 +1112,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
 #+end_src
 
-#+RESULTS:
-| actuator-byte-recompile-init | org-id-locations-save | bookmark-exit-hook-internal | elfeed-db-save-safe | org-babel-remove-temporary-directory | savehist-save | actuator-unpropertize-kill-ring | savehist-autosave | server-force-stop | elfeed-db-gc-safe |
+#+results:
+| elfeed-db-save-safe | prescient--save | actuator-byte-recompile-init | package-quickstart-refresh | desktop-kill | org-clock-save | org-id-locations-save | org-babel-remove-temporary-directory | recentf-save-list | save-place-kill-emacs-hook | bookmark-exit-hook-internal | savehist-save | actuator-unpropertize-kill-ring | savehist-autosave | server-force-stop | elfeed-db-gc-safe |
 
 ** Modeline time
 #+begin_src emacs-lisp
@@ -1196,7 +1185,7 @@ https://gist.github.com/spacebat/5500966
 ** Auth Source
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'auth-sources '(password-store))
+  (csetq auth-sources '(password-store))
 #+end_src
 
 ** Org
@@ -1206,11 +1195,9 @@ https://gist.github.com/spacebat/5500966
 
   (make-directory (expand-file-name "org-publish/"
                                     actuator-var-directory) t)
-  (customize-set-variable
-  'org-clock-persist-file (expand-file-name "org/org-clock-persist.el"
+  (csetq org-clock-persist-file (expand-file-name "org/org-clock-persist.el"
                                             actuator-var-directory))
-  (customize-set-variable
-  'org-publish-timestamp-directory (expand-file-name "org-publish/"
+  (csetq org-publish-timestamp-directory (expand-file-name "org-publish/"
   actuator-var-directory))
 #+end_src
 
@@ -1397,7 +1384,7 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 ** Ledger Mode
 #+begin_src emacs-lisp
-  (customize-set-variable 'ledger-default-date-format 'ledger-iso-date-format)
+  (csetq ledger-default-date-format 'ledger-iso-date-format)
   (add-to-list 'package-selected-packages 'ledger-mode)
 #+end_src
 ** Markdown Mode
@@ -1433,8 +1420,8 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'nov)
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-  (customize-set-variable 'nov-save-place-file (expand-file-name "nov-save-place.el") actuator-var-directory)
-  (customize-set-variable 'nov-text-width 65)
+  (csetq nov-save-place-file (expand-file-name "nov-save-place.el" actuator-var-directory))
+  (csetq nov-text-width 65)
   (defun actuator-novel-setup ()
     (face-remap-add-relative 'variable-pitch :family "Georgia"
                              :height 1.3)
@@ -1445,7 +1432,7 @@ https://gist.github.com/spacebat/5500966
 ** Project
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'project)
-  (customize-set-variable 'project-list-file (expand-file-name "project-list.el" actuator-var-directory))
+  (csetq project-list-file (expand-file-name "project-list.el" actuator-var-directory))
 #+end_src
 
 ** Org Link Minor Mode
@@ -1485,8 +1472,8 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'forge)
   (make-directory (expand-file-name "forge/post/" actuator-var-directory) t)
-  (customize-set-variable 'forge-database-file (expand-file-name "forge/forge.db" actuator-var-directory))
-  (customize-set-variable 'forge-post-directory (expand-file-name "forge/post/" actuator-var-directory))
+  (csetq forge-database-file (expand-file-name "forge/forge.db" actuator-var-directory))
+  (csetq forge-post-directory (expand-file-name "forge/post/" actuator-var-directory))
 #+end_src
 
 #+results:
@@ -1495,19 +1482,18 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'transient)
   (make-directory (expand-file-name "transient" actuator-var-directory) t)
-  (customize-set-variable 'transient-history-file (expand-file-name "transient/history.el" actuator-var-directory))
-  (customize-set-variable 'transient-levels-file (expand-file-name "transient/levels.el" actuator-var-directory))
-  (customize-set-variable 'transient-values-file (expand-file-name "transient/values.el" actuator-var-directory))
+  (csetq transient-history-file (expand-file-name "transient/history.el" actuator-var-directory))
+  (csetq transient-levels-file (expand-file-name "transient/levels.el" actuator-var-directory))
+  (csetq transient-values-file (expand-file-name "transient/values.el" actuator-var-directory))
 #+end_src
 
 ** Ivy
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'prescient)
-  (customize-set-variable 'prescient-save-file (expand-file-name "prescient.el" actuator-var-directory))
-  ;;(customize-set-variable 'prescient-persist-mode 1)
-  (customize-set-variable 'prescient-history-length 10000)
-  (customize-set-variable 'prescient-aggressive-file-save t)
+  (csetq prescient-save-file (expand-file-name "prescient.el" actuator-var-directory))
+  (csetq prescient-history-length 10000)
+  (csetq prescient-aggressive-file-save t)
   (require 'counsel nil t)
   (require 'prescient nil t)
   (require 'ivy-prescient nil t)
@@ -1610,8 +1596,8 @@ https://gist.github.com/spacebat/5500966
 ** Auctex
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'auctex)
-  (customize-set-variable 'TeX-engine 'luatex)
-  (customize-set-variable 'TeX-source-correlate-start-server t)
+  (csetq TeX-engine 'luatex)
+  (csetq TeX-source-correlate-start-server t)
 #+end_src
 ** Magit
 #+begin_src emacs-lisp
@@ -1640,7 +1626,7 @@ https://gist.github.com/spacebat/5500966
     :config
     <<magit-status>>
     <<magit-quit-session>>)
-    (customize-set-variable 'magit-repository-directories
+    (csetq magit-repository-directories
                             `((,org-directory . 0)
                               ("~/env.d"      . 0)
                               ("~/Projects"   . 1)))
@@ -1911,8 +1897,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "elfeed" actuator-var-directory) t)
-  (customize-set-variable 'eshell-directory-name (expand-file-name "elfeed" actuator-var-directory))
-  (customize-set-variable 'eshell-history-file-name (expand-file-name "history" eshell-directory-name))
+  (csetq eshell-directory-name (expand-file-name "elfeed" actuator-var-directory))
+  (csetq eshell-history-file-name (expand-file-name "history" eshell-directory-name))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2058,8 +2044,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Tramp
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "tramp/" actuator-var-directory) t)
-  (customize-set-variable 'tramp-auto-save-directory (expand-file-name "tramp/auto-save/" actuator-var-directory))
-  (customize-set-variable 'tramp-persistency-file-name (expand-file-name "tramp.el" actuator-var-directory))
+  (csetq tramp-auto-save-directory (expand-file-name "tramp/auto-save/" actuator-var-directory))
+  (csetq tramp-persistency-file-name (expand-file-name "tramp.el" actuator-var-directory))
 #+end_src
 
 ** Rainbow
@@ -2111,15 +2097,14 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'vterm)
   (when (executable-find "fish")
-    (customize-set-variable 'vterm-shell "fish"))
+    (csetq vterm-shell "fish"))
 #+end_src
 
 ** Auto-save
 #+begin_src emacs-lisp
   (auto-save-mode)
   (with-eval-after-load 'auto-save-mode
-    (customize-set-variable
-    'auto-save-list-file-prefix (expand-file-name "auto-save/"
+    (csetq auto-save-list-file-prefix (expand-file-name "auto-save/"
     actuator-var-directory)))
 #+end_src
 
@@ -2127,7 +2112,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 ** Backups
 #+begin_src emacs-lisp
-  (customize-set-variable 'backup-directory-alist
+  (csetq backup-directory-alist
                           `(("." . ,(expand-file-name "backups" actuator-var-directory))))
 #+end_src
 
@@ -2141,7 +2126,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (add-to-list 'package-selected-packages 'mpdel)
   (require 'mpdel nil t)
   ;; (mpdel-mode)
-  (customize-set-variable 'mpdel-prefix-key (kbd "C-z"))
+  (csetq mpdel-prefix-key (kbd "C-z"))
 #+end_src
 
 https://gitea.petton.fr/mpdel/mpdel
