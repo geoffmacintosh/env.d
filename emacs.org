@@ -734,7 +734,8 @@ From  emacs-plus:
 
 ** Org Todos
 #+begin_src emacs-lisp
-  (setq org-todo-keywords
+  (customize-set-variable 'org-use-fast-todo-selection 'expert)
+  (customize-set-variable 'org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
 #+end_src
 
