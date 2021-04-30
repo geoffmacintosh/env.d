@@ -1425,50 +1425,41 @@ https://gist.github.com/spacebat/5500966
 
 ** Fish Mode
 #+begin_src emacs-lisp
-  (use-package fish-mode
-    )
+  (add-to-list 'package-selected-packages 'fish-mode)
 #+end_src
 ** Ledger Mode
 #+begin_src emacs-lisp
-  (use-package ledger-mode
-
-    :config
-    (setq ledger-default-date-format ledger-iso-date-format))
+  (customize-set-variable 'ledger-default-date-format ledger-iso-date-format)
+  (add-to-list 'package-selected-packages 'ledger-mode)
 #+end_src
 ** Markdown Mode
 #+begin_src emacs-lisp
-    (use-package markdown-mode
-      )
+  (add-to-list 'package-selected-packages 'markdown-mode)
 #+end_src
+
 ** YAML Mode
 #+begin_src emacs-lisp
-    (use-package yaml-mode
-      )
+  (add-to-list 'package-selected-packages 'yaml-mode)
 #+end_src
 ** TOML Mode
 #+begin_src emacs-lisp
-    (use-package toml-mode
-      )
+  (add-to-list 'package-selected-packages 'toml-mode)
 #+end_src
 ** Lua Mode
 #+begin_src emacs-lisp
-    (use-package lua-mode
-      )
+  (add-to-list 'package-selected-packages 'lua-mode)
 #+end_src
 ** Gitignore Mode
 #+begin_src emacs-lisp
-    (use-package gitignore-mode
-      )
+  (add-to-list 'package-selected-packages 'gitignore-mode)
 #+end_src
 ** Gitconfig Mode
 #+begin_src emacs-lisp
-  (use-package gitconfig-mode
-    )
+  (add-to-list 'package-selected-packages 'gitconfig-mode)
 #+end_src
 ** Ripgrep
 #+begin_src emacs-lisp
-  (use-package rg
-    )
+  (add-to-list 'package-selected-packages 'rg)
 #+end_src
 ** Nov.el
 #+begin_src emacs-lisp
