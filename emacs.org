@@ -2209,8 +2209,8 @@ Or could just use mingus?
 ** MPDel
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'mpdel)
-  (require 'mpdel)
-  (mpdel-mode)
+  (require 'mpdel nil t)
+  ;; (mpdel-mode)
   (customize-set-variable 'mpdel-prefix-key (kbd "C-z"))
 #+end_src
 
