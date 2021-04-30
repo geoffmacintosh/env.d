@@ -1429,7 +1429,7 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 ** Ledger Mode
 #+begin_src emacs-lisp
-  (customize-set-variable 'ledger-default-date-format ledger-iso-date-format)
+  (customize-set-variable 'ledger-default-date-format 'ledger-iso-date-format)
   (add-to-list 'package-selected-packages 'ledger-mode)
 #+end_src
 ** Markdown Mode
