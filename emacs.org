@@ -86,23 +86,12 @@
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
     (package-install 'use-package))
+  (add-to-list 'package-selected-packages 'use-package)
 #+end_src
 
 #+begin_src emacs-lisp
   (eval-when-compile
     (require 'use-package nil t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (require 'use-package-ensure nil t)
-  (setq use-package-always-ensure t)
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (use-package bind-key
-    :ensure
-    :init
-    (require 'bind-key))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -335,7 +324,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Open org-links in new window or not
 #+begin_src emacs-lisp
   (use-package ol
-    :ensure nil
     :custom
     (org-link-frame-setup '((vm . vm-visit-folder-other-frame)
                             (vm-imap . vm-visit-imap-folder-other-frame)
@@ -478,7 +466,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (use-package bookmark
-    :ensure nil
     :custom
     (bookmark-version-control t)
     (bookmark-save-flag 1))
@@ -632,7 +619,6 @@ From  emacs-plus:
 
 #+begin_src emacs-lisp
   (use-package xt-mouse
-    :ensure nil
     :unless window-system
     :config
     (require 'mouse)
@@ -644,14 +630,12 @@ From  emacs-plus:
 
 #+begin_src emacs-lisp
   (use-package locate
-    :ensure nil
     :custom
     (locate-command "mdfind"))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package flymake
-    :ensure nil
     :disabled t
     :hook (emacs-lisp-mode . flymake-mode))
 #+end_src
@@ -660,14 +644,12 @@ From  emacs-plus:
 
 #+begin_src emacs-lisp
   (use-package vc-hooks
-    :ensure nil
     :custom
     (vc-handled-backends nil))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package paren
-    :ensure nil
     :config
     (show-paren-mode)
     (electric-pair-mode 1)
@@ -816,7 +798,6 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
 
 #+begin_src emacs-lisp
   (use-package browse-url
-    :ensure nil
     :custom
     (browse-url-handlers '(("wikipedia"   . eww )
                            ("youtu\\.?be" . actuator-browse-video)
@@ -843,7 +824,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package shr
-    :ensure nil
     :custom
     (shr-width 75))
 #+end_src
@@ -890,7 +870,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Encryption (EPG)
 #+begin_src emacs-lisp
   (use-package epg
-    :ensure nil
     :custom
     (epg-pinentry-mode 'loopback))
 #+end_src
@@ -920,7 +899,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package dired
-    :ensure nil
     :config
     (require 'dired-x)
     ;;(require 'ls-lisp)
@@ -983,7 +961,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-attach
-    :ensure nil
     :custom
     (org-attach-store-link-p t)
     (org-attach-expert nil)
@@ -997,7 +974,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package org-clock
-    :ensure nil
     :init
     (org-clock-persistence-insinuate)
     :custom
@@ -1018,7 +994,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Ediff
 #+begin_src emacs-lisp
   (use-package ediff
-    :ensure nil
     :custom
     ;;(ediff-diff-options "")
     ;;(ediff-custom-diff-options "-u")
@@ -1056,7 +1031,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package mu4e
-    :ensure nil
     ;; :init
     ;; (require 'mu4e)
     :config
@@ -1100,7 +1074,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (use-package message
-    :ensure nil
     :custom
     (send-mail-function 'sendmail-send-it)
     (message-send-mail-function 'sendmail-send-it))
@@ -1144,7 +1117,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (use-package time
     :config
     (display-time)
-    :ensure nil
     :custom
     (display-time-24hr-format t)
     (display-time-default-load-average nil))
@@ -1153,7 +1125,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Allow different places in the same buffer
 #+begin_src emacs-lisp
   (use-package window
-    :ensure nil
     :custom
     (switch-to-buffer-preserve-window-point t))
 #+end_src
@@ -1172,7 +1143,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Doc View
 #+begin_src emacs-lisp
   (use-package doc-view
-    :ensure nil
     :config
     (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
     (defvar actuator-doc-view-bookmark-push-p t
@@ -1206,19 +1176,13 @@ https://gist.github.com/spacebat/5500966
 
 ** Org Randomnote
 #+begin_src emacs-lisp
-  (use-package org-randomnote
-    )
+  (add-to-list 'package-selected-packages 'org-randomnote)
 #+end_src
 
 ** Auth Source
 
 #+begin_src emacs-lisp
-  (use-package auth-source-pass
-    :ensure
-    :config
-    (auth-source-pass-enable)
-    :custom
-    (auth-sources '(password-store)))
+  (customize-set-variable 'auth-sources '(password-store))
 #+end_src
 
 ** Org
@@ -1243,9 +1207,8 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 
 #+begin_src emacs-lisp
-  ;;(defvar org-directory "~/org")
+  (add-to-list 'package-selected-packages 'org-plus-contrib)
   (use-package org
-    :ensure org-plus-contrib
     :config
     (org-indent-mode 1)
     ;; (add-to-list 'org-babel-default-header-args
@@ -1333,7 +1296,6 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package org-capture
-    :ensure nil
     :config
     (defun actuator-org-capture-turn-off-header-line ()
     "Disable the header-line in a local mode.
@@ -1345,21 +1307,18 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package org-list
-    :ensure nil
     :custom
     (org-list-indent-offset 1))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package org-keys
-    :ensure nil
     :custom
     (org-use-speed-commands t))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package org-refile
-    :ensure nil
     :custom
     (org-refile-allow-creating-parent-nodes 'confirm)
     (org-outline-path-complete-in-steps nil)
@@ -1371,7 +1330,6 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package org-src
-    :ensure nil
     :config
     (defun actuator-org-src-line-wrap-setup ()
       "Set truncate-lines-mode in org-source-editing buffers."
@@ -1387,7 +1345,6 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package org-footnote
-    :ensure nil
     :custom
     (org-footnote-auto-adjust t)
     (org-footnote-define-inline t)
@@ -1396,7 +1353,6 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package ob-core
-    :ensure nil
     :custom
     (org-confirm-babel-evaluate nil)
     (org-babel-results-keyword "results"))
@@ -1404,7 +1360,6 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package org-crypt
-    :ensure nil
     :init
     (require 'org-crypt)
     :config
@@ -1417,7 +1372,6 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package org-agenda
-    :ensure nil
     :custom
     (org-agenda-sticky t)
     (org-agenda-dim-blocked-tasks t))
@@ -1481,17 +1435,14 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 
 ** Org Link Minor Mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-link-minor-mode
-    :disabled t
-    :ensure nil
     :hook (emacs-lisp-mode . org-link-minor-mode))
 #+end_src
 
 ** HTMLize
 #+begin_src emacs-lisp
-  (use-package htmlize
-    :ensure t)
+  (add-to-list 'package-selected-packages 'htmlize)
 #+end_src
 
 ** Eldoc
@@ -1499,8 +1450,8 @@ https://gist.github.com/spacebat/5500966
 [[https://www.reddit.com/r/emacs/comments/c1zl0s/weekly_tipstricketc_thread/ergullj/?context=1][Improve eldoc's documentation]]
 
 #+begin_src emacs-lisp
+(add-to-list 'package-selected-packages 'eldoc)
   (use-package eldoc
-    :ensure t
     :custom
     (eldoc-echo-area-use-multiline-p t)
     (eldoc-idle-delay 0)
@@ -1584,7 +1535,6 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (use-package ivy
-    :ensure t
     :defines ivy-minibuffer-map
     :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
     :config
@@ -1616,12 +1566,12 @@ https://gist.github.com/spacebat/5500966
 : t
 
 #+begin_src emacs-lisp
-(use-package ivy-prescient
-  :ensure t
-  :after (ivy prescient)
-  :functions ivy-prescient-mode
-  :config
-  (ivy-prescient-mode 1))
+  (add-to-list 'package-selected-packages 'ivy-prescient)
+  (use-package ivy-prescient
+    :after (ivy prescient)
+    :functions ivy-prescient-mode
+    :config
+    (ivy-prescient-mode 1))
 #+end_src
 ** Cliplink
 
@@ -1640,22 +1590,19 @@ https://gist.github.com/spacebat/5500966
 
 ** Anki
 #+begin_src emacs-lisp
-  (use-package anki-editor
-    )
+  (add-to-list 'package-selected-packages 'anki-editor)
 #+end_src
 
 ** Auctex
 #+begin_src emacs-lisp
-  (use-package tex
-    :ensure auctex
-    :custom
-    (TeX-engine 'luatex)
-    (TeX-source-correlate-start-server t))
+  (add-to-list 'package-selected-packages 'auctex)
+  (customize-set-variable 'TeX-engine 'luatex)
+  (customize-set-variable 'TeX-source-correlate-start-server t)
 #+end_src
 ** Magit
 #+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'magit)
   (use-package magit
-    :ensure t
     :after exec-path-from-shell
     :init
     (global-set-key (kbd "C-c g") #'magit-status)
@@ -1708,8 +1655,8 @@ https://gist.github.com/spacebat/5500966
 ** Org download
 
 #+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'org-download)
   (use-package org-download
-    :ensure t
     :init
     (global-set-key (kbd "C-M-y") #'org-download-screenshot)
     (require 'org-download)
@@ -1918,8 +1865,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 *** Org-elfeed
 #+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'elfeed-org)
   (use-package elfeed-org
-    :ensure t
     :after elfeed
     :config
     (elfeed-org)
@@ -1956,7 +1903,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (use-package eshell
-    :ensure nil
     ;; :bind (:map eshell-mode-map
     ;;             ("\C-a" . eshell-bol)
     ;;             ("\C-r" . counsel-esh-history)
@@ -1974,7 +1920,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (use-package em-hist
-    :ensure nil
     :custom
     (eshell-history-size 10000)
     (eshell-hist-ignoredups t))
@@ -1982,7 +1927,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (use-package em-cmpl
-    :ensure nil
     :custom
     (eshell-cmpl-cycle-completions nil)
     (eshell-cmpl-ignore-case t))
@@ -2023,22 +1967,19 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 | tramp-eshell-directory-change | actuator-eshell-z | actuator-fish-completion | actuator-eshell-autocomplete | actuator-eshell-imenu |
 
 #+begin_src emacs-lisp
-  (use-package pcmpl-args
-    :ensure
-    :config
-    (require 'pcmpl-args))
+  (add-to-list 'package-selected-packages 'pcmpl-args)
+  (require 'pcmpl-args nil t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package pcmpl-homebrew
-    :ensure
-    :config
-    (require 'pcmpl-homebrew))
+  (when (eq system-type 'darwin)
+    (add-to-list 'package-selected-packages 'pcmpl-homebrew)
+    (require 'pcmpl-homebrew nil t))
 #+end_src
 
 #+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'fish-completion)
   (use-package fish-completion
-    :ensure
     :custom
     (fish-completion-fallback-on-bash-p t)
     :config
@@ -2073,8 +2014,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 ** Mu4e Alert
 #+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'mu4e-alert)
   (use-package mu4e-alert
-    :ensure t
     :config
     (cond ((eq system-type 'gnu/linux)
            (mu4e-alert-set-default-style 'libnotify))
@@ -2087,8 +2028,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Alert
 
 #+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'alert)
   (use-package alert
-    :ensure t
     :config
       (cond ((eq system-type 'gnu/linux)
              (setq alert-default-style 'libnotify))
@@ -2097,28 +2038,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 ** Systemd
 #+begin_src emacs-lisp
-  (use-package systemd
-    :ensure t)
-#+end_src
-
-** EMMS
-Or could just use mingus?
-#+begin_src emacs-lisp
-  (use-package emms
-    :ensure t
-    :config
-    (require 'emms-player-mpd)
-    (require 'emms-setup)
-    (emms-minimalistic)
-    (setq emms-player-mpd-server-name "localhost")
-    (setq emms-player-mpd-server-port "6600")
-    (add-to-list 'emms-info-functions 'emms-info-mpd)
-    :custom
-    (emms-player-list '(emms-player-mpd))
-    (emms-source-file-default-directory "~/Music/Music Files"))
-
-  (make-directory (expand-file-name "emms/" actuator-var-directory) t)
-  (customize-set-variable 'emms-directory (expand-file-name "emms/" actuator-var-directory))
+  (add-to-list 'package-selected-packages 'systemd)
 #+end_src
 
 ** Tramp
@@ -2130,10 +2050,9 @@ Or could just use mingus?
 
 ** Rainbow
 #+begin_src emacs-lisp
-  (use-package rainbow-mode
-    :ensure
-    :demand
-    :config
+  (add-to-list 'package-selected-packages 'rainbow-mode)
+  (require 'rainbow-mode nil t)
+  (when (featurep 'rainbow-mode)
     (rainbow-mode))
 #+end_src
 ** Modeline
@@ -2162,26 +2081,23 @@ Or could just use mingus?
  - [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
 ** Minions
 #+begin_src emacs-lisp
-  (use-package minions
-    :ensure
-    :demand t
-    :config
+  (add-to-list 'package-selected-packages 'minions)
+  (require 'minions nil t)
+  (when (featurep 'minions)
     (minions-mode))
 #+end_src
 ** Sudoers
 
 #+begin_src emacs-lisp
-  (use-package etc-sudoers-mode
-    :ensure t)
+  (add-to-list 'package-selected-packages 'etc-sudoers-mode)
 #+end_src
 
 ** VTerm
 
 #+begin_src emacs-lisp
-  (use-package vterm
-    :ensure t
-    :custom
-    (vterm-shell "fish"))
+  (add-to-list 'package-selected-packages 'vterm)
+  (when (executable-find "fish")
+    (customize-set-variable 'vterm-shell "fish"))
 #+end_src
 
 ** Auto-save

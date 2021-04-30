@@ -397,3 +397,29 @@ I built a few shortcuts to switch between different tag views that I commonly us
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-unread"))
 #+end_src
+
+* EMMS
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-04-30 Fri 16:03
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable
+:ARCHIVE_CATEGORY: emacs
+:END:
+Or could just use mingus?
+#+begin_src emacs-lisp
+  (use-package emms
+    :ensure t
+    :config
+    (require 'emms-player-mpd)
+    (require 'emms-setup)
+    (emms-minimalistic)
+    (setq emms-player-mpd-server-name "localhost")
+    (setq emms-player-mpd-server-port "6600")
+    (add-to-list 'emms-info-functions 'emms-info-mpd)
+    :custom
+    (emms-player-list '(emms-player-mpd))
+    (emms-source-file-default-directory "~/Music/Music Files"))
+
+  (make-directory (expand-file-name "emms/" actuator-var-directory) t)
+  (customize-set-variable 'emms-directory (expand-file-name "emms/" actuator-var-directory))
+#+end_src
