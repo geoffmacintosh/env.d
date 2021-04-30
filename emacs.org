@@ -59,11 +59,25 @@
 
 * Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :noweb yes :mkdirp yes
+:header-args: :tangle ~/.config/emacs/init.el :mkdirp yes
 :END:
 ** Lexical Binding
 #+begin_src emacs-lisp :comments no
   ;;; init.el -*- lexical-binding: t; -*-
+#+end_src
+
+** Csetq
+https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
+
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+        "Macro to set the value of a variable, possibly a custom user option."
+        `(funcall (or (get ',variable 'custom-set)
+                      (and (plist-member (symbol-plist ',variable)
+                                         'standard-value)
+                           'set-default)
+                      'set)
+                  ',variable ,value))
 #+end_src
 
 ** Package Init
