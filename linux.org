@@ -112,6 +112,32 @@
   # ILoveCandy
   # enable multilib
 #+end_src
+
+* Application list
+- paru :: AUR helper
+- fish :: Default (human) shell
+- qmk :: Keyboard configuration
+- texlive-most :: LaTeX
+- mpv :: Video playback
+- anki :: Flashcards
+- qbittorrent :: Torrents
+- openrgb :: Fancy LED controller
+- emacs-pgtk-native-comp-git :: Emacs with GTK and Native Comp
+- pulseeffects :: An audio effects package for pipewire (noise reduction!)
+- systemdgenie :: SystemD managemnent
+- downgrade :: Pacman downgrading tool
+- mangohud :: FPS overlay
+- element-desktop :: Element
+- discord :: Discord
+- lyrebird :: voice changer
+- obs-studio-wayland :: Stream/recording tool with Wayland support
+- reflector :: Pacman mirror updater
+- zathura :: PDF viewer
+- imv :: Image viewer
+- mako :: Notification daemon
+- borg :: Backup tool
+- amphetype :: Typing trainer
+- mg :: Micro text editor (alias mg -n to mg for no backup files)
 * Sway
 :PROPERTIES:
 :header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")
