@@ -1104,11 +1104,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
           (early  (expand-file-name "early-init.el" user-emacs-directory)))
       (if (fboundp 'native-compile)
           (progn
-            (native-compile init)
-            (native-compile early))
+            ;;(native-compile early)
+            (native-compile init))
         (progn
-          (byte-recompile-file init  nil 0)
-          (byte-recompile-file early nil 0)))))
+          ;;(byte-recompile-file early  nil 0)
+          (byte-recompile-file init nil 0)))))
   (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
 #+end_src
 
