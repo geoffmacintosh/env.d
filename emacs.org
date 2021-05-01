@@ -10,7 +10,7 @@
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq load-prefer-newer t "Load the newer el/c instead of preferring the elc.")
+  (setq load-prefer-newer t)
   (setq frame-inhibit-implied-resize t)
   (setq org-directory (expand-file-name "~/org/"))
 #+end_src
