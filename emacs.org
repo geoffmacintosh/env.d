@@ -2130,3 +2130,15 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 https://gitea.petton.fr/mpdel/mpdel
+
+** Spell check
+#+begin_src emacs-lisp
+  (csetq ispell-program-name "aspell")
+  (csetq ispell-personal-dictionary "~/Sync/.sync/dictionary")
+  (csetq ispell-silently-savep t)
+  (defun actuator-org-reveal-around-ispell ()
+    "Reveals the area around the point in org-mode files."
+    (when (derived-mode-p 'org-mode)
+      (org-reveal t)))
+  (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around-ispell)
+#+end_src
