@@ -598,6 +598,7 @@ From  emacs-plus:
   (recentf-mode)
   (global-set-key (kbd "C-x C-r") #'recentf-open-files)
   (csetq recentf-max-saved-items 1000)
+  (csetq recentf-save-file (expand-file-name "recentf.el" actuator-var-directory))
   (csetq recentf-exclude `(,actuator-var-directory
                        "^/\\(?:ssh\\|su\\|sudo\\)?:"
                        "/var/folders/"))
