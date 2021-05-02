@@ -875,7 +875,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Dired
 #+begin_src emacs-lisp
   (with-eval-after-load 'dired
-    (require 'dired-x))
+    (require 'dired-x)
+    (require 'wdired))
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 #+end_src
 
@@ -899,9 +900,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (use-package dired
     :config
-    (require 'dired-x)
+    ;;(require 'dired-x)
     ;;(require 'ls-lisp)
-    (require 'wdired)
+    ;;(require 'wdired)
     (setq dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
     (with-eval-after-load 'savehist
       (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
