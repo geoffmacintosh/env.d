@@ -243,23 +243,24 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 ** Autorevert
 #+begin_src emacs-lisp
-  (require 'autorevert)
-  (global-auto-revert-mode 1)
-
-  (setq global-auto-revert-non-file-buffers nil)
-  (setq auto-revert-verbose nil)
-  (setq auto-revert-avoid-polling t)
-  (setq buffer-auto-revert-by-notification t)
-  (setq auto-revert-interval 60)
-  (setq revert-without-query t)
-  (setq auto-revert-check-vc-info nil)
+  (run-with-idle-timer 5 nil #'(lambda ()
+                                 (require 'autorevert)
+                                 (global-auto-revert-mode 1)))
+  (csetq global-auto-revert-non-file-buffers nil)
+  (csetq auto-revert-verbose nil)
+  (csetq auto-revert-avoid-polling t)
+  (csetq buffer-auto-revert-by-notification t)
+  (csetq auto-revert-interval 60)
+  (csetq revert-without-query t)
+  (csetq auto-revert-check-vc-info nil)
 #+end_src
 
 ** Server
 
 #+begin_src emacs-lisp
-  (require 'server)
-  (unless (server-running-p) (server-start))
+  (run-with-idle-timer 5 nil #'(lambda ()
+                                 (require 'server)
+                                 (unless (server-running-p) (server-start))))
 #+end_src
 
 ** Undo
