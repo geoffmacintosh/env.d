@@ -100,6 +100,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
     (package-install 'use-package))
+  (setq package-selected-packages nil)
   (add-to-list 'package-selected-packages 'use-package)
 #+end_src
 
