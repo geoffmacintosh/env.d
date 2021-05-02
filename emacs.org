@@ -289,7 +289,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Hippie Expand
 
 #+begin_src emacs-lisp
-  ;;(declare-function setq early-init)
   (with-eval-after-load 'hippie-exp
     (csetq hippie-expand-verbose t)
     (setq hippie-expand-try-functions-list
@@ -310,9 +309,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (global-set-key (kbd "<M-SPC>") #'hippie-expand)
 #+end_src
 
-#+results:
-: hippie-expand
-
 - try-complete-lisp-symbol has a lot of completions
 - try-expand-line-all-buffers is very slow
 
@@ -321,7 +317,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     "Remove an expansion without having to loop around."
     (interactive)
     (hippie-expand 0))
-  (global-set-key (kbd "<backtab>") #'actuator-hippie-unexpand)
+  (global-set-key (kbd "M-S-SPC") #'actuator-hippie-unexpand)
 #+end_src
 
 ** Open org-links in new window or not
@@ -1422,7 +1418,7 @@ https://gist.github.com/spacebat/5500966
   (add-to-list 'package-selected-packages 'nov)
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
   (csetq nov-save-place-file (expand-file-name "nov-save-place.el" actuator-var-directory))
-  (csetq nov-text-width 65)
+  (csetq nov-text-width 75)
   (defun actuator-novel-setup ()
     (face-remap-add-relative 'variable-pitch :family "Georgia"
                              :height 1.3)
@@ -1675,8 +1671,8 @@ https://gist.github.com/spacebat/5500966
 ** Web Mode
 
 #+begin_src emacs-lisp
+(add-to-list 'package-selected-packages 'web-mode)
   (use-package web-mode
-
     :mode (("\\.html?\\'" . web-mode)
            ("\\.css\\'"   . web-mode)
            ("\\.jsx?\\'"  . web-mode)
