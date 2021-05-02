@@ -618,14 +618,12 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package xt-mouse
-    :unless window-system
-    :config
+  (unless 'window-system
     (require 'mouse)
+    (require 'xt-mouse)
+    ;;(csetq mouse-sel-mode t)
     (xterm-mouse-mode t)
-    (defun track-mouse (_e))
-    :custom
-    (mouse-sel-mode t))
+    (defun track-mouse (_e)))
 #+end_src
 
 #+begin_src emacs-lisp
