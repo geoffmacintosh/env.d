@@ -293,7 +293,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (with-eval-after-load 'hippie-exp
     (csetq hippie-expand-verbose t)
-    (setq hippie-expand-try-functions-list
+    (csetq hippie-expand-try-functions-list
            '(try-expand-all-abbrevs
              try-expand-dabbrev-visible
              try-expand-dabbrev
