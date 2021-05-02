@@ -83,8 +83,8 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 ** Package Init
 
 #+begin_src emacs-lisp
-  (require 'package)
-  (package-initialize)
+  ;;(require 'package)
+  ;;(package-initialize)
 
   (csetq package-archives
         '(("org"    . "https://orgmode.org/elpa/")
