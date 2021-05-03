@@ -1242,7 +1242,7 @@ https://gist.github.com/spacebat/5500966
     (add-to-list 'org-default-properties "header-args")
     ;;(add-to-list 'org-babel-default-header-args '(:mkdirp . "yes"))
     ;;(global-set-key (kbd "C-c c") #'counsel-org-capture)
-    ;;(global-set-key (kbd "C-c c") #'org-capture)
+   (global-set-key (kbd "C-c c") #'org-capture)
     (global-set-key (kbd "C-c a") #'org-agenda)
     (global-set-key (kbd "C-c l") #'org-store-link)
     :custom
