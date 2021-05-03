@@ -1205,8 +1205,9 @@ https://gist.github.com/spacebat/5500966
 
 
 #+begin_src emacs-lisp
-  (require 'org-checklist)
-  (add-to-list 'org-modules 'org-checklist)
+  (with-eval-after-load 'org
+    (require 'org-checklist)
+    (add-to-list 'org-modules 'org-checklist))
 #+end_src
 
 #+begin_src emacs-lisp
