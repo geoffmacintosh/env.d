@@ -697,13 +697,15 @@ From  emacs-plus:
 ** Delete by Moving to Trash
 #+begin_src emacs-lisp
   (defun system-move-file-to-trash (file)
-    "Move the file to trash via the `trash` command-line tool."
+    "Move FILE to trash via the `trash` command-line tool."
     (call-process "trash" nil nil nil file))
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq delete-by-moving-to-trash nil)
+  (when (executable-find "trash")
+    (csetq delete-by-moving-to-trash t))
 #+end_src
+
 ** Copy sentence
 #+begin_src emacs-lisp
   (defun actuator-copy-sentence ()
