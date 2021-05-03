@@ -140,7 +140,10 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 #+begin_src emacs-lisp
   (csetq custom-file (expand-file-name "custom.el" actuator-var-directory))
-  (load custom-file 'noerror)
+  (defun actuator-load-custom-file ()
+    "The most basic of functions to load the custom file."
+    (load custom-file 'noerror))
+  (add-hook 'after-init-hook #'actuator-load-custom-file)
 #+end_src
 
 ** Read only
