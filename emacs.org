@@ -1291,6 +1291,9 @@ https://gist.github.com/spacebat/5500966
     (org-mode . (lambda () (electric-indent-local-mode -1))))
 #+end_src
 
+#+results:
+| (lambda nil (electric-indent-local-mode -1)) | (lambda nil (add-hook 'before-save-hook 'actuator-update-all-dynamic-blocks nil 'make-it-local)) | #[0 \300\301\302\303\304$\207 [add-hook before-save-hook org-encrypt-entries nil t] 5] | #[0 \300\301!\207 [electric-indent-local-mode -1] 2] | visual-line-mode | #[0 \300\301\302\303\304$\207 [add-hook before-save-hook actuator-update-all-dynamic-blocks nil make-it-local] 5] | org-clock-load | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-eldoc-load |
+
 #+begin_src emacs-lisp
   ;;(setq org-agenda-files nil)
   ;;(setq org-agenda-files `(,org-directory))
@@ -2014,7 +2017,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (setq eshell-prompt-function #'actuator-eshell-prompt))
 #+end_src
 
-
 ** Mu4e Alert
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'mu4e-alert)
@@ -2135,7 +2137,7 @@ https://gitea.petton.fr/mpdel/mpdel
 
 ** Spell check
 #+begin_src emacs-lisp
-  (csetq ispell-program-name "aspell")
+  ;;(csetq ispell-program-name "aspell")
   (csetq ispell-personal-dictionary "~/Sync/.sync/dictionary")
   (csetq ispell-silently-savep t)
   (defun actuator-org-reveal-around-ispell ()
