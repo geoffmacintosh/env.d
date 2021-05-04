@@ -730,9 +730,6 @@ From  emacs-plus:
   actuator-var-directory))
 #+end_src
 
-#+results:
-: /Users/g/.config/emacs/var/org-publish/
-
 #+begin_src emacs-lisp
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
@@ -765,7 +762,7 @@ From  emacs-plus:
   (csetq org-src-window-setup 'current-window)
   (csetq org-src-ask-before-returning-to-edit-buffer nil)
   (csetq org-src-fontify-natively t)
-  (csetq org-tags-exclude-from-inheritance (quote ("crypt")))
+  (csetq org-tags-exclude-from-inheritance '("crypt"))
   (csetq org-crypt-key nil)
   (csetq org-habit-show-habits-only-for-today t)
 #+end_src
@@ -783,8 +780,8 @@ From  emacs-plus:
 | org-src-babel-configure-edit-buffer | org-src-mode-configure-edit-buffer | actuator-org-src-line-wrap-setup |
 
 #+begin_src emacs-lisp
-  ;; (with-eval-after-load 'org-agenda
-  ;;     (org-agenda-follow-mode))
+   (with-eval-after-load 'org-agenda
+       (csetq org-agenda-follow-mode t))
 #+end_src
 
 #+results:
@@ -854,6 +851,9 @@ From  emacs-plus:
                                   ("s" . "src shell")))
   (csetq org-log-done 'time)
   (csetq org-log-into-drawer t)
+  (csetq org-log-reschedule 'time)
+  (csetq org-log-refile 'time)
+  (csetq org-log-redeadline 'time)
   (csetq org-closed-keep-when-no-todo t)
   (csetq org-enforce-todo-dependencies t)
   (csetq org-enforce-todo-checkbox-dependencies t)
