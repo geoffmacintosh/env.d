@@ -731,6 +731,7 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
+  (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
          '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
