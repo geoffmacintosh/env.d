@@ -691,7 +691,7 @@ From  emacs-plus:
 
 ** Help
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-h x k") #'describe-key)
+  ;;(global-set-key (kbd "C-h x k") #'describe-key)
 #+end_src
 
 ** Delete by Moving to Trash
