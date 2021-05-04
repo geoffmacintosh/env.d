@@ -719,221 +719,172 @@ From  emacs-plus:
 
 ** Org
 #+begin_src emacs-lisp
-  (csetq org-use-fast-todo-selection 'expert)
-  (csetq org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq org-agenda-custom-commands
-        '(("h" "Agenda Plus"
-           ((agenda "")
-            (tags-todo "current")))))
-  (csetq org-agenda-window-setup 'reorganize-frame)
-  (csetq org-agenda-restore-windows-after-quit t)
-  (csetq org-agenda-span 'week) ;; fortnight
-  (csetq org-agenda-include-diary t)
-  (csetq org-agenda-text-search-extra-files nil)
-  (csetq org-agenda-todo-list-sublevels t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-agenda
-      (org-agenda-follow-mode))
-#+end_src
-
-#+begin_src emacs-lisp
   (make-directory (expand-file-name "org/" actuator-var-directory) t)
 
   (make-directory (expand-file-name "org-publish/"
-                                    actuator-var-directory) t)
+                                    actuator-var-directory)
+                  t)
   (csetq org-clock-persist-file (expand-file-name "org/org-clock-persist.el"
                                             actuator-var-directory))
   (csetq org-publish-timestamp-directory (expand-file-name "org-publish/"
   actuator-var-directory))
 #+end_src
 
+#+results:
+: /Users/g/.config/emacs/var/org-publish/
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org
-    (require 'org-checklist)
-    (add-to-list 'org-modules 'org-checklist))
-#+end_src
-
-#+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'org-plus-contrib)
-  (use-package org
-    :config
-    (org-indent-mode 1)
-    ;; (add-to-list 'org-babel-default-header-args
-    ;;         '(:mkdirp . "yes"))
-    ;; (add-to-list 'org-babel-default-header-args '(:comments . "link"))
-    (setq org-babel-default-header-args '((:mkdirp   . "yes")
-                                          (:comments . "link")
-                                          (:session  . "none")
-                                          (:results  . "replace")
-                                          (:exports  . "code")
-                                          (:cache    . "no")
-                                          (:noweb    . "no")
-                                          (:hlines   . "no")
-                                          (:tangle   . "no")))
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((emacs-lisp . t)
-                                   (shell      . t)))
-    (defun actuator-update-all-dynamic-blocks ()
-      "Hi"
-      (org-dblock-update 1))
-    (add-hook 'org-mode-hook
-              (lambda ()
-                (add-hook 'before-save-hook
-                          'actuator-update-all-dynamic-blocks nil
-                          'make-it-local)))
-    (add-to-list 'org-default-properties "DIR")
-    (add-to-list 'org-default-properties "header-args")
-    ;;(add-to-list 'org-babel-default-header-args '(:mkdirp . "yes"))
-    ;;(global-set-key (kbd "C-c c") #'counsel-org-capture)
-   (global-set-key (kbd "C-c c") #'org-capture)
-    (global-set-key (kbd "C-c a") #'org-agenda)
-    (global-set-key (kbd "C-c l") #'org-store-link)
-    :custom
-    ;;(setq-local org-display-custom-times nil)
-    ;;(org-time-stamp-custom-formats
-    ;; '("<%A, %B %e %Y>" . "<%A, %B %e %Y %H:%M>"))
-    (org-startup-folded 'content)
-    (org-ellipsis " →")
-    (org-startup-align-all-tables t)
-    (org-startup-shrink-all-tables t)
-    (org-startup-with-inline-images t)
-    (org-startup-indented t)
-    (org-hide-leading-stars t)
-    (org-pretty-entities-include-sub-superscripts t)
-    (org-hide-emphasis-markers t)
-    (org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
-    (org-image-actual-width 300)
-    (org-fontify-done-headline t)
-    (org-structure-template-alist '(("e" . "src emacs-lisp")
-                                    ("s" . "src shell")))
-    (org-log-done 'time)
-    (org-log-into-drawer t)
-    (org-closed-keep-when-no-todo t)
-    (org-enforce-todo-dependencies t)
-    (org-enforce-todo-checkbox-dependencies t)
-    (org-complete-tags-always-offer-all-agenda-tags nil)
-    (org-clone-delete-id t)
-    (org-tags-column -60)
-    (org-catch-invisible-edits 'show-and-error)
-    (org-insert-heading-respect-content t)
-    (org-ctrl-k-protect-subtree t)
-    (org-M-RET-may-split-line '((default . nil)))
-    (org-special-ctrl-k t)
-    (org-special-ctrl-a/e t)
-    (org-blank-before-new-entry '((heading         . t)
-                                  (plain-list-item . auto)))
-    (org-use-property-inheritance t)
-    (org-modules nil)
-    (org-tag-persistent-alist '(("noexport")
-                                ("ignore")
-                                ("unpublished")
-                                ("blog")
-                                ("tbd")))
-    :hook
-    (org-mode . visual-line-mode)
-    (org-mode . (lambda () (electric-indent-local-mode -1))))
+  (csetq org-use-fast-todo-selection 'expert)
+  (csetq org-todo-keywords
+         '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
+  (csetq org-agenda-custom-commands
+         '(("h" "Agenda Plus"
+            ((agenda "")
+             (tags-todo "current")))))
+  (csetq org-agenda-window-setup 'reorganize-frame)
+  (csetq org-agenda-restore-windows-after-quit t)
+  (csetq org-agenda-span 'week) ;; fortnight
+  (csetq org-agenda-include-diary t)
+  (csetq org-agenda-text-search-extra-files nil)
+  (csetq org-agenda-todo-list-sublevels t)
+  (csetq org-agenda-sticky t)
+  (csetq org-agenda-dim-blocked-tasks t)
+  (csetq org-list-indent-offset 1)
+  (csetq org-use-speed-commands t)
+  (csetq org-refile-allow-creating-parent-nodes 'confirm)
+  (csetq org-outline-path-complete-in-steps nil)
+  (csetq org-refile-use-outline-path 'file)
+  (csetq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (csetq org-footnote-auto-adjust t)
+  (csetq org-footnote-define-inline t)
+  (csetq org-footnote-auto-label t)
+  (csetq org-confirm-babel-evaluate nil)
+  (csetq org-babel-results-keyword "results")
+  (csetq org-edit-src-persistent-message nil)
+  (csetq org-src-tab-acts-natively t)
+  (csetq org-src-window-setup 'current-window)
+  (csetq org-src-ask-before-returning-to-edit-buffer nil)
+  (csetq org-src-fontify-natively t)
+  (csetq org-tags-exclude-from-inheritance (quote ("crypt")))
+  (csetq org-crypt-key nil)
+  (csetq org-habit-show-habits-only-for-today t)
 #+end_src
 
 #+results:
-| (lambda nil (electric-indent-local-mode -1)) | (lambda nil (add-hook 'before-save-hook 'actuator-update-all-dynamic-blocks nil 'make-it-local)) | #[0 \300\301\302\303\304$\207 [add-hook before-save-hook org-encrypt-entries nil t] 5] | #[0 \300\301!\207 [electric-indent-local-mode -1] 2] | visual-line-mode | #[0 \300\301\302\303\304$\207 [add-hook before-save-hook actuator-update-all-dynamic-blocks nil make-it-local] 5] | org-clock-load | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-eldoc-load |
 
 #+begin_src emacs-lisp
-  ;;(setq org-agenda-files nil)
-  ;;(setq org-agenda-files `(,org-directory))
-  (setq org-agenda-files (expand-file-name "agenda" org-directory))
+  (defun actuator-org-src-line-wrap-setup ()
+        "Set truncate-lines-mode in org-source-editing buffers."
+        (setq-local truncate-lines t))
+  (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
 #+end_src
 
+#+results:
+| org-src-babel-configure-edit-buffer | org-src-mode-configure-edit-buffer | actuator-org-src-line-wrap-setup |
 
 #+begin_src emacs-lisp
-  (use-package org-capture
-    :config
-    (defun actuator-org-capture-turn-off-header-line ()
+  ;; (with-eval-after-load 'org-agenda
+  ;;     (org-agenda-follow-mode))
+#+end_src
+
+#+results:
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    ;;(add-to-list 'org-default-properties "DIR")
+    ;;(add-to-list 'org-default-properties "header-args")
+    (org-crypt-use-before-save-magic)
+    (add-to-list 'org-modules 'org-crypt)
+    ;;(electric-indent-local-mode -1)
+    (org-indent-mode 1)
+    ;;(visual-line-mode)
+    ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
+    (require 'org-checklist)
+    (add-to-list 'org-modules 'org-habit)
+    (require 'org-habit)
+    (add-to-list 'org-modules 'org-checklist))
+#+end_src
+
+#+results:
+| org-checklist | org-crypt | ol-w3m | ol-bbdb | ol-bibtex | ol-docview | ol-gnus | ol-info | ol-irc | ol-mhe | ol-rmail | ol-eww |
+
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'org-plus-contrib)
+  (csetq org-babel-default-header-args '((:mkdirp   . "yes")
+                                        (:comments . "link")
+                                        (:session  . "none")
+                                        (:results  . "replace")
+                                        (:exports  . "code")
+                                        (:cache    . "no")
+                                        (:noweb    . "no")
+                                        (:hlines   . "no")
+                                        (:tangle   . "no")))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages
+  ;;                              '((emacs-lisp . t)
+  ;;                                (shell      . t)))
+  (defun actuator-update-all-dynamic-blocks ()
+    "Hi"
+    (org-dblock-update 1))
+
+  (defun actuator-org-mode-subhook ()
+    "Thing"
+    (add-hook 'before-save-hook
+                        'actuator-update-all-dynamic-blocks nil
+                        'make-it-local))
+
+  (add-hook 'org-mode-hook #'actuator-org-mode-subhook)
+
+  (global-set-key (kbd "C-c c") #'org-capture)
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (global-set-key (kbd "C-c l") #'org-store-link)
+
+  (csetq org-startup-folded 'content)
+  (csetq org-ellipsis " →")
+  (csetq org-startup-align-all-tables t)
+  (csetq org-startup-shrink-all-tables t)
+  (csetq org-startup-with-inline-images t)
+  (csetq org-startup-indented t)
+  (csetq org-hide-leading-stars t)
+  (csetq org-pretty-entities-include-sub-superscripts t)
+  (csetq org-hide-emphasis-markers t)
+  ;;
+  (csetq org-image-actual-width 300)
+  (csetq org-fontify-done-headline t)
+  (csetq org-structure-template-alist '(("e" . "src emacs-lisp")
+                                  ("s" . "src shell")))
+  (csetq org-log-done 'time)
+  (csetq org-log-into-drawer t)
+  (csetq org-closed-keep-when-no-todo t)
+  (csetq org-enforce-todo-dependencies t)
+  (csetq org-enforce-todo-checkbox-dependencies t)
+  (csetq org-complete-tags-always-offer-all-agenda-tags nil)
+  (csetq org-clone-delete-id t)
+  (csetq org-tags-column -60)
+  (csetq org-catch-invisible-edits 'show-and-error)
+  (csetq org-insert-heading-respect-content t)
+  (csetq org-ctrl-k-protect-subtree t)
+  (csetq org-M-RET-may-split-line '((default . nil)))
+  (csetq org-special-ctrl-k t)
+  (csetq org-special-ctrl-a/e t)
+  (csetq org-blank-before-new-entry '((heading         . t)
+                                (plain-list-item . auto)))
+  (csetq org-use-property-inheritance t)
+  (csetq org-modules nil)
+  (csetq org-tag-persistent-alist '(("noexport")
+                                    ("ignore")
+                                    ("unpublished")
+                                    ("blog")
+                                    ("tbd")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-org-capture-turn-off-header-line ()
     "Disable the header-line in a local mode.
   This is used to disable the help line in `org-capture' buffers as
   there's no variable that will do it."
     (setq-local header-line-format nil))
-    :hook (org-capture-mode . actuator-org-capture-turn-off-header-line))
+  (add-hook 'org-capture-mode-hook #'actuator-org-capture-turn-off-header-line)
 #+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-list
-    :custom
-    (org-list-indent-offset 1))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-keys
-    :custom
-    (org-use-speed-commands t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-refile
-    :custom
-    (org-refile-allow-creating-parent-nodes 'confirm)
-    (org-outline-path-complete-in-steps nil)
-    (org-refile-use-outline-path 'file)
-    (org-refile-targets '((org-agenda-files :maxlevel . 3)))
-    :hook
-    (midnight-mode . org-refile-get-targets))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-src
-    :config
-    (defun actuator-org-src-line-wrap-setup ()
-      "Set truncate-lines-mode in org-source-editing buffers."
-      (setq-local truncate-lines t))
-    :custom
-    (org-edit-src-persistent-message nil)
-    (org-src-tab-acts-natively t)
-    (org-src-window-setup 'current-window)
-    (org-src-ask-before-returning-to-edit-buffer nil)
-    (org-src-fontify-natively t)
-    :hook (org-src-mode . actuator-org-src-line-wrap-setup))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-footnote
-    :custom
-    (org-footnote-auto-adjust t)
-    (org-footnote-define-inline t)
-    (org-footnote-auto-label 'random))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package ob-core
-    :custom
-    (org-confirm-babel-evaluate nil)
-    (org-babel-results-keyword "results"))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-crypt
-    :init
-    (require 'org-crypt)
-    :config
-    (org-crypt-use-before-save-magic)
-    (add-to-list 'org-modules 'org-crypt)
-    :custom
-    (org-tags-exclude-from-inheritance (quote ("crypt")))
-    (org-crypt-key nil))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package org-agenda
-    :custom
-    (org-agenda-sticky t)
-    (org-agenda-dim-blocked-tasks t))
-#+end_src
-
 
 ** Holidays
 :PROPERTIES:
@@ -945,14 +896,6 @@ From  emacs-plus:
   (setq holiday-bahai-holidays nil)
   (setq holiday-oriental-holidays nil)
   ;;(setq holiday-other-holidays '((lunar-phases)))
-#+end_src
-** Habit
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org
-    (add-to-list 'org-modules 'org-habit)
-    (require 'org-habit)
-    (setq org-habit-show-habits-only-for-today t))
 #+end_src
 
 ** Keyboard Macros
