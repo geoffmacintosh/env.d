@@ -926,10 +926,12 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (when (eq system-type 'darwin)
-    (setq browse-url-browser-function 'browse-url-generic)
+    (setq browse-url-browser-function 'eww)
+    (setq browse-url-secondary-browser-function 'browse-url-generic)
     (setq browse-url-generic-program "open")
     (setq browse-url-generic-args '("--background")))
 #+end_src
+
 ** iBuffer
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x C-b") #'ibuffer)
