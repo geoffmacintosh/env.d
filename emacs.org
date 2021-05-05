@@ -365,16 +365,9 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("i" "Inbox" entry (file "inbox.org")
-                   "* %^{Title}\n%U\n%i\n\n%a")))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
                  `("t" "Todo" entry
                    (file "inbox.org")
-                   "* TODO %?\n%U\n\n%i\n%a\n")))
+                   "* TODO %?\n:LOGBOOK:\n- Added on %U\n:END:\n\n%i\n%a\n")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -403,50 +396,10 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   :PROPERTIES:
   :EMAIL: %^{Email}
   :PHONE: %^{Phone}
+  :END:
+  :LOGBOOK:
+  - Added on %U
   :END:\n\n%?")))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-capture-inbox ()
-    (interactive)
-    (org-capture nil "i"))
-
-  (defun actuator-capture-todo ()
-    (interactive)
-    (org-capture nil "t"))
-
-  (defun actuator-capture-journal ()
-    (interactive)
-    (org-capture nil "j"))
-
-  (defun actuator-capture-bookmark ()
-    (interactive)
-    (org-capture nil "b"))
-
-  (defun actuator-capture-contact ()
-    (interactive)
-    (org-capture nil "C"))
-
-  (defun actuator-capture-feed ()
-    (interactive)
-    (org-capture nil "f"))
-
-
-  (defun actuator-capture-calendar ()
-    (interactive)
-    (org-capture nil "c"))
-
-  ;; (with-eval-after-load 'transient
-  ;;   (transient-define-prefix actuator-org-capture ()
-  ;;     "Click"
-  ;;     ["Capture"
-  ;;      ("i" "Inbox" actuator-capture-inbox)
-  ;;      ("t" "Todo"  actuator-capture-todo)
-  ;;      ("j" "Journal" actuator-capture-journal)
-  ;;      ("C" "Contact" actuator-capture-contact)
-  ;;      ("c" "Calendar" actuator-capture-calendar)
-  ;;      ("b" "Bookmark" actuator-capture-bookmark)]))
-  ;; (global-set-key (kbd "C-c c") #'actuator-org-capture)
 #+end_src
 
 ** Personal Stuff
@@ -826,6 +779,8 @@ From  emacs-plus:
 
   (defun actuator-org-mode-subhook ()
     "Thing"
+    (electric-indent-local-mode -1)
+    (visual-line-mode)
     (add-hook 'before-save-hook
                         'actuator-update-all-dynamic-blocks nil
                         'make-it-local))
