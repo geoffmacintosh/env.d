@@ -246,15 +246,15 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 ** Autorevert
 #+begin_src emacs-lisp
-  (run-with-idle-timer 5 nil #'(lambda ()
+  (run-with-idle-timer 1 nil #'(lambda ()
                                  (require 'autorevert)
                                  (global-auto-revert-mode 1)))
-  (csetq global-auto-revert-non-file-buffers nil)
-  (csetq auto-revert-verbose nil)
-  (csetq auto-revert-avoid-polling t)
-  (csetq buffer-auto-revert-by-notification t)
-  (csetq auto-revert-interval 60)
-  (csetq revert-without-query t)
+  ;;(csetq global-auto-revert-non-file-buffers nil)
+  ;;(csetq auto-revert-verbose nil)
+  ;;(csetq auto-revert-avoid-polling nil)
+  ;;(csetq buffer-auto-revert-by-notification t)
+  ;;(csetq auto-revert-interval 60)
+  ;;(csetq revert-without-query t)
   (csetq auto-revert-check-vc-info nil)
 #+end_src
 
@@ -930,6 +930,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (setq browse-url-secondary-browser-function 'browse-url-generic)
     (setq browse-url-generic-program "open")
     (setq browse-url-generic-args '("--background")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (make-directory "~/Sync/.sync/eww/" t)
+  (csetq eww-bookmarks-directory "~/Sync/.sync/eww/")
 #+end_src
 
 ** iBuffer
