@@ -423,3 +423,23 @@ Or could just use mingus?
   (make-directory (expand-file-name "emms/" actuator-var-directory) t)
   (customize-set-variable 'emms-directory (expand-file-name "emms/" actuator-var-directory))
 #+end_src
+
+* SVG Screenshot
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-05-06 Thu 12:05
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable
+:ARCHIVE_CATEGORY: emacs
+:END:
+#+begin_src emacs-lisp :tangle no
+  (defun screenshot-svg ()
+    "Save a screenshot of the current frame as an SVG image.
+  Saves to a temp file and puts the filename in the kill ring."
+    (interactive)
+    (let* ((filename (make-temp-file "Emacs" nil ".svg"))
+           (data (x-export-frames nil 'svg)))
+      (with-temp-file filename
+        (insert data))
+      (kill-new filename)
+      (message filename)))
+#+end_src
