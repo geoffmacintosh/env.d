@@ -246,14 +246,12 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 ** Autorevert
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'(lambda ()
-                                 (require 'autorevert)
-                                 (global-auto-revert-mode 1)))
+  (run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
   ;;(csetq global-auto-revert-non-file-buffers nil)
   ;;(csetq auto-revert-verbose nil)
   ;;(csetq auto-revert-avoid-polling nil)
   ;;(csetq buffer-auto-revert-by-notification t)
-  ;;(csetq auto-revert-interval 60)
+  (csetq auto-revert-interval 15)
   ;;(csetq revert-without-query t)
   (csetq auto-revert-check-vc-info nil)
 #+end_src
@@ -261,9 +259,10 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Server
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 5 nil #'(lambda ()
-                                 (require 'server)
-                                 (unless (server-running-p) (server-start))))
+  (defun actuator-start-server-if-not-running ()
+    (require 'server)
+    (unless (server-running-p) (server-start)))
+  (run-with-idle-timer 2 nil #'actuator-start-server-if-not-running)
 #+end_src
 
 ** Undo
@@ -475,7 +474,7 @@ From  emacs-plus:
   (setq indent-tabs-mode nil) ; Never insert tabs with tab key
   (setq require-final-newline t)
 
-  (save-place-mode 1)
+  (run-with-idle-timer 2 nil #'save-place-mode 1)
   (csetq save-place-file (expand-file-name "save-place.el" actuator-var-directory))
 
   (setq backup-by-copying    t)
@@ -495,7 +494,8 @@ From  emacs-plus:
   (setq confirm-kill-emacs 'y-or-n-p)
 
   ;;(abbrev-mode)
-  (setq-default abbrev-mode t)
+  (run-with-idle-timer 1 nil #'abbrev-mode 1)
+  ;;(setq-default abbrev-mode t)
   (setq save-abbrevs 'silently)
 
   (setq enable-recursive-minibuffers t)
@@ -547,7 +547,7 @@ From  emacs-plus:
 ** Misc
 
 #+begin_src emacs-lisp
-  (recentf-mode)
+  (run-with-idle-timer 1 nil #'recentf-mode 1)
   (global-set-key (kbd "C-x C-r") #'recentf-open-files)
   (csetq recentf-max-saved-items 1000)
   (csetq recentf-save-file (expand-file-name "recentf.el" actuator-var-directory))
@@ -603,14 +603,11 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package paren
-    :config
-    (show-paren-mode)
-    (electric-pair-mode 1)
-    :custom
-    (blink-matching-paren nil)
-    (show-paren-delay 0)
-    (show-paren-style 'mixed))
+  (run-with-idle-timer 2 nil #'show-paren-mode 1)
+  (run-with-idle-timer 2 nil #'electric-pair-mode 1)
+  (csetq blink-matching-paren nil)
+  (csetq show-paren-delay 0)
+  (csetq show-paren-style 'mixed)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -746,10 +743,11 @@ From  emacs-plus:
     ;;(add-to-list 'org-default-properties "header-args")
     (org-crypt-use-before-save-magic)
     (add-to-list 'org-modules 'org-crypt)
-    ;;(electric-indent-local-mode -1)
     (org-indent-mode 1)
-    ;;(visual-line-mode)
     ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((emacs-lisp . t)
+                                   (shell      . t)))
     (require 'org-checklist)
     (add-to-list 'org-modules 'org-habit)
     (require 'org-habit)
@@ -757,7 +755,7 @@ From  emacs-plus:
 #+end_src
 
 #+results:
-| org-checklist | org-crypt | ol-w3m | ol-bbdb | ol-bibtex | ol-docview | ol-gnus | ol-info | ol-irc | ol-mhe | ol-rmail | ol-eww |
+| org-checklist | org-habit | org-crypt |
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-plus-contrib)
@@ -770,9 +768,7 @@ From  emacs-plus:
                                         (:noweb    . "no")
                                         (:hlines   . "no")
                                         (:tangle   . "no")))
-  ;; (org-babel-do-load-languages 'org-babel-load-languages
-  ;;                              '((emacs-lisp . t)
-  ;;                                (shell      . t)))
+
   (defun actuator-update-all-dynamic-blocks ()
     "Hi"
     (org-dblock-update 1))
@@ -1847,26 +1843,29 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-    (defun actuator-eshell-autocomplete ()
-          "Enable tab autocompletion in eshell."
-          (define-key
-            eshell-mode-map (kbd "<tab>")
-            (lambda () (interactive) (pcomplete-std-complete))))
-    (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
+  (defun actuator-eshell-autocomplete ()
+    "Enable tab autocompletion in eshell."
+    (define-key eshell-mode-map (kbd "<tab>") #'actuator-eshell-autocomplete))
+  (defun actuator-pcomplete-std-complete ()
+    (interactive)
+    (pcomplete-std-complete))
+  (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
 #+end_src
 
 #+results:
-| tramp-eshell-directory-change | actuator-eshell-z | actuator-fish-completion | actuator-eshell-autocomplete | actuator-eshell-imenu |
+| actuator-fish-completion | actuator-eshell-autocomplete | actuator-eshell-imenu |
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'pcmpl-args)
-  (require 'pcmpl-args nil t)
+  (with-eval-after-load 'eshell
+    (require 'pcmpl-args nil t))
 #+end_src
 
 #+begin_src emacs-lisp
   (when (eq system-type 'darwin)
     (add-to-list 'package-selected-packages 'pcmpl-homebrew)
-    (require 'pcmpl-homebrew nil t))
+    (with-eval-after-load 'eshell
+      (require 'pcmpl-homebrew nil t)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2031,4 +2030,15 @@ https://gitea.petton.fr/mpdel/mpdel
     (when (derived-mode-p 'org-mode)
       (org-reveal t)))
   (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around-ispell)
+#+end_src
+
+** Remove bidirectional editing to make long lines better
+#+begin_src emacs-lisp
+  (csetq bidi-paragraph-direction 'left-to-right)
+  (csetq bidi-inhibit-bpa t)
+#+end_src
+
+** Long lines mode
+#+begin_src emacs-lisp
+  (run-with-idle-timer 2 nil #'global-so-long-mode 1)
 #+end_src
