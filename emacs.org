@@ -1132,7 +1132,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mu4e-compose-format-flowed t)
   (csetq mu4e-date-format "%y-%m-%d")
   (csetq mu4e-headers-date-format "%y-%m-%d")
-  (csetq mu4e-get-mail-command "mbsync -a")
+  (csetq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
   (csetq mu4e-mu-binary (executable-find "mu"))
 #+end_src
 
