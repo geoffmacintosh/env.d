@@ -1891,15 +1891,26 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Mu4e Alert
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'mu4e-alert)
-  (use-package mu4e-alert
-    :config
-    (cond ((eq system-type 'gnu/linux)
-           (mu4e-alert-set-default-style 'libnotify))
-          ((eq system-type 'darwin)
-           (mu4e-alert-set-default-style 'osx-notifier)))
-    :hook
-    (after-init . mu4e-alert-enable-notifications)
-    (after-init . mu4e-alert-enable-mode-line-display))
+
+  (defun actuator-set-up-mu4e-alert ()
+    "Set up mu4e alerts if both mu4e and mu4e-alert are installed.
+
+  If run with an idle timer such as:
+
+  (run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)
+
+  it will not hurt the startup time."
+    (require 'mu4e-alert nil t)
+    (require 'mu4e nil t)
+    (when (and (featurep 'mu4e-alert) (featurep 'mu4e))
+      (cond ((eq system-type 'gnu/linux)
+             (mu4e-alert-set-default-style 'libnotify))
+            ((eq system-type 'darwin)
+             (mu4e-alert-set-default-style 'osx-notifier)))
+      (mu4e-alert-enable-notifications)
+      (mu4e-alert-enable-mode-line-display)))
+
+  (run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)
 #+end_src
 ** Alert
 
