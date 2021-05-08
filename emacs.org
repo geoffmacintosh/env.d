@@ -873,11 +873,9 @@ From  emacs-plus:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
 #+begin_src emacs-lisp
-  (use-package browse-url
-    :custom
-    (browse-url-handlers '(("wikipedia"   . eww )
-                           ("youtu\\.?be" . actuator-browse-video)
-                           ("twitch"      . actuator-browse-video))))
+  (csetq browse-url-handlers '(("wikipedia"   . eww )
+                               ("youtu\\.?be" . actuator-browse-video)
+                               ("twitch"      . actuator-browse-video)))
 #+end_src
 
 #+begin_src emacs-lisp
