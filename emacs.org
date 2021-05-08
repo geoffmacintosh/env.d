@@ -1208,28 +1208,27 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Doc View
 #+begin_src emacs-lisp
-  (use-package doc-view
-    :config
-    (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
-    (defvar actuator-doc-view-bookmark-push-p t
-      "Whether to push automatic doc-view bookmarks, or clobber them.")
-    (defun actuator-doc-view-open-handler ()
-      "Stuff."
+  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
+
+  (defvar actuator-doc-view-bookmark-push-p t
+    "Whether to push automatic doc-view bookmarks, or clobber them.")
+  (defun actuator-doc-view-open-handler ()
+    "Stuff."
+    (require 'bookmark)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump (buffer-name)))
+
+  (defun actuator-doc-view-save-handler ()
+    "Stuff"
+    (when (eq major-mode 'doc-view-mode)
       (require 'bookmark)
       (bookmark-maybe-load-default-file)
-      (bookmark-jump (buffer-name)))
+      (bookmark-set (buffer-name) actuator-doc-view-bookmark-push-p)))
 
-    (defun actuator-doc-view-save-handler ()
-      "Stuff"
-      (when (eq major-mode 'doc-view-mode)
-        (require 'bookmark)
-        (bookmark-maybe-load-default-file)
-        (bookmark-set (buffer-name) actuator-doc-view-bookmark-push-p)))
-    :hook
-    (doc-view-mode . actuator-doc-view-open-handler)
-    (kill-buffer-hook . actuator-doc-view-save-handler)
-    :custom
-    (doc-view-resolution 150))
+  (add-hook 'doc-view-mode-hook #'actuator-doc-view-open-handler)
+  (add-hook 'kill-buffer-hook #'actuator-doc-view-save-handler)
+
+  (csetq doc-view-resolution 150)
 #+end_src
 https://gist.github.com/spacebat/5500966
 
