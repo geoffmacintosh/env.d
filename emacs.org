@@ -1399,14 +1399,6 @@ https://gist.github.com/spacebat/5500966
 
 #+end_src
 
-#+results:
-: t
-
-#+begin_src emacs-lisp
-  (use-package request
-    :disabled t)
-#+end_src
-
 #+begin_src emacs-lisp
   (use-package ivy
     :defines ivy-minibuffer-map
