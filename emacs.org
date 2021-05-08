@@ -1325,12 +1325,12 @@ https://gist.github.com/spacebat/5500966
 [[https://www.reddit.com/r/emacs/comments/c1zl0s/weekly_tipstricketc_thread/ergullj/?context=1][Improve eldoc's documentation]]
 
 #+begin_src emacs-lisp
-(add-to-list 'package-selected-packages 'eldoc)
-  (use-package eldoc
-    :custom
-    (eldoc-echo-area-use-multiline-p t)
-    (eldoc-idle-delay 0)
-    :config
+  (add-to-list 'package-selected-packages 'eldoc)
+
+  (csetq eldoc-echo-area-use-multiline-p t)
+  (csetq eldoc-idle-delay 0)
+
+  (with-eval-after-load 'eldoc
     (define-advice elisp-get-fnsym-args-string (:around (orig-fun sym &rest r) docstring)
       "If SYM is a function, append its docstring."
       (require 'subr-x)
