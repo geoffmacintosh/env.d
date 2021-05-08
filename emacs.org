@@ -1856,16 +1856,16 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'fish-completion)
-  (use-package fish-completion
-    :custom
-    (fish-completion-fallback-on-bash-p t)
-    :config
-    (defun actuator-fish-completion ()
-      "arst"
-      (when (and (executable-find "fish")
-                 (require 'fish-completion nil t))
-        (fish-completion-mode)))
-    :hook (eshell-mode . actuator-fish-completion))
+
+  (csetq fish-completion-fallback-on-bash-p t)
+
+  (defun actuator-set-up-eshell-fish-completion ()
+    "arst"
+    (when (executable-find "fish")
+      (require 'fish-completion nil t)
+      (fish-completion-mode)))
+
+  (add-hook 'eshell-mode-hook #'actuator-set-up-eshell-fish-completion)
 #+end_src
 
 #+begin_src emacs-lisp
