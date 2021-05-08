@@ -899,9 +899,7 @@ I want video links to be opened in MPV. This helps my battery life as well as my
 SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts and Nov.el books. Normally it wraps at the page width, but that can be adjusted.
 
 #+begin_src emacs-lisp
-  (use-package shr
-    :custom
-    (shr-width 75))
+  (csetq shr-width 75)
 #+end_src
 
 *** Open links in background                      :ignore:
