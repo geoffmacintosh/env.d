@@ -1530,20 +1530,21 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-download)
-  (use-package org-download
-    :init
-    (global-set-key (kbd "C-M-y") #'org-download-screenshot)
-    (require 'org-download)
-    :custom
-    (org-download-method 'directory)
-    (org-download-image-dir nil)
-    ;;(org-download-annotate-function #'actuator-org-dl-annotate)
-    ;;(org-download-timestamp "")
-    (org-download-screenshot-method "screencapture -i %s")
-    (org-download-heading-lvl nil)
-    (org-download-timestamp "%Y%m%d-%H%M%S-")
-    ;;(org-download-screenshot-method "/usr/local/bin/pngpaste %s")
-    )
+
+  ;;(global-set-key (kbd "C-M-y") #'org-download-screenshot)
+
+  ;;(require 'org-download)
+
+
+    (csetq org-download-method 'directory)
+    (csetq org-download-image-dir nil)
+    ;;(csetq org-download-annotate-function #'actuator-org-dl-annotate)
+    ;;(csetq org-download-timestamp "")
+    (csetq org-download-screenshot-method "screencapture -i %s")
+    (csetq org-download-heading-lvl nil)
+    (csetq org-download-timestamp "%Y%m%d-%H%M%S-")
+    ;;(csetq org-download-screenshot-method "/usr/local/bin/pngpaste %s")
+
 #+end_src
 
 ** Web Mode
