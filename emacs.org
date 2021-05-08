@@ -1310,9 +1310,12 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 
 ** Org Link Minor Mode
+
 #+begin_src emacs-lisp :tangle no
-  (use-package org-link-minor-mode
-    :hook (emacs-lisp-mode . org-link-minor-mode))
+  (add-to-list 'package-selected-packages 'org-link-minor-mode)
+
+  (when (package-installed-p 'org-link-minor-mode)
+    (add-hook 'emacs-lisp-mode #'org-link-minor-mode))
 #+end_src
 
 ** HTMLize
