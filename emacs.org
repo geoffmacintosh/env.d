@@ -1421,39 +1421,29 @@ https://gist.github.com/spacebat/5500966
 ** Magit
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'magit)
-  (use-package magit
-    :after exec-path-from-shell
-    :init
-    (global-set-key (kbd "C-c g") #'magit-status)
-    (global-set-key (kbd "C-x g") #'magit-status)
-    (global-set-key (kbd "C-x G") #'magit-list-repositories)
-    :custom
-    (magit-diff-refine-hunk 'all)
-    (magit-save-repository-buffers 'dontask)
-    (magit-section-initial-visibility-alist
-     '((untracked . show)
-       (unstaged  . show)
-       (unpushed  . show)
-       (upstream  . show)))
-    ;;(magit-auto-revert-mode t)
-    (magit-push-always-verify nil)
-    (magit-repository-directories '(("~/org"     . 0)
-                                    ("~/.config" . 0)))
-    (magit-no-confirm '(stage-all-changes
-                        unstage-all-changes))
-    (magit-status-initial-section nil)
-    :config
-    <<magit-status>>
-    <<magit-quit-session>>)
-    (csetq magit-repository-directories
-                            `((,org-directory . 0)
-                              ("~/env.d"      . 0)
-                              ("~/Projects"   . 1)))
+
+  (global-set-key (kbd "C-c g") #'magit-status)
+  (global-set-key (kbd "C-x g") #'magit-status)
+  (global-set-key (kbd "C-x G") #'magit-list-repositories)
+
+  (csetq magit-diff-refine-hunk 'all)
+  (csetq magit-save-repository-buffers 'dontask)
+  (csetq magit-section-initial-visibility-alist
+         '((untracked . show)
+           (unstaged  . show)
+           (unpushed  . show)
+           (upstream  . show)))
+  ;;(csetq magit-auto-revert-mode t)
+  (csetq magit-push-always-verify nil)
+  (csetq magit-no-confirm '(stage-all-changes
+                            unstage-all-changes))
+  (csetq magit-status-initial-section nil)
+  (csetq magit-repository-directories
+         `((,org-directory . 0)
+           ("~/env.d"      . 0)
+           ("~/Projects"   . 1)))
 #+end_src
 
-#+RESULTS:
-
-#+name: magit-status
 #+begin_src emacs-lisp
   (defadvice magit-status (around magit-fullscreen activate)
        (window-configuration-to-register :magit-fullscreen)
@@ -1461,7 +1451,7 @@ https://gist.github.com/spacebat/5500966
        (delete-other-windows))
 #+end_src
 
-#+name: magit-quit-session
+
 #+begin_src emacs-lisp
 (defun magit-quit-session ()
       "Restores the previous window configuration and kills the magit buffer"
