@@ -914,8 +914,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq ibuffer-show-empty-filter-groups nil)
-  (setq ibuffer-saved-filter-groups
+  (csetq ibuffer-show-empty-filter-groups nil)
+  (csetq ibuffer-saved-filter-groups
         '(("default"
            ("Misc"      (name . "^\\*.*\\*$"))
            ("Magit"     (name . "magit"))
@@ -924,14 +924,15 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
            ("My Org"    (directory . "/Users/g/org"))
            ("Config"    (or
                          (directory . "/Users/g/.config")
-                         (directory . "/usr/local/share/emacs")))
-           )))
+                         (directory . "/usr/local/share/emacs"))))))
 #+end_src
 
 #+begin_src emacs-lisp
   (defun actuator-ibuffer-setup ()
     "Setup ibuffer defaults."
     (require 'ibuf-ext)
+    (declare-function 'ibuffer-switch-to-saved-filter-groups "ibuf-ext")
+    (declare-function 'ibuffer-auto-mode "ibuf-ext")
     (ibuffer-switch-to-saved-filter-groups "default")
     (ibuffer-auto-mode 1)
     (toggle-truncate-lines +1))
@@ -1067,6 +1068,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (jump-to-register :ediff))
 
   (defun ediff-org-reveal-around-difference (&rest _)
+    (require 'ediff)
     (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
       (ediff-with-current-buffer buf
                                  (when (derived-mode-p 'org-mode)
@@ -1135,20 +1137,17 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (defun actuator-byte-recompile-init ()
     "Recompiles the inits. I dunno why I want to."
     (interactive)
-    (let ((init   (expand-file-name "init.el"       user-emacs-directory))
-          (early  (expand-file-name "early-init.el" user-emacs-directory)))
+    (let ((init   (expand-file-name "init.el"       user-emacs-directory)))
       (if (fboundp 'native-compile)
           (progn
-            ;;(native-compile early)
             (native-compile init))
         (progn
-          ;;(byte-recompile-file early  nil 0)
           (byte-recompile-file init nil 0)))))
   (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
 #+end_src
 
 #+results:
-| elfeed-db-save-safe | prescient--save | actuator-byte-recompile-init | package-quickstart-refresh | desktop-kill | org-clock-save | org-id-locations-save | org-babel-remove-temporary-directory | recentf-save-list | save-place-kill-emacs-hook | bookmark-exit-hook-internal | savehist-save | actuator-unpropertize-kill-ring | savehist-autosave | server-force-stop | elfeed-db-gc-safe |
+| prescient--save | transient-maybe-save-history | save-place-kill-emacs-hook | recentf-save-list | desktop-kill | elfeed-db-save-safe | actuator-byte-recompile-init | package-quickstart-refresh | org-clock-save | org-id-locations-save | org-babel-remove-temporary-directory | bookmark-exit-hook-internal | savehist-save | actuator-unpropertize-kill-ring | savehist-autosave | elfeed-db-gc-safe | server-force-stop |
 
 ** Modeline time
 #+begin_src emacs-lisp
@@ -1743,17 +1742,22 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (with-eval-after-load 'eshell
     (defun actuator-eshell-prompt ()
-      ;;(require 'em-dirs)
+      (require 'eshell)
+      (require 'em-dirs)
+      (declare-function 'eshell/pwd "em-dirs")
       (concat
        ;;(user-login-name)
        ;;"@"
        ;;(system-name)
        ;;":"
        (eshell/pwd)
-       " ❯ "))
-    (setq eshell-prompt-regexp "^.+@.+:.+❯ ")
-    (setq eshell-prompt-function #'actuator-eshell-prompt))
+       " ❯ ")))
+    (csetq eshell-prompt-regexp "^.+@.+:.+❯ ")
+    (csetq eshell-prompt-function #'actuator-eshell-prompt)
 #+end_src
+
+#+results:
+: actuator-eshell-prompt
 
 ** Mu4e Alert
 #+begin_src emacs-lisp
