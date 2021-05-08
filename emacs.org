@@ -1077,34 +1077,30 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Ediff
 #+begin_src emacs-lisp
-  (use-package ediff
-    :custom
-    ;;(ediff-diff-options "")
-    ;;(ediff-custom-diff-options "-u")
-    (ediff-window-setup-function 'ediff-setup-windows-plain)
-    (ediff-split-window-function 'split-window-horizontally)
-    :config
-    (defun actuator-ediff-startup ()
-      "Prep Ediff for success."
-      (window-configuration-to-register :ediff))
+  (csetq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (csetq ediff-split-window-function 'split-window-horizontally)
 
-    (defun actuator-ediff-quit ()
-      "Restore files after diffing."
-      (jump-to-register :ediff))
+  (defun actuator-ediff-startup ()
+    "Prep Ediff for success."
+    (window-configuration-to-register :ediff))
 
-    (defun ediff-org-reveal-around-difference (&rest _)
-      (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
-        (ediff-with-current-buffer buf
-          (when (derived-mode-p 'org-mode)
-            (org-reveal t)))))
+  (defun actuator-ediff-quit ()
+    "Restore files after diffing."
+    (jump-to-register :ediff))
 
-    (advice-add 'ediff-next-difference :after
-    #'ediff-org-reveal-around-difference)
-    (advice-add 'ediff-previous-difference :after
-    #'ediff-org-reveal-around-difference)
-    :hook
-    (ediff-startup . actuator-ediff-startup)
-    (ediff-quit    . actuator-ediff-quit))
+  (defun ediff-org-reveal-around-difference (&rest _)
+    (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
+      (ediff-with-current-buffer buf
+                                 (when (derived-mode-p 'org-mode)
+                                   (org-reveal t)))))
+
+  (advice-add 'ediff-next-difference :after
+              #'ediff-org-reveal-around-difference)
+  (advice-add 'ediff-previous-difference :after
+              #'ediff-org-reveal-around-difference)
+
+  (add-hook 'ediff-startup-hook #'actuator-ediff-startup)
+  (add-hook 'ediff-quit-hook #'actuator-ediff-quit)
 #+end_src
 
 [[https://www.reddit.com/r/emacs/comments/dxzi96/have_some_code_make_ediffing_folded_org_files/][Have some code: make ediffing folded org files better : emacs]]
