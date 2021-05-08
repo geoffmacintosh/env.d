@@ -1180,12 +1180,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Modeline time
 #+begin_src emacs-lisp
-  (use-package time
-    :config
-    (display-time)
-    :custom
-    (display-time-24hr-format t)
-    (display-time-default-load-average nil))
+  (run-with-idle-timer 1 nil #'display-time)
+  (csetq display-time-24hr-format t)
+  (csetq display-time-default-load-average nil)
 #+end_src
 
 ** Allow different places in the same buffer
