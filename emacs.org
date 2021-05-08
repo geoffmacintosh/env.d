@@ -1044,15 +1044,13 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 :END:
 
 #+begin_src emacs-lisp
-  (use-package org-attach
-    :custom
-    (org-attach-store-link-p t)
-    (org-attach-expert nil)
-    (org-attach-dir-relative t)
-    (org-attach-preferred-new-method 'dir)
-    (org-attach-method 'mv)
-    (org-attach-auto-tag "attach")
-    (org-attach-archive-delete 'query))
+  (csetq org-attach-store-link-p t)
+  (csetq org-attach-expert nil)
+  (csetq org-attach-dir-relative t)
+  (csetq org-attach-preferred-new-method 'dir)
+  (csetq org-attach-method 'mv)
+  (csetq org-attach-auto-tag "attach")
+  (csetq org-attach-archive-delete 'query)
 #+end_src
 ** Clock
 
