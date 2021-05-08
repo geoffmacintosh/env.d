@@ -443,3 +443,33 @@ Or could just use mingus?
       (kill-new filename)
       (message filename)))
 #+end_src
+
+* Captar
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-05-08 Sat 11:19
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable/Org-elfeed
+:ARCHIVE_CATEGORY: emacs
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("e" "Elfeed Feed" entry
+                   (file+olp ,(expand-file-name "feeds.org"
+                                                org-directory) "Feeds")
+                   "* [[%^{Feed URL}][%^{Title}]]\n%(org-time-stamp-inactive)"
+                   :immediate-finish
+                   :kill-buffer
+                   :empty-lines 1)))
+#+end_src
+
+* Changes                                         :noexport:
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-05-08 Sat 11:19
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable/Org-elfeed
+:ARCHIVE_CATEGORY: emacs
+:END:
+** Wednesday May 20, 2020
+- Published

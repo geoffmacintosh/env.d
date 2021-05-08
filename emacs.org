@@ -1545,120 +1545,88 @@ https://gist.github.com/spacebat/5500966
     ;;(org-download-screenshot-method "/usr/local/bin/pngpaste %s")
     )
 #+end_src
+
 ** Web Mode
 
 #+begin_src emacs-lisp
-(add-to-list 'package-selected-packages 'web-mode)
-  (use-package web-mode
-    :mode (("\\.html?\\'" . web-mode)
-           ("\\.css\\'"   . web-mode)
-           ("\\.jsx?\\'"  . web-mode)
-           ("\\.tsx?\\'"  . web-mode)
-           ("\\.json\\'"  . web-mode))
-    :custom
-    (web-mode-markup-indent-offset 2)
-    (web-mode-code-indent-offset 2)
-    (web-mode-css-indent-offset 2))
+  (add-to-list 'package-selected-packages 'web-mode)
+
+  (when (package-installed-p 'web-mode)
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsx?\\'"  . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tsx?\\'"  . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.json\\'"  . web-mode)))
+
+  (csetq web-mode-markup-indent-offset 2)
+  (csetq web-mode-code-indent-offset 2)
+  (csetq web-mode-css-indent-offset 2)
 #+end_src
 ** Elfeed
-*** Introduction
-Usually people start these things out by explaining what RSS is and all that. I don't think I'll be doing that. I like RSS because I like knowing when new things happen, and I don't want to check a bunch of different services all the time. Beyond that, I also really like the idea of being able to filter out feed items that don't appeal to me. I don't mind if I can only read stuff on my computer, so I haven't set up any sort of sync with my phone, although it should be possible to do that.
-
-I have [[https://github.com/skeeto/elfeed][Elfeed]] set up in a single use-package declaration, and I've pulled all the individual functions out into their own bits so as to talk about them separately.
-
 #+begin_src emacs-lisp
-  (use-package elfeed
-    :init
-    (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
-    ;; :bind
-    ;; (("C-x w" . actuator-elfeed-load-db-and-open)
-    ;;  :map elfeed-search-mode-map
-    ;;  ("A" . actuator-elfeed-show-all)
-    ;;  ("U" . actuator-elfeed-show-unread)
-    ;;  ("q" . actuator-elfeed-save-db-and-bury)
-    ;;  ("R" . actuator-elfeed-mark-all-as-read))
-    :custom
-    (elfeed-search-filter "@1-week-ago +unread ")
-    :config
-    <<faces>>
-    <<elfeed-filters>>
-    <<load-quit>>
-    <<mark-all-as-read>>)
-
+  (csetq elfeed-search-filter "@1-week-ago +unread ")
+  (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
     (define-key elfeed-search-mode-map (kbd "q") #'actuator-elfeed-save-db-and-bury)
     (define-key elfeed-search-mode-map (kbd "R") #'actuator-elfeed-mark-all-as-read))
 #+end_src
 
-#+results:
-: actuator-elfeed-mark-all-as-read
-
-*** Open videos in MPV                            :ignore:
-One feature that people talk about a lot is setting up Elfeed to handle video-feeds separately from others, allowing you to avoid opening---say---a YouTube link in MPV instead of a browser window. That's pretty nice if you think YouTube's site is bad. There are a variety of ways to do that, but my current solution is to adjust how Emacs handles URLs, as documented in my Web config. The advantage of my system is that it affects all links to YouTube, regardless of where they are. It's a general solution, not an Elfeed solution.
-
-*** Filters                                       :ignore:
-:PROPERTIES:
-:header-args: :noweb-ref elfeed-filters :tangle no :results output silent
-:END:
 Filters are kind of the star of Elfeed. I mostly use them to remove items that I don't want to see (or already see in other contexts---podcasts for example). I think it's all pretty straightforward. The only thing of note that I do is adding a debug tag to each hook that hides things. That way I can tell which filter it is that's causing problems when I make a stupid typo and suddenly a specific filter matches all entries.
 
 #+begin_src emacs-lisp
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
-                                :add '(junk debug1)
-                                :remove 'unread))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :before "2 weeks ago"
-                                :add 'debug2
-                                :remove 'unread))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-title "MacSparky"
-                                :entry-title "focused\\|Mac Power Users\\|jazz\\|automators\\|podcast"
-                                :add '(junk debug3)
-                                :remove 'unread))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-title "Six Colors"
-                                :entry-title "podcast\\|macworld\\|member"
-                                :add '(junk debug4)
-                                :remove 'unread))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-title "Longreads"
-                                :entry-title "longreads"
-                                :add '(junk debug5)
-                                :remove 'unread))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-url "youtube\\.com"
-                                :add '(video youtube)))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-url "twitchrss"
-                                :add '(video twitch)))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-url "kijiji\\.ca"
-                                :add '(shop kijiji)))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-url "reddit"
-                                :add 'reddit))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-url "ikea"
-                                :entry-title "Q\\:"
-                                :remove 'unread
-                                :add '(junk debug6)))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-url "cestlaz"
-                                :entry-title '(not "emacs")
-                                :add '(junk debug7)
-                                :remove 'unread))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :feed-url "reddit\\.com"
-                                :entry-title '(not "F1")
-                                :add '(junk debug8)
-                                :remove 'unread))
+  (with-eval-after-load 'elfeed
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
+                                  :add '(junk debug1)
+                                  :remove 'unread))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :before "2 weeks ago"
+                                  :add 'debug2
+                                  :remove 'unread))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-title "MacSparky"
+                                  :entry-title "focused\\|Mac Power Users\\|jazz\\|automators\\|podcast"
+                                  :add '(junk debug3)
+                                  :remove 'unread))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-title "Six Colors"
+                                  :entry-title "podcast\\|macworld\\|member"
+                                  :add '(junk debug4)
+                                  :remove 'unread))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-title "Longreads"
+                                  :entry-title "longreads"
+                                  :add '(junk debug5)
+                                  :remove 'unread))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "youtube\\.com"
+                                  :add '(video youtube)))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "twitchrss"
+                                  :add '(video twitch)))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "kijiji\\.ca"
+                                  :add '(shop kijiji)))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "reddit"
+                                  :add 'reddit))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "ikea"
+                                  :entry-title "Q\\:"
+                                  :remove 'unread
+                                  :add '(junk debug6)))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "cestlaz"
+                                  :entry-title '(not "emacs")
+                                  :add '(junk debug7)
+                                  :remove 'unread))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "reddit\\.com"
+                                  :entry-title '(not "F1")
+                                  :add '(junk debug8)
+                                  :remove 'unread)))
 #+end_src
 
-*** Load and quit Elfeed nicely                   :ignore:
-:PROPERTIES:
-:header-args: :noweb-ref load-quit :tangle no :results output silent
-:END:
 You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
 
 #+begin_src emacs-lisp
@@ -1688,11 +1656,6 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
     (jump-to-register :elfeed-fullscreen))
 #+end_src
 
-*** Mark all as read                              :ignore:
-:PROPERTIES:
-:header-args: :noweb-ref mark-all-as-read :tangle no :results output silent
-:END:
-
 #+begin_src emacs-lisp
   (defun actuator-elfeed-mark-all-as-read ()
       "Mark all feeds in search as read. Taken from Mike Zamansky"
@@ -1701,19 +1664,16 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
       (elfeed-search-untag-all-unread))
 #+end_src
 
-*** Faces                                         :ignore:
-:PROPERTIES:
-:header-args: :noweb-ref faces :tangle no :results output silent
-:END:
 Changing the colours of an entry is neat, but not that useful. I mostly have this set up in order to learn how to do it, and as a vague novelty.
 
 #+begin_src emacs-lisp
+  (with-eval-after-load 'elfeed
   (add-to-list 'elfeed-search-face-alist
                '(video actuator-elfeed-video-face))
   (add-to-list 'elfeed-search-face-alist
                '(image actuator-elfeed-image-face))
   (add-to-list 'elfeed-search-face-alist
-               '(comic actuator-elfeed-comic-face))
+               '(comic actuator-elfeed-comic-face)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1737,36 +1697,19 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     :group 'actuator-elfeed)
 #+end_src
 
-*** Org-elfeed
+** Org-elfeed
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'elfeed-org)
-  (use-package elfeed-org
-    :after elfeed
-    :config
-    (elfeed-org)
-    :custom
-    (rmh-elfeed-org-ignore-tag "disconnected")
-    (rmh-elfeed-org-auto-ignore-invalid-feeds nil)
-    (rmh-elfeed-org-files (list "~/org/feeds.org")))
+
+  (with-eval-after-load 'elfeed
+    (require 'elfeed-org nil t)
+    (elfeed-org))
+
+  (csetq rmh-elfeed-org-ignore-tag "disconnected")
+  (csetq rmh-elfeed-org-auto-ignore-invalid-feeds nil)
+  (csetq rmh-elfeed-org-files (expand-file-name "feeds.org" org-directory))
 #+end_src
 
-*** Changes                                     :noexport:
-**** Wednesday May 20, 2020
-- Published
-
-*** Captar
-
-#+begin_src emacs-lisp :tangle no
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("e" "Elfeed Feed" entry
-                   (file+olp ,(expand-file-name "feeds.org"
-                                                org-directory) "Feeds")
-                   "* [[%^{Feed URL}][%^{Title}]]\n%(org-time-stamp-inactive)"
-                   :immediate-finish
-                   :kill-buffer
-                   :empty-lines 1)))
-#+end_src
 ** Eshell
 
 #+begin_src emacs-lisp
@@ -1814,7 +1757,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       "Set up eshell-imenu integration"
       (setq-local imenu-generic-expression
                   '(("Prompt" "^.*?[#❯]" 1))))
-    (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
+    ;;(add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1824,7 +1767,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defun actuator-pcomplete-std-complete ()
     (interactive)
     (pcomplete-std-complete))
-  (add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
+  ;;(add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
 #+end_src
 
 #+results:
@@ -1854,12 +1797,12 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (require 'fish-completion nil t)
       (fish-completion-mode)))
 
-  (add-hook 'eshell-mode-hook #'actuator-set-up-eshell-fish-completion)
+  ;;(add-hook 'eshell-mode-hook #'actuator-set-up-eshell-fish-completion)
 #+end_src
 
 #+begin_src emacs-lisp
-  (add-hook 'eshell-expand-input-functions
-             #'eshell-expand-history-references)
+  ;;(add-hook 'eshell-expand-input-functions
+  ;;           #'eshell-expand-history-references)
 #+end_src
 
 #+begin_src emacs-lisp
