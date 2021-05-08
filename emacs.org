@@ -952,9 +952,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Encryption (EPG)
 #+begin_src emacs-lisp
-  (use-package epg
-    :custom
-    (epg-pinentry-mode 'loopback))
+  (csetq epg-pinentry-mode 'loopback)
 #+end_src
 ** Dired
 #+begin_src emacs-lisp
