@@ -148,7 +148,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 ** Read only
 #+begin_src emacs-lisp
-  (setq view-read-only t)
+  (csetq view-read-only t)
 #+end_src
 
 ** Ctrl-Z
