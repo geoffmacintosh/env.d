@@ -982,33 +982,28 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 
 #+begin_src emacs-lisp
-  (use-package dired
-    :config
-    ;;(require 'dired-x)
-    ;;(require 'ls-lisp)
-    ;;(require 'wdired)
-    (setq dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
-    (with-eval-after-load 'savehist
-      (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
-    :custom
-    (dired-dwim-target t)
-    (ls-lisp-use-insert-directory-program t)
-    (ls-lisp-ignore-case t)
-    (ls-lisp-use-string-collate nil)
-    (ls-lisp-verbosity '(links uid))
-    (ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
-    (ls-lisp-use-localized-time-format nil)
+  (csetq dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
 
-    (dired-listing-switches "-alhFo") ; Not use for ls-lisp?
-    ;; a :: include files beginning with dots
-    ;; l :: display as list
-    ;; h :: human-readable filenames
-    ;; F :: display a slash after directories
-    ;; S :: sort by size
+  (csetq dired-dwim-target t)
+  (csetq ls-lisp-use-insert-directory-program t)
+  (csetq ls-lisp-ignore-case t)
+  (csetq ls-lisp-use-string-collate nil)
+  (csetq ls-lisp-verbosity '(links uid))
+  (csetq ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
+  (csetq ls-lisp-use-localized-time-format nil)
 
-    (wdired-allow-to-change-permissions t)
+  (csetq dired-listing-switches "-alhFo") ; Not use for ls-lisp?
+  ;; a :: include files beginning with dots
+  ;; l :: display as list
+  ;; h :: human-readable filenames
+  ;; F :: display a slash after directories
+  ;; S :: sort by size
 
-    (dired-recursive-copies 'always))
+  (csetq wdired-allow-to-change-permissions t)
+
+  (csetq dired-recursive-copies 'always)
 #+end_src
 
 ** Split Windows
