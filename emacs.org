@@ -1022,7 +1022,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
       (other-window 1)
       (when (fboundp 'ivy-switch-buffer)
         (ivy-switch-buffer)))
-  (global-set-key (kbd "C-x 3") #'actuator-split-window-right)
+  ;;(global-set-key (kbd "C-x 3") #'actuator-split-window-right)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1035,7 +1035,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
       (other-window 1)
       (when (fboundp 'ivy-switch-buffer)
         (ivy-switch-buffer)))
-  (global-set-key (kbd "C-x 2") #'actuator-split-window-below)
+  ;;(global-set-key (kbd "C-x 2") #'actuator-split-window-below)
 #+end_src
 
 ** Attach
