@@ -1337,26 +1337,14 @@ https://gist.github.com/spacebat/5500966
 ** Ivy
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'prescient)
-  (csetq prescient-save-file (expand-file-name "prescient.el" actuator-var-directory))
-  (csetq prescient-history-length 10000)
-  (csetq prescient-aggressive-file-save t)
-  (require 'counsel nil t)
-  (require 'prescient nil t)
-  (require 'ivy-prescient nil t)
-  (when (featurep 'ivy-prescient)
-    (ivy-prescient-mode +1)
-    (prescient-persist-mode +1))
-#+end_src
-
-
-#+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'counsel)
   (add-to-list 'package-selected-packages 'ivy)
   (add-to-list 'package-selected-packages 'swiper)
+
   (with-eval-after-load 'counsel
     (setq counsel-find-file-ignore-regexp "\\`\\."))
-  (when (featurep 'counsel)
+
+  (when (package-installed-p 'counsel)
     (require 'counsel)
     (require 'ivy)
     (require 'swiper)
@@ -1368,49 +1356,41 @@ https://gist.github.com/spacebat/5500966
     (global-set-key (kbd "C-h v")   #'counsel-describe-variable)
     (global-set-key (kbd "C-c s")   #'counsel-search)
     (global-set-key (kbd "M-y")     #'counsel-yank-pop))
-
-
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package ivy
-    :defines ivy-minibuffer-map
-    :functions ivy-mode ivy-immediate-done ivy-alt-done ivy-next-line
-    :config
+  (when (package-installed-p 'ivy)
     (ivy-mode 1)
-    :init
-    (global-set-key (kbd "C-x b") #'ivy-switch-buffer)
+    (global-set-key (kbd "C-x b") #'ivy-switch-buffer))
+
+  (with-eval-after-load 'ivy
     (define-key ivy-minibuffer-map (kbd "<C-return>") #'ivy-immediate-done)
     (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
-    (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line)
-    :custom
-    (ivy-use-ignore-default 'always)
-    (ivy-ignore-buffers '("*elfeed-log*"
-                          "*straight-process*"
-                          "*Completions*"
-                          "*Compile-Log*"))
-    (ivy-use-virtual-buffers nil)
-    (ivy-count-format "(%d/%d) ")
-    (ivy-extra-directories nil)
-    ;; :bind
-    ;; (("C-x b" . ivy-switch-buffer)
-    ;;  :map ivy-minibuffer-map
-    ;;  ("<C-return>" . ivy-immediate-done)
-    ;;  ("RET"        . ivy-alt-done)
-    ;;  ("M-y"        . ivy-next-line)))
-  )
+    (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line))
+
+  (csetq ivy-use-ignore-default 'always)
+  (csetq ivy-ignore-buffers '("*elfeed-log*"
+                              "*straight-process*"
+                              "*Completions*"
+                              "*Compile-Log*"))
+  (csetq ivy-use-virtual-buffers nil)
+  (csetq ivy-count-format "(%d/%d) ")
+  (csetq ivy-extra-directories nil)
 #+end_src
 
-#+results:
-: t
 
 #+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'prescient)
   (add-to-list 'package-selected-packages 'ivy-prescient)
-  (use-package ivy-prescient
-    :after (ivy prescient)
-    :functions ivy-prescient-mode
-    :config
-    (ivy-prescient-mode 1))
+
+  (with-eval-after-load 'ivy
+    (when (package-installed-p 'ivy-prescient)
+      (ivy-prescient-mode 1)
+      (prescient-persist-mode 1)))
+
+  (csetq prescient-save-file (expand-file-name "prescient.el" actuator-var-directory))
+  (csetq prescient-history-length 10000)
+  (csetq prescient-aggressive-file-save t)
 #+end_src
 ** Cliplink
 
