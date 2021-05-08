@@ -1057,13 +1057,12 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Clock
 
 #+begin_src emacs-lisp
-  (use-package org-clock
-    :init
-    (org-clock-persistence-insinuate)
-    :custom
-    (org-clock-persist t)
-    (org-clock-out-remove-zero-time-clocks t)
-    (org-clock-mode-line-total 'auto))
+  (with-eval-after-load 'org
+    (org-clock-persistence-insinuate))
+
+  (csetq org-clock-persist t)
+  (csetq org-clock-out-remove-zero-time-clocks t)
+  (csetq org-clock-mode-line-total 'auto)
 #+end_src
 
 ** World Time
