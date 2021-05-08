@@ -1776,34 +1776,23 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package eshell
-    ;; :bind (:map eshell-mode-map
-    ;;             ("\C-a" . eshell-bol)
-    ;;             ("\C-r" . counsel-esh-history)
-    ;;             ([up]   . previous-line)
-    ;;             ([down] . next-line))
-    :config
-    (defalias 'eshell/f  'find-file-other-window)
-    (defalias 'eshell/ff 'find-file)
-    (defalias 'eshell/v  'view-file-other-window)
-    (defalias 'eshell/vv 'view-file)
-    :custom
-    (eshell-destroy-buffer-when-process-dies t) ;;em-term
-    (eshell-banner-message "")) ;;em-banner
+  (defalias 'eshell/f  'find-file-other-window)
+  (defalias 'eshell/ff 'find-file)
+  (defalias 'eshell/v  'view-file-other-window)
+  (defalias 'eshell/vv 'view-file)
+
+  (csetq eshell-destroy-buffer-when-process-dies t)
+  (csetq eshell-banner-message "")
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package em-hist
-    :custom
-    (eshell-history-size 10000)
-    (eshell-hist-ignoredups t))
+  (csetq eshell-history-size 10000)
+  (csetq eshell-hist-ignoredups t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package em-cmpl
-    :custom
-    (eshell-cmpl-cycle-completions nil)
-    (eshell-cmpl-ignore-case t))
+  (csetq eshell-cmpl-cycle-completions nil)
+  (csetq eshell-cmpl-ignore-case t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1815,7 +1804,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (setq eshell-where-to-jump 'begin)
   (setq eshell-review-quick-commands nil)
   (setq eshell-smart-space-goes-to-end t)
-  (add-hook 'eshell-modehook #'actuator-eshell-smart-shell)
+  (add-hook 'eshell-mode-hook #'actuator-eshell-smart-shell)
 #+end_src
 
 - [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
