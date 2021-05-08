@@ -569,23 +569,18 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package locate
-    :custom
-    (locate-command "mdfind"))
+  (when (executable-find "mdfind")
+    (csetq locate-command "mdfind"))
 #+end_src
 
-#+begin_src emacs-lisp
-  (use-package flymake
-    :disabled t
-    :hook (emacs-lisp-mode . flymake-mode))
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
 #+end_src
 
 #+results:
 
 #+begin_src emacs-lisp
-  (use-package vc-hooks
-    :custom
-    (vc-handled-backends nil))
+  (csetq vc-handled-backends nil)
 #+end_src
 
 #+begin_src emacs-lisp
