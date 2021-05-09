@@ -1641,7 +1641,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (csetq rmh-elfeed-org-ignore-tag "disconnected")
   (csetq rmh-elfeed-org-auto-ignore-invalid-feeds nil)
-  (csetq rmh-elfeed-org-files (expand-file-name "feeds.org" org-directory))
+  (csetq rmh-elfeed-org-files `(,(expand-file-name "feeds.org" org-directory)))
 #+end_src
 
 ** Eshell
