@@ -1039,8 +1039,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
     (org-clock-persistence-insinuate))
-
-  (csetq org-clock-persist t)
+  (csetq org-clock-into-drawer "CLOCK")
+  ;;(csetq org-clock-persist t)
   (csetq org-clock-out-remove-zero-time-clocks t)
   (csetq org-clock-mode-line-total 'auto)
 #+end_src
