@@ -178,10 +178,10 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 ** Savehist
 #+begin_src emacs-lisp
-  (savehist-mode)
-  (csetq history-length 1000)
+  (run-with-idle-timer 1 nil #'savehist-mode)
+  (csetq history-length 10000)
   (csetq history-delete-duplicates t)
-  (csetq message-log-max 1000)
+  (csetq message-log-max 10000)
   (csetq savehist-save-minibuffer-history t)
   (csetq savehist-additional-variables
                           '(buffer-name-history
@@ -292,23 +292,33 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Hippie Expand
 
 #+begin_src emacs-lisp
+  (csetq dabbrev-case-distinction t)
+  (csetq dabbrev-case-fold-search t)
+  (csetq dabbrev-case-replace t)
+#+end_src
+
+#+begin_src emacs-lisp
   (with-eval-after-load 'hippie-exp
-    (csetq hippie-expand-verbose t)
-    (csetq hippie-expand-try-functions-list
-           '(try-expand-all-abbrevs
-             try-expand-dabbrev-visible
-             try-expand-dabbrev
-             try-expand-dabbrev-all-buffers
-             try-expand-dabbrev-from-kill
-             try-complete-file-name-partially
-             try-complete-file-name
-             try-expand-line
-             try-complete-lisp-symbol-partially
-             try-complete-lisp-symbol
-             try-expand-list
-             try-expand-list-all-buffers
-             try-expand-whole-kill
-             try-expand-line-all-buffers)))
+    (require 'dabbrev))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq hippie-expand-verbose t)
+  (csetq hippie-expand-try-functions-list
+         '(try-expand-all-abbrevs
+           try-expand-dabbrev-visible
+           try-expand-dabbrev
+           try-expand-dabbrev-all-buffers
+           try-expand-dabbrev-from-kill
+           try-complete-file-name-partially
+           try-complete-file-name
+           try-expand-line
+           try-complete-lisp-symbol-partially
+           try-complete-lisp-symbol
+           try-expand-list
+           try-expand-list-all-buffers
+           try-expand-whole-kill
+           try-expand-line-all-buffers))
   (global-set-key (kbd "<M-SPC>") #'hippie-expand)
 #+end_src
 
@@ -442,8 +452,8 @@ From  emacs-plus:
 
   (global-set-key (kbd "M-o") #'other-window)
 
-  (delete-selection-mode t)
-  (midnight-mode 1)
+  (run-with-idle-timer 2 nil #'delete-selection-mode t)
+  (run-with-idle-timer 2 nil #'midnight-mode t)
   (setq sentence-end-double-space nil)
 
   (prefer-coding-system 'utf-8)
@@ -482,7 +492,7 @@ From  emacs-plus:
   (setq save-abbrevs 'silently)
 
   (setq enable-recursive-minibuffers t)
-  (minibuffer-depth-indicate-mode 1)
+  (run-with-idle-timer 2 nil #'minibuffer-depth-indicate-mode t)
 
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-defun  'disabled nil)
@@ -991,33 +1001,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq wdired-allow-to-change-permissions t)
 
   (csetq dired-recursive-copies 'always)
-#+end_src
-
-** Split Windows
-#+begin_src emacs-lisp
-    (defun actuator-split-window-right ()
-      "Replacement for `split-window-right'.
-    Moves the point to the newly created window and asks for the
-    buffer."
-      (interactive)
-      (split-window-right)
-      (other-window 1)
-      (when (fboundp 'ivy-switch-buffer)
-        (ivy-switch-buffer)))
-  ;;(global-set-key (kbd "C-x 3") #'actuator-split-window-right)
-#+end_src
-
-#+begin_src emacs-lisp
-    (defun actuator-split-window-below ()
-      "Replacement for `split-window-below'.
-    Moves the point to the newly created window and asks for the
-    buffer."
-      (interactive)
-      (split-window-below)
-      (other-window 1)
-      (when (fboundp 'ivy-switch-buffer)
-        (ivy-switch-buffer)))
-  ;;(global-set-key (kbd "C-x 2") #'actuator-split-window-below)
 #+end_src
 
 ** Attach

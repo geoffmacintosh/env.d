@@ -473,3 +473,36 @@ Or could just use mingus?
 :END:
 ** Wednesday May 20, 2020
 - Published
+
+* Split Windows
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-05-11 Tue 10:21
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable
+:ARCHIVE_CATEGORY: emacs
+:END:
+#+begin_src emacs-lisp
+    (defun actuator-split-window-right ()
+      "Replacement for `split-window-right'.
+    Moves the point to the newly created window and asks for the
+    buffer."
+      (interactive)
+      (split-window-right)
+      (other-window 1)
+      (when (fboundp 'ivy-switch-buffer)
+        (ivy-switch-buffer)))
+  ;;(global-set-key (kbd "C-x 3") #'actuator-split-window-right)
+#+end_src
+
+#+begin_src emacs-lisp
+    (defun actuator-split-window-below ()
+      "Replacement for `split-window-below'.
+    Moves the point to the newly created window and asks for the
+    buffer."
+      (interactive)
+      (split-window-below)
+      (other-window 1)
+      (when (fboundp 'ivy-switch-buffer)
+        (ivy-switch-buffer)))
+  ;;(global-set-key (kbd "C-x 2") #'actuator-split-window-below)
+#+end_src
