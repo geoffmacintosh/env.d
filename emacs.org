@@ -84,28 +84,18 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 #+begin_src emacs-lisp
   (require 'package)
-  ;;(package-initialize)
 
   (csetq package-archives
-        '(("org"    . "https://orgmode.org/elpa/")
-          ("melpa"  . "https://melpa.org/packages/")
-          ("gnu"    . "https://elpa.gnu.org/packages/")
-          ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+         '(("org"    . "https://orgmode.org/elpa/")
+           ("melpa"  . "https://melpa.org/packages/")
+           ("gnu"    . "https://elpa.gnu.org/packages/")
+           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
   (csetq package-archive-priorities '(("org"   . 40)
-                                     ("melpa" . 30)
-                                     ("gnu"   . 20)
-                                     ("nongnu". 10)))
+                                      ("melpa" . 30)
+                                      ("gnu"   . 20)
+                                      ("nongnu". 10)))
   (setq package-selected-packages nil)
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
-  (add-to-list 'package-selected-packages 'use-package)
-  (eval-when-compile
-    (require 'use-package nil t))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -704,6 +694,7 @@ From  emacs-plus:
   (csetq org-tags-exclude-from-inheritance '("crypt"))
   (csetq org-crypt-key nil)
   (csetq org-habit-show-habits-only-for-today t)
+  (csetq org-capture-bookmark t)
 #+end_src
 
 #+results:
