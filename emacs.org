@@ -701,8 +701,20 @@ From  emacs-plus:
   (csetq org-capture-bookmark t)
 #+end_src
 
-#+results:
+#+begin_src emacs-lisp
+  (csetq org-agenda-columns-add-appointments-to-effort-sum t)
+  (add-to-list 'org-global-properties '("Effort_ALL". "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 7:00 8:00")) ;; WHY NO WORK
+#+end_src
 
+
+
+#+begin_src emacs-lisp
+  (csetq org-agenda-todo-ignore-scheduled 'future)
+  (csetq org-agenda-todo-ignore-deadlines 'far)
+  (csetq org-agenda-todo-ignore-timestamp 'future)
+  (csetq org-agenda-todo-ignore-with-date nil)
+  (csetq org-agenda-tags-todo-honor-ignore-options t)
+#+end_src
 #+begin_src emacs-lisp
   (defun actuator-org-src-line-wrap-setup ()
         "Set truncate-lines-mode in org-source-editing buffers."
