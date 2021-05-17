@@ -106,6 +106,9 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 ** Exec path from shell
 #+begin_src emacs-lisp
+  (when (file-attributes "/usr/local/bin" t)
+    (add-to-list 'exec-path "/usr/local/bin"))
+
   (when (file-attributes "/usr/local/sbin" t)
     (add-to-list 'exec-path "/usr/local/sbin"))
 
@@ -1070,7 +1073,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
            (:maildir "/Inbox"   :key ?i)))
   (csetq mail-user-agent 'mu4e-user-agent)
   (csetq mu4e-hide-index-messages t)
-  (csetq mu4e-update-interval (* 60 15))
+  (csetq mu4e-update-interval nil)
+  (csetq mu4e-index-update-in-background nil)
+  (csetq mu4e-index-update-error-warning t)
   (csetq mu4e-refile-folder "/Archive")
   (csetq mu4e-sent-folder   "/Sent Items")
   (csetq mu4e-drafts-folder "/Drafts")
@@ -1083,8 +1088,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mu4e-compose-format-flowed t)
   (csetq mu4e-date-format "%y-%m-%d")
   (csetq mu4e-headers-date-format "%y-%m-%d")
-  (csetq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
+  ;;(csetq mu4e-get-mail-command (concat (executable-find "mbsync") " --all"))
+  (csetq mu4e-get-mail-command "mbsync --all")
   (csetq mu4e-mu-binary (executable-find "mu"))
+  ;;(csetq mu4e-mu-binary "mu")
 #+end_src
 
 ** Message

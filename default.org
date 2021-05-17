@@ -272,6 +272,7 @@ that.
   set -gx VISUAL "emacsclient -c -a \"\""
 
   test -e "/usr/local/sbin" && fish_add_path "/usr/local/sbin"
+  test -e "/usr/local/bin" && fish_add_path "/usr/local/bin"
   test -e "/Library/TeX/texbin" && fish_add_path "/Library/TeX/texbin"
   test -e "/usr/local/opt/ruby/libexec/gembin" && fish_add_path "/usr/local/opt/ruby/libexec/gembin"
   test -e "/usr/local/opt/ruby/bin" && fish_add_path "/usr/local/opt/ruby/bin"
