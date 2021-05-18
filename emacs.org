@@ -1198,7 +1198,7 @@ https://gist.github.com/spacebat/5500966
 ** Sync stuff
 #+begin_src emacs-lisp
   (setq elfeed-db-directory   "~/Sync/.sync/elfeed")
-  (setq abbrev-file-name      "~/Sync/.sync/abbrev.el")
+  (setq abbrev-file-name      (expand-file-name "etc/abbrev.el" org-directory))
   (setq bookmark-default-file "~/Sync/.sync/bookmark.el")
 #+end_src
 
@@ -1883,7 +1883,7 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Spell check
 #+begin_src emacs-lisp
   ;;(csetq ispell-program-name "aspell")
-  (csetq ispell-personal-dictionary "~/Sync/.sync/dictionary")
+  (csetq ispell-personal-dictionary (expand-file-name "etc/dictionary" org-directory))
   (csetq ispell-silently-savep t)
   (defun actuator-org-reveal-around-ispell ()
     "Reveals the area around the point in org-mode files."
