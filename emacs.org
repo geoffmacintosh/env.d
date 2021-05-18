@@ -253,6 +253,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (defun actuator-start-server-if-not-running ()
     (require 'server)
+    (declare-function server-running-p "server")
     (unless (server-running-p) (server-start)))
   (run-with-idle-timer 2 nil #'actuator-start-server-if-not-running)
 #+end_src
@@ -351,6 +352,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
+    (defvar org-capture-templates)
     (add-to-list 'org-capture-templates
                  `("l" "Todo (with link)" entry
                    (file "inbox.org")
@@ -359,6 +361,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
+    (defvar org-capture-templates)
     (add-to-list 'org-capture-templates
                  `("t" "Todo (no link)" entry
                    (file "inbox.org")
@@ -367,6 +370,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
+    (defvar org-capture-templates)
     (defun actuator-date-stamp ()
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
     (add-to-list 'org-capture-templates
@@ -377,6 +381,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
+    (defvar org-capture-templates)
     (add-to-list 'org-capture-templates
                  '("C" "Contact" entry (file "contacts.org")
                    "* %^{Name}
@@ -741,6 +746,7 @@ From  emacs-plus:
     ;;(add-to-list 'org-default-properties "header-args")
     (org-crypt-use-before-save-magic)
     (add-to-list 'org-modules 'org-crypt)
+    (declare-function org-indent-mode "org-indent")
     (org-indent-mode 1)
     ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
     (org-babel-do-load-languages 'org-babel-load-languages
@@ -769,6 +775,8 @@ From  emacs-plus:
 
   (defun actuator-update-all-dynamic-blocks ()
     "Hi"
+    (require 'org)
+    (declare-function org-dblock-update "org")
     (org-dblock-update 1))
 
   (defun actuator-org-mode-subhook ()
@@ -783,6 +791,7 @@ From  emacs-plus:
 
   (global-set-key (kbd "C-c c") #'org-capture)
   (global-set-key (kbd "C-c a") #'org-agenda)
+  (declare-function org-store-link "ol")
   (global-set-key (kbd "C-c l") #'org-store-link)
 
   (csetq org-startup-folded 'content)
@@ -951,8 +960,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (defun actuator-ibuffer-setup ()
     "Setup ibuffer defaults."
     (require 'ibuf-ext)
-    (declare-function 'ibuffer-switch-to-saved-filter-groups "ibuf-ext")
-    (declare-function 'ibuffer-auto-mode "ibuf-ext")
+    (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext")
+    (declare-function ibuffer-auto-mode "ibuf-ext")
     (ibuffer-switch-to-saved-filter-groups "default")
     (ibuffer-auto-mode 1)
     (toggle-truncate-lines +1))
@@ -1061,6 +1070,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (jump-to-register :ediff))
 
   (defun ediff-org-reveal-around-difference (&rest _)
+    (defvar ediff-buffer-A)
+    (defvar ediff-buffer-B)
+    (defvar ediff-buffer-C)
+    (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body))
+
     (require 'ediff)
     (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
       (ediff-with-current-buffer buf
@@ -1392,7 +1406,8 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-cliplink)
   (global-set-key (kbd "C-x p i") #'org-cliplink)
-    (with-eval-after-load 'org-capture
+  (with-eval-after-load 'org-capture
+    (defvar org-capture-templates)
       (add-to-list 'org-capture-templates
                    '("b" "Bookmark" entry
                      (file "bookmarks.org")
@@ -1498,6 +1513,7 @@ https://gist.github.com/spacebat/5500966
   (csetq elfeed-search-filter "@1-week-ago +unread ")
   (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
+    (defvar elfeed-search-mode-map)
     (define-key elfeed-search-mode-map (kbd "q") #'actuator-elfeed-save-db-and-bury)
     (define-key elfeed-search-mode-map (kbd "R") #'actuator-elfeed-mark-all-as-read))
 #+end_src
@@ -1506,6 +1522,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'elfeed
+    (declare-function elfeed-make-tagger "elfeed")
     (add-hook 'elfeed-new-entry-hook
               (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
                                   :add '(junk debug1)
@@ -1562,15 +1579,17 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 
 #+begin_src emacs-lisp
   (defun actuator-elfeed-load-db-and-open ()
-        "Wrapper to load the elfeed database from disk before
-        opening. Taken from Pragmatic Emacs."
-        (interactive)
-        (window-configuration-to-register :elfeed-fullscreen)
-        (delete-other-windows)
-        (elfeed)
-        (elfeed-db-load)
-        (elfeed-search-update 1)
-        (elfeed-update))
+    "Wrapper to load the elfeed database from disk before
+  opening. Taken from Pragmatic Emacs."
+    (interactive)
+    (declare-function elfeed-db-load "elfeed-db")
+    (declare-function elfeed-search-update "elfeed-search")
+    (window-configuration-to-register :elfeed-fullscreen)
+    (delete-other-windows)
+    (elfeed)
+    (elfeed-db-load)
+    (elfeed-search-update 1)
+    (elfeed-update))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1578,6 +1597,10 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
     "Wrapper to save the Elfeed database to disk before burying
     buffer. Taken from Pragmatic Emacs."
     (interactive)
+    (declare-function elfeed-db-save "elfeed-db")
+    (declare-function elfeed-db-gc "elfeed-db")
+    (declare-function elfeed-db-compact "elfeed-db")
+    (declare-function elfeed-db-unload "elfeed-db")
     (elfeed-db-save)
     (elfeed-db-gc)
     (elfeed-db-compact)
@@ -1589,22 +1612,24 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 
 #+begin_src emacs-lisp
   (defun actuator-elfeed-mark-all-as-read ()
-      "Mark all feeds in search as read. Taken from Mike Zamansky"
-      (interactive)
-      (with-no-warnings (mark-whole-buffer))
-      (elfeed-search-untag-all-unread))
+    "Mark all feeds in search as read. Taken from Mike Zamansky"
+    (interactive)
+    (declare-function elfeed-search-untag-all-unread "elfeed-search")
+    (with-no-warnings (mark-whole-buffer))
+    (elfeed-search-untag-all-unread))
 #+end_src
 
 Changing the colours of an entry is neat, but not that useful. I mostly have this set up in order to learn how to do it, and as a vague novelty.
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'elfeed
-  (add-to-list 'elfeed-search-face-alist
-               '(video actuator-elfeed-video-face))
-  (add-to-list 'elfeed-search-face-alist
-               '(image actuator-elfeed-image-face))
-  (add-to-list 'elfeed-search-face-alist
-               '(comic actuator-elfeed-comic-face)))
+    (defvar elfeed-search-face-alist)
+    (add-to-list 'elfeed-search-face-alist
+                 '(video actuator-elfeed-video-face))
+    (add-to-list 'elfeed-search-face-alist
+                 '(image actuator-elfeed-image-face))
+    (add-to-list 'elfeed-search-face-alist
+                 '(comic actuator-elfeed-comic-face)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1691,7 +1716,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     ;;(add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-eshell-autocomplete ()
     "Enable tab autocompletion in eshell."
     (define-key eshell-mode-map (kbd "<tab>") #'actuator-eshell-autocomplete))
@@ -1737,18 +1762,17 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'eshell
     (defun actuator-eshell-prompt ()
       (require 'eshell)
       (require 'em-dirs)
-      (declare-function 'eshell/pwd "em-dirs")
+      (declare-function eshell/pwd "em-dirs")
       (concat
        ;;(user-login-name)
        ;;"@"
        ;;(system-name)
        ;;":"
        (eshell/pwd)
-       " ❯ ")))
+       " ❯ "))
     (csetq eshell-prompt-regexp "^.+@.+:.+❯ ")
     (csetq eshell-prompt-function #'actuator-eshell-prompt)
 #+end_src
@@ -1891,6 +1915,8 @@ https://gitea.petton.fr/mpdel/mpdel
   (defun actuator-org-reveal-around-ispell ()
     "Reveals the area around the point in org-mode files."
     (when (derived-mode-p 'org-mode)
+      (require 'org)
+      (declare-function org-reveal "org")
       (org-reveal t)))
   (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around-ispell)
 #+end_src
