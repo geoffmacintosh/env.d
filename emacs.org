@@ -132,7 +132,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 ** Custom-set Variables
 
 #+begin_src emacs-lisp
-  (csetq custom-file (expand-file-name "custom.el" actuator-var-directory))
+  (csetq custom-file (expand-file-name "custom.el" "~/env.d"))
   (defun actuator-load-custom-file ()
     "The most basic of functions to load the custom file."
     (load custom-file 'noerror))
