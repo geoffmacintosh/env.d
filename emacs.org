@@ -240,12 +240,11 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Autorevert
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
-  ;;(csetq global-auto-revert-non-file-buffers nil)
-  ;;(csetq auto-revert-verbose nil)
-  ;;(csetq auto-revert-avoid-polling nil)
-  ;;(csetq buffer-auto-revert-by-notification t)
+  (csetq auto-revert-verbose t)
+  (csetq auto-revert-avoid-polling t)
+  (csetq buffer-auto-revert-by-notification t)
   (csetq auto-revert-interval 15)
-  ;;(csetq revert-without-query t)
+  (csetq revert-without-query nil)
   (csetq auto-revert-check-vc-info nil)
 #+end_src
 
@@ -584,8 +583,8 @@ From  emacs-plus:
 
 #+results:
 
-#+begin_src emacs-lisp
-  (csetq vc-handled-backends nil)
+#+begin_src emacs-lisp :tangle no
+  (csetq vcq-handled-backends nil)
 #+end_src
 
 #+begin_src emacs-lisp
