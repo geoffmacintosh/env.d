@@ -829,11 +829,24 @@ From  emacs-plus:
   ;;                               (plain-list-item . auto)))
   (csetq org-use-property-inheritance t)
   (csetq org-modules nil)
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq org-tag-persistent-alist '(("noexport")
                                     ("ignore")
-                                    ("unpublished")
-                                    ("blog")
-                                    ("tbd")))
+                                    (:startgrouptag . nil)
+                                    ("@"      . nil)
+                                    (:grouptags     . nil)
+                                    ("@email"       . ?m)
+                                    ("@phone"       . ?p)
+                                    ("@computer"    . ?c)
+                                    ("@errand"      . ?e)
+                                    ("@download"    . ?d)
+                                    ("@exercise"    . ?x)
+                                    ("@home"        . ?h)
+                                    ("@research"    . ?r)
+                                    (:endgroup      . nil)
+                                    (:endgrouptag   . nil)))
 #+end_src
 
 #+begin_src emacs-lisp
