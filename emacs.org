@@ -622,13 +622,7 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
-  (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
-#+end_src
-
-
-
-#+begin_src emacs-lisp :tangle no
-  (csetq vcq-handled-backends nil)
+  (csetq vc-handled-backends nil)
 #+end_src
 
 #+begin_src emacs-lisp
