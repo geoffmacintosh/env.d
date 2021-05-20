@@ -2147,3 +2147,43 @@ https://gitea.petton.fr/mpdel/mpdel
 #+begin_src emacs-lisp
   (csetq proced-auto-update-flag t)
 #+end_src
+
+** Winner
+#+begin_src emacs-lisp
+  (run-with-idle-timer 2 nil #'winner-mode)
+#+end_src
+
+** Flymake
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq flymake-suppress-zero-counters t)
+  (csetq flymake-no-changes-timeout nil)
+  (csetq flymake-start-on-save-buffer t)
+  (with-eval-after-load 'flymake
+    (defvar flymake-mode-map)
+    (declare-function flymake-start "flymake")
+    (declare-function flymake-show-diagnostics-buffer "flymake")
+    (declare-function flymake-goto-next-error "flymake")
+    (declare-function flymake-goto-prev-error "flymake")
+    (define-key flymake-mode-map (kbd "C-c ! s") #'flymake-start)
+    (define-key flymake-mode-map (kbd "C-c ! d") #'flymake-show-diagnostics-buffer)
+    (define-key flymake-mode-map (kbd "C-c ! n") #'flymake-goto-next-error)
+    (define-key flymake-mode-map (kbd "C-c ! p") #'flymake-goto-prev-error))
+#+end_src
+
+** Display buffer
+#+begin_src emacs-lisp
+  (csetq display-buffer-alist
+         '(("\\*\\(Org Lint\\|Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Completions\\)\\*"
+            (display-buffer-in-side-window)
+            (side . bottom)
+            (window-parameters . ((mode-line-format . none)))
+            (window-height . 0.2))
+           ("\\*Calendar.*"
+            (display-buffer-in-side-window)
+            (side . bottom)
+            (window-height . shrink-window-if-larger-than-buffer))))
+#+end_src
