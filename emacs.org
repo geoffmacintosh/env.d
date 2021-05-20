@@ -1421,6 +1421,7 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (csetq auth-sources '(password-store))
+  (csetq password-cache-expiry 600)
 #+end_src
 
 ** Fish Mode
