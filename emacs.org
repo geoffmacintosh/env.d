@@ -1380,7 +1380,6 @@ https://gist.github.com/spacebat/5500966
   (csetq auth-sources '(password-store))
 #+end_src
 
-
 ** Fish Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'fish-mode)
@@ -2092,4 +2091,15 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Long lines mode
 #+begin_src emacs-lisp
   (run-with-idle-timer 2 nil #'global-so-long-mode 1)
+#+end_src
+
+** Package
+#+begin_src emacs-lisp
+  (csetq package-name-column-width 40)
+  (add-hook 'package-menu-mode-hook #'hl-line-mode)
+#+end_src
+
+** Proced
+#+begin_src emacs-lisp
+  (csetq proced-auto-update-flag t)
 #+end_src
