@@ -750,14 +750,30 @@ From  emacs-plus:
   (csetq org-crypt-key nil)
   (csetq org-habit-show-habits-only-for-today t)
   (csetq org-capture-bookmark t)
+  (csetq org-hide-macro-markers t)
+  (csetq org-reverse-note-order t)
+  (csetq org-agenda-insert-diary-extract-time t)
+  (csetq org-agenda-start-with-follow-mode t)
+  (csetq org-agenda-follow-indirect t)
+  (csetq org-agenda-skip-scheduled-if-done t)
+  (csetq org-agenda-skip-deadline-if-done t)
+  (csetq org-agenda-skip-additional-timestamps-same-entry t)
+  (csetq org-agenda-skip-timestamp-if-done nil)
+  (csetq org-agenda-time-leading-zero t)
+  (csetq org-agenda-current-time-string
+                  "Now - - - - - - -")
+  (csetq org-agenda-time-grid
+        '((daily today require-timed)
+          (0600 0700 0800 0900 1000 1100
+                1200 1300 1400 1500 1600
+                1700 1800 1900 2000 2100)
+          " ....." "-----------------"))
 #+end_src
 
 #+begin_src emacs-lisp
   (csetq org-agenda-columns-add-appointments-to-effort-sum t)
   ;;(add-to-list 'org-global-properties '("Effort_ALL". "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 7:00 8:00")) ;; WHY NO WORK
 #+end_src
-
-
 
 #+begin_src emacs-lisp
   (csetq org-agenda-todo-ignore-scheduled 'future)
@@ -832,8 +848,8 @@ From  emacs-plus:
     (electric-indent-local-mode -1)
     (visual-line-mode)
     (add-hook 'before-save-hook
-                        'actuator-update-all-dynamic-blocks nil
-                        'make-it-local))
+              'actuator-update-all-dynamic-blocks nil
+              'make-it-local))
 
   (add-hook 'org-mode-hook #'actuator-org-mode-setup)
 
@@ -853,8 +869,9 @@ From  emacs-plus:
   (csetq org-hide-emphasis-markers t)
   (csetq org-image-actual-width 300)
   (csetq org-fontify-done-headline t)
-  (csetq org-structure-template-alist '(("e" . "src emacs-lisp")
-                                  ("s" . "src shell")))
+  (csetq org-structure-template-alist
+         '(("e" . "src emacs-lisp")
+           ("s" . "src shell")))
   (csetq org-log-done 'time)
   (csetq org-log-into-drawer t)
   (csetq org-log-reschedule 'time)
