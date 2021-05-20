@@ -39,13 +39,24 @@
     "Enlarged `gc-cons-percentage'.")
 
   (defun actuator-restore-gc ()
-    "Restore `gc-cons-threshold' and `gc-cons-percentage' value."
+    "Restore `gc-cons-threshold' and `gc-cons-percentage' value.
+
+  This should be used shortly after enlarging the garbage
+  collection values and ideally before doing any typing. It might
+  cause Emacs to pause for a noticable amount of time, but I
+  haven't noticed that so far."
+
     (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
     (setq gc-cons-percentage actuator-original-gc-cons-percentage)
     (garbage-collect))
 
   (defun actuator-engorge-gc ()
-    "Set `gc-cons-threshold' and `gc-cons-percentage' to huge numbers."
+    "Set `gc-cons-threshold' and `gc-cons-percentage' to huge numbers.
+
+  This should be used in situations where garbage collection
+  happens a lot, such as during Emacs' init or when using the
+  minibuffer completion on really big lists."
+
     (setq gc-cons-threshold actuator-engorged-gc-cons-threshold)
     (setq gc-cons-percentage actuator-engorged-gc-cons-percentage))
 
@@ -135,6 +146,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (csetq custom-file (expand-file-name "custom.el" "~/env.d"))
   (defun actuator-load-custom-file ()
     "The most basic of functions to load the custom file."
+
     (load custom-file 'noerror))
   (add-hook 'after-init-hook #'actuator-load-custom-file)
 #+end_src
@@ -152,7 +164,8 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 ** Just one space
 #+begin_src emacs-lisp
   (defun actuator-just-one-space ()
-    "Insert just one space, killing ALL whitespace."
+    "Insert just one space, killing all other whitespace."
+
     (interactive)
     (just-one-space -1))
 
@@ -162,7 +175,13 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 ** Unfill paragraph
 #+begin_src emacs-lisp
   (defun actuator-unfill-paragraph ()
-    "Unfills a paragraph."
+    "Does the opposite of filling a paragraph.
+
+  This technically causes it to wrap only at a really huge number.
+  It should be safe in most instances, but Emacs does have some
+  issues with really long lines, so if you run this on a really,
+  really huge paragraph, you might be sorry."
+
     (interactive)
     (let ((fill-column most-positive-fixnum))
       (fill-paragraph)))
@@ -223,7 +242,16 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 2. Unpropertize kill ring on quit
 #+begin_src emacs-lisp
   (defun actuator-unpropertize-kill-ring ()
-    "It do thing."
+    "Removes properties from items in the kill ring.
+
+  Text stored in the kill ring is kept propertized---that is, faces
+  that apply to it should be correctly applied on yank. That can
+  vastly increase the size of the kill ring, causing it to go from
+  no big deal to a rather substantial issue if you try to persist
+  the kill ring. This removes properties, which makes the kill ring
+  lossy in a fashion, but means that saving huge numbers of kill
+  ring items to disk should no longer cause weird issues."
+
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
   (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
@@ -252,6 +280,13 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (defun actuator-start-server-if-not-running ()
+    "If Emacs' server is not running, start it.
+
+  This allows Emacs client to function. This does not check to see
+  if the current Emacs instance is running the server, only that at
+  least one server is running. I don't care about running multiple
+  servers, so that's fine."
+
     (require 'server)
     (declare-function server-running-p "server")
     (unless (server-running-p) (server-start)))
@@ -277,11 +312,13 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 ** Minibuffer Resize
 #+begin_src emacs-lisp
-  (defun actuator-minibuffer-setup ()
-         (set (make-local-variable 'face-remapping-alist)
-            '((org-document-title :height 1.0))))
+  (defun actuator-minibuffer-normalize-face-height ()
+    "Resets faces in the minibuffer to be the default height."
 
-  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-setup)
+    (set (make-local-variable 'face-remapping-alist)
+         '((org-document-title :height 1.0))))
+
+  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-normalize-face-height)
 #+end_src
 ** Hippie Expand
 
@@ -488,9 +525,7 @@ From  emacs-plus:
   (setq find-file-visit-truename nil) ; Don't resolve symlinks
   (setq confirm-kill-emacs 'y-or-n-p)
 
-  ;;(abbrev-mode)
   (run-with-idle-timer 1 nil #'abbrev-mode 1)
-  ;;(setq-default abbrev-mode t)
   (setq save-abbrevs 'silently)
 
   (setq enable-recursive-minibuffers t)
@@ -504,8 +539,10 @@ From  emacs-plus:
 
   (defun display-startup-echo-area-message ()
     "Remove the GNU info from the minibuffer on startup.
+
   All you have to do is create a function with this name.  It's
   called automatically."
+
     (message ""))
 
   (setq default-frame-alist
@@ -526,7 +563,9 @@ From  emacs-plus:
 
   (defun actuator-frame-init (&optional _frame)
     "Initialize per-frame variables.
+
   These variables need to be set every time a frame is created."
+
     (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
     (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
     (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
@@ -604,7 +643,8 @@ From  emacs-plus:
   (add-hook 'emacs-startup-hook #'actuator-startup-profile)
 
   (defun actuator-startup-profile ()
-    "Displays startup time garbage collections in the modeline."
+    "Display the startup time and garbage collections in the minibuffer."
+
     (message "Emacs ready in %s with %d garbage collections."
              (format "%.2f seconds"
                      (float-time
@@ -637,8 +677,11 @@ From  emacs-plus:
 ** Delete by Moving to Trash
 #+begin_src emacs-lisp
   (defun system-move-file-to-trash (file)
-    "Move FILE to trash via the `trash` command-line tool."
-    (call-process "trash" nil nil nil file))
+    "Move FILE to trash via the `trash' command-line tool."
+
+    (if (executable-find "trash")
+        (call-process "trash" nil nil nil file)
+    (error "Executable `trash' could not be found in PATH.")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -649,7 +692,7 @@ From  emacs-plus:
 ** Copy sentence
 #+begin_src emacs-lisp
   (defun actuator-copy-sentence ()
-    "Save the entire sentence to the clipboard/kill ring."
+    "Save the entire sentence to the kill ring."
     (interactive)
     (save-excursion
       (backward-sentence)
@@ -764,30 +807,35 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-plus-contrib)
   (csetq org-babel-default-header-args '((:mkdirp   . "yes")
-                                        (:comments . "link")
-                                        (:session  . "none")
-                                        (:results  . "replace")
-                                        (:exports  . "code")
-                                        (:cache    . "no")
-                                        (:noweb    . "no")
-                                        (:hlines   . "no")
-                                        (:tangle   . "no")))
+                                         (:comments . "link")
+                                         (:session  . "none")
+                                         (:results  . "replace")
+                                         (:exports  . "code")
+                                         (:cache    . "no")
+                                         (:noweb    . "no")
+                                         (:hlines   . "no")
+                                         (:tangle   . "no")))
 
   (defun actuator-update-all-dynamic-blocks ()
-    "Hi"
+    "Update all dynamic blocks in an Org-mode document.
+
+  Should only be called when in Org-mode, but also it shouldn't
+  cause an error if not."
+
     (require 'org)
     (declare-function org-dblock-update "org")
     (org-dblock-update 1))
 
-  (defun actuator-org-mode-subhook ()
-    "Thing"
+  (defun actuator-org-mode-setup ()
+    "Sets basic defaults in Org-mode that aren't variables."
+
     (electric-indent-local-mode -1)
     (visual-line-mode)
     (add-hook 'before-save-hook
                         'actuator-update-all-dynamic-blocks nil
                         'make-it-local))
 
-  (add-hook 'org-mode-hook #'actuator-org-mode-subhook)
+  (add-hook 'org-mode-hook #'actuator-org-mode-setup)
 
   (global-set-key (kbd "C-c c") #'org-capture)
   (global-set-key (kbd "C-c a") #'org-agenda)
@@ -803,7 +851,6 @@ From  emacs-plus:
   (csetq org-hide-leading-stars t)
   (csetq org-pretty-entities-include-sub-superscripts t)
   (csetq org-hide-emphasis-markers t)
-  ;;
   (csetq org-image-actual-width 300)
   (csetq org-fontify-done-headline t)
   (csetq org-structure-template-alist '(("e" . "src emacs-lisp")
@@ -852,8 +899,10 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (defun actuator-org-capture-turn-off-header-line ()
     "Disable the header-line in a local mode.
+
   This is used to disable the help line in `org-capture' buffers as
   there's no variable that will do it."
+
     (setq-local header-line-format nil))
   (add-hook 'org-capture-mode-hook #'actuator-org-capture-turn-off-header-line)
 #+end_src
@@ -922,7 +971,7 @@ I want video links to be opened in MPV. This helps my battery life as well as my
 
 #+begin_src emacs-lisp
     (defun actuator-browse-video (url &rest _args)
-      "Browse a URL with a dedicated video player.
+      "Browse URL with a dedicated video player.
   Avoids opening a browser window."
       (start-process "mpv" nil "mpv" url))
 #+end_src
@@ -971,7 +1020,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (defun actuator-ibuffer-setup ()
-    "Setup ibuffer defaults."
+    "Set up ibuffer defaults that require running functions.
+
+  This should be run as in a hook that is called when ibuffer-mode is run."
+
     (require 'ibuf-ext)
     (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext")
     (declare-function ibuffer-auto-mode "ibuf-ext")
@@ -1073,34 +1125,79 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (csetq ediff-window-setup-function 'ediff-setup-windows-plain)
   (csetq ediff-split-window-function 'split-window-horizontally)
+  (csetq ediff-diff-options "-w") ;;-w ignores whitespace changes
+  (csetq ediff-forward-word-function 'forward-char) ;;testing
+  (csetq ediff-highlight-all-diffs t)
+  (csetq ediff-keep-variants nil)
 
-  (defun actuator-ediff-startup ()
-    "Prep Ediff for success."
+  (defun actuator-ediff-save-window-configuration ()
+    "Save current window layout so ediff can control the frame."
+
     (window-configuration-to-register :ediff))
 
-  (defun actuator-ediff-quit ()
-    "Restore files after diffing."
+  (defun actuator-ediff-restore-window-configuration ()
+    "Restore the window layout after diffing."
+
     (jump-to-register :ediff))
 
-  (defun ediff-org-reveal-around-difference (&rest _)
+  (defun actuator-ediff-org-reveal-around-difference (&rest _)
+    "Ensure that the relevant Org-mode diff is visible."
+
     (defvar ediff-buffer-A)
     (defvar ediff-buffer-B)
     (defvar ediff-buffer-C)
     (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body))
-
     (require 'ediff)
+
     (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
       (ediff-with-current-buffer buf
                                  (when (derived-mode-p 'org-mode)
                                    (org-reveal t)))))
 
-  (advice-add 'ediff-next-difference :after
-              #'ediff-org-reveal-around-difference)
-  (advice-add 'ediff-previous-difference :after
-              #'ediff-org-reveal-around-difference)
+  ;; (defun actuator-ediff-copy-both-to-C ()
+  ;;   "Copy both the A and B diffs to the output C."
 
-  (add-hook 'ediff-startup-hook #'actuator-ediff-startup)
-  (add-hook 'ediff-quit-hook #'actuator-ediff-quit)
+  ;;   (interactive)
+  ;;   (defvar ediff-current-difference)
+  ;;   (defvar ediff-control-buffer)
+  ;;   (require 'ediff-util)
+  ;;   (declare-function ediff-copy-diff "ediff-util")
+  ;;   (declare-function ediff-get-region-contents "ediff-util")
+
+  ;;   (ediff-copy-diff ediff-current-difference nil 'C nil
+  ;;                    (concat
+  ;;                     (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+  ;;                     (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+
+  ;; (defun actuator-add-d-to-ediff-mode-map ()
+  ;;   "Mode map to work with ediff-copy-both-to-C"
+
+  ;;   (defun ediff-mode-map)
+  ;;   (define-key ediff-mode-map "d" 'actuator-ediff-copy-both-to-C))
+  ;; (add-hook 'ediff-keymap-setup-hook 'actuator-add-d-to-ediff-mode-map)
+
+  ;; (advice-add 'ediff-next-difference :after
+  ;;             #'actuator-ediff-org-reveal-around-difference)
+  ;; (advice-add 'ediff-previous-difference :after
+  ;;             #'actuator-ediff-org-reveal-around-difference)
+
+  (add-hook 'ediff-startup-hook #'actuator-ediff-save-window-configuration)
+  ;;(add-hook 'ediff-startup-hook #'actuator-ediff-org-reveal-around-difference)
+  (add-hook 'ediff-quit-hook #'actuator-ediff-restore-window-configuration)
+
+  (defun actuator-org-mode-show-all ()
+    "Show the entire buffer when in an org buffer.
+
+  Sometimes it's better to show the entire buffer, for example when
+  trying to run ediff on an org-mode file. That way context for the diff is shown."
+    (declare-function outline-show-all "outline")
+    (when (derived-mode-p 'org-mode)
+      (require 'outline)
+      (outline-show-all)))
+
+  (add-hook 'ediff-prepare-buffer-hook #'actuator-org-mode-show-all)
+
+
 #+end_src
 
 [[https://www.reddit.com/r/emacs/comments/dxzi96/have_some_code_make_ediffing_folded_org_files/][Have some code: make ediffing folded org files better : emacs]]
@@ -1159,7 +1256,13 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (defun actuator-byte-recompile-init ()
-    "Recompiles the inits. I dunno why I want to."
+    "Byte compiles the init files.
+
+  Will recompile if the files if they are already compiled, create
+  new compilations if they aren't, and native compile if that's an
+  option. Does not work well with early-init.el, but that's not a
+  file that should benefit from byte compilation that much anyway."
+
     (interactive)
     (let ((init   (expand-file-name "init.el"       user-emacs-directory)))
       (if (fboundp 'native-compile)
@@ -1191,7 +1294,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** ERC
 #+begin_src emacs-lisp
   (defun actuator-twitch-start-irc ()
-    "Connect to Twitch IRC."
+    "Connect to Twitch IRC channel.
+
+  I really want to use irc for something for some reason."
+
     (interactive)
     (erc-tls :server "irc.chat.twitch.tv"
              :port 6697
@@ -1203,20 +1309,33 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
-  (defvar actuator-doc-view-bookmark-push-p t
-    "Whether to push automatic doc-view bookmarks, or clobber them.")
+  (defvar actuator-doc-view-bookmark-push nil
+    "Overwrite or add a new bookmark for doc-view files.
+
+  When set to nil, the bookmark entry will be overwritten, so that
+  only one bookmark per buffer will be written. Set to non-nil to
+  push a new bookmark each time the buffer is killed. Only the
+  latest bookmark will be used automatically to jump to the
+  location. I guess you could use this to keep a record of how much
+  you read each time, but honestly that seems absurd to me.")
+
   (defun actuator-doc-view-open-handler ()
-    "Stuff."
+    "Jump to bookmark location if available when opening a document."
+
     (require 'bookmark)
     (bookmark-maybe-load-default-file)
     (bookmark-jump (buffer-name)))
 
   (defun actuator-doc-view-save-handler ()
-    "Stuff"
+    "Create a bookmark when killing a doc-view buffer.
+
+  See the variable `actuator-doc-view-bookmark-push' to customize
+  the behaviour of this function."
+
     (when (eq major-mode 'doc-view-mode)
       (require 'bookmark)
       (bookmark-maybe-load-default-file)
-      (bookmark-set (buffer-name) actuator-doc-view-bookmark-push-p)))
+      (bookmark-set (buffer-name) actuator-doc-view-bookmark-push)))
 
   (add-hook 'doc-view-mode-hook #'actuator-doc-view-open-handler)
   (add-hook 'kill-buffer-hook #'actuator-doc-view-save-handler)
@@ -1289,6 +1408,8 @@ https://gist.github.com/spacebat/5500966
   (csetq nov-save-place-file (expand-file-name "nov-save-place.el" actuator-var-directory))
   (csetq nov-text-width 75)
   (defun actuator-novel-setup ()
+    "Set up some defaults for nov.el that make it nicer to read in."
+
     (face-remap-add-relative 'variable-pitch :family "Georgia"
                              :height 1.3)
     (setq-local line-spacing 1.2))
@@ -1476,12 +1597,13 @@ https://gist.github.com/spacebat/5500966
 
 
 #+begin_src emacs-lisp
-(defun magit-quit-session ()
-      "Restores the previous window configuration and kills the magit buffer"
-      (interactive)
-      (kill-buffer)
-      (auto-revert-mode -1)
-      (jump-to-register :magit-fullscreen))
+  (defun magit-quit-session ()
+    "Restores the previous window configuration and kills the magit buffer"
+
+    (interactive)
+    (kill-buffer)
+    (auto-revert-mode -1)
+    (jump-to-register :magit-fullscreen))
 #+end_src
 
 ** Org download
@@ -1594,6 +1716,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
   (defun actuator-elfeed-load-db-and-open ()
     "Wrapper to load the elfeed database from disk before
   opening. Taken from Pragmatic Emacs."
+
     (interactive)
     (declare-function elfeed-db-load "elfeed-db")
     (declare-function elfeed-search-update "elfeed-search")
@@ -1609,6 +1732,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
   (defun actuator-elfeed-save-db-and-bury ()
     "Wrapper to save the Elfeed database to disk before burying
     buffer. Taken from Pragmatic Emacs."
+
     (interactive)
     (declare-function elfeed-db-save "elfeed-db")
     (declare-function elfeed-db-gc "elfeed-db")
@@ -1626,6 +1750,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 #+begin_src emacs-lisp
   (defun actuator-elfeed-mark-all-as-read ()
     "Mark all feeds in search as read. Taken from Mike Zamansky"
+
     (interactive)
     (declare-function elfeed-search-untag-all-unread "elfeed-search")
     (with-no-warnings (mark-whole-buffer))
@@ -1636,7 +1761,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'elfeed
-    (defvar elfeed-search-face-alist)
+    (defvar elfeed-search-face-alist nil
+      "Variable for the custom faces used in Elfeed's search list.")
     (add-to-list 'elfeed-search-face-alist
                  '(video actuator-elfeed-video-face))
     (add-to-list 'elfeed-search-face-alist
@@ -1709,7 +1835,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (defun actuator-eshell-smart-shell ()
-    "Set up Plan9/Smart shell stuff."
+    "Set up Plan9/Smart shell in eshell."
+
     (require 'em-smart)
     (declare-function eshell-smart-initialize "em-smart")
     (eshell-smart-initialize))
@@ -1721,9 +1848,10 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 - [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
     (defun actuator-eshell-imenu ()
       "Set up eshell-imenu integration"
+
       (setq-local imenu-generic-expression
                   '(("Prompt" "^.*?[#❯]" 1))))
     ;;(add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
@@ -1732,8 +1860,10 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp :tangle no
   (defun actuator-eshell-autocomplete ()
     "Enable tab autocompletion in eshell."
+
     (define-key eshell-mode-map (kbd "<tab>") #'actuator-eshell-autocomplete))
   (defun actuator-pcomplete-std-complete ()
+
     (interactive)
     (pcomplete-std-complete))
   ;;(add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
@@ -1755,7 +1885,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (require 'pcmpl-homebrew nil t)))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'fish-completion)
 
   (csetq fish-completion-fallback-on-bash-p t)
@@ -1769,13 +1899,17 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   ;;(add-hook 'eshell-mode-hook #'actuator-set-up-eshell-fish-completion)
 #+end_src
 
-#+begin_src emacs-lisp
-  ;;(add-hook 'eshell-expand-input-functions
-  ;;           #'eshell-expand-history-references)
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'eshell-expand-input-functions
+            #'eshell-expand-history-references)
 #+end_src
 
 #+begin_src emacs-lisp
     (defun actuator-eshell-prompt ()
+      "Custom prompt for eshell.
+
+Designed to be as minimalist as possible, while being moderately useful."
+
       (require 'eshell)
       (require 'em-dirs)
       (declare-function eshell/pwd "em-dirs")
@@ -1790,9 +1924,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (csetq eshell-prompt-function #'actuator-eshell-prompt)
 #+end_src
 
-#+results:
-: actuator-eshell-prompt
-
 ** Mu4e Alert
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'mu4e-alert)
@@ -1801,10 +1932,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     "Set up mu4e alerts if both mu4e and mu4e-alert are installed.
 
   If run with an idle timer such as:
-
   (run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)
-
   it will not hurt the startup time."
+
     (require 'mu4e-alert nil t)
     (require 'mu4e nil t)
     (when (and (featurep 'mu4e-alert) (featurep 'mu4e))
@@ -1927,6 +2057,7 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq ispell-silently-savep t)
   (defun actuator-org-reveal-around-ispell ()
     "Reveals the area around the point in org-mode files."
+
     (when (derived-mode-p 'org-mode)
       (require 'org)
       (declare-function org-reveal "org")
