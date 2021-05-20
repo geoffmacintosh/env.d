@@ -1076,6 +1076,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (with-eval-after-load 'dired
     (require 'dired-x)
+    (require 'dired-aux)
     (require 'wdired))
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 #+end_src
@@ -1090,10 +1091,22 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq image-dired-thumb-size 100)
-  (setq image-dired-thumb-width 300)
-  (setq image-dired-thumb-height 300)
-  (setq image-dired-thumb-margin 5)
+  (csetq image-dired-thumb-size 100)
+  (csetq image-dired-thumb-width 300)
+  (csetq image-dired-thumb-height 300)
+  (csetq image-dired-thumb-margin 5)
+  (csetq image-dired-thumb-relief 0)
+  (csetq image-dired-thumbs-per-row 4)
+  (with-eval-after-load 'image-dired
+    (defvar image-dired-thumbnail-mode-map)
+    (declare-function image-dired-thumbnail-display-external "image-dired")
+    (define-key image-dired-thumbnail-mode-map
+      (kbd "<return>") #'image-dired-thumbnail-display-external))
+
+  (cond ((executable-find "open")
+         (csetq image-dired-external-viewer "open"))
+        ((executable-find "xdg-open")
+         (csetq image-dired-external-viewer "xdg-open")))
 #+end_src
 
 
@@ -1103,6 +1116,16 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
 
   (csetq dired-dwim-target t)
+  (csetq dired-auto-revert-buffer #'dired-directory-changed-p)
+  (csetq wdired-create-parent-directories t)
+  (csetq wdired-allow-to-change-permissions t)
+  (csetq dired-recursive-copies 'always)
+  (csetq dired-isearch-filenames 'dwim)
+  (csetq dired-create-destination-dirs 'ask)
+  (csetq dired-vc-rename-file t)
+
+  (add-hook 'dired-mode-hook #'hl-line-mode)
+
   (csetq ls-lisp-use-insert-directory-program t)
   (csetq ls-lisp-ignore-case t)
   (csetq ls-lisp-use-string-collate nil)
@@ -1110,16 +1133,19 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
   (csetq ls-lisp-use-localized-time-format nil)
 
-  (csetq dired-listing-switches "-alhFo") ; Not use for ls-lisp?
+  (cond ((or (eq system-type 'gnu/linux) (executable-find "gls"))
+         (csetq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso --dired"))
+         ((eq system-type 'darwin)
+          (csetq dired-listing-switches "-alhFo")))
+
   ;; a :: include files beginning with dots
+  ;; A :: include files beginning with dots except . and ..
+  ;; G :: skip group names
+  ;; v :: natural sort
   ;; l :: display as list
   ;; h :: human-readable filenames
   ;; F :: display a slash after directories
   ;; S :: sort by size
-
-  (csetq wdired-allow-to-change-permissions t)
-
-  (csetq dired-recursive-copies 'always)
 #+end_src
 
 ** Attach
