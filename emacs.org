@@ -23,9 +23,9 @@
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (boundp 'comp-eln-load-path)
-    (setcar (nthcdr 0 comp-eln-load-path)
-     (expand-file-name "var/eln/" user-emacs-directory)))
+  (when (boundp 'native-comp-eln-load-path)
+    (setcar (nthcdr 0 native-comp-eln-load-path)
+     (expand-file-name "~/.cache/emacs/eln-cache/")))
 #+end_src
 
 #+begin_src emacs-lisp
