@@ -1401,9 +1401,14 @@ https://gist.github.com/spacebat/5500966
 
 ** Sync stuff
 #+begin_src emacs-lisp
-  (setq elfeed-db-directory   "~/Sync/.sync/elfeed")
-  (setq abbrev-file-name      (expand-file-name "etc/abbrev.el" org-directory))
-  (setq bookmark-default-file "~/Sync/.sync/bookmark.el")
+  (csetq elfeed-db-directory   "~/Sync/.sync/elfeed")
+  (csetq abbrev-file-name      (expand-file-name "etc/abbrev.el" org-directory))
+#+end_src
+
+** Bookmarks
+#+begin_src emacs-lisp
+  (csetq bookmark-fontify nil)
+  (csetq bookmark-default-file "~/Sync/.sync/bookmark.el")
 #+end_src
 
 ** Org Randomnote
