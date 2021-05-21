@@ -2079,7 +2079,7 @@ Designed to be as minimalist as possible, while being moderately useful."
 #+begin_src emacs-lisp
   (csetq auto-save-list-file-prefix (expand-file-name "auto-save/"
                                                       actuator-var-directory))
-  (auto-save-mode)
+  (csetq auto-save-default t)
 #+end_src
 
 #+results:
