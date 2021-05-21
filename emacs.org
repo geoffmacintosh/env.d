@@ -755,13 +755,14 @@ From  emacs-plus:
   (csetq org-agenda-skip-timestamp-if-done nil)
   (csetq org-agenda-time-leading-zero t)
   (csetq org-agenda-current-time-string
-                  "Now - - - - - - -")
+         "Now - - - - - - -")
   (csetq org-agenda-time-grid
-        '((daily today require-timed)
-          (0600 0700 0800 0900 1000 1100
-                1200 1300 1400 1500 1600
-                1700 1800 1900 2000 2100)
-          " ....." "-----------------"))
+         '((daily today require-timed)
+           (0600 0700 0800 0900 1000 1100
+                 1200 1300 1400 1500 1600
+                 1700 1800 1900 2000 2100)
+           " ....." "-----------------"))
+  (csetq org-agenda-diary-file "~/org/diary.org")
 #+end_src
 
 #+begin_src emacs-lisp
