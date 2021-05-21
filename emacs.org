@@ -431,14 +431,36 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   :END:\n\n%?")))
 #+end_src
 
-** Personal Stuff
+
+** Calendar
 
 #+begin_src emacs-lisp
-  (setq user-full-name "Geoff MacIntosh")
-  (setq user-mail-address "geoff@mac.into.sh")
   (setq calendar-latitude [47 33 north])
   (setq calendar-longitude [52 42 west])
 #+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-calendar-mode-line-entry (command echo &optional key string)
+    "Return a propertized string for `calendar-mode-line-format'.
+  COMMAND is a command to run, ECHO is the help-echo text, KEY
+  is COMMAND's keybinding, STRING describes the binding.
+
+  This version of this function does not display the keybinding for
+  the COMMAND, which was unneeded and hard to theme correctly."
+    (propertize (or key
+                     (capitalize (format "%s" string)))
+                'help-echo (format "mouse-1: %s" echo)
+                'mouse-face 'mode-line-highlight
+                'keymap (make-mode-line-mouse-map 'mouse-1 command)))
+
+  (advice-add 'calendar-mode-line-entry :override #'actuator-calendar-mode-line-entry)
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq calendar-date-style 'iso)
+  (csetq calendar-offset -1)
+#+end_src
+
 ** Unfiled Settings
 :PROPERTIES:
 :ID:       3659786E-6B2D-4AF8-8901-434068730FC7
@@ -1294,6 +1316,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (csetq send-mail-function 'sendmail-send-it)
   (csetq message-send-mail-function 'sendmail-send-it)
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq user-full-name "Geoff MacIntosh")
+  (setq user-mail-address "geoff@mac.into.sh")
 #+end_src
 
 ** Native Compile

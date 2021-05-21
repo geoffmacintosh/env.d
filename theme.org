@@ -109,6 +109,11 @@
                                :background ,xgrey
                                :box (:line-width 7 :color, xgrey)))))
 
+     `(mode-line-highlight ((t (:box (:line-width 7
+                                      :color ,grey)
+                                :background ,grey
+                                :foreground ,white))))
+
 
      ))
 
