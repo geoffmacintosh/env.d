@@ -52,6 +52,7 @@
 
 ** Very early
 #+begin_src emacs-lisp
+  (eval-when-compile (defvar org-directory))
   (setq org-directory (expand-file-name "~/org/"))
 #+end_src
 
@@ -96,7 +97,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 #+begin_src emacs-lisp
   (defmacro csetq (variable value)
-    "Macro to set the value of a variable, possibly a custom user option."
+    "Macro to set the VALUE of VARIABLE, possibly a custom user option."
     `(funcall (or (get ',variable 'custom-set)
                   (and (plist-member (symbol-plist ',variable)
                                      'standard-value)
@@ -255,7 +256,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 2. Unpropertize kill ring on quit
 #+begin_src emacs-lisp
   (defun actuator-unpropertize-kill-ring ()
-    "Removes properties from items in the kill ring.
+    "Remove properties from items in the kill ring.
 
   Text stored in the kill ring is kept propertized---that is, faces
   that apply to it should be correctly applied on yank. That can
@@ -274,7 +275,9 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 3. Savehist on kill only
 
 #+begin_src emacs-lisp
-  (setq savehist-autosave-interval nil)
+  (eval-when-compile ;;(defvar savehist-autosave-interval)
+                     (declare-function savehist-save "savehist"))
+  (csetq savehist-autosave-interval nil)
   (add-hook 'kill-emacs-hook #'savehist-save)
   (add-hook 'after-save-hook #'savehist-save)
 #+end_src
@@ -326,7 +329,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Minibuffer Resize
 #+begin_src emacs-lisp
   (defun actuator-minibuffer-normalize-face-height ()
-    "Resets faces in the minibuffer to be the default height."
+    "Reset faces in the minibuffer to be the default height."
 
     (set (make-local-variable 'face-remapping-alist)
          '((org-document-title :height 1.0))))
@@ -394,8 +397,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 ** Diary
 #+begin_src emacs-lisp
-  (setq diary-file (expand-file-name "diary" org-directory))
-  (setq calendar-date-style 'iso)
+  (csetq diary-file (expand-file-name "diary" org-directory))
+  (csetq calendar-date-style 'iso)
 #+end_src
 
 ** Capture Templates
@@ -447,8 +450,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Calendar
 
 #+begin_src emacs-lisp
-  (setq calendar-latitude [47 33 north])
-  (setq calendar-longitude [52 42 west])
+  (csetq calendar-latitude [47 33 north])
+  (csetq calendar-longitude [52 42 west])
 #+end_src
 
 #+begin_src emacs-lisp
@@ -616,6 +619,8 @@ From  emacs-plus:
 
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'recentf-mode 1)
+  (eval-when-compile (declare-function recentf-open-files "recentf")
+                     (declare-function recentf-cleanup "recentf"))
   (global-set-key (kbd "C-x C-r") #'recentf-open-files)
   (csetq recentf-max-saved-items 1000)
   (csetq recentf-save-file (expand-file-name "recentf.el" actuator-var-directory))
@@ -681,20 +686,11 @@ From  emacs-plus:
 #+end_src
 ** Eliminate frame title
 #+begin_src emacs-lisp
-  (setq ns-use-proxy-icon nil)
-  (setq frame-title-format
-        '((:eval (when (buffer-file-name)
-                   (abbreviate-file-name default-directory)))
-          "%b" ))
-  ;;(set-frame-parameter (selected-frame) 'title nil)
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun remember-titlebar-settings ()
-    "Get fucked, Emacs"
-    (set-frame-parameter (selected-frame) 'name nil)
-    (set-frame-parameter (selected-frame) 'title nil))
-  ;;(add-hook 'window-configuration-change-hook #'remember-titlebar-settings)
+  (csetq ns-use-proxy-icon nil)
+  (csetq frame-title-format
+         '((:eval (when (buffer-file-name)
+                    (abbreviate-file-name default-directory)))
+           "%b"))
 #+end_src
 
 ** Help
@@ -704,16 +700,13 @@ From  emacs-plus:
 
 ** Delete by Moving to Trash
 #+begin_src emacs-lisp
-  (defun system-move-file-to-trash (file)
-    "Move FILE to trash via the `trash' command-line tool."
-
-    (if (executable-find "trash")
-        (call-process "trash" nil nil nil file)
-      (error "Executable `trash' could not be found in PATH.")))
-#+end_src
-
-#+begin_src emacs-lisp
   (when (executable-find "trash")
+    (defun system-move-file-to-trash (file)
+      "Move FILE to trash via the `trash' cli tool."
+
+      (if (executable-find "trash")
+          (call-process "trash" nil nil nil file)
+        (error "Executable `trash' could not be found in PATH")))
     (csetq delete-by-moving-to-trash t))
 #+end_src
 
@@ -829,21 +822,27 @@ From  emacs-plus:
 #+results:
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (defvar org-modules)
+    (defvar org-default-properties)
+    (declare-function org-indent-mode "org-indent"))
+
+
   (with-eval-after-load 'org
     ;;(add-to-list 'org-default-properties "DIR")
     ;;(add-to-list 'org-default-properties "header-args")
-    (org-crypt-use-before-save-magic)
     (add-to-list 'org-modules 'org-crypt)
-    (declare-function org-indent-mode "org-indent")
+    (org-crypt-use-before-save-magic)
+
     (org-indent-mode 1)
     ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((emacs-lisp . t)
                                    (shell      . t)))
-    (require 'org-checklist)
     (add-to-list 'org-modules 'org-habit)
     (require 'org-habit)
-    (add-to-list 'org-modules 'org-checklist))
+    (add-to-list 'org-modules 'org-checklist)
+    (require 'org-checklist))
 #+end_src
 
 #+results:
@@ -872,7 +871,7 @@ From  emacs-plus:
     (org-dblock-update 1))
 
   (defun actuator-org-mode-setup ()
-    "Sets basic defaults in Org-mode that aren't variables."
+    "Set basic defaults in Org-mode that aren't variables."
 
     (electric-indent-local-mode -1)
     (visual-line-mode)
@@ -981,7 +980,7 @@ From  emacs-plus:
 #+begin_src emacs-lisp
   (fset 'actuator-make-checklist
         (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
-  (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+  ;;(global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
 
 *** References
@@ -1107,6 +1106,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (require 'dired-x)
     (require 'dired-aux)
     (require 'wdired))
+  (eval-when-compile (declare-function dired-omit-mode "dired-x"))
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 #+end_src
 
@@ -1141,11 +1141,14 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (csetq dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
+
   (with-eval-after-load 'savehist
+    (eval-when-compile (defvar savehist-additional-variables))
     (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
 
-  (csetq dired-dwim-target t)
+  (with-eval-after-load (declare-function dired-directory-changed-p "dired"))
   (csetq dired-auto-revert-buffer #'dired-directory-changed-p)
+  (csetq dired-dwim-target t)
   (csetq wdired-create-parent-directories t)
   (csetq wdired-allow-to-change-permissions t)
   (csetq dired-recursive-copies 'always)
@@ -1204,11 +1207,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** World Time
 #+begin_src emacs-lisp
-  (setq world-clock-list '(("America/New_York" "New York")
-                           ("Europe/London"    "London")
-                           ("Australia/Sydney" "Sydney")
-                           ("America/Edmonton" "Calgary")
-                           ("America/St_Johns" "St. John's")))
+  (csetq world-clock-list '(("America/New_York" "New York")
+                            ("Europe/London"    "London")
+                            ("Australia/Sydney" "Sydney")
+                            ("America/Edmonton" "Calgary")
+                            ("America/St_Johns" "St. John's")))
 #+end_src
 
 ** Ediff
@@ -1279,7 +1282,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     "Show the entire buffer when in an org buffer.
 
   Sometimes it's better to show the entire buffer, for example when
-  trying to run ediff on an org-mode file. That way context for the diff is shown."
+  trying to run ediff on an Org-mode file. That way context for the diff is shown."
     (declare-function outline-show-all "outline")
     (when (derived-mode-p 'org-mode)
       (require 'outline)
@@ -1447,6 +1450,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     "Jump to bookmark location if available when opening a document."
 
     (require 'bookmark)
+    (eval-when-compile (declare-function bookmark-maybe-load-default-file "bookmark"))
     (bookmark-maybe-load-default-file)
     (bookmark-jump (buffer-name)))
 
@@ -1576,6 +1580,8 @@ https://gist.github.com/spacebat/5500966
   (csetq eldoc-idle-delay 0)
 
   (with-eval-after-load 'eldoc
+    (eval-when-compile (declare-function elisp-get-fnsym-args-string@docstring "elisp-mode"))
+    ;;(require 'elisp-mode)
     (define-advice elisp-get-fnsym-args-string (:around (orig-fun sym &rest r) docstring)
       "If SYM is a function, append its docstring."
       (require 'subr-x)
@@ -1613,14 +1619,17 @@ https://gist.github.com/spacebat/5500966
   (add-to-list 'package-selected-packages 'ivy)
   (add-to-list 'package-selected-packages 'swiper)
 
-  (with-eval-after-load 'counsel
-    (setq counsel-find-file-ignore-regexp "\\`\\."))
+  (csetq counsel-find-file-ignore-regexp "\\`\\.")
 
   (when (package-installed-p 'counsel)
-    (require 'counsel)
-    (require 'ivy)
-    (require 'swiper)
-    (counsel-mode 1)
+    (eval-when-compile
+      (declare-function counsel-buffer-or-recentf "counsel")
+      (declare-function counsel-find-file "counsel")
+      (declare-function counsel-M-x "counsel")
+      (declare-function counsel-describe-function "counsel")
+      (declare-function counsel-describe-variable "counsel")
+      (declare-function counsel-search "counsel")
+      (declare-function counsel-yank-pop "counsel"))
     (global-set-key (kbd "C-x C-r") #'counsel-buffer-or-recentf)
     (global-set-key (kbd "C-x C-f") #'counsel-find-file)
     (global-set-key (kbd "M-x")     #'counsel-M-x)
@@ -1632,10 +1641,19 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (when (package-installed-p 'ivy)
-    (ivy-mode 1)
+    (eval-when-compile (declare-function ivy-switch-buffer "ivy"))
     (global-set-key (kbd "C-x b") #'ivy-switch-buffer))
 
   (with-eval-after-load 'ivy
+    (eval-when-compile
+      (defvar ivy-minibuffer-map)
+      (declare-function counsel-mode "counsel")
+      (declare-function ivy-mode "ivy")
+      (declare-function ivy-immediate-done "ivy")
+      (declare-function ivy-alt-done "ivy")
+      (declare-function ivy-next-line "ivy"))
+    (counsel-mode 1)
+    (ivy-mode 1)
     (define-key ivy-minibuffer-map (kbd "<C-return>") #'ivy-immediate-done)
     (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
     (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line))
@@ -1657,6 +1675,9 @@ https://gist.github.com/spacebat/5500966
 
   (with-eval-after-load 'ivy
     (when (package-installed-p 'ivy-prescient)
+      (eval-when-compile
+        (declare-function ivy-prescient-mode "ivy-prescient")
+        (declare-function prescient-persist-mode "prescient"))
       (ivy-prescient-mode 1)
       (prescient-persist-mode 1)))
 
@@ -1668,6 +1689,7 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-cliplink)
+  (with-eval-after-load (declare-function org-cliplink "org-cliplink"))
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
     (defvar org-capture-templates)
@@ -1695,6 +1717,9 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'magit)
 
+  (eval-when-compile
+    (declare-function magit-status "magit-status")
+    (declare-function magit-list-repositories "magit-repos"))
   (global-set-key (kbd "C-c g") #'magit-status)
   (global-set-key (kbd "C-x g") #'magit-status)
   (global-set-key (kbd "C-x G") #'magit-list-repositories)
@@ -1719,6 +1744,7 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (defadvice magit-status (around magit-fullscreen activate)
+    "Fullscreen the magit status window."
     (window-configuration-to-register :magit-fullscreen)
     ad-do-it
     (delete-other-windows))
@@ -1727,8 +1753,7 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (defun magit-quit-session ()
-    "Restores the previous window configuration and kills the magit buffer"
-
+    "Restore the previous window configuration and kill the magit buffer."
     (interactive)
     (kill-buffer)
     (auto-revert-mode -1)
@@ -1845,12 +1870,15 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 
 #+begin_src emacs-lisp
   (defun actuator-elfeed-load-db-and-open ()
-    "Wrapper to load the elfeed database from disk before
-  opening. Taken from Pragmatic Emacs."
+    "Wrapper to load the elfeed database from disk before opening.
 
+  Taken from Pragmatic Emacs."
     (interactive)
-    (declare-function elfeed-db-load "elfeed-db")
-    (declare-function elfeed-search-update "elfeed-search")
+    (eval-when-compile
+      (declare-function elfeed "elfeed")
+      (declare-function elfeed-db-load "elfeed-db")
+      (declare-function elfeed-search-update "elfeed-search")
+      (declare-function elfeed-update "elfeed"))
     (window-configuration-to-register :elfeed-fullscreen)
     (delete-other-windows)
     (elfeed)
@@ -1861,9 +1889,9 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 
 #+begin_src emacs-lisp
   (defun actuator-elfeed-save-db-and-bury ()
-    "Wrapper to save the Elfeed database to disk before burying
-    buffer. Taken from Pragmatic Emacs."
+    "Save the Elfeed database to disk before burying buffer.
 
+  Taken from Pragmatic Emacs."
     (interactive)
     (declare-function elfeed-db-save "elfeed-db")
     (declare-function elfeed-db-gc "elfeed-db")
@@ -1880,8 +1908,9 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 
 #+begin_src emacs-lisp
   (defun actuator-elfeed-mark-all-as-read ()
-    "Mark all feeds in search as read. Taken from Mike Zamansky"
+    "Mark all feeds in search as read.
 
+Taken from Mike Zamansky"
     (interactive)
     (declare-function elfeed-search-untag-all-unread "elfeed-search")
     (with-no-warnings (mark-whole-buffer))
@@ -1931,11 +1960,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   This version doesn't show 0/0:0 items because I have no idea what
   those numbers are supposed to represent."
-    (defvar elfeed-search-filter-active)
-    (declare-function elfeed-queue-count-active "elfeed")
-    (declare-function elfeed-queue-count-total "elfeed")
-    (declare-function elfeed-search--intro-header "elfeed-search")
-    (declare-function elfeed-db-last-update "elfeed-db")
+    (eval-when-compile
+      (defvar elfeed-search-filter-active)
+      (defvar elfeed-search-filter)
+      (declare-function elfeed-queue-count-active "elfeed")
+      (declare-function elfeed-queue-count-total "elfeed")
+      (declare-function elfeed-search--intro-header "elfeed-search")
+      (declare-function elfeed-db-last-update "elfeed-db"))
     (cond
      ((zerop (elfeed-db-last-update))
       (elfeed-search--intro-header))
@@ -1986,8 +2017,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (add-to-list 'package-selected-packages 'elfeed-org)
 
   (with-eval-after-load 'elfeed
-    (require 'elfeed-org nil t)
-    (elfeed-org))
+    (eval-when-compile
+      (declare-function elfeed-org "elfeed-org"))
+      (elfeed-org))
 
   (csetq rmh-elfeed-org-ignore-tag "disconnected")
   (csetq rmh-elfeed-org-auto-ignore-invalid-feeds nil)
@@ -1999,6 +2031,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "elfeed" actuator-var-directory) t)
   (csetq eshell-directory-name (expand-file-name "elfeed" actuator-var-directory))
+  (eval-when-compile (defvar eshell-directory-name))
   (csetq eshell-history-file-name (expand-file-name "history" eshell-directory-name))
 #+end_src
 
@@ -2029,9 +2062,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (require 'em-smart)
     (declare-function eshell-smart-initialize "em-smart")
     (eshell-smart-initialize))
-  (setq eshell-where-to-jump 'begin)
-  (setq eshell-review-quick-commands nil)
-  (setq eshell-smart-space-goes-to-end t)
+  (csetq eshell-where-to-jump 'begin)
+  (csetq eshell-review-quick-commands nil)
+  (csetq eshell-smart-space-goes-to-end t)
   (add-hook 'eshell-mode-hook #'actuator-eshell-smart-shell)
 #+end_src
 
@@ -2121,18 +2154,22 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     "Set up mu4e alerts if both mu4e and mu4e-alert are installed.
 
   If run with an idle timer such as:
-  (run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)
+  `(run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)'
   it will not hurt the startup time."
 
     (require 'mu4e-alert nil t)
     (require 'mu4e nil t)
-    (when (and (featurep 'mu4e-alert) (featurep 'mu4e))
-      (cond ((eq system-type 'gnu/linux)
-             (mu4e-alert-set-default-style 'libnotify))
-            ((eq system-type 'darwin)
-             (mu4e-alert-set-default-style 'osx-notifier)))
-      (mu4e-alert-enable-notifications)
-      (mu4e-alert-enable-mode-line-display)))
+    (eval-when-compile
+      (when (and (featurep 'mu4e-alert) (featurep 'mu4e))
+        (declare-function mu4e-alert-set-default-style "mu4e-alert")
+        (declare-function mu4e-alert-enable-notifications "mu4e-alert")
+        (declare-function mu4e-alert-enable-mode-line-display "mu4e-alert")
+        (cond ((eq system-type 'gnu/linux)
+               (mu4e-alert-set-default-style 'libnotify))
+              ((eq system-type 'darwin)
+               (mu4e-alert-set-default-style 'osx-notifier)))
+        (mu4e-alert-enable-notifications)
+        (mu4e-alert-enable-mode-line-display))))
 
   (run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)
 #+end_src
@@ -2160,9 +2197,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Rainbow
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'rainbow-mode)
-  (require 'rainbow-mode nil t)
-  (when (featurep 'rainbow-mode)
-    (rainbow-mode))
+  (when (package-installed-p 'rainbow-mode)
+    (eval-when-compile (declare-function rainbow-mode "rainbow-mode"))
+    (run-with-idle-timer 2 nil #'rainbow-mode))
 #+end_src
 ** Modeline
 
@@ -2191,9 +2228,10 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Minions
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'minions)
-  (require 'minions nil t)
-  (when (featurep 'minions)
-    (minions-mode))
+
+  (when (package-installed-p 'minions)
+    (eval-when-compile (declare-function minions-mode "minions"))
+    (run-with-idle-timer 1 nil #'minions-mode))
 #+end_src
 ** Sudoers
 
@@ -2244,14 +2282,13 @@ https://gitea.petton.fr/mpdel/mpdel
   ;;(csetq ispell-program-name "aspell")
   (csetq ispell-personal-dictionary (expand-file-name "etc/dictionary" org-directory))
   (csetq ispell-silently-savep t)
-  (defun actuator-org-reveal-around-ispell ()
-    "Reveals the area around the point in org-mode files."
+  (defun actuator-org-reveal-around ()
+    "Reveals the area around the point in Org-mode files."
 
     (when (derived-mode-p 'org-mode)
-      (require 'org)
-      (declare-function org-reveal "org")
+      (eval-when-compile (declare-function org-reveal "org"))
       (org-reveal t)))
-  (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around-ispell)
+  (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around)
 #+end_src
 
 ** Remove bidirectional editing to make long lines better
@@ -2288,7 +2325,7 @@ https://gitea.petton.fr/mpdel/mpdel
 
 #+begin_src emacs-lisp
   (csetq flymake-suppress-zero-counters t)
-  (csetq flymake-no-changes-timeout nil)
+  (csetq flymake-no-changes-timeout 1)
   (csetq flymake-start-on-save-buffer t)
   (with-eval-after-load 'flymake
     (defvar flymake-mode-map)
@@ -2318,4 +2355,10 @@ https://gitea.petton.fr/mpdel/mpdel
             (display-buffer-in-side-window)
             (side . bottom)
             (window-height . 0.5))))
+#+end_src
+
+** Footer
+#+begin_src emacs-lisp :comments no
+  (provide 'init)
+  ;;; init.el ends here
 #+end_src
