@@ -7,7 +7,11 @@
 :END:
 
 #+begin_src emacs-lisp :comments no
-  ;;; early-init.el -*- lexical-binding: t; -*-
+  ;;; early-init.el --- Set up some pre-package.el defaults -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
 #+end_src
 
 #+begin_src emacs-lisp
@@ -17,6 +21,7 @@
 #+end_src
 
 #+begin_src emacs-lisp
+  (eval-when-compile (defvar package-quickstart))
   (setq package-quickstart-file (expand-file-name "var/package-quickstart.el" user-emacs-directory))
   (when (file-exists-p package-quickstart-file)
     (setq package-quickstart t))
@@ -75,7 +80,11 @@
 :END:
 ** Lexical Binding
 #+begin_src emacs-lisp :comments no
-  ;;; init.el -*- lexical-binding: t; -*-
+  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
 #+end_src
 
 ** Csetq
