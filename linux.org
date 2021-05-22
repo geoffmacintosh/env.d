@@ -983,3 +983,26 @@ And to check how much space the journal is currently using:
 
 #+results:
 : Archived and active journals take up 72.0M in the file system.
+
+* Font Config
+#+begin_src xml :tangle ~/.config/fontconfig/fonts.conf :comments no
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+  <fontconfig>
+    <match target="font">
+      <edit name="hintstyle" mode="assign">
+        <const>hintfull</const>
+      </edit>
+    </match>
+    <match target="font">
+      <edit name="rgba" mode="assign">
+        <const>rgb</const>
+      </edit>
+    </match>
+    <match target="font">
+      <edit name="lcdfilter" mode="assign">
+        <const>lcddefault</const>
+      </edit>
+    </match>
+  </fontconfig>
+#+end_src
