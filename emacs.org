@@ -1343,8 +1343,12 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq message-kill-buffer-on-exit t)
   (csetq message-wide-reply-confirm-recipients t)
   (with-eval-after-load 'mm-bodies
+    (defvar mm-body-charset-encoding-alist)
     (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64)))
-  (add-hook 'message-setup-hook #'message-sort-headers)
+
+  (with-eval-after-load 'message
+    (declare-function message-sort-headers "message")
+    (add-hook 'message-setup-hook #'message-sort-headers))
 #+end_src
 
 ** Native Compile
@@ -1914,6 +1918,11 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   This version doesn't show 0/0:0 items because I have no idea what
   those numbers are supposed to represent."
+    (defvar elfeed-search-filter-active)
+    (declare-function elfeed-queue-count-active "elfeed")
+    (declare-function elfeed-queue-count-total "elfeed")
+    (declare-function elfeed-search--intro-header "elfeed-search")
+    (declare-function elfeed-db-last-update "elfeed-db")
     (cond
      ((zerop (elfeed-db-last-update))
       (elfeed-search--intro-header))
@@ -1937,6 +1946,12 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (defun actuator-elfeed-search--count-unread ()
     "Count the number of entries and feeds being currently displayed."
+    (defvar elfeed-search-filter-active)
+    (defvar elfeed-search-filter-overflowing)
+    (defvar elfeed-search-entries)
+    (declare-function elfeed-tagged-p "elfeed-db")
+    (declare-function elfeed-feed-url "elfeed-db")
+    (declare-function elfeed-entry-feed "elfeed-db")
     (if (and elfeed-search-filter-active elfeed-search-filter-overflowing)
         "?/?:?"
       (cl-loop with feeds = (make-hash-table :test 'equal)
