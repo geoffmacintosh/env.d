@@ -25,7 +25,7 @@
 #+begin_src emacs-lisp
   (when (boundp 'native-comp-eln-load-path)
     (setcar (nthcdr 0 native-comp-eln-load-path)
-     (expand-file-name "~/.cache/emacs/eln-cache/")))
+            (expand-file-name "~/.cache/emacs/eln-cache/")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -83,13 +83,13 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 #+begin_src emacs-lisp
   (defmacro csetq (variable value)
-        "Macro to set the value of a variable, possibly a custom user option."
-        `(funcall (or (get ',variable 'custom-set)
-                      (and (plist-member (symbol-plist ',variable)
-                                         'standard-value)
-                           'set-default)
-                      'set)
-                  ',variable ,value))
+    "Macro to set the value of a variable, possibly a custom user option."
+    `(funcall (or (get ',variable 'custom-set)
+                  (and (plist-member (symbol-plist ',variable)
+                                     'standard-value)
+                       'set-default)
+                  'set)
+              ',variable ,value))
 #+end_src
 
 ** Package Init
@@ -197,28 +197,28 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (csetq message-log-max 10000)
   (csetq savehist-save-minibuffer-history t)
   (csetq savehist-additional-variables
-                          '(buffer-name-history
-                            command-history
-                            compile-history
-                            extended-command-history
-                            file-name-history
-                            file-name-history
-                            global-mark-ring
-                            Info-history-list
-                            kill-ring
-                            kmacro-ring
-                            last-kbd-macro
-                            minibuffer-history
-                            org-link--history
-                            org-read-date-history
-                            org-refile-history
-                            org-table-formula-history
-                            org-tags-history
-                            regexp-search-ring
-                            register-alist
-                            savehist-minibuffer-history-variables
-                            shell-command-history
-                            mark-ring))
+         '(buffer-name-history
+           command-history
+           compile-history
+           extended-command-history
+           file-name-history
+           file-name-history
+           global-mark-ring
+           Info-history-list
+           kill-ring
+           kmacro-ring
+           last-kbd-macro
+           minibuffer-history
+           org-link--history
+           org-read-date-history
+           org-refile-history
+           org-table-formula-history
+           org-tags-history
+           regexp-search-ring
+           register-alist
+           savehist-minibuffer-history-variables
+           shell-command-history
+           mark-ring))
   (csetq savehist-file (expand-file-name "savehist.el" actuator-var-directory))
 #+end_src
 
@@ -431,7 +431,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   :END:\n\n%?")))
 #+end_src
 
-
 ** Calendar
 
 #+begin_src emacs-lisp
@@ -448,7 +447,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   This version of this function does not display the keybinding for
   the COMMAND, which was unneeded and hard to theme correctly."
     (propertize (or key
-                     (capitalize (format "%s" string)))
+                    (capitalize (format "%s" string)))
                 'help-echo (format "mouse-1: %s" echo)
                 'mouse-face 'mode-line-highlight
                 'keymap (make-mode-line-mouse-map 'mouse-1 command)))
@@ -608,8 +607,8 @@ From  emacs-plus:
   (csetq recentf-max-saved-items 1000)
   (csetq recentf-save-file (expand-file-name "recentf.el" actuator-var-directory))
   (csetq recentf-exclude `(,actuator-var-directory
-                       "^/\\(?:ssh\\|su\\|sudo\\)?:"
-                       "/var/folders/"))
+                           "^/\\(?:ssh\\|su\\|sudo\\)?:"
+                           "/var/folders/"))
   (add-hook 'midnight-mode-hook #'recentf-cleanup)
 #+end_src
 
@@ -697,7 +696,7 @@ From  emacs-plus:
 
     (if (executable-find "trash")
         (call-process "trash" nil nil nil file)
-    (error "Executable `trash' could not be found in PATH.")))
+      (error "Executable `trash' could not be found in PATH.")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -724,9 +723,9 @@ From  emacs-plus:
                                     actuator-var-directory)
                   t)
   (csetq org-clock-persist-file (expand-file-name "org/org-clock-persist.el"
-                                            actuator-var-directory))
+                                                  actuator-var-directory))
   (csetq org-publish-timestamp-directory (expand-file-name "org-publish/"
-  actuator-var-directory))
+                                                           actuator-var-directory))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -801,8 +800,8 @@ From  emacs-plus:
 #+end_src
 #+begin_src emacs-lisp
   (defun actuator-org-src-line-wrap-setup ()
-        "Set truncate-lines-mode in org-source-editing buffers."
-        (setq-local truncate-lines t))
+    "Set truncate-lines-mode in org-source-editing buffers."
+    (setq-local truncate-lines t))
   (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
 #+end_src
 
@@ -810,8 +809,8 @@ From  emacs-plus:
 | org-src-babel-configure-edit-buffer | org-src-mode-configure-edit-buffer | actuator-org-src-line-wrap-setup |
 
 #+begin_src emacs-lisp
-   (with-eval-after-load 'org-agenda
-       (csetq org-agenda-follow-mode t))
+  (with-eval-after-load 'org-agenda
+    (csetq org-agenda-follow-mode t))
 #+end_src
 
 #+results:
@@ -967,9 +966,9 @@ From  emacs-plus:
 
 *** Make Checklist
 #+begin_src emacs-lisp
-(fset 'actuator-make-checklist
-   (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
-    (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+  (fset 'actuator-make-checklist
+        (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
+  (global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
 
 *** References
@@ -1008,10 +1007,10 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
 I want video links to be opened in MPV. This helps my battery life as well as my personal life because I don't have to visit YouTube. This requires [[https://mpv.io][MPV]] to be installed, which is best installed via [[http://brew.sh][Brew]] on macOS. I've tried to use [[https://nixos.org/download.html][Nix]], but it doesn't work well.
 
 #+begin_src emacs-lisp
-    (defun actuator-browse-video (url &rest _args)
-      "Browse URL with a dedicated video player.
+  (defun actuator-browse-video (url &rest _args)
+    "Browse URL with a dedicated video player.
   Avoids opening a browser window."
-      (start-process "mpv" nil "mpv" url))
+    (start-process "mpv" nil "mpv" url))
 #+end_src
 
 *** Simple HTML renderer                          :ignore:
@@ -1059,15 +1058,15 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (csetq ibuffer-show-empty-filter-groups nil)
   (csetq ibuffer-saved-filter-groups
-        '(("default"
-           ("Misc"      (name . "^\\*.*\\*$"))
-           ("Magit"     (name . "magit"))
-           ("Src"       (name . "\*Org Src"))
-           ("Dired"     (mode . dired-mode))
-           ("My Org"    (directory . "/Users/g/org"))
-           ("Config"    (or
-                         (directory . "/Users/g/.config")
-                         (directory . "/usr/local/share/emacs"))))))
+         '(("default"
+            ("Misc"      (name . "^\\*.*\\*$"))
+            ("Magit"     (name . "magit"))
+            ("Src"       (name . "\*Org Src"))
+            ("Dired"     (mode . dired-mode))
+            ("My Org"    (directory . "/Users/g/org"))
+            ("Config"    (or
+                          (directory . "/Users/g/.config")
+                          (directory . "/usr/local/share/emacs"))))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1152,8 +1151,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
   (cond ((or (eq system-type 'gnu/linux) (executable-find "gls"))
          (csetq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso --dired"))
-         ((eq system-type 'darwin)
-          (csetq dired-listing-switches "-alhFo")))
+        ((eq system-type 'darwin)
+         (csetq dired-listing-switches "-alhFo")))
 
   ;; a :: include files beginning with dots
   ;; A :: include files beginning with dots except . and ..
@@ -1193,10 +1192,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** World Time
 #+begin_src emacs-lisp
   (setq world-clock-list '(("America/New_York" "New York")
-                            ("Europe/London"    "London")
-                            ("Australia/Sydney" "Sydney")
-                            ("America/Edmonton" "Calgary")
-                            ("America/St_Johns" "St. John's")))
+                           ("Europe/London"    "London")
+                           ("Australia/Sydney" "Sydney")
+                           ("America/Edmonton" "Calgary")
+                           ("America/St_Johns" "St. John's")))
 #+end_src
 
 ** Ediff
@@ -1315,12 +1314,37 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (csetq send-mail-function 'sendmail-send-it)
-  (csetq message-send-mail-function 'sendmail-send-it)
+  (csetq message-send-mail-function send-mail-function)
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq user-full-name "Geoff MacIntosh")
-  (setq user-mail-address "geoff@mac.into.sh")
+  (csetq user-full-name "Geoff MacIntosh")
+  (csetq user-mail-address "geoff@mac.into.sh")
+  (csetq mail-signature "Geoff.")
+  (csetq message-signature mail-signature)
+#+end_src
+
+#+begin_src emacs-lisp
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq mm-encrypt-option 'guided)
+  (csetq mm-sign-option 'guided)
+  (csetq mml-secure-openpgp-encrypt-to-self t)
+  (csetq mml-secure-openpgp-sign-with-sender t)
+  (csetq mml-secure-smime-encrypt-to-self t)
+  (csetq mml-secure-smime-sign-with-sender t)
+  (csetq mail-user-agent 'message-user-agent)
+  ;;(setq mail-header-separator (purecopy "*****"))
+  (csetq compose-mail-user-agent-warnings nil)
+  (csetq message-mail-user-agent nil)
+  ;;(setq message-citation-line-format "On %Y-%m-%d, %R %z, %f wrote:\n")
+  (csetq message-confirm-send nil)
+  (csetq message-kill-buffer-on-exit t)
+  (csetq message-wide-reply-confirm-recipients t)
+  (with-eval-after-load 'mm-bodies
+    (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64)))
+  (add-hook 'message-setup-hook #'message-sort-headers)
 #+end_src
 
 ** Native Compile
@@ -1630,13 +1654,13 @@ https://gist.github.com/spacebat/5500966
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
     (defvar org-capture-templates)
-      (add-to-list 'org-capture-templates
-                   '("b" "Bookmark" entry
-                     (file "bookmarks.org")
-                     "* %(org-cliplink-capture) %^g\nSaved on: %U\n\n%?"
-                     :prepend
-                     :empty-lines 1
-                     :kill-buffer)))
+    (add-to-list 'org-capture-templates
+                 '("b" "Bookmark" entry
+                   (file "bookmarks.org")
+                   "* %(org-cliplink-capture) %^g\nSaved on: %U\n\n%?"
+                   :prepend
+                   :empty-lines 1
+                   :kill-buffer)))
 #+end_src
 
 ** Anki
@@ -1678,9 +1702,9 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (defadvice magit-status (around magit-fullscreen activate)
-       (window-configuration-to-register :magit-fullscreen)
-       ad-do-it
-       (delete-other-windows))
+    (window-configuration-to-register :magit-fullscreen)
+    ad-do-it
+    (delete-other-windows))
 #+end_src
 
 
@@ -1704,14 +1728,14 @@ https://gist.github.com/spacebat/5500966
   ;;(require 'org-download)
 
 
-    (csetq org-download-method 'directory)
-    (csetq org-download-image-dir nil)
-    ;;(csetq org-download-annotate-function #'actuator-org-dl-annotate)
-    ;;(csetq org-download-timestamp "")
-    (csetq org-download-screenshot-method "screencapture -i %s")
-    (csetq org-download-heading-lvl nil)
-    (csetq org-download-timestamp "%Y%m%d-%H%M%S-")
-    ;;(csetq org-download-screenshot-method "/usr/local/bin/pngpaste %s")
+  (csetq org-download-method 'directory)
+  (csetq org-download-image-dir nil)
+  ;;(csetq org-download-annotate-function #'actuator-org-dl-annotate)
+  ;;(csetq org-download-timestamp "")
+  (csetq org-download-screenshot-method "screencapture -i %s")
+  (csetq org-download-heading-lvl nil)
+  (csetq org-download-timestamp "%Y%m%d-%H%M%S-")
+  ;;(csetq org-download-screenshot-method "/usr/local/bin/pngpaste %s")
 
 #+end_src
 
@@ -1734,6 +1758,8 @@ https://gist.github.com/spacebat/5500966
 ** Elfeed
 #+begin_src emacs-lisp
   (csetq elfeed-search-filter "@1-week-ago +unread ")
+  (csetq elfeed-enclosure-default-dir "~/Download/")
+  (csetq elfeed-search-title-max-width 120)
   (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
     (defvar elfeed-search-mode-map)
@@ -1861,23 +1887,70 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (defface actuator-elfeed-video-face
-    `((t . (:background "gray90" :foreground "blue")))
+    `((t . (:background "gray90" :foreground "black")))
     "Face for elfeed video entry."
     :group 'actuator-elfeed)
 #+end_src
 
 #+begin_src emacs-lisp
   (defface actuator-elfeed-image-face
-    `((t . (:background "gray90" :foreground "blue")))
+    `((t . (:background "gray90" :foreground "black")))
     "Face for elfeed image entry."
     :group 'actuator-elfeed)
 #+end_src
 
 #+begin_src emacs-lisp
   (defface actuator-elfeed-comic-face
-    `((t . (:background "gray90" :foreground "blue")))
+    `((t . (:background "gray90" :foreground "black")))
     "Face for elfeed comic entry."
     :group 'actuator-elfeed)
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq elfeed-search-header-function #'actuator-elfeed-search--header)
+
+  (defun actuator-elfeed-search--header ()
+    "Computes the string to be used as the Elfeed header.
+
+  This version doesn't show 0/0:0 items because I have no idea what
+  those numbers are supposed to represent."
+    (cond
+     ((zerop (elfeed-db-last-update))
+      (elfeed-search--intro-header))
+     ((> (elfeed-queue-count-total) 0)
+      (let ((total (elfeed-queue-count-total))
+            (in-process (elfeed-queue-count-active)))
+        (format "%d jobs pending, %d active..."
+                (- total in-process) in-process)))
+     ((let* ((db-time (seconds-to-time (elfeed-db-last-update)))
+             (update (format-time-string "%Y-%m-%d %H:%M" db-time))
+             (unread (actuator-elfeed-search--count-unread)))
+        (format "Updated %s %s%s"
+                (propertize update 'face 'elfeed-search-last-update-face)
+                (propertize unread 'face 'elfeed-search-unread-count-face)
+                (cond
+                 (elfeed-search-filter-active "")
+                 ((string-match-p "[^ ]" elfeed-search-filter)
+                  (concat ", " (propertize elfeed-search-filter
+                                           'face 'elfeed-search-filter-face)))
+                 ("")))))))
+
+  (defun actuator-elfeed-search--count-unread ()
+    "Count the number of entries and feeds being currently displayed."
+    (if (and elfeed-search-filter-active elfeed-search-filter-overflowing)
+        "?/?:?"
+      (cl-loop with feeds = (make-hash-table :test 'equal)
+               for entry in elfeed-search-entries
+               for feed = (elfeed-entry-feed entry)
+               for url = (elfeed-feed-url feed)
+               count entry into entry-count
+               count (elfeed-tagged-p 'unread entry) into unread-count
+               do (puthash url t feeds)
+               finally
+               (cl-return
+                (format "%d unread %d total %d feeds"
+                        unread-count entry-count
+                        (hash-table-count feeds))))))
 #+end_src
 
 ** Org-elfeed
@@ -1937,12 +2010,12 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 - [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
 
 #+begin_src emacs-lisp :tangle no
-    (defun actuator-eshell-imenu ()
-      "Set up eshell-imenu integration"
+  (defun actuator-eshell-imenu ()
+    "Set up eshell-imenu integration"
 
-      (setq-local imenu-generic-expression
-                  '(("Prompt" "^.*?[#❯]" 1))))
-    ;;(add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
+    (setq-local imenu-generic-expression
+                '(("Prompt" "^.*?[#❯]" 1))))
+  ;;(add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
@@ -1993,23 +2066,23 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-    (defun actuator-eshell-prompt ()
-      "Custom prompt for eshell.
+  (defun actuator-eshell-prompt ()
+    "Custom prompt for eshell.
 
-Designed to be as minimalist as possible, while being moderately useful."
+  Designed to be as minimalist as possible, while being moderately useful."
 
-      (require 'eshell)
-      (require 'em-dirs)
-      (declare-function eshell/pwd "em-dirs")
-      (concat
-       ;;(user-login-name)
-       ;;"@"
-       ;;(system-name)
-       ;;":"
-       (eshell/pwd)
-       " ❯ "))
-    (csetq eshell-prompt-regexp "^.+@.+:.+❯ ")
-    (csetq eshell-prompt-function #'actuator-eshell-prompt)
+    (require 'eshell)
+    (require 'em-dirs)
+    (declare-function eshell/pwd "em-dirs")
+    (concat
+     ;;(user-login-name)
+     ;;"@"
+     ;;(system-name)
+     ;;":"
+     (eshell/pwd)
+     " ❯ "))
+  (csetq eshell-prompt-regexp "^.+@.+:.+❯ ")
+  (csetq eshell-prompt-function #'actuator-eshell-prompt)
 #+end_src
 
 ** Mu4e Alert
@@ -2086,7 +2159,7 @@ Designed to be as minimalist as possible, while being moderately useful."
 #+end_src
 
 *** References
- - [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
+- [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
 ** Minions
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'minions)
@@ -2120,7 +2193,7 @@ Designed to be as minimalist as possible, while being moderately useful."
 ** Backups
 #+begin_src emacs-lisp
   (csetq backup-directory-alist
-                          `(("." . ,(expand-file-name "backups" actuator-var-directory))))
+         `(("." . ,(expand-file-name "backups" actuator-var-directory))))
 #+end_src
 
 ** Ignore disabled commands
@@ -2212,5 +2285,9 @@ https://gitea.petton.fr/mpdel/mpdel
            ("\\*Calendar.*"
             (display-buffer-in-side-window)
             (side . bottom)
-            (window-height . shrink-window-if-larger-than-buffer))))
+            (window-height . shrink-window-if-larger-than-buffer))
+           ("^[a-z]+\\.org-[A-Z]+ [a-z, ]+-[0-9]$"
+            (display-buffer-in-side-window)
+            (side . bottom)
+            (window-height . 0.5))))
 #+end_src
