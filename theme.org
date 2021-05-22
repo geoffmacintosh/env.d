@@ -87,6 +87,8 @@
      ;; `(elfeed-search-feed-face ((t :foreground red)))
      ;; `(elfeed-search-tag-face ((t :foreground red)))
 
+     `(elfeed-search-unread-count-face ((t :foreground ,white)))
+
      `(ivy-current-match ((t (:background ,grey :foreground ,white :extend t))))
      `(minibuffer-prompt ((t (:inherit default))))
      `(isearch ((t (:background ,lgrey))))
