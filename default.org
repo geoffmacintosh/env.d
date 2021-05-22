@@ -474,3 +474,51 @@ I think mu will actually index correctly on its own the first time you launch mu
 #+begin_src conf :tangle (if (eq system-type 'darwin) "~/.gnupg/gpg-agent.conf" "no") :comments no
   pinentry-program /usr/local/bin/pinentry-mac
 #+end_src
+
+* macOS Default Keybindings
+#+begin_src text :tangle (if (eq system-type 'darwin) "~/Library/KeyBindings/DefaultKeyBinding.dict" "no") :comments no
+  {
+  "^l"        = "centerSelectionInVisibleArea:";
+  "^/"        = "undo:";
+  "^_"        = "undo:";
+  "^ "        = "setMark:";
+  "^\@"       = "setMark:";
+  "^w"        = "deleteToMark:";
+
+  "~f"        = "moveWordForward:";
+  "~b"        = "moveWordBackward:";
+  "~<"        = "moveToBeginningOfDocument:";
+  "~>"        = "moveToEndOfDocument:";
+  "~v"        = "pageUp:";
+  "~/"        = "complete:";
+  "~c"        = ( "capitalizeWord:",
+                  "moveForward:",
+                  "moveForward:");
+  "~u"        = ( "uppercaseWord:",
+                  "moveForward:",
+                  "moveForward:");
+  "~l"        = ( "lowercaseWord:",
+                  "moveForward:",
+                  "moveForward:");
+  "~d"        = "deleteWordForward:";
+  "^~h"       = "deleteWordBackward:";
+  "~\U007F"   = "deleteWordBackward:";
+  "~t"        = "transposeWords:";
+  "~\@"       = ( "setMark:",
+                  "moveWordForward:",
+                  "swapWithMark");
+  "~h"        = ( "setMark:",
+                  "moveToEndOfParagraph:",
+                  "swapWithMark");
+
+  "^x" = {
+       "u"     = "undo:";
+       "k"     = "performClose:";
+       "^f"    = "openDocument:";
+       "^x"    = "swapWithMark:";
+       "^m"    = "selectToMark:";
+       "^s"    = "saveDocument:";
+       "^w"    = "saveDocumentAs:";
+       };
+  }
+#+end_src
