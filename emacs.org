@@ -17,7 +17,6 @@
 #+begin_src emacs-lisp
   (setq load-prefer-newer t)
   (setq frame-inhibit-implied-resize t)
-  (setq org-directory (expand-file-name "~/org/"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -31,6 +30,29 @@
   (when (boundp 'native-comp-eln-load-path)
     (setcar (nthcdr 0 native-comp-eln-load-path)
             (expand-file-name "~/.cache/emacs/eln-cache/")))
+#+end_src
+
+#+begin_src emacs-lisp :comments no
+  (provide 'early-init)
+  ;;; early-init.el ends here
+#+end_src
+
+* Init
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/init.el :mkdirp yes
+:END:
+** Lexical Binding
+#+begin_src emacs-lisp :comments no
+  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
+#+end_src
+
+** Very early
+#+begin_src emacs-lisp
+  (setq org-directory (expand-file-name "~/org/"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -67,24 +89,6 @@
 
   (actuator-engorge-gc)
   (add-hook 'after-init-hook #'actuator-restore-gc)
-#+end_src
-
-#+begin_src emacs-lisp :comments no
-  (provide 'early-init)
-  ;;; early-init.el ends here
-#+end_src
-
-* Init
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :mkdirp yes
-:END:
-** Lexical Binding
-#+begin_src emacs-lisp :comments no
-  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
-
-  ;;; Commentary:
-
-  ;;; Code:
 #+end_src
 
 ** Csetq
