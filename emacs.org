@@ -50,8 +50,16 @@
   ;;; Code:
 #+end_src
 
+** Native compile
+#+begin_src emacs-lisp
+  (when (eq system-type 'darwin)
+    (csetq native-comp-async-report-warnings-errors nil))
+#+end_src
+
 ** Very early
 #+begin_src emacs-lisp
+  (package-activate-all)
+
   (eval-when-compile (defvar org-directory))
   (setq org-directory (expand-file-name "~/org/"))
 #+end_src
@@ -827,26 +835,24 @@ From  emacs-plus:
     (defvar org-default-properties)
     (declare-function org-indent-mode "org-indent"))
 
-
   (with-eval-after-load 'org
-    ;;(add-to-list 'org-default-properties "DIR")
-    ;;(add-to-list 'org-default-properties "header-args")
-    (add-to-list 'org-modules 'org-crypt)
-    (org-crypt-use-before-save-magic)
-
+    (add-to-list 'org-default-properties "DIR")
+    (add-to-list 'org-default-properties "header-args")
     (org-indent-mode 1)
+
+    (when (package-installed-p 'org-plus-contrib)
+      (add-to-list 'org-modules 'habit)
+      ;;(require 'org-habit)
+      (add-to-list 'org-modules 'checklist)
+      ;;(require 'org-checklist)
+      (add-to-list 'org-modules 'crypt)
+      (org-crypt-use-before-save-magic))
+
     ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((emacs-lisp . t)
-                                   (shell      . t)))
-    (add-to-list 'org-modules 'org-habit)
-    (require 'org-habit)
-    (add-to-list 'org-modules 'org-checklist)
-    (require 'org-checklist))
+                                   (shell      . t))))
 #+end_src
-
-#+results:
-| org-checklist | org-habit | org-crypt |
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-plus-contrib)
@@ -1300,12 +1306,18 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 [[https://rakhim.org/fastmail-setup-with-emacs-mu4e-and-mbsync-on-macos/][Fastmail + mu4e]]
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (when (and (eq system-type 'darwin) (file-exists-p "/usr/local/bin/fish"))
+      (csetq shell-file-name "/usr/local/bin/fish")))
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq mu4e-maildir-shortcuts
          '((:maildir "/Archive" :key ?a)
            (:maildir "/Inbox"   :key ?i)))
   (csetq mail-user-agent 'mu4e-user-agent)
   (csetq mu4e-hide-index-messages t)
-  (csetq mu4e-update-interval nil)
+  (csetq mu4e-update-interval (* 60 15))
   (csetq mu4e-index-update-in-background nil)
   (csetq mu4e-index-update-error-warning t)
   (csetq mu4e-refile-folder "/Archive")
@@ -1322,8 +1334,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mu4e-headers-date-format "%y-%m-%d")
   ;;(csetq mu4e-get-mail-command (concat (executable-find "mbsync") " --all"))
   (csetq mu4e-get-mail-command "mbsync --all")
-  (csetq mu4e-mu-binary (executable-find "mu"))
-  ;;(csetq mu4e-mu-binary "mu")
+  ;;(csetq mu4e-mu-binary (executable-find "mu"))
+  (csetq mu4e-mu-binary "mu")
 #+end_src
 
 ** Message
