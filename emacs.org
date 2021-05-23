@@ -21,12 +21,12 @@
 
 #+begin_src emacs-lisp
   (eval-when-compile (defvar package-quickstart))
-  (setq package-quickstart-file (expand-file-name "var/package-quickstart.el" user-emacs-directory))
+  ;;(setq package-quickstart-file (expand-file-name "var/package-quickstart.el" user-emacs-directory))
   (when (file-exists-p package-quickstart-file)
     (setq package-quickstart t))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (boundp 'native-comp-eln-load-path)
     (setcar (nthcdr 0 native-comp-eln-load-path)
             (expand-file-name "~/.cache/emacs/eln-cache/")))
@@ -1391,17 +1391,18 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   file that should benefit from byte compilation that much anyway."
 
     (interactive)
-    (let ((init   (expand-file-name "init.el"       user-emacs-directory)))
+    (let ((init  (expand-file-name "init.el" user-emacs-directory)))
       (if (fboundp 'native-compile)
           (progn
-            (native-compile init))
+            (native-compile init)
+            (when package-quickstart-file
+              (native-compile package-quickstart-file)))
         (progn
-          (byte-recompile-file init nil 0)))))
+          (byte-recompile-file init nil 0)
+          (when package-quickstart-file
+            (byte-recompile-file package-quickstart-file nil 0))))))
   (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
 #+end_src
-
-#+results:
-| prescient--save | transient-maybe-save-history | save-place-kill-emacs-hook | recentf-save-list | desktop-kill | elfeed-db-save-safe | actuator-byte-recompile-init | package-quickstart-refresh | org-clock-save | org-id-locations-save | org-babel-remove-temporary-directory | bookmark-exit-hook-internal | savehist-save | actuator-unpropertize-kill-ring | savehist-autosave | elfeed-db-gc-safe | server-force-stop |
 
 ** Modeline time
 #+begin_src emacs-lisp
