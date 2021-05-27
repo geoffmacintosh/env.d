@@ -332,7 +332,7 @@ that.
   end
 
   function fish_prompt -d "The prompt for fish"
-      prompt_ssh
+      #prompt_ssh
       prompt_cwd
       prompt_git
       printf ' ❯ '
