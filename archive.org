@@ -675,3 +675,16 @@ This script should rysnc-copy my music to my archive  very confusing) but had no
 
   typeset -U PATH path
 #+end_src
+**** From emacs.org
+***** Modeline time
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-05-28 Fri 12:07
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable
+:ARCHIVE_CATEGORY: emacs
+:END:
+#+begin_src emacs-lisp
+  (run-with-idle-timer 1 nil #'display-time)
+  (csetq display-time-24hr-format t)
+  (csetq display-time-default-load-average nil)
+#+end_src
