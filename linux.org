@@ -374,13 +374,13 @@
   #     }
   # }
 
-
+  gaps outer 0
 
   include /etc/sway/config.d/*
 #+end_src
 
 #+begin_src conf
-  default_border pixel 3
+  default_border pixel 0
 #+end_src
 * Wofi
 ** Config
