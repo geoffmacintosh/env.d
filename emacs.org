@@ -2504,6 +2504,12 @@ https://gitea.petton.fr/mpdel/mpdel
             (window-height . 0.5))))
 #+end_src
 
+** Safe local variables
+#+begin_src emacs-lisp
+  (add-to-list 'safe-local-variable-values
+               '(after-save-hook . "org-babel-tangle"))
+#+end_src
+
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
