@@ -730,6 +730,13 @@ From  emacs-plus:
 #+end_src
 
 ** Org
+The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJECT" to match projects. The escaped quotes are needed.
+
+#+begin_src emacs-lisp
+  (csetq org-stuck-projects
+        '("+TODO=\"PROJECT\"" ("NEXT" "TODO") nil ""))
+#+end_src
+
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "org/" actuator-var-directory) t)
 
