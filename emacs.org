@@ -1337,8 +1337,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mu4e-headers-date-format "%y-%m-%d")
   ;;(csetq mu4e-get-mail-command (concat (executable-find "mbsync") " --all"))
   (csetq mu4e-get-mail-command "mbsync --all")
-  ;;(csetq mu4e-mu-binary (executable-find "mu"))
-  (csetq mu4e-mu-binary "mu")
+  (csetq mu4e-mu-binary (executable-find "mu"))
+  ;;(csetq mu4e-mu-binary "mu")
 #+end_src
 
 ** Message
