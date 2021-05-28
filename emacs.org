@@ -2357,14 +2357,14 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
                  mode-line-mule-info
                  mode-line-client
                  mode-line-modified
-                 "   "
+                 " "
                  '(:eval (when (buffer-file-name)
                            (abbreviate-file-name default-directory)))
                  ;;mode-line-buffer-identification
                  (propertize "%b" 'face 'mode-line-buffer-id)
                  " %IB "
                  mode-line-position
-                 "  "
+                 " "
                  mode-line-misc-info
                  '(:eval (when (featurep 'minions)
                            minions-mode-line-modes))))
