@@ -1,17 +1,81 @@
-#    -*- mode: org -*-
+Archived entries from file /home/g/env.d/linux.org_archive
 
+* 2021
 
-Archived entries from file /home/g/env.d/emacs.org
+** 2021-05 May
 
+*** 2021-05-28 Friday
+**** From linux.org_archive
+***** Twitch FFMPEG
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2021-05-28 Fri 12:04
+  :ARCHIVE_FILE: ~/env.d/linux.org_archive
+  :ARCHIVE_CATEGORY: linux
+  :END:
+From [[https://wiki.archlinux.org/index.php/Streaming_to_twitch.tv#Shell_script_method][Streaming to twitch.tv - ArchWiki]]
 
-* Disabled
+#+begin_src shell :tangle ~/src/stream-to-twitch :shebang "#!/usr/bin/env sh
+  # Usage: stream-to-twitch path/to/key
+
+  set -euo pipefail
+
+  #######################################
+  # Stream to Twitch.tv.
+  # Globals:
+  #   None.
+  # Arguments:
+  #   Stream key. A string.
+  # Returns:
+  #   None.
+  #######################################
+  stream_to_twitch() {
+      res_input="2550x1440" # input resolution
+      res_output="1280x720" # output resolution
+      fps="30" # target FPS
+      gop="60" # i-frame interval, should be double of fps
+      gop_min="30" # min i-frame interval, should be equal to fps
+      probesize="42M" # https://stackoverflow.com/a/57904380
+      threads="2" # max 6
+      cbr="1000k" # constant bitrate (should be between 1000k–3000k)
+      quality="ultrafast" # one of the many FFmpeg presets
+      audio_input_speakers="0" # speakers' sink id
+      audio_input_mic="default" # microphone's sink id
+      audio_rate="44100"
+      stream_server="live-yto" # see https://stream.twitch.tv/ingests for list
+      stream_key="${1}" # key will be passed as an agument from the command line
+      loglevel="warning" # supress unecessary information from printing
+
+      ffmpeg \
+          -loglevel "${loglevel}" \
+          -f x11grab -s "${res_input}" -r ${fps} -probesize ${probesize} -i :0.0 \
+          -f pulse -i "${audio_input_speakers}" \
+          -f pulse -i "${audio_input_mic}" \
+          -filter_complex "[2]highpass=f=200,lowpass=f=3000[hl]; [1][hl]amix=inputs=2[a]" \
+          -map 0:v -map [a] \
+          -f flv -ac 2 -ar ${audio_rate} \
+          -vcodec libx264 -g ${gop} -keyint_min ${gop_min} -b:v ${cbr} \
+          -minrate ${cbr} -maxrate ${cbr} -pix_fmt yuv420p \
+          -s ${res_output} -preset "${quality}" -tune film -acodec aac \
+          -threads ${threads} -strict normal \
+          -bufsize ${cbr} \
+          "rtmp://${stream_server}.twitch.tv/app/${stream_key}"
+  }
+
+  # Get stream key securely stored with the password manager "pass"
+  # and pass the key to the script to start the stream.
+  stream_to_twitch "$(pass "${1}")" #twitch.tv-stream-key
+#+end_src
+
+ If using PulseAudio, run pactl list sinks short to find your Input Audio stream.
+**** From emacs.org_archive
+***** Disabled
    :PROPERTIES:
    :header-args: :tangle no
-   :ARCHIVE_TIME: 2021-04-20 Tue 10:42
-   :ARCHIVE_FILE: ~/env.d/emacs.org
+   :ARCHIVE_TIME: 2021-05-28 Fri 12:04
+   :ARCHIVE_FILE: ~/env.d/emacs.org_archive
    :ARCHIVE_CATEGORY: emacs
    :END:
-** Completion at point
+****** Completion at point
 #+begin_src emacs-lisp
   (setq tab-always-indent 'complete)
 #+end_src
@@ -36,14 +100,14 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
             'append)
 #+end_src
 
-** Matrix
+****** Matrix
 #+begin_src emacs-lisp
   (use-package matrix-client
     :straight (matrix-client :host github
                              :repo "alphapapa/matrix-client.el"))
 #+end_src
 
-** Smart Tab
+****** Smart Tab
 
 #+begin_src emacs-lisp
   (use-package smart-tab
@@ -57,7 +121,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
     (smart-tab-completion-functions-alist nil))
 #+end_src
 
-** Checklist
+****** Checklist
 
 #+begin_src emacs-lisp :tangle no
   (use-package org-checklist
@@ -66,11 +130,11 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
     (add-to-list 'org-modules 'org-checklist))
 #+end_src
 
-** Backends
+****** Backends
 #+begin_src emacs-lisp
   ;;(setq org-export-backends '(html icalendar latex))
 #+end_src
-** Publish Project
+****** Publish Project
 #+begin_src emacs-lisp
   (setq org-publish-project-alist
         `(("blog-org"
@@ -88,7 +152,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
            :publishing-function org-publish-attachment)
           ("blog" :components ("blog-org" "blog-images"))))
 #+end_src
-** Hugo
+****** Hugo
 #+begin_src emacs-lisp
   (use-package ox-hugo
 
@@ -108,7 +172,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
     "* " v1 "\n" _ "\n\n"
     "* Metadata                       :noexport:blog:unpublished:")
 #+end_src
-** Prodigy
+****** Prodigy
 #+begin_src emacs-lisp
   (use-package prodigy
 
@@ -121,7 +185,7 @@ https://with-emacs.com/posts/tutorials/customize-completion-at-point/
      :stop-signal 'sigkill
      :kill-process-buffer-on-stop t))
 #+end_src
-** Ignore headlines
+****** Ignore headlines
 #+begin_src emacs-lisp :tangle no
   (use-package ox-extra
 
@@ -134,7 +198,7 @@ Then tag a headline with ~:ignore:~ to avoid the headline being exported. The co
 
 *References*
 - [[https://emacs.stackexchange.com/questions/38184/org-mode-ignore-heading-when-exporting-to-latex#41685][StackExchange]]
-** Skeleton
+****** Skeleton
 You can define a skeleton to expand as an abbrev expansion. Add it to the list via ~M-x edit-abbrevs~ as shown here
 
 #+begin_example
@@ -147,7 +211,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
 *References*
 - [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Skeletons-as-Abbrevs.html][GNU Manual]] [2020-04-26 Sun]
 
-** Spell check
+****** Spell check
 
 #+begin_src emacs-lisp
 ;; comment
@@ -183,7 +247,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     (ispell-current-personal-dictionary "~/.dict"))
 #+end_src
 
-** Dired subtree
+****** Dired subtree
 
 #+begin_src emacs-lisp
   (use-package dired-subtree
@@ -192,7 +256,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     :bind (:map dired-mode-map
                ("i" . dired-subtree-cycle)))
 #+end_src
-** Dired git info
+****** Dired git info
 
 #+begin_src emacs-lisp
   (use-package dired-git-info
@@ -201,7 +265,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     :bind (:map dired-mode-map
                 (")" . dired-git-info-mode)))
 #+end_src
-** Diredfl
+****** Diredfl
 
 #+begin_src emacs-lisp
   (use-package diredfl
@@ -210,7 +274,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
     :config
     (diredfl-global-mode 1))
 #+end_src
-** Dired Open
+****** Dired Open
 
 #+begin_src emacs-lisp
   (defun actuator-dired-open ()
@@ -224,7 +288,7 @@ In this, the abbrev is added to C-mode, it is invoked when you type "example," i
   (bind-key "e" #'actuator-dired-open dired-mode-map)
 #+end_src
 
-** Fancy refile
+****** Fancy refile
 
 #+begin_src emacs-lisp
   (defmacro actuator-org-make-refile-command (fn-suffix refile-targets)
@@ -251,7 +315,7 @@ _t_his file"
 #+end_src
 
 https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
-** MRU Clock
+****** MRU Clock
 
 #+begin_src emacs-lisp
   (use-package org-mru-clock
@@ -263,7 +327,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     :custom
     (org-mru-clock-completing-read 'ivy-completing-read))
 #+end_src
-** Hydra
+****** Hydra
 
 #+begin_src emacs-lisp
   (use-package hydra
@@ -272,7 +336,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     (hydra-hint-display-type 'lv))
 #+end_src
 
-** Pulse Line
+****** Pulse Line
 #+begin_src emacs-lisp
   (defun pulse-line (&rest _)
         "Pulse the current line."
@@ -283,7 +347,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     (advice-add command :after #'pulse-line))
 #+end_src
 
-** Auto-upgrade
+****** Auto-upgrade
 #+begin_src emacs-lisp
     (use-package auto-package-update
       :ensure t
@@ -304,13 +368,13 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
   --save-space" "*Package backup log*"))
 #+end_src
 
-** Git autocommit
+****** Git autocommit
 #+begin_src emacs-lisp
   (use-package git-auto-commit-mode
     :ensure t)
 #+end_src
 
-** Sunrise/set
+****** Sunrise/set
 
 #+begin_src emacs-lisp :tangle no
   (require 'solar)
@@ -358,7 +422,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
 [[https://www.reddit.com/r/orgmode/comments/a1z26t/sunrise_sunset_as_separate_entries_on_agenda_view/][Sunrise Sunset as Separate Entries on Agenda View (SUPPORT) : orgmode]]
 [[https://stackoverflow.com/questions/22889036/custom-diary-sunrise-function-not-working-autoload-diary-emacs][elisp - Custom diary-sunrise function not working. `autoload-diary`? (Emacs.)...]]
 
-** Truncate
+****** Truncate
 #+begin_src emacs-lisp
   (setq truncate-partial-width-windows nil)
   (toggle-truncate-lines 1) ; Don't wrap lines by default
@@ -366,7 +430,7 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
   (add-hook 'prog-mode-hook    #'auto-fill-mode)
   (add-hook 'special-mode-hook #'turn-on-visual-line-mode)
 #+end_src
-** SMTP Mail
+****** SMTP Mail
 
 #+begin_src emacs-lisp
   (use-package smtpmail
@@ -376,12 +440,11 @@ https://fuco1.github.io/2019-02-10-Refiling-hydra-with-pre-defined-targets.html
     (smtpmail-smtp-server "smtp.fastmail.com")
     (smtpmail-smtp-service 587))
 #+end_src
-
-* Shortcuts                                         :ignore:
+***** Shortcuts                                 :ignore:
 :PROPERTIES:
 :header-args: :noweb-ref shortcuts :tangle no :results output silent
-:ARCHIVE_TIME: 2021-04-20 Tue 11:09
-:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/emacs.org_archive
 :ARCHIVE_OLPATH: Unstable/Elfeed
 :ARCHIVE_CATEGORY: emacs
 :END:
@@ -397,11 +460,10 @@ I built a few shortcuts to switch between different tag views that I commonly us
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-unread"))
 #+end_src
-
-* EMMS
+***** EMMS
 :PROPERTIES:
-:ARCHIVE_TIME: 2021-04-30 Fri 16:03
-:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/emacs.org_archive
 :ARCHIVE_OLPATH: Unstable
 :ARCHIVE_CATEGORY: emacs
 :END:
@@ -423,11 +485,10 @@ Or could just use mingus?
   (make-directory (expand-file-name "emms/" actuator-var-directory) t)
   (customize-set-variable 'emms-directory (expand-file-name "emms/" actuator-var-directory))
 #+end_src
-
-* SVG Screenshot
+***** SVG Screenshot
 :PROPERTIES:
-:ARCHIVE_TIME: 2021-05-06 Thu 12:05
-:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/emacs.org_archive
 :ARCHIVE_OLPATH: Unstable
 :ARCHIVE_CATEGORY: emacs
 :END:
@@ -443,11 +504,10 @@ Or could just use mingus?
       (kill-new filename)
       (message filename)))
 #+end_src
-
-* Captar
+***** Captar
 :PROPERTIES:
-:ARCHIVE_TIME: 2021-05-08 Sat 11:19
-:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/emacs.org_archive
 :ARCHIVE_OLPATH: Unstable/Org-elfeed
 :ARCHIVE_CATEGORY: emacs
 :END:
@@ -463,21 +523,19 @@ Or could just use mingus?
                    :kill-buffer
                    :empty-lines 1)))
 #+end_src
-
-* Changes                                         :noexport:
+***** Changes                                 :noexport:
 :PROPERTIES:
-:ARCHIVE_TIME: 2021-05-08 Sat 11:19
-:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/emacs.org_archive
 :ARCHIVE_OLPATH: Unstable/Org-elfeed
 :ARCHIVE_CATEGORY: emacs
 :END:
-** Wednesday May 20, 2020
+****** Wednesday May 20, 2020
 - Published
-
-* Split Windows
+***** Split Windows
 :PROPERTIES:
-:ARCHIVE_TIME: 2021-05-11 Tue 10:21
-:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/emacs.org_archive
 :ARCHIVE_OLPATH: Unstable
 :ARCHIVE_CATEGORY: emacs
 :END:
@@ -505,4 +563,115 @@ Or could just use mingus?
       (when (fboundp 'ivy-switch-buffer)
         (ivy-switch-buffer)))
   ;;(global-set-key (kbd "C-x 2") #'actuator-split-window-below)
+#+end_src
+**** From macos.org_archive
+***** Stop indexing node_modules
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2021-05-28 Fri 12:04
+  :ARCHIVE_FILE: ~/env.d/macos.org_archive
+  :ARCHIVE_CATEGORY: macos
+  :END:
+FROM ANDY
+#+begin_src shell
+  find . -type d -name "node_modules" -exec touch "{}/.metadata_never_index" \;
+#+end_src
+***** Backup Anki
+:PROPERTIES:
+:ID:       B421E9B0-7686-4777-AA4B-2A6C2D2A8DED
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/macos.org_archive
+:ARCHIVE_CATEGORY: macos
+:END:
+
+#+begin_src xml :tangle ~/Library/LaunchAgents/actuator.backup-anki.plist
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+    <dict>
+      <key>Label</key>
+      <string>actuator.backup-anki</string>
+      <key>ProgramArguments</key>
+      <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>/usr/bin/rsync -av ~/Library/ApplicationSupport/Anki2 ~/Documents/Archive/Anki2</string>
+      </array>
+      <key>StartCalendarInterval</key>
+      <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+      </dict>
+      <key>StandardErrorPath</key>
+      <string>/tmp/backup-ankit.stderr</string>
+    </dict>
+  </plist>
+#+end_src
+***** Rsync music backup
+:PROPERTIES:
+:ID:       CB217DF8-4B9F-4ADC-9F60-1B7FAB3DA897
+:ARCHIVE_TIME: 2021-05-28 Fri 12:04
+:ARCHIVE_FILE: ~/env.d/macos.org_archive
+:ARCHIVE_CATEGORY: macos
+:END:
+I wanted to keep my music backed up to iCloud. I don't pay for iTunes Match or Apple Music, but I do have 2TB of iCloud Drive storage, so this works well.
+
+This script should rysnc-copy my music to my archive  very confusing) but had no end of issues getting permission from the system to run it. The secret was to enable full disk access to ~/bin/sh~.
+
+#+begin_src xml :tangle ~/Library/LaunchAgents/actuator.syncmusic.plist
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+    <dict>
+      <key>Label</key>
+      <string>actuator.syncmusic</string>
+      <key>ProgramArguments</key>
+      <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>/usr/bin/rsync -av ~/Music/ ~/Documents/Archive/Music</string>
+      </array>
+      <key>StartCalendarInterval</key>
+      <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+      </dict>
+      <key>StandardErrorPath</key>
+      <string>/tmp/music.stderr</string>
+    </dict>
+  </plist>
+#+end_src
+**** From default.org_archive
+***** ZSH
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2021-05-28 Fri 12:05
+  :ARCHIVE_FILE: ~/env.d/default.org_archive
+  :ARCHIVE_CATEGORY: default
+  :END:
+#+begin_src shell :tangle ~/.zshenv
+  export XDG_DATA_HOME="$HOME/.local/share"
+  export XDG_CONFIG_HOME="$HOME/.config"
+  export XDG_CACHE_HOME="$HOME/.cache"
+
+  export EDITOR="emacsclient -tty -a \"\""
+  export VISUAL="emacsclient -c -a \"\""
+
+  export QMK_HOME="~/Documents/Projects/qmk_firmware"
+
+  [ -d /usr/local/opt/ruby/bin ] && \
+      path=( /usr/local/opt/ruby/bin $path )
+
+  [ -d /usr/local/opt/ruby/libexec/gembin ] && \
+      path=( /usr/local/opt/ruby/libexec/gembin $path )
+
+  [ -d /Library/TeX/texbin ] && \
+      path=( /Library/TeX/texbin $path )
+
+  [ -d /usr/local/sbin ] && \
+      path=( /usr/local/sbin $path )
+
+  typeset -U PATH path
 #+end_src
