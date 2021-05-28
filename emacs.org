@@ -2373,8 +2373,8 @@ https://gitea.petton.fr/mpdel/mpdel
             (window-height . 0.5))))
 #+end_src
 
-** Footer
-#+begin_src emacs-lisp :comments no
+* Footer
+#+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
   ;;; init.el ends here
 #+end_src
