@@ -137,3 +137,20 @@ Install pacman-contrib.
 #+end_src
 
 *
+
+* Fail Lock
+[[https://wiki.archlinux.org/index.php/Security#Lock_out_user_after_three_failed_login_attempts][Security - ArchWiki]]
+
+As per =/etc/security/faillock.conf=:
+
+- unlock_time :: the lockout time (in seconds, default 10 minutes).
+- fail_interval :: the time in which failed logins can cause a lockout (in seconds, default 15 minutes).
+- deny :: the number of failed logins before lockout (default 3).
+- =deny = 0= will disable lockout
+
+#+begin_src shell :dir /sudo::
+  echo "deny = 0" | tee -a /etc/security/faillock.conf
+#+end_src
+
+#+results:
+: deny = 0
