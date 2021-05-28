@@ -838,15 +838,18 @@ From  emacs-plus:
   (with-eval-after-load 'org
     (add-to-list 'org-default-properties "DIR")
     (add-to-list 'org-default-properties "header-args")
+    (require 'org-habit)
+    (require 'org-checklist)
+    (require 'org-crypt)
+    (org-crypt-use-before-save-magic)
     (org-indent-mode 1)
 
-    (when (package-installed-p 'org-plus-contrib)
-      (add-to-list 'org-modules 'habit)
-      ;;(require 'org-habit)
-      (add-to-list 'org-modules 'checklist)
-      ;;(require 'org-checklist)
-      (add-to-list 'org-modules 'crypt)
-      (org-crypt-use-before-save-magic))
+    ;; (when (package-installed-p 'org-plus-contrib)
+    ;;   (add-to-list 'org-modules 'habit)
+    ;;   (add-to-list 'org-modules 'checklist)
+    ;;   (add-to-list 'org-modules 'crypt))
+
+
 
     ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
     (org-babel-do-load-languages 'org-babel-load-languages
