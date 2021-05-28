@@ -1557,13 +1557,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
 #+end_src
 
-** Modeline time
-#+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'display-time)
-  (csetq display-time-24hr-format t)
-  (csetq display-time-default-load-average nil)
-#+end_src
-
 ** Allow different places in the same buffer
 #+begin_src emacs-lisp
   (csetq switch-to-buffer-preserve-window-point t)
