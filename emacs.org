@@ -1293,7 +1293,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (eval-when-compile (defvar savehist-additional-variables))
     (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
 
-  (with-eval-after-load (declare-function dired-directory-changed-p "dired"))
+  (eval-when-compile (declare-function dired-directory-changed-p "dired"))
   (csetq dired-auto-revert-buffer #'dired-directory-changed-p)
   (csetq dired-dwim-target t)
   (csetq wdired-create-parent-directories t)
