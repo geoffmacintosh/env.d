@@ -1528,6 +1528,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (setq comp-async-report-warnings-errors nil))
 #+end_src
 
+#+begin_src emacs-lisp
+  (csetq package-native-compile t)
+#+end_src
+
 ** Package Quickstart
 
 #+begin_src emacs-lisp
