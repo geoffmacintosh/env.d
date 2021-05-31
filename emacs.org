@@ -547,7 +547,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (add-to-list 'org-capture-templates
                  `("l" "Todo (with link)" entry
                    (file "inbox.org")
-                   "* TODO %?\n:LOGBOOK:\n- Added on %U\n:END:\n%i\n%a\n")))
+                   "* TODO %?\n%U\n%i\n%a\n")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -556,7 +556,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (add-to-list 'org-capture-templates
                  `("t" "Todo (no link)" entry
                    (file "inbox.org")
-                   "* TODO %?\n:LOGBOOK:\n- Added on %U\n:END:\n%i\n")))
+                   "* TODO %?\n%U\n%i\n")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -580,9 +580,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   :EMAIL: %^{Email}
   :PHONE: %^{Phone}
   :END:
-  :LOGBOOK:
-  - Added on %U
-  :END:\n\n%?")))
+  %U
+  \n%?")))
 #+end_src
 
 ** Calendar
