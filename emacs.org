@@ -1313,6 +1313,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq ls-lisp-use-localized-time-format nil)
 
   (cond ((or (eq system-type 'gnu/linux) (executable-find "gls"))
+         (when (executable-find "gls") (csetq insert-directory-program "gls"))
          (csetq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso --dired"))
         ((eq system-type 'darwin)
          (csetq dired-listing-switches "-alhFo")))
