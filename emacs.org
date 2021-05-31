@@ -1550,7 +1550,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   file that should benefit from byte compilation that much anyway."
 
     (interactive)
-    (let ((init  (expand-file-name "init.el" user-emacs-directory)))
+    (let ((init  user-init-file))
       (if (fboundp 'native-compile)
           (progn
             (native-compile init)
