@@ -250,17 +250,17 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (require 'package)
 
   (csetq package-archives
-         '(("org"    . "https://orgmode.org/elpa/")
-           ("melpa"  . "https://melpa.org/packages/")
+         '(("melpa"  . "https://melpa.org/packages/")
            ("gnu"    . "https://elpa.gnu.org/packages/")
            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-  (csetq package-archive-priorities '(("org"   . 40)
-                                      ("melpa" . 30)
-                                      ("gnu"   . 20)
-                                      ("nongnu". 10)))
+  (csetq package-archive-priorities '(("melpa"  . 10)
+                                      ("gnu"    . 30)
+                                      ("nongnu" . 20)))
   (setq package-selected-packages nil)
 #+end_src
+
+#+results:
 
 #+begin_src emacs-lisp
   (defvar actuator-var-directory (expand-file-name (convert-standard-filename "var/") user-emacs-directory))
@@ -995,7 +995,8 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'org-plus-contrib)
+  (add-to-list 'package-selected-packages 'org)
+  (add-to-list 'package-selected-packages 'org-contrib)
   (csetq org-babel-default-header-args '((:mkdirp   . "yes")
                                          (:comments . "link")
                                          (:session  . "none")
