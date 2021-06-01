@@ -156,12 +156,6 @@
     (setq package-quickstart t))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (when (boundp 'native-comp-eln-load-path)
-    (setcar (nthcdr 0 native-comp-eln-load-path)
-            (expand-file-name "~/.cache/emacs/eln-cache/")))
-#+end_src
-
 #+begin_src emacs-lisp :comments no
   (provide 'early-init)
   ;;; early-init.el ends here
@@ -798,10 +792,6 @@ From  emacs-plus:
     (csetq locate-command "mdfind"))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (csetq vc-handled-backends nil)
-#+end_src
-
 #+begin_src emacs-lisp
   (run-with-idle-timer 2 nil #'show-paren-mode 1)
   (run-with-idle-timer 2 nil #'electric-pair-mode 1)
@@ -1337,7 +1327,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq org-attach-store-link-p t)
   (csetq org-attach-expert nil)
   (csetq org-attach-dir-relative t)
-  (csetq org-attach-preferred-new-method 'dir)
+  (csetq org-attach-preferred-new-method 'id)
   (csetq org-attach-method 'mv)
   (csetq org-attach-auto-tag "attach")
   (csetq org-attach-archive-delete 'query)
