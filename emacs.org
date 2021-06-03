@@ -888,10 +888,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-dim-blocked-tasks t)
   (csetq org-list-indent-offset 1)
   (csetq org-use-speed-commands t)
-  (csetq org-refile-allow-creating-parent-nodes 'confirm)
-  (csetq org-outline-path-complete-in-steps nil)
-  (csetq org-refile-use-outline-path 'file)
-  (csetq org-refile-targets '((org-agenda-files :maxlevel . 3)))
   (csetq org-footnote-auto-adjust t)
   (csetq org-footnote-define-inline t)
   (csetq org-footnote-auto-label t)
@@ -928,6 +924,45 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+  (csetq org-refile-cache t)
+  (csetq org-refile-allow-creating-parent-nodes 'confirm)
+  (csetq org-outline-path-complete-in-steps nil)
+  (csetq org-refile-use-outline-path 'file)
+  ;;(csetq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+
+    (defun actuator-org-refile-candidates ()
+      "Collect all the org-mode files in the org-directory.
+
+  Currently it only collects files that start with a lowercase
+  letter, which is probably the wrong way to go about it, but I
+  don't have any files that start with uppercase or numbers (this
+  is on purpose) and that eliminates adding any autosave, backup or
+  other weird files that might temporarily get caught by the
+  refiler that I don't want. This would be an easy fix, but I'm not
+  doing it."
+      (directory-files org-directory t "^[a-z].*\\.org$"))
+
+    (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
+
+    (defun actuator-inbuffer-org-refile ()
+      "Refile within the current buffer only."
+      (interactive)
+      (let ((org-refile-targets '((nil :maxlevel . 3)))
+            (org-refile-cache nil))
+        (org-refile)))
+
+  (defun actuator-rebuild-org-refile-cache ()
+    "Rebuilds the refile cache so things refile quickly.
+
+  Might be a touch mean to slower laptops, so not sure it should
+  run very often."
+    (org-refile-cache-clear)
+    (org-refile-get-targets))
+
+  (run-with-idle-timer 300 t #'actuator-rebuild-org-refile-cache)
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq org-agenda-columns-add-appointments-to-effort-sum t)
   ;;(add-to-list 'org-global-properties '("Effort_ALL". "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 7:00 8:00")) ;; WHY NO WORK
 #+end_src
@@ -939,6 +974,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-todo-ignore-with-date nil)
   (csetq org-agenda-tags-todo-honor-ignore-options t)
 #+end_src
+
 #+begin_src emacs-lisp
   (defun actuator-org-src-line-wrap-setup ()
     "Set truncate-lines-mode in org-source-editing buffers."
@@ -1841,7 +1877,7 @@ https://gist.github.com/spacebat/5500966
     (add-to-list 'org-capture-templates
                  '("b" "Bookmark" entry
                    (file "bookmarks.org")
-                   "* %(org-cliplink-capture) %^g\nSaved on: %U\n\n%?"
+                   "* %(org-cliplink-capture) %^g\n%U\n\n%?"
                    :prepend
                    :empty-lines 1
                    :kill-buffer)))
