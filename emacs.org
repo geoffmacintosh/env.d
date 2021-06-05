@@ -2547,6 +2547,95 @@ https://gitea.petton.fr/mpdel/mpdel
                '(after-save-hook . "org-babel-tangle"))
 #+end_src
 
+** Org publish org
+
+#+begin_src emacs-lisp
+  (with-eval-when-load
+   'ox
+   (eval-when-compile (defvar org-export-filter-timestamp-functions))
+   (add-to-list 'org-export-filter-timestamp-functions
+                #'actuator-filter-timestamp)
+   (defun actuator-filter-timestamp (trans back _comm)
+     "Remove <> around time-stamps."
+     (pcase back
+       ((or `jekyll `html `md)
+        (replace-regexp-in-string "&[lg]t;" "" trans))
+       (`latex
+        (replace-regexp-in-string "[<>]" "" trans)))))
+#+end_src
+
+#+begin_src emacs-lisp
+    (defvar actuator-org-html-head
+      "<link rel='stylesheet' href='css/site.css' type='text/css'/>")
+
+    (defvar actuator-org-html-preamble
+      "<ul>
+    <li><a href='/'>Home</a></li>
+    </ul>")
+
+    (defvar actuator-org-html-postamble
+      "Last updated %C. Built with %c. (%v HTML).")
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load
+   'ox-publish
+   (eval-when-compile (defvar org-publish-project-alist))
+   (setq org-publish-project-alist nil)
+   (add-to-list
+    'org-publish-project-alist
+    `("org-content"
+      :base-directory ,org-directory
+      :base-extension "org"
+      ;;:html-link-home "/"
+      ;;:html-link-up nil
+      :publishing-directory "~/Desktop/html/"
+      :publishing-function org-html-publish-to-html
+      :with-author t
+      :with-creator nil
+      :with-date t
+      :with-title t
+      :section-numbers nil
+      :with-drawers t
+      :with-sub-superscript t
+      :html-viewport nil
+      :recursive nil
+      :with-toc nil
+      :section-numbers nil
+      :with-broken-links mark
+      :html-doctype "html5"
+      :html-html5-fancy t
+      :html-head-extra nil
+      :html-head-include-default-style nil
+      :html-head-include-scripts nil
+      :html-head ,actuator-org-html-head
+      :html-preamble ,actuator-org-html-preamble
+      :html-postamble ,actuator-org-html-postamble
+      :sitemap-title "Sitemap"
+      :sitemap-style list
+      :sitemap-filename "sitemap.org"
+      ;;:sitemap-sort-files anti-chronologically
+      :auto-sitemap t
+      :makeindex t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-export-org ()
+    "Build org html."
+    (interactive)
+    (org-publish "org" nil t))
+  (global-set-key (kbd "C-c p") #'actuator-export-org)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-filter-local-links (link backend info)
+    "Filter that converts all the /index.html links to /."
+    (if (org-export-derived-backend-p backend 'html)
+        (replace-regexp-in-string "/index.html" "/" link)))w
+  (with-eval-after-load
+   'ox
+   (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
+#+end_src
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
