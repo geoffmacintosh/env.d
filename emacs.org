@@ -1505,7 +1505,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mu4e-mu-binary (executable-find "mu"))
   ;;(csetq mu4e-mu-binary "mu")
   (add-hook 'message-mode-hook 'auto-fill-mode)
-  (csetq message-cite-reply-position 'below)
+  (csetq message-cite-reply-position 'traditional)
 #+end_src
 
 ** Message
