@@ -411,7 +411,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (eval-when-compile ;;(defvar savehist-autosave-interval)
                      (declare-function savehist-save "savehist"))
   (csetq savehist-autosave-interval nil)
-  (add-hook 'kill-emacs-hook #'savehist-save)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'savehist-save))
   (add-hook 'after-save-hook #'savehist-save)
 #+end_src
 ** Autorevert
@@ -714,11 +715,11 @@ From  emacs-plus:
 
     (message ""))
 
-  (setq default-frame-alist
+  (csetq default-frame-alist
         '((ns-transparent-titlebar . t)
           (ns-appearance           . 'light)))
 
-  (setq completion-styles
+  (csetq completion-styles
         '(fuzzy
           basic
           partial-completion
@@ -745,7 +746,9 @@ From  emacs-plus:
       (set-frame-font "SF Mono-12" nil t)))
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
-  (actuator-frame-init)
+
+  (unless noninteractive
+    (actuator-frame-init))
 #+end_src
 ** Misc
 
@@ -1570,7 +1573,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Package Quickstart
 
 #+begin_src emacs-lisp
-  (add-hook 'kill-emacs-hook #'package-quickstart-refresh)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
 #+end_src
 
 ** Byte compile init
@@ -1595,7 +1599,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
           (byte-recompile-file init nil 0)
           (when package-quickstart-file
             (byte-recompile-file package-quickstart-file nil 0))))))
-  (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init))
 #+end_src
 
 ** Allow different places in the same buffer
