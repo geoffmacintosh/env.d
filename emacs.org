@@ -893,11 +893,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
          '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
-  (csetq org-agenda-window-setup 'reorganize-frame)
+  (csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 'week) ;; fortnight
   (csetq org-agenda-include-diary t)
-  (csetq org-agenda-text-search-extra-files nil)
   (csetq org-agenda-todo-list-sublevels t)
   (csetq org-agenda-sticky t)
   (csetq org-agenda-dim-blocked-tasks t)
@@ -1041,7 +1040,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   cause an error if not."
 
     (require 'org)
+    (require 'org-table)
     (declare-function org-dblock-update "org")
+    (declare-function org-table-map-tables "org-table")
+    (org-table-map-tables 'org-table-align 'quietly)
     (org-dblock-update 1))
 
   (defun actuator-org-mode-setup ()
@@ -1081,7 +1083,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-log-redeadline 'time)
   (csetq org-closed-keep-when-no-todo t)
   (csetq org-enforce-todo-dependencies t)
-  (csetq org-enforce-todo-checkbox-dependencies t)
+  (csetq org-enforce-todo-checkbox-dependencies nil)
   (csetq org-complete-tags-always-offer-all-agenda-tags nil)
   (csetq org-clone-delete-id t)
   (csetq org-tags-column -60)
