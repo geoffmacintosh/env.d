@@ -177,6 +177,7 @@
 ** Native compile
 #+begin_src emacs-lisp
   (when (eq system-type 'darwin)
+    (eval-when-compile (defvar native-comp-async-report-warnings-errors))
     (setq native-comp-async-report-warnings-errors nil))
 #+end_src
 
@@ -958,18 +959,22 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
     (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
 
-    (defun actuator-inbuffer-org-refile ()
-      "Refile within the current buffer only."
-      (interactive)
-      (let ((org-refile-targets '((nil :maxlevel . 3)))
-            (org-refile-cache nil))
-        (org-refile)))
+    ;; (defun actuator-inbuffer-org-refile ()
+    ;;   "Refile within the current buffer only."
+    ;;   (interactive)
+    ;;   (let ((org-refile-targets '((nil :maxlevel . 3)))
+    ;;         (org-refile-cache nil))
+    ;;     (org-refile)))
 
   (defun actuator-rebuild-org-refile-cache ()
     "Rebuilds the refile cache so things refile quickly.
 
   Might be a touch mean to slower laptops, so not sure it should
   run very often."
+    (require 'org-refile)
+    (eval-when-compile
+      (declare-function org-refile-cache-clear "org-refile")
+      (declare-function org-refile-get-targets "org-refile"))
     (org-refile-cache-clear)
     (org-refile-get-targets))
 
@@ -2550,18 +2555,20 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Org publish org
 
 #+begin_src emacs-lisp
-  (with-eval-when-load
-   'ox
-   (eval-when-compile (defvar org-export-filter-timestamp-functions))
-   (add-to-list 'org-export-filter-timestamp-functions
-                #'actuator-filter-timestamp)
-   (defun actuator-filter-timestamp (trans back _comm)
-     "Remove <> around time-stamps."
-     (pcase back
-       ((or `jekyll `html `md)
-        (replace-regexp-in-string "&[lg]t;" "" trans))
-       (`latex
-        (replace-regexp-in-string "[<>]" "" trans)))))
+  (with-eval-after-load
+      'ox
+    (eval-when-compile (defvar org-export-filter-timestamp-functions))
+
+    (defun actuator-filter-timestamp (trans back _comm)
+      "Remove <> around time-stamps."
+      (pcase back
+        ((or `jekyll `html `md)
+         (replace-regexp-in-string "&[lg]t;" "" trans))
+        (`latex
+         (replace-regexp-in-string "[<>]" "" trans))))
+
+    (add-to-list 'org-export-filter-timestamp-functions
+                 #'actuator-filter-timestamp))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2623,18 +2630,23 @@ https://gitea.petton.fr/mpdel/mpdel
   (defun actuator-export-org ()
     "Build org html."
     (interactive)
+    (require 'ox-publish)
+    (eval-when-compile (declare-function org-publish "ox-publish"))
     (org-publish "org" nil t))
   (global-set-key (kbd "C-c p") #'actuator-export-org)
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-filter-local-links (link backend info)
-    "Filter that converts all the /index.html links to /."
+  (defun actuator-filter-local-links (link backend _info)
+    "Filter to convert all the forms of /index.html to /."
+    (require 'ox)
+    (eval-when-compile (declare-function org-export-derived-backend-p "ox"))
     (if (org-export-derived-backend-p backend 'html)
-        (replace-regexp-in-string "/index.html" "/" link)))w
+        (replace-regexp-in-string "/index.html" "/" link)))
   (with-eval-after-load
-   'ox
-   (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
+      'ox
+    (eval-when-compile (defvar org-export-filter-link-functions))
+    (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
 #+end_src
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
