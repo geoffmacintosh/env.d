@@ -870,14 +870,29 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (eval-when-compile (defvar org-agenda-custom-commands))
+    (add-to-list 'org-agenda-custom-commands
+                 '("u" "Unscheduled TODOs"
+                   ((todo ""
+                          ((org-agenda-overriding-header "\nUnscheduled TODO")
+                           (org-agenda-skip-function
+                            '(org-agenda-skip-entry-if
+                              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("d" "Daily View"
+                   ((agenda "")
+                    (todo "NEXT"))
+                   ((org-agenda-span 'day)))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq org-agenda-text-search-extra-files '(agenda-archives))
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
          '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
-  (csetq org-agenda-custom-commands
-         '(("h" "Agenda Plus"
-            ((agenda "")
-             (tags-todo "current")))))
   (csetq org-agenda-window-setup 'reorganize-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 'week) ;; fortnight
@@ -982,15 +997,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
 #+end_src
 
-#+results:
-| org-src-babel-configure-edit-buffer | org-src-mode-configure-edit-buffer | actuator-org-src-line-wrap-setup |
-
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-agenda
     (csetq org-agenda-follow-mode t))
 #+end_src
-
-#+results:
 
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1006,15 +1016,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (require 'org-crypt)
     (org-crypt-use-before-save-magic)
     (org-indent-mode 1)
-
-    ;; (when (package-installed-p 'org-plus-contrib)
-    ;;   (add-to-list 'org-modules 'habit)
-    ;;   (add-to-list 'org-modules 'checklist)
-    ;;   (add-to-list 'org-modules 'crypt))
-
-
-
-    ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((emacs-lisp . t)
                                    (shell      . t))))
