@@ -138,6 +138,16 @@
 - borg :: Backup tool
 - amphetype :: Typing trainer
 - mg :: Micro text editor (alias mg -n to mg for no backup files)
+* Bash
+
+#+begin_src shell :tangle ~/.bash_profile
+  export GRIM_DEFAULT_DIR=~/Downloads/
+  export MOZ_ENABLE_WAYLAND=1
+  if [ "$(tty)" = "/dev/tty1" ]; then
+      exec sway
+  fi
+#+end_src
+
 * Sway
 :PROPERTIES:
 :header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")

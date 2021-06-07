@@ -7,15 +7,6 @@
   ExecStart=-/usr/bin/agetty --autologin g --noclear %I $TERM
 #+end_src
 
-* Bash
-
-#+begin_src shell :tangle ~/.bash_profile
-  export GRIM_DEFAULT_DIR=~/Downloads/
-  export MOZ_ENABLE_WAYLAND=1
-  if [ "$(tty)" = "/dev/tty1" ]; then
-      exec sway
-  fi
-#+end_src
 * Postfix
 
 #+begin_src shell :results replace
