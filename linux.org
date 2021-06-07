@@ -400,7 +400,6 @@
 
 #+begin_src conf
   prompt=Run
-
 #+end_src
 
 
@@ -720,27 +719,11 @@
 
 #+begin_src conf
   [general]
-  ; The reaper thread will check every 5 seconds for exited clients, for config file changes, and for the CPU/iGPU power balance
   reaper_freq=15
   desiredgov=performance
-
-  ; GameMode can change the scheduler policy to SCHED_ISO on kernels which support it (currently
-  ; not supported by upstream kernels). Can be set to "auto", "on" or "off". "auto" will enable
-  ; with 4 or more CPU cores. "on" will always enable. Defaults to "off".
-  softrealtime=off
-
-  ; GameMode can renice game processes. You can put any value between 0 and 20 here, the value
-  ; will be negated and applied as a nice value (0 means no change). Defaults to 0.
+  softrealtime=auto
   renice=10
-
-  ; By default, GameMode adjusts the iopriority of clients to BE/0, you can put any value
-  ; between 0 and 7 here (with 0 being highest priority), or one of the special values
-  ; "off" (to disable) or "reset" (to restore Linux default behavior based on CPU priority),
-  ; currently, only the best-effort class is supported thus you cannot set it here
   ioprio=0
-
-  ; Sets whether gamemode will inhibit the screensaver when active
-  ; Defaults to 1
   inhibit_screensaver=1
 #+end_src
 
