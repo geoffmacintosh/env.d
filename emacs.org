@@ -177,6 +177,7 @@
 ** Native compile
 #+begin_src emacs-lisp
   (when (eq system-type 'darwin)
+    (eval-when-compile (defvar native-comp-async-report-warnings-errors))
     (setq native-comp-async-report-warnings-errors nil))
 #+end_src
 
@@ -410,7 +411,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (eval-when-compile ;;(defvar savehist-autosave-interval)
                      (declare-function savehist-save "savehist"))
   (csetq savehist-autosave-interval nil)
-  (add-hook 'kill-emacs-hook #'savehist-save)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'savehist-save))
   (add-hook 'after-save-hook #'savehist-save)
 #+end_src
 ** Autorevert
@@ -713,11 +715,11 @@ From  emacs-plus:
 
     (message ""))
 
-  (setq default-frame-alist
+  (csetq default-frame-alist
         '((ns-transparent-titlebar . t)
           (ns-appearance           . 'light)))
 
-  (setq completion-styles
+  (csetq completion-styles
         '(fuzzy
           basic
           partial-completion
@@ -744,7 +746,9 @@ From  emacs-plus:
       (set-frame-font "SF Mono-12" nil t)))
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
-  (actuator-frame-init)
+
+  (unless noninteractive
+    (actuator-frame-init))
 #+end_src
 ** Misc
 
@@ -870,19 +874,33 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (eval-when-compile (defvar org-agenda-custom-commands))
+    (add-to-list 'org-agenda-custom-commands
+                 '("u" "Unscheduled TODOs"
+                   ((todo ""
+                          ((org-agenda-overriding-header "\nUnscheduled TODO")
+                           (org-agenda-skip-function
+                            '(org-agenda-skip-entry-if
+                              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("d" "Daily View"
+                   ((agenda "")
+                    (todo "NEXT"))
+                   ((org-agenda-span 'day)))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq org-agenda-text-search-extra-files '(agenda-archives))
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
          '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
-  (csetq org-agenda-custom-commands
-         '(("h" "Agenda Plus"
-            ((agenda "")
-             (tags-todo "current")))))
-  (csetq org-agenda-window-setup 'reorganize-frame)
+  (csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 'week) ;; fortnight
   (csetq org-agenda-include-diary t)
-  (csetq org-agenda-text-search-extra-files nil)
   (csetq org-agenda-todo-list-sublevels t)
   (csetq org-agenda-sticky t)
   (csetq org-agenda-dim-blocked-tasks t)
@@ -944,18 +962,22 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
     (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
 
-    (defun actuator-inbuffer-org-refile ()
-      "Refile within the current buffer only."
-      (interactive)
-      (let ((org-refile-targets '((nil :maxlevel . 3)))
-            (org-refile-cache nil))
-        (org-refile)))
+    ;; (defun actuator-inbuffer-org-refile ()
+    ;;   "Refile within the current buffer only."
+    ;;   (interactive)
+    ;;   (let ((org-refile-targets '((nil :maxlevel . 3)))
+    ;;         (org-refile-cache nil))
+    ;;     (org-refile)))
 
   (defun actuator-rebuild-org-refile-cache ()
     "Rebuilds the refile cache so things refile quickly.
 
   Might be a touch mean to slower laptops, so not sure it should
   run very often."
+    (require 'org-refile)
+    (eval-when-compile
+      (declare-function org-refile-cache-clear "org-refile")
+      (declare-function org-refile-get-targets "org-refile"))
     (org-refile-cache-clear)
     (org-refile-get-targets))
 
@@ -982,15 +1004,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
 #+end_src
 
-#+results:
-| org-src-babel-configure-edit-buffer | org-src-mode-configure-edit-buffer | actuator-org-src-line-wrap-setup |
-
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-agenda
     (csetq org-agenda-follow-mode t))
 #+end_src
-
-#+results:
 
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -1006,15 +1023,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (require 'org-crypt)
     (org-crypt-use-before-save-magic)
     (org-indent-mode 1)
-
-    ;; (when (package-installed-p 'org-plus-contrib)
-    ;;   (add-to-list 'org-modules 'habit)
-    ;;   (add-to-list 'org-modules 'checklist)
-    ;;   (add-to-list 'org-modules 'crypt))
-
-
-
-    ;;(org-emphasis-alist (delete '("+" (:strike-through t)) org-emphasis-alist))
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((emacs-lisp . t)
                                    (shell      . t))))
@@ -1040,7 +1048,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   cause an error if not."
 
     (require 'org)
+    (require 'org-table)
     (declare-function org-dblock-update "org")
+    (declare-function org-table-map-tables "org-table")
+    (org-table-map-tables 'org-table-align 'quietly)
     (org-dblock-update 1))
 
   (defun actuator-org-mode-setup ()
@@ -1080,7 +1091,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-log-redeadline 'time)
   (csetq org-closed-keep-when-no-todo t)
   (csetq org-enforce-todo-dependencies t)
-  (csetq org-enforce-todo-checkbox-dependencies t)
+  (csetq org-enforce-todo-checkbox-dependencies nil)
   (csetq org-complete-tags-always-offer-all-agenda-tags nil)
   (csetq org-clone-delete-id t)
   (csetq org-tags-column -60)
@@ -1505,7 +1516,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mu4e-mu-binary (executable-find "mu"))
   ;;(csetq mu4e-mu-binary "mu")
   (add-hook 'message-mode-hook 'auto-fill-mode)
-  (csetq message-cite-reply-position 'below)
+  (csetq message-cite-reply-position 'traditional)
 #+end_src
 
 ** Message
@@ -1562,7 +1573,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Package Quickstart
 
 #+begin_src emacs-lisp
-  (add-hook 'kill-emacs-hook #'package-quickstart-refresh)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
 #+end_src
 
 ** Byte compile init
@@ -1587,7 +1599,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
           (byte-recompile-file init nil 0)
           (when package-quickstart-file
             (byte-recompile-file package-quickstart-file nil 0))))))
-  (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init))
 #+end_src
 
 ** Allow different places in the same buffer
@@ -2080,7 +2093,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
     (declare-function elfeed-db-unload "elfeed-db")
     (elfeed-db-save)
     (elfeed-db-gc)
-    (elfeed-db-compact)
+    ;;(elfeed-db-compact)
     (elfeed-db-unload)
     (quit-window)
     (garbage-collect)
@@ -2544,6 +2557,102 @@ https://gitea.petton.fr/mpdel/mpdel
                '(after-save-hook . "org-babel-tangle"))
 #+end_src
 
+** Org publish org
+
+#+begin_src emacs-lisp
+  (with-eval-after-load
+      'ox
+    (eval-when-compile (defvar org-export-filter-timestamp-functions))
+
+    (defun actuator-filter-timestamp (trans back _comm)
+      "Remove <> around time-stamps."
+      (pcase back
+        ((or `jekyll `html `md)
+         (replace-regexp-in-string "&[lg]t;" "" trans))
+        (`latex
+         (replace-regexp-in-string "[<>]" "" trans))))
+
+    (add-to-list 'org-export-filter-timestamp-functions
+                 #'actuator-filter-timestamp))
+#+end_src
+
+#+begin_src emacs-lisp
+    (defvar actuator-org-html-head
+      "<link rel='stylesheet' href='css/site.css' type='text/css'/>")
+
+    (defvar actuator-org-html-preamble
+      "<ul>
+    <li><a href='/'>Home</a></li>
+    </ul>")
+
+    (defvar actuator-org-html-postamble
+      "Last updated %C. Built with %c. (%v HTML).")
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load
+   'ox-publish
+   (eval-when-compile (defvar org-publish-project-alist))
+   (setq org-publish-project-alist nil)
+   (add-to-list
+    'org-publish-project-alist
+    `("org-content"
+      :base-directory ,org-directory
+      :base-extension "org"
+      ;;:html-link-home "/"
+      ;;:html-link-up nil
+      :publishing-directory "~/Desktop/html/"
+      :publishing-function org-html-publish-to-html
+      :with-author t
+      :with-creator nil
+      :with-date t
+      :with-title t
+      :section-numbers nil
+      :with-drawers t
+      :with-sub-superscript t
+      :html-viewport nil
+      :recursive nil
+      :with-toc nil
+      :section-numbers nil
+      :with-broken-links mark
+      :html-doctype "html5"
+      :html-html5-fancy t
+      :html-head-extra nil
+      :html-head-include-default-style nil
+      :html-head-include-scripts nil
+      :html-head ,actuator-org-html-head
+      :html-preamble ,actuator-org-html-preamble
+      :html-postamble ,actuator-org-html-postamble
+      :sitemap-title "Sitemap"
+      :sitemap-style list
+      :sitemap-filename "sitemap.org"
+      ;;:sitemap-sort-files anti-chronologically
+      :auto-sitemap t
+      :makeindex t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-export-org ()
+    "Build org html."
+    (interactive)
+    (require 'ox-publish)
+    (eval-when-compile (declare-function org-publish "ox-publish"))
+    (org-publish "org" nil t))
+  (global-set-key (kbd "C-c p") #'actuator-export-org)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-filter-local-links (link backend _info)
+    "Filter to convert all the forms of /index.html to /."
+    (require 'ox)
+    (eval-when-compile (declare-function org-export-derived-backend-p "ox"))
+    (if (org-export-derived-backend-p backend 'html)
+        (replace-regexp-in-string "/index.html" "/" link)))
+  (with-eval-after-load
+      'ox
+    (eval-when-compile (defvar org-export-filter-link-functions))
+    (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
+#+end_src
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
