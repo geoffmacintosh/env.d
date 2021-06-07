@@ -213,9 +213,9 @@
   # Read `man 5 sway-input` for more information about this section.
 
   input * {
-          xkb_layout "us"
-          xkb_variant "colemak"
-          xkb_options ctrl:nocaps
+          xkb_layout "us,us"
+          xkb_variant "colemak,,"
+          xkb_options "ctrl:nocaps,grp:shift_toggle"
   }
 
 
