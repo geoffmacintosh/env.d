@@ -1110,6 +1110,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+begin_src emacs-lisp
   (csetq org-tag-persistent-alist '(("noexport")
                                     ("ignore")
+                                    ("crypt")
                                     (:startgrouptag . nil)
                                     ("@"      . nil)
                                     (:grouptags     . nil)
@@ -2653,6 +2654,24 @@ https://gitea.petton.fr/mpdel/mpdel
     (eval-when-compile (defvar org-export-filter-link-functions))
     (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
 #+end_src
+
+** Insert creation stamp on heading creation
+[2021-06-05 Sat 16:24]
+
+#+begin_src emacs-lisp
+  (defun actuator-org-insert-heading-timestamp ()
+    "Insert a timestamp below a new heading.
+
+  Org counts an inactive timestamp on the start of a line as a
+  creation date."
+    (save-excursion
+      (insert "\n")
+      (org-time-stamp-inactive '(16))))
+
+  (add-hook 'org-insert-heading-hook #'actuator-org-insert-heading-timestamp)
+#+end_src
+
+
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
