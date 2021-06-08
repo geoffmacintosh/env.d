@@ -225,6 +225,13 @@
   (add-hook 'after-init-hook #'actuator-restore-gc)
 #+end_src
 
+** GPG ID
+
+#+begin_src emacs-lisp
+  (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
+    "My GPG ID.")
+#+end_src
+
 ** Csetq
 https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
@@ -917,7 +924,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-src-ask-before-returning-to-edit-buffer nil)
   (csetq org-src-fontify-natively t)
   (csetq org-tags-exclude-from-inheritance '("crypt"))
-  (csetq org-crypt-key nil)
+  (csetq org-crypt-key actuator-gpg-id)
   (csetq org-habit-show-habits-only-for-today t)
   (csetq org-capture-bookmark t)
   (csetq org-hide-macro-markers t)
@@ -1683,9 +1690,10 @@ https://gist.github.com/spacebat/5500966
   (add-to-list 'package-selected-packages 'org-randomnote)
 #+end_src
 
-** Auth Source
+** Auth Source / EPA / EPG
 
 #+begin_src emacs-lisp
+  (csetq epa-file-encrypt-to actuator-gpg-id)
   (csetq auth-sources '(password-store))
   (csetq password-cache-expiry 600)
 #+end_src
