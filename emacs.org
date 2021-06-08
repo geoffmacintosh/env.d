@@ -1580,7 +1580,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** Package Quickstart
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
 #+end_src
