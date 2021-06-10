@@ -2549,7 +2549,7 @@ https://gitea.petton.fr/mpdel/mpdel
 [[https://emacs.stackexchange.com/questions/48472/how-to-make-m-x-ansi-term-behave-like-m-x-shell-opening-in-new-window/48481#48481][Switch-to-buffer-obey-display-actions]]
 
 #+begin_src emacs-lisp
-  (csetq switch-to-buffer-obey-display-actions t)
+  (csetq switch-to-buffer-obey-display-actions nil) ;; Currently fucks up badly Investiate this.
   (csetq display-buffer-alist
          '(("\\*\\(Org Lint\\|Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Completions\\)\\*"
             (display-buffer-in-side-window)
