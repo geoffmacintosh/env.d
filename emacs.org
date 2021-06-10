@@ -445,7 +445,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   servers, so that's fine."
 
     (require 'server)
-    (declare-function server-running-p "server")
+    (eval-when-compile (declare-function server-running-p "server"))
     (unless (server-running-p) (server-start)))
   (run-with-idle-timer 2 nil #'actuator-start-server-if-not-running)
 #+end_src
@@ -543,10 +543,12 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 
 ** Capture Templates
+#+begin_src emacs-lisp
+  (eval-when-compile (defvar org-capture-templates))
+#+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
-    (defvar org-capture-templates)
     (add-to-list 'org-capture-templates
                  `("l" "Todo (with link)" entry
                    (file "inbox.org")
@@ -555,7 +557,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
-    (defvar org-capture-templates)
     (add-to-list 'org-capture-templates
                  `("t" "Todo (no link)" entry
                    (file "inbox.org")
@@ -564,7 +565,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
-    (defvar org-capture-templates)
     (defun actuator-date-stamp ()
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
     (add-to-list 'org-capture-templates
@@ -575,7 +575,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
-    (defvar org-capture-templates)
     (add-to-list 'org-capture-templates
                  '("C" "Contact" entry (file "contacts.org")
                    "* %^{Name}
@@ -1018,7 +1017,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
 #+begin_src emacs-lisp
   (eval-when-compile
-    (defvar org-modules)
+    ;;(defvar org-modules)
     (defvar org-default-properties)
     (declare-function org-indent-mode "org-indent"))
 
@@ -1056,8 +1055,9 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
     (require 'org)
     (require 'org-table)
-    (declare-function org-dblock-update "org")
-    (declare-function org-table-map-tables "org-table")
+    (eval-when-compile
+      (declare-function org-dblock-update "org")
+      (declare-function org-table-map-tables "org-table"))
     (org-table-map-tables 'org-table-align 'quietly)
     (org-dblock-update 1))
 
@@ -1074,7 +1074,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
   (global-set-key (kbd "C-c c") #'org-capture)
   (global-set-key (kbd "C-c a") #'org-agenda)
-  (declare-function org-store-link "ol")
+  (eval-when-compile (declare-function org-store-link "ol"))
   (global-set-key (kbd "C-c l") #'org-store-link)
 
   (csetq org-startup-folded 'content)
@@ -1274,18 +1274,19 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-ibuffer-setup ()
-    "Set up ibuffer defaults that require running functions.
+    (defun actuator-ibuffer-setup ()
+      "Set up ibuffer defaults that require running functions.
 
-  This should be run as in a hook that is called when ibuffer-mode is run."
+    This should be run as in a hook that is called when ibuffer-mode is run."
 
-    (require 'ibuf-ext)
-    (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext")
-    (declare-function ibuffer-auto-mode "ibuf-ext")
-    (ibuffer-switch-to-saved-filter-groups "default")
-    (ibuffer-auto-mode 1)
-    (toggle-truncate-lines +1))
-  (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
+      (require 'ibuf-ext)
+      (eval-when-compile
+        (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext")
+        (declare-function ibuffer-auto-mode "ibuf-ext"))
+      (ibuffer-switch-to-saved-filter-groups "default")
+      (ibuffer-auto-mode 1)
+      (toggle-truncate-lines +1))
+    (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
 #+end_src
 
 ** Encryption (EPG)
@@ -1319,8 +1320,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq image-dired-thumb-relief 0)
   (csetq image-dired-thumbs-per-row 4)
   (with-eval-after-load 'image-dired
-    (defvar image-dired-thumbnail-mode-map)
-    (declare-function image-dired-thumbnail-display-external "image-dired")
+    (eval-when-compile
+      (defvar image-dired-thumbnail-mode-map)
+      (declare-function image-dired-thumbnail-display-external "image-dired"))
     (define-key image-dired-thumbnail-mode-map
       (kbd "<return>") #'image-dired-thumbnail-display-external))
 
@@ -1418,27 +1420,25 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
   (defun actuator-ediff-save-window-configuration ()
     "Save current window layout so ediff can control the frame."
-
     (window-configuration-to-register :ediff))
 
   (defun actuator-ediff-restore-window-configuration ()
     "Restore the window layout after diffing."
-
     (jump-to-register :ediff))
 
   (defun actuator-ediff-org-reveal-around-difference (&rest _)
     "Ensure that the relevant Org-mode diff is visible."
-
-    (defvar ediff-buffer-A)
-    (defvar ediff-buffer-B)
-    (defvar ediff-buffer-C)
-    (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body))
+    (eval-when-compile
+      (defvar ediff-buffer-A)
+      (defvar ediff-buffer-B)
+      (defvar ediff-buffer-C)
+      (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body)))
     (require 'ediff)
 
     (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
       (ediff-with-current-buffer buf
-                                 (when (derived-mode-p 'org-mode)
-                                   (org-reveal t)))))
+        (when (derived-mode-p 'org-mode)
+          (org-reveal t)))))
 
   ;; (defun actuator-ediff-copy-both-to-C ()
   ;;   "Copy both the A and B diffs to the output C."
@@ -1476,7 +1476,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
   Sometimes it's better to show the entire buffer, for example when
   trying to run ediff on an Org-mode file. That way context for the diff is shown."
-    (declare-function outline-show-all "outline")
+    (eval-when-compile (declare-function outline-show-all "outline"))
     (when (derived-mode-p 'org-mode)
       (require 'outline)
       (outline-show-all)))
@@ -1560,11 +1560,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq message-kill-buffer-on-exit t)
   (csetq message-wide-reply-confirm-recipients t)
   (with-eval-after-load 'mm-bodies
-    (defvar mm-body-charset-encoding-alist)
+    (eval-when-compile (defvar mm-body-charset-encoding-alist))
     (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64)))
 
   (with-eval-after-load 'message
-    (declare-function message-sort-headers "message")
+    (eval-when-compile (declare-function message-sort-headers "message"))
     (add-hook 'message-setup-hook #'message-sort-headers))
 #+end_src
 
@@ -1892,10 +1892,10 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-cliplink)
-  (with-eval-after-load (declare-function org-cliplink "org-cliplink"))
+  (eval-when-compile (declare-function org-cliplink "org-cliplink"))
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
-    (defvar org-capture-templates)
+    (eval-when-compile (defvar org-capture-templates))
     (add-to-list 'org-capture-templates
                  '("b" "Bookmark" entry
                    (file "bookmarks.org")
@@ -2007,7 +2007,7 @@ https://gist.github.com/spacebat/5500966
   (csetq elfeed-search-title-max-width 120)
   (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
-    (defvar elfeed-search-mode-map)
+    (eval-when-compile (defvar elfeed-search-mode-map))
     (define-key elfeed-search-mode-map (kbd "q") #'actuator-elfeed-save-db-and-bury)
     (define-key elfeed-search-mode-map (kbd "R") #'actuator-elfeed-mark-all-as-read))
 #+end_src
@@ -2016,7 +2016,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'elfeed
-    (declare-function elfeed-make-tagger "elfeed")
+    (eval-when-compile (declare-function elfeed-make-tagger "elfeed"))
     (add-hook 'elfeed-new-entry-hook
               (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
                                   :add '(junk debug1)
@@ -2096,10 +2096,11 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 
   Taken from Pragmatic Emacs."
     (interactive)
-    (declare-function elfeed-db-save "elfeed-db")
-    (declare-function elfeed-db-gc "elfeed-db")
-    (declare-function elfeed-db-compact "elfeed-db")
-    (declare-function elfeed-db-unload "elfeed-db")
+    (eval-when-compile
+     (declare-function elfeed-db-save "elfeed-db")
+     (declare-function elfeed-db-gc "elfeed-db")
+     (declare-function elfeed-db-compact "elfeed-db")
+     (declare-function elfeed-db-unload "elfeed-db"))
     (elfeed-db-save)
     (elfeed-db-gc)
     ;;(elfeed-db-compact)
@@ -2110,22 +2111,21 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-elfeed-mark-all-as-read ()
-    "Mark all feeds in search as read.
+    (defun actuator-elfeed-mark-all-as-read ()
+      "Mark all feeds in search as read.
 
-Taken from Mike Zamansky"
-    (interactive)
-    (declare-function elfeed-search-untag-all-unread "elfeed-search")
-    (with-no-warnings (mark-whole-buffer))
-    (elfeed-search-untag-all-unread))
+  Taken from Mike Zamansky"
+      (interactive)
+      (eval-when-compile (declare-function elfeed-search-untag-all-unread "elfeed-search"))
+      (with-no-warnings (mark-whole-buffer))
+      (elfeed-search-untag-all-unread))
 #+end_src
 
 Changing the colours of an entry is neat, but not that useful. I mostly have this set up in order to learn how to do it, and as a vague novelty.
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'elfeed
-    (defvar elfeed-search-face-alist nil
-      "Variable for the custom faces used in Elfeed's search list.")
+    (eval-when-compile (defvar elfeed-search-face-alist))
     (add-to-list 'elfeed-search-face-alist
                  '(video actuator-elfeed-video-face))
     (add-to-list 'elfeed-search-face-alist
@@ -2193,12 +2193,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (defun actuator-elfeed-search--count-unread ()
     "Count the number of entries and feeds being currently displayed."
-    (defvar elfeed-search-filter-active)
-    (defvar elfeed-search-filter-overflowing)
-    (defvar elfeed-search-entries)
-    (declare-function elfeed-tagged-p "elfeed-db")
-    (declare-function elfeed-feed-url "elfeed-db")
-    (declare-function elfeed-entry-feed "elfeed-db")
+    (eval-when-compile
+      (defvar elfeed-search-filter-active)
+      (defvar elfeed-search-filter-overflowing)
+      (defvar elfeed-search-entries)
+      (declare-function elfeed-tagged-p "elfeed-db")
+      (declare-function elfeed-feed-url "elfeed-db")
+      (declare-function elfeed-entry-feed "elfeed-db"))
     (if (and elfeed-search-filter-active elfeed-search-filter-overflowing)
         "?/?:?"
       (cl-loop with feeds = (make-hash-table :test 'equal)
@@ -2337,7 +2338,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
     (require 'eshell)
     (require 'em-dirs)
-    (declare-function eshell/pwd "em-dirs")
+    (eval-when-compile (declare-function eshell/pwd "em-dirs"))
     (concat
      ;;(user-login-name)
      ;;"@"
@@ -2531,11 +2532,12 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq flymake-no-changes-timeout 1)
   (csetq flymake-start-on-save-buffer t)
   (with-eval-after-load 'flymake
-    (defvar flymake-mode-map)
-    (declare-function flymake-start "flymake")
-    (declare-function flymake-show-diagnostics-buffer "flymake")
-    (declare-function flymake-goto-next-error "flymake")
-    (declare-function flymake-goto-prev-error "flymake")
+    (eval-when-compile
+      (defvar flymake-mode-map)
+      (declare-function flymake-start "flymake")
+      (declare-function flymake-show-diagnostics-buffer "flymake")
+      (declare-function flymake-goto-next-error "flymake")
+      (declare-function flymake-goto-prev-error "flymake"))
     (define-key flymake-mode-map (kbd "C-c ! s") #'flymake-start)
     (define-key flymake-mode-map (kbd "C-c ! d") #'flymake-show-diagnostics-buffer)
     (define-key flymake-mode-map (kbd "C-c ! n") #'flymake-goto-next-error)
