@@ -2268,7 +2268,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     "Set up Plan9/Smart shell in eshell."
 
     (require 'em-smart)
-    (declare-function eshell-smart-initialize "em-smart")
+    (eval-when-compile (declare-function eshell-smart-initialize "em-smart"))
     (eshell-smart-initialize))
   (csetq eshell-where-to-jump 'begin)
   (csetq eshell-review-quick-commands nil)
@@ -2579,18 +2579,16 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Org publish org
 
 #+begin_src emacs-lisp
-  (with-eval-after-load
-      'ox
+  (defun actuator-filter-timestamp (trans back _comm)
+    "Remove <> around time-stamps."
+    (pcase back
+      ((or `jekyll `html `md)
+       (replace-regexp-in-string "&[lg]t;" "" trans))
+      (`latex
+       (replace-regexp-in-string "[<>]" "" trans))))
+
+  (with-eval-after-load 'ox
     (eval-when-compile (defvar org-export-filter-timestamp-functions))
-
-    (defun actuator-filter-timestamp (trans back _comm)
-      "Remove <> around time-stamps."
-      (pcase back
-        ((or `jekyll `html `md)
-         (replace-regexp-in-string "&[lg]t;" "" trans))
-        (`latex
-         (replace-regexp-in-string "[<>]" "" trans))))
-
     (add-to-list 'org-export-filter-timestamp-functions
                  #'actuator-filter-timestamp))
 #+end_src
@@ -2682,6 +2680,7 @@ https://gitea.petton.fr/mpdel/mpdel
 
   Org counts an inactive timestamp on the start of a line as a
   creation date."
+    (eval-when-compile (declare-function org-time-stamp-inactive "org"))
     (save-excursion
       (insert "\n")
       (org-time-stamp-inactive '(16))))
