@@ -1,6 +1,6 @@
 #+title: Administrative
 
-* Automatic Login
+* Automatic login
 #+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/system/getty@tty1.service.d/override.conf" "no") :comments no
   [Service]
   ExecStart=
@@ -83,7 +83,7 @@ For Arch, enable the systemd unit:
 #+end_src
 
 You can then check to see if mail is in the queue via =mailq=.
-* Power Button
+* Power button
 #+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/logind.conf.d/10-logind.conf" "no") :comments no
   [Login]
   HandlePowerKey=suspend
@@ -105,7 +105,7 @@ Enable the timer via =systemctl enable reflector.timer=.
   --age 12
   --sort rate
 #+end_src
-* Paccache Clean
+* Paccache clean
 
 Install pacman-contrib.
 
@@ -129,7 +129,7 @@ Install pacman-contrib.
 
 *
 
-* Fail Lock
+* Fail lock
 [[https://wiki.archlinux.org/index.php/Security#Lock_out_user_after_three_failed_login_attempts][Security - ArchWiki]]
 
 As per =/etc/security/faillock.conf=:
@@ -145,3 +145,19 @@ As per =/etc/security/faillock.conf=:
 
 #+results:
 : deny = 0
+
+* Set XKB for games
+:LOGBOOK:
+- Refiled on [2021-06-11 Fri 12:31]
+:END:
+[2021-06-11 Fri 12:06]
+
+#+begin_src conf :tangle /sudo::/etc/X11/xorg.conf.d/00-keyboard.conf
+  Section "InputClass"
+          Identifier "keyboard defaults"
+          MatchIsKeyboard "on"
+          Option "XkbLayout" "us,us"
+          Option "XkbVariant" ",colemak"
+          Option "XkbOptions" "grp:shifts_toggle"
+  EndSection
+#+end_src
