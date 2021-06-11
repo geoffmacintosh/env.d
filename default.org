@@ -479,7 +479,7 @@ I think mu will actually index correctly on its own the first time you launch mu
 #+end_src
 
 #+begin_src conf :tangle ~/.gnupg/gpg-agent.conf :comments no
-  allow-emacs-pinentry
+  # allow-emacs-pinentry
   # allow-loopback-entry
   max-cache-ttl 86400
   default-cache-ttl 86400
