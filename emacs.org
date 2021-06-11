@@ -915,7 +915,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 'week) ;; fortnight
-  (csetq org-agenda-include-diary t)
+  ;;(csetq org-agenda-include-diary t)
   (csetq org-agenda-todo-list-sublevels t)
   (csetq org-agenda-sticky t)
   (csetq org-agenda-dim-blocked-tasks t)
@@ -2698,10 +2698,49 @@ https://gitea.petton.fr/mpdel/mpdel
 #+end_src
 
 ** Org-edna
+[2021-06-11 Fri 15:44]
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-edna)
 #+end_src
-[2021-06-11 Fri 15:44]
+
+
+** Org agenda sunrise/set
+[2021-06-11 Fri 20:18]
+
+
+
+
+
+#+begin_src emacs-lisp
+  (defun diary-sunrise ()
+    (let ((dss (diary-sunrise-sunset)))
+      (with-temp-buffer
+        (insert dss)
+        (goto-char (point-min))
+        (while (re-search-forward " ([^)]*)" nil t)
+          (replace-match "" nil nil))
+        (goto-char (point-min))
+        (search-forward ",")
+        (buffer-substring (point-min) (match-beginning 0)))))
+
+  ;; sunset
+  (defun diary-sunset ()
+    (let ((dss (diary-sunrise-sunset))
+          start end)
+      (with-temp-buffer
+        (insert dss)
+        (goto-char (point-min))
+        (while (re-search-forward " ([^)]*)" nil t)
+          (replace-match "" nil nil))
+        (goto-char (point-min))
+        (search-forward ", ")
+        (setq start (match-end 0))
+        (search-forward " at")
+        (setq end (match-beginning 0))
+        (goto-char start)
+        (capitalize-word 1)
+        (buffer-substring start end))))
+#+end_src
 
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
