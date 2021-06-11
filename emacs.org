@@ -15,7 +15,7 @@
         (white "#FFFFFF")
         (dark  "#000000")
         (cyan  "#00FFFF")
-        (red   "#8b0000")
+        (red   "#FF1616")
         (grey  "#484e55")
         (lgrey "#bdc4cc")
 
@@ -68,9 +68,18 @@
      `(org-block-begin-line ((t :inherit org-block)))
      `(link ((t :foreground ,dark
                 :underline t)))
-     `(org-document-title ((t (:foreground ,dark
-                               :height 220))))
+     `(org-document-title ((t :foreground ,dark
+                               :height 220)))
      `(org-level-1 ((t :weight bold)))
+     `(org-done ((t :foreground ,lgrey
+                    :weight bold)))
+     `(org-headline-done ((t :foreground ,grey)))
+     `(org-todo ((t :foreground ,red
+                    :weight bold)))
+     `(org-special-keyword ((t :foreground ,grey)))
+
+     `(org-date ((t :foreground ,dark
+                    :underline t)))
 
      ;; `(dired-filename ((t :foreground red)))
      ;; `(dired-header ((t :foreground red)))
@@ -2687,6 +2696,12 @@ https://gitea.petton.fr/mpdel/mpdel
 
   (add-hook 'org-insert-heading-hook #'actuator-org-insert-heading-timestamp)
 #+end_src
+
+** Org-edna
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'org-edna)
+#+end_src
+[2021-06-11 Fri 15:44]
 
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
