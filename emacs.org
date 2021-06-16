@@ -437,7 +437,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (csetq auto-revert-verbose t)
   (csetq auto-revert-avoid-polling t)
   (csetq buffer-auto-revert-by-notification t)
-  (csetq auto-revert-interval 15)
+  ;;(csetq auto-revert-interval 15)
   (csetq revert-without-query nil)
   (csetq auto-revert-check-vc-info nil)
 #+end_src
@@ -2707,10 +2707,6 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Org agenda sunrise/set
 [2021-06-11 Fri 20:18]
 
-
-
-
-
 #+begin_src emacs-lisp
   (defun diary-sunrise ()
     (let ((dss (diary-sunrise-sunset)))
@@ -2740,6 +2736,19 @@ https://gitea.petton.fr/mpdel/mpdel
         (goto-char start)
         (capitalize-word 1)
         (buffer-substring start end))))
+#+end_src
+
+** Type break
+[2021-06-16 Wed 20:22]
+#+begin_src emacs-lisp
+  (csetq type-break-file-name (expand-file-name "type-break.el" actuator-var-directory))
+  (run-with-idle-timer 2 nil #'type-break-mode 1)
+#+end_src
+
+** Auto-insert
+[2021-06-16 Wed 20:23]
+#+begin_src emacs-lisp
+  (run-with-idle-timer 2 nil #'auto-insert-mode 1)
 #+end_src
 
 * Footer
