@@ -1052,6 +1052,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (org-indent-mode 1)
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((emacs-lisp . t)
+                                   (calc       . t)
                                    (shell      . t))))
 #+end_src
 
