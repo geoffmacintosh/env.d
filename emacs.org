@@ -848,15 +848,21 @@ From  emacs-plus:
 #+end_src
 
 ** Delete by Moving to Trash
-#+begin_src emacs-lisp
-  (when (executable-find "trash")
-    (defun system-move-file-to-trash (file)
-      "Move FILE to trash via the `trash' cli tool."
+[[elfeed:christiantietze.de#tag:christiantietze.de,2021-06-21:/posts/2021/06/emacs-trash-file-macos/][Trash File from Emacs with Put-Back Enabled on macOS]]
 
-      (if (executable-find "trash")
-          (call-process "trash" nil nil nil file)
-        (error "Executable `trash' could not be found in PATH")))
-    (csetq delete-by-moving-to-trash t))
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (when (executable-find "trash")
+      (csetq delete-by-moving-to-trash t)
+      (csetq trash-directory "~/.Trash")
+      (defun system-move-file-to-trash (path)
+        "Moves file at PATH to the Trash according to `move-file-to-trash' convention.
+
+  On macOS relies on the command-line utility 'trash' to be installed."
+        (shell-command (concat "trash -vF \"" path "\""
+                               "| sed -e 's/^/Trashed: /'")
+                       nil ;; Name of output buffer
+                       "*Trash Error Buffer*"))))
 #+end_src
 
 ** Copy sentence
