@@ -1171,13 +1171,53 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 :CATEGORY: Holiday
 :END:
 #+begin_src emacs-lisp
-  (setq holiday-islamic-holidays nil)
-  ;;(setq holiday-christian-holiday nil)
-  (setq holiday-bahai-holidays nil)
-  (setq holiday-oriental-holidays nil)
-  ;;(setq holiday-other-holidays '((lunar-phases)))
+  (csetq calendar-chinese-all-holidays-flag nil)
+  (csetq calendar-hebrew-all-holidays-flag nil)
+  (csetq calendar-christian-all-holidays-flag nil)
+  (csetq calendar-islamic-all-holidays-flag nil)
+  (csetq calendar-bahai-all-holidays-flag nil)
+  (csetq holiday-bahai-holidays nil)
 #+end_src
 
+#+begin_src emacs-lisp
+  (defvar holiday-american-holidays
+    '((holiday-float 1 1 3  "Martin Luther King Day (USA)")
+      (holiday-float 2 1 3  "President's Day (USA)")
+      (holiday-float 5 1 -1 "Memorial Day (USA)")
+      (holiday-fixed 6 14   "Flag Day (USA)")
+      (holiday-fixed 7 4    "Independence Day (USA)")
+      (holiday-float 10 1 2 "Columbus Day (USA)")
+      (holiday-fixed 11 11  "Veteran's Day (USA)")
+      (holiday-float 11 4 4 "Thanksgiving (USA)"))
+    "General holidays for the United States.
+  See the documentation for `calendar-holidays' for details.")
+
+  (csetq holiday-general-holidays
+         '((holiday-fixed 1 1   "New Year's Day")
+           (holiday-fixed 2 2   "Groundhog Day")
+           (holiday-fixed 2 14  "Valentine's Day")
+           (holiday-fixed 3 17  "St. Patrick's Day")
+           (holiday-fixed 4 1   "April Fools' Day")
+           (holiday-float 5 0 2 "Mother's Day")
+           (holiday-float 6 0 3 "Father's Day")
+           (holiday-fixed 10 31 "Halloween")))
+
+  (defvar holiday-canada-holidays
+    '((holiday-fixed 7 1       "Canada Day")
+      (holiday-float 9 1 1     "Labour Day")
+      (holiday-float 5 1 -1    "Victoria Day" 24)
+      (holiday-float 6 1 0     "August Civic Holiday")
+      (holiday-fixed 9 30      "Orange Shirt Day")
+      (holiday-float 10 1 2    "Thanksgiving")
+      (holiday-fixed 11 11     "Remembrance Day")
+      (holiday-fixed 12 26     "Boxing Day")
+      (holiday-float 2 1 3     "Family Day"))
+    "General holidays for Canada.
+  See the documentation for `calendar-holidays' for details.")
+
+  (csetq holiday-other-holidays (append holiday-canada-holidays
+                                        holiday-american-holidays))
+#+end_src
 ** Keyboard Macros
 
 - ~C-x (~ Start defining a keyboard macro.
