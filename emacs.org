@@ -81,6 +81,8 @@
      `(org-date ((t :foreground ,dark
                     :underline t)))
 
+     `(pulse-highlight-start-face ((t :background ,red)))
+
      ;; `(dired-filename ((t :foreground red)))
      ;; `(dired-header ((t :foreground red)))
      ;; `(dired-hide-details-information ((t :foreground red)))
@@ -2703,7 +2705,6 @@ https://gitea.petton.fr/mpdel/mpdel
   (add-to-list 'package-selected-packages 'org-edna)
 #+end_src
 
-
 ** Org agenda sunrise/set
 [2021-06-11 Fri 20:18]
 
@@ -2749,6 +2750,39 @@ https://gitea.petton.fr/mpdel/mpdel
 [2021-06-16 Wed 20:23]
 #+begin_src emacs-lisp
   (run-with-idle-timer 2 nil #'auto-insert-mode 1)
+#+end_src
+
+** Show tooltips in modeline
+
+#+begin_src emacs-lisp
+  (csetq org-return-follows-link t)
+  (csetq help-at-pt-display-when-idle t)
+  (csetq help-at-pt-timer-delay 0)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-echo-area-tooltips ()
+    "Show tooltips in the echo area automatically for current buffer."
+    (setq-local help-at-pt-display-when-idle t
+                help-at-pt-timer-delay 0)
+    (help-at-pt-cancel-timer)
+    (help-at-pt-set-timer))
+
+  (add-hook 'org-mode-hook #'actuator-echo-area-tooltips nil t)
+#+end_src
+
+** Pulse line
+
+#+begin_src emacs-lisp
+  (defun pulse-line (&rest _)
+    "Interactive function to pulse the current line."
+    (interactive)
+    (require 'pulse)
+    (pulse-momentary-highlight-one-line (point)))
+  (defadvice other-window (after other-window-pulse activate) (pulse-line))
+  (defadvice delete-window (after delete-window-pulse activate) (pulse-line))
+  (defadvice recenter-top-bottom (after recenter-top-bottom-pulse activate) (pulse-line))
+  (csetq pulse-delay .07)
 #+end_src
 
 * Footer
