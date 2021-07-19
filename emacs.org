@@ -2865,6 +2865,12 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq pulse-delay .07)
 #+end_src
 
+** Registers
+[2021-07-18 Sun 21:27]
+#+begin_src emacs-lisp
+  (set-register ?i (cons 'file "~/org/inbox.org"))
+#+end_src
+
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
