@@ -1003,7 +1003,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (eval-when-compile
       (declare-function org-refile-cache-clear "org-refile")
       (declare-function org-refile-get-targets "org-refile"))
-    (org-refile-cache-clear)
+    ;;(org-refile-cache-clear)
     (org-refile-get-targets))
 
   (run-with-idle-timer 300 t #'actuator-rebuild-org-refile-cache)
