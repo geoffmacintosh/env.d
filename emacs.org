@@ -2351,7 +2351,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defun actuator-eshell-autocomplete ()
     "Enable tab autocompletion in eshell."
 
-    (define-key eshell-mode-map (kbd "<tab>") #'actuator-eshell-autocomplete))
+    (define-key eshell-mode-map (kbd "TAB") #'actuator-eshell-autocomplete))
   (defun actuator-pcomplete-std-complete ()
 
     (interactive)
