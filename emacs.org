@@ -2822,6 +2822,8 @@ https://gitea.petton.fr/mpdel/mpdel
 #+begin_src emacs-lisp
   (csetq type-break-file-name (expand-file-name "type-break.el" actuator-var-directory))
   (run-with-idle-timer 2 nil #'type-break-mode 1)
+  (csetq type-break-query-mode t)
+  (csetq type-break-mode-line-message-mode t)
 #+end_src
 
 ** Auto-insert
