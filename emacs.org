@@ -602,8 +602,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 ** Calendar
 
 #+begin_src emacs-lisp
-  (csetq calendar-latitude [47 33 north])
-  (csetq calendar-longitude [52 42 west])
+  (csetq calendar-latitude [51 02 north])
+  (csetq calendar-longitude [114 03 west])
 #+end_src
 
 #+begin_src emacs-lisp
