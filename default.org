@@ -472,7 +472,7 @@ I think mu will actually index correctly on its own the first time you launch mu
   no-secmem-warning
   keyserver pool.sks-keyservers.net
   default-key CB7647349621074630BED0DADDCB697E089A4F88
-  default-recipient-self
+  #default-recipient-self
   encrypt-to CB7647349621074630BED0DADDCB697E089A4F88
   bzip2-compress-level 9
   compress-level 9
