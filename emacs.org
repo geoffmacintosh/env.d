@@ -1,4 +1,3 @@
-# -*- after-save-hook: (org-babel-tangle); -*-
 #+title: Emacs
 
 * Theme
@@ -200,42 +199,6 @@
 
   (eval-when-compile (defvar org-directory))
   (setq org-directory (expand-file-name "~/org/"))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defvar actuator-original-gc-cons-threshold gc-cons-threshold
-    "Original value for `gc-cons-threshold'.")
-  (defvar actuator-original-gc-cons-percentage gc-cons-percentage
-    "Original value for `gc-cons-percentage'.")
-  (defvar actuator-engorged-gc-cons-threshold (* 5 1000 1000 1000)
-    "Enlarged `gc-cons-threshold'.")
-  (defvar actuator-engorged-gc-cons-percentage 0.6
-    "Enlarged `gc-cons-percentage'.")
-
-  (defun actuator-restore-gc ()
-    "Restore `gc-cons-threshold' and `gc-cons-percentage' value.
-
-  This should be used shortly after enlarging the garbage
-  collection values and ideally before doing any typing. It might
-  cause Emacs to pause for a noticable amount of time, but I
-  haven't noticed that so far."
-
-    (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
-    (setq gc-cons-percentage actuator-original-gc-cons-percentage)
-    (garbage-collect))
-
-  (defun actuator-engorge-gc ()
-    "Set `gc-cons-threshold' and `gc-cons-percentage' to huge numbers.
-
-  This should be used in situations where garbage collection
-  happens a lot, such as during Emacs' init or when using the
-  minibuffer completion on really big lists."
-
-    (setq gc-cons-threshold actuator-engorged-gc-cons-threshold)
-    (setq gc-cons-percentage actuator-engorged-gc-cons-percentage))
-
-  (actuator-engorge-gc)
-  (add-hook 'after-init-hook #'actuator-restore-gc)
 #+end_src
 
 ** GPG ID
@@ -470,15 +433,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (global-set-key (kbd "s-z") #'undo-only)
     (global-set-key (kbd "s-Z") #'undo-redo)
   #+end_src
-
-** Cancel GC in Minibuffer
-#+begin_src emacs-lisp
-  (when (and (fboundp 'actuator-engorge-gc)
-             (fboundp 'actuator-restore-gc))
-    (add-hook 'minibuffer-setup-hook #'actuator-engorge-gc)
-    (add-hook 'minibuffer-exit-hook  #'actuator-restore-gc))
-
-#+end_src
 
 ** Minibuffer Resize
 #+begin_src emacs-lisp

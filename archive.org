@@ -688,3 +688,101 @@ This script should rysnc-copy my music to my archive  very confusing) but had no
   (csetq display-time-24hr-format t)
   (csetq display-time-default-load-average nil)
 #+end_src
+
+** 2021-07 July
+
+*** 2021-07-29 Thursday
+**** From emacs.org
+***** Change GC
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-07-29 Thu 19:07
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Init
+:ARCHIVE_CATEGORY: emacs
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (defvar actuator-original-gc-cons-threshold gc-cons-threshold
+    "Original value for `gc-cons-threshold'.")
+  (defvar actuator-original-gc-cons-percentage gc-cons-percentage
+    "Original value for `gc-cons-percentage'.")
+  (defvar actuator-engorged-gc-cons-threshold (* 5 1000 1000 1000)
+    "Enlarged `gc-cons-threshold'.")
+  (defvar actuator-engorged-gc-cons-percentage 0.6
+    "Enlarged `gc-cons-percentage'.")
+
+  (defun actuator-restore-gc ()
+    "Restore `gc-cons-threshold' and `gc-cons-percentage' value.
+
+  This should be used shortly after enlarging the garbage
+  collection values and ideally before doing any typing. It might
+  cause Emacs to pause for a noticable amount of time, but I
+  haven't noticed that so far."
+
+    (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
+    (setq gc-cons-percentage actuator-original-gc-cons-percentage)
+    (garbage-collect))
+
+  (defun actuator-engorge-gc ()
+    "Set `gc-cons-threshold' and `gc-cons-percentage' to huge numbers.
+
+  This should be used in situations where garbage collection
+  happens a lot, such as during Emacs' init or when using the
+  minibuffer completion on really big lists."
+
+    (setq gc-cons-threshold actuator-engorged-gc-cons-threshold)
+    (setq gc-cons-percentage actuator-engorged-gc-cons-percentage))
+
+  (actuator-engorge-gc)
+  (add-hook 'after-init-hook #'actuator-restore-gc)
+#+end_src
+***** Cancel GC in Minibuffer
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-07-29 Thu 19:07
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Stable
+:ARCHIVE_CATEGORY: emacs
+:END:
+#+begin_src emacs-lisp
+  (when (and (fboundp 'actuator-engorge-gc)
+             (fboundp 'actuator-restore-gc))
+    (add-hook 'minibuffer-setup-hook #'actuator-engorge-gc)
+    (add-hook 'minibuffer-exit-hook  #'actuator-restore-gc))
+
+#+end_src
+***** Ement
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-07-29 Thu 19:28
+:ARCHIVE_FILE: ~/env.d/emacs.org
+:ARCHIVE_OLPATH: Unstable
+:ARCHIVE_CATEGORY: emacs
+:END:
+This is almost certainly the wrong way to do this, but if plz.el and ement.el are git-cloned to the correct location, this activates them. I don't like using external package managers because I am wrong.
+
+#+begin_src emacs-lisp
+  (let ((ement-path
+         (expand-file-name "site-lisp/ement.el" user-emacs-directory))
+        (plz-path
+         (expand-file-name "site-lisp/plz.el" user-emacs-directory)))
+    (when (and (file-exists-p ement-path) (file-exists-p plz-path))
+      (add-to-list 'package-selected-packages 'ts)
+      (add-to-list 'load-path ementel)
+      (add-to-list 'load-path plzel)
+      (when (and (null (file-exists-p (expand-file-name "plz-autoloads.el" plz-path)))
+                 (null (file-exists-p (expand-ifle-name "ement-autoloads.el" ement-path))))
+        (package-refresh-contents)
+        (package-install 'ts)
+        (package-generate-autoloads "ement" ementel)
+        (package-generate-autoloads "plz" plzel)
+        (byte-recompile-directory (expand-file-name "site-lisp" user-emacs-directory) 0)
+        (native-compile-async (expand-file-name "site-lisp" user-emacs-directory) t t)
+        (message "Installing ement.el"))
+      (load "plz-autoloads")
+      (load "ement-autoloads")
+      (defun actuator-matrix-connect ()
+        "Connects to my Matrix Server."
+        (interactive)
+        (ement-connect
+         (auth-source-pass-get "userid" "element.io")
+         (auth-source-pass-get 'secret "element.io")))))
+#+end_src
