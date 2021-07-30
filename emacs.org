@@ -2890,6 +2890,27 @@ This is almost certainly the wrong way to do this, but if plz.el and ement.el ar
          (auth-source-pass-get 'secret "element.io")))))
 #+end_src
 
+** Compilation window
+[2021-07-28 Wed 11:09]
+
+#+begin_src emacs-lisp
+  (defun actuator-notify-compilation-result (buffer msg)
+    "Notify that the compilation is finished,
+    close the *compilation* buffer if the compilation is successful,
+    and set the focus back to Emacs frame"
+    (if (string-match "^finished" msg)
+        (progn
+          (sleep-for 4)
+          (delete-windows-on buffer)
+          (message "Compilation Successful"))
+      (message "Compilation Failed"))
+    (let ((current-frame (car (car (cdr (current-frame-configuration))))))
+      (select-frame-set-input-focus current-frame)))
+
+  (add-to-list 'compilation-finish-functions
+               'actuator-notify-compilation-result)
+#+end_src
+
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
