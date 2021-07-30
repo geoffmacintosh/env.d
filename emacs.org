@@ -878,10 +878,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
          '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
   (csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
-  (csetq org-agenda-span 'week) ;; fortnight
+  (csetq org-agenda-span 7) ;; fortnight
   ;;(csetq org-agenda-include-diary t)
   (csetq org-agenda-todo-list-sublevels t)
-  (csetq org-agenda-sticky t)
+  (csetq org-agenda-sticky nil)
   (csetq org-agenda-dim-blocked-tasks t)
   (csetq org-list-indent-offset 1)
   (csetq org-use-speed-commands t)
@@ -2500,8 +2500,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 ** Auto-save
 #+begin_src emacs-lisp
-  (csetq auto-save-list-file-prefix (expand-file-name "auto-save/"
-                                                      actuator-var-directory))
+  (csetq auto-save-list-file-prefix
+         (expand-file-name "auto-save-list/" user-emacs-directory))
   (csetq auto-save-default t)
 #+end_src
 
@@ -2510,7 +2510,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Backups
 #+begin_src emacs-lisp
   (csetq backup-directory-alist
-         `(("." . ,(expand-file-name "backups" actuator-var-directory))))
+         `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 #+end_src
 
 ** Ignore disabled commands
@@ -2622,13 +2622,14 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Org publish org
 
 #+begin_src emacs-lisp
-  (defun actuator-filter-timestamp (trans back _comm)
-    "Remove <> around time-stamps."
-    (pcase back
+  (defun actuator-filter-timestamp (string backend _comm)
+    "Remove <> around time-stamps.
+  I actually don't know what STRING is. BACKEND can be some "
+    (pcase backend
       ((or `jekyll `html `md)
-       (replace-regexp-in-string "&[lg]t;" "" trans))
+       (replace-regexp-in-string "&[lg]t;" "" string))
       (`latex
-       (replace-regexp-in-string "[<>]" "" trans))))
+       (replace-regexp-in-string "[<>]" "" string))))
 
   (with-eval-after-load 'ox
     (eval-when-compile (defvar org-export-filter-timestamp-functions))
@@ -2742,6 +2743,7 @@ https://gitea.petton.fr/mpdel/mpdel
 
 #+begin_src emacs-lisp
   (defun diary-sunrise ()
+    (eval-when-compile (declare-function diary-sunrise-sunset "solar"))
     (let ((dss (diary-sunrise-sunset)))
       (with-temp-buffer
         (insert dss)
