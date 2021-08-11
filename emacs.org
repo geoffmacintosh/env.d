@@ -274,11 +274,12 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 #+begin_src emacs-lisp
   (csetq custom-file (expand-file-name "custom-settings.el" actuator-var-directory))
+  (csetq custom-file nil)
   (defun actuator-load-custom-file ()
     "The most basic of functions to load the custom file."
 
     (load custom-file 'noerror))
-  (add-hook 'after-init-hook #'actuator-load-custom-file)
+  ;;(add-hook 'after-init-hook #'actuator-load-custom-file)
 #+end_src
 
 ** Read only
@@ -902,7 +903,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-hide-macro-markers t)
   (csetq org-reverse-note-order t)
   (csetq org-agenda-insert-diary-extract-time t)
-  (csetq org-agenda-start-with-follow-mode t)
+  (csetq org-agenda-start-with-follow-mode nil)
   (csetq org-agenda-follow-indirect t)
   (csetq org-agenda-skip-scheduled-if-done t)
   (csetq org-agenda-skip-deadline-if-done t)
@@ -989,7 +990,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-agenda
-    (csetq org-agenda-follow-mode t))
+    (csetq org-agenda-follow-mode nil))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1210,7 +1211,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 *** Set up browsing handlers                      :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (csetq browse-url-handlers '(("wikipedia"   . eww )
                                ("youtu\\.?be" . actuator-browse-video)
                                ("twitch"      . actuator-browse-video)))
@@ -1249,8 +1250,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 *** Open links in background                      :ignore:
 
 #+begin_src emacs-lisp
-  (csetq browse-url-browser-function 'eww)
-  (csetq browse-url-secondary-browser-function 'browse-url-generic)
+  (csetq browse-url-browser-function 'browse-url-generic)
+  (csetq browse-url-secondary-browser-function 'eww)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2616,7 +2617,9 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Safe local variables
 #+begin_src emacs-lisp
   (add-to-list 'safe-local-variable-values
-               '(after-save-hook . "org-babel-tangle"))
+               '(buffer-auto-save-file-name . nil))
+  (add-to-list 'safe-local-variable-values
+               '(org-archive-location . "archive.org::datetree/* From %"))
 #+end_src
 
 ** Org publish org
@@ -2791,7 +2794,7 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Show tooltips in modeline
 
 #+begin_src emacs-lisp
-  (csetq org-return-follows-link t)
+  (csetq org-return-follows-link nil)
   (csetq help-at-pt-display-when-idle t)
   (csetq help-at-pt-timer-delay 0)
 #+end_src
@@ -2910,6 +2913,36 @@ This is almost certainly the wrong way to do this, but if plz.el and ement.el ar
   (add-to-list 'compilation-finish-functions
                'actuator-notify-compilation-result)
 #+end_src
+
+** Keyfreq
+[2021-07-29 Thu 22:09]
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'keyfreq)
+  (require 'keyfreq)
+  (csetq keyfreq-file (expand-file-name "keyfreq.el" actuator-var-directory))
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1)
+  (csetq keyfreq-excluded-commands
+         '(self-insert-command
+           mwheel-scroll
+           forward-char
+           backward-char
+           previous-line
+           next-line
+           org-self-insert-command
+           org-delete-backward-char
+           mouse-drag-region
+           mouse-set-point
+           org-agenda-next-line
+           elfeed-show-next
+           delete-backward-char
+           mouse-set-region
+           org-agenda-previous-line))
+#+end_src
+
+#+results:
+| self-insert-command | mwheel-scroll | forward-char | backward-char | previous-line | next-line |
+
 
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
