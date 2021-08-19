@@ -74,6 +74,9 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
   import:
     move: yes
   plugins: fetchart ftintitle mpdupdate smartplaylist embedart
+  fetchart:
+    auto: yes
+    enforce_ratio: 0.5%
   embedart:
     auto: yes
   mpdupdate:

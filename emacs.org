@@ -32,7 +32,7 @@
      `(cursor ((t (:background ,blue))))
      `(fringe ((t (:background ,white))))
      `(region ((t (:background ,highlight-dim))))
-     `(highlight ((t (:background nil))))
+     `(highlight ((t (:background ,highlight-dim))))
      `(hl-line ((t (:background ,grey :foreground ,white))))
      `(header-line ((t (:background ,grey :foreground ,white))))
 
@@ -625,104 +625,104 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq help-window-select t) ; Select help window by default
-  (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
-  (defalias 'yes-or-no-p 'y-or-n-p)
+    (setq help-window-select t) ; Select help window by default
+    (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
+    (defalias 'yes-or-no-p 'y-or-n-p)
 
-  (global-set-key (kbd "M-o") #'other-window)
+    (global-set-key (kbd "M-o") #'other-window)
 
-  (run-with-idle-timer 2 nil #'delete-selection-mode t)
-  (run-with-idle-timer 2 nil #'midnight-mode t)
-  (setq sentence-end-double-space nil)
+    (run-with-idle-timer 2 nil #'delete-selection-mode t)
+    (run-with-idle-timer 2 nil #'midnight-mode t)
+    (setq sentence-end-double-space nil)
 
-  (defun actuator-prefer-utf-8 ()
-    "Set all the UTF-8 defaults."
-    (prefer-coding-system 'utf-8)
-    (set-default-coding-systems 'utf-8)
-    (set-terminal-coding-system 'utf-8)
-    (set-keyboard-coding-system 'utf-8)
-    (set-language-environment "UTF-8"))
+    (defun actuator-prefer-utf-8 ()
+      "Set all the UTF-8 defaults."
+      (prefer-coding-system 'utf-8)
+      (set-default-coding-systems 'utf-8)
+      (set-terminal-coding-system 'utf-8)
+      (set-keyboard-coding-system 'utf-8)
+      (set-language-environment "UTF-8"))
 
-  (run-with-idle-timer 1 nil #'actuator-prefer-utf-8)
+    (run-with-idle-timer 1 nil #'actuator-prefer-utf-8)
 
-  (add-hook 'before-save-hook 'whitespace-cleanup)
+    (add-hook 'before-save-hook 'whitespace-cleanup)
 
-  (setq indent-tabs-mode nil) ; Never insert tabs with tab key
-  (setq require-final-newline t)
+    (setq indent-tabs-mode nil) ; Never insert tabs with tab key
+    (setq require-final-newline t)
 
-  (run-with-idle-timer 2 nil #'save-place-mode 1)
-  (csetq save-place-file (expand-file-name "save-place.el" actuator-var-directory))
+    (run-with-idle-timer 2 nil #'save-place-mode 1)
+    (csetq save-place-file (expand-file-name "save-place.el" actuator-var-directory))
 
-  (setq backup-by-copying    t)
-  (setq delete-old-versions  t)
-  (setq kept-new-versions    50)
-  (setq kept-old-versions    5) ; I don't know what an old version is
-  (setq version-control      t)
-  (setq vc-make-backup-files t)
+    (setq backup-by-copying    t)
+    (setq delete-old-versions  t)
+    (setq kept-new-versions    50)
+    (setq kept-old-versions    5) ; I don't know what an old version is
+    (setq version-control      t)
+    (setq vc-make-backup-files t)
 
-  (setq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
-  (setq uniquify-separator "/")
-  (setq uniquify-after-kill-buffer-p t)
-  (setq uniquify-ignore-buffers-re "^\\*")
-  (setq uniquify-strip-common-suffix nil)
+    (setq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
+    (setq uniquify-separator "/")
+    (setq uniquify-after-kill-buffer-p t)
+    (setq uniquify-ignore-buffers-re "^\\*")
+    (setq uniquify-strip-common-suffix nil)
 
-  (setq find-file-visit-truename nil) ; Don't resolve symlinks
-  (setq confirm-kill-emacs 'y-or-n-p)
+    (setq find-file-visit-truename nil) ; Don't resolve symlinks
+    (setq confirm-kill-emacs 'y-or-n-p)
 
-  (run-with-idle-timer 1 nil #'abbrev-mode 1)
-  (setq save-abbrevs 'silently)
+    (run-with-idle-timer 1 nil #'abbrev-mode 1)
+    (setq save-abbrevs 'silently)
 
-  (setq enable-recursive-minibuffers t)
-  (run-with-idle-timer 2 nil #'minibuffer-depth-indicate-mode t)
+    (setq enable-recursive-minibuffers t)
+    (run-with-idle-timer 2 nil #'minibuffer-depth-indicate-mode t)
 
-  (put 'narrow-to-region 'disabled nil)
-  (put 'narrow-to-defun  'disabled nil)
+    (put 'narrow-to-region 'disabled nil)
+    (put 'narrow-to-defun  'disabled nil)
 
-  (add-hook 'after-save-hook
-            #'executable-make-buffer-file-executable-if-script-p)
+    (add-hook 'after-save-hook
+              #'executable-make-buffer-file-executable-if-script-p)
 
-  (defun display-startup-echo-area-message ()
-    "Remove the GNU info from the minibuffer on startup.
+    (defun display-startup-echo-area-message ()
+      "Remove the GNU info from the minibuffer on startup.
 
-  All you have to do is create a function with this name.  It's
-  called automatically."
+    All you have to do is create a function with this name.  It's
+    called automatically."
 
-    (message ""))
+      (message ""))
 
-  (csetq default-frame-alist
-        '((ns-transparent-titlebar . t)
-          (ns-appearance           . 'light)))
+    (csetq default-frame-alist
+          '((ns-transparent-titlebar . t)
+            (ns-appearance           . 'light)))
 
-  (csetq completion-styles
-        '(fuzzy
-          basic
-          partial-completion
-          substring
-          initials
-          emacs22))
+    (csetq completion-styles
+          '(fuzzy
+            partial-completion
+            substring
+            initials
+            basic
+            emacs22))
 
-  (defun actuator-font-exists-p (font)
-    "Return non-nil if FONT is loaded."
-    (member font (font-family-list)))
+    (defun actuator-font-exists-p (font)
+      "Return non-nil if FONT is loaded."
+      (member font (font-family-list)))
 
-  (defun actuator-frame-init (&optional _frame)
-    "Initialize per-frame variables.
+    (defun actuator-frame-init (&optional _frame)
+      "Initialize per-frame variables.
 
-  These variables need to be set every time a frame is created."
+    These variables need to be set every time a frame is created."
 
-    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-    (when (and (not (display-graphic-p))
-               (fboundp 'menu-bar-mode))
-      (menu-bar-mode   -1))
-    (when (actuator-font-exists-p "SF Mono")
-      (set-frame-font "SF Mono-12" nil t)))
+      (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+      (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+      (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+      (when (and (not (display-graphic-p))
+                 (fboundp 'menu-bar-mode))
+        (menu-bar-mode   -1))
+      (when (actuator-font-exists-p "SF Mono")
+        (set-frame-font "SF Mono-12" nil t)))
 
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+    (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
-  (unless noninteractive
-    (actuator-frame-init))
+    (unless noninteractive
+      (actuator-frame-init))
 #+end_src
 ** Misc
 
@@ -837,8 +837,12 @@ From  emacs-plus:
 The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJECT" to match projects. The escaped quotes are needed.
 
 #+begin_src emacs-lisp
-  (csetq org-stuck-projects
-        '("+TODO=\"PROJECT\"" ("NEXT" "TODO") nil ""))
+    (csetq org-stuck-projects
+           '("+TODO=\"PROJECT\"" ("TODO") nil ""))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq org-archive-save-context-info '(time file olpath todo))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -854,21 +858,21 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org-agenda
-    (eval-when-compile (defvar org-agenda-custom-commands))
-    (add-to-list 'org-agenda-custom-commands
-                 '("u" "Unscheduled TODOs"
-                   ((todo ""
-                          ((org-agenda-overriding-header "\nUnscheduled TODO")
-                           (org-agenda-skip-function
-                            '(org-agenda-skip-entry-if
-                              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
-                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
-    (add-to-list 'org-agenda-custom-commands
-                 '("d" "Daily View"
-                   ((agenda "")
-                    (todo "NEXT"))
-                   ((org-agenda-span 'day)))))
+    (with-eval-after-load 'org-agenda
+      (eval-when-compile (defvar org-agenda-custom-commands))
+      (add-to-list 'org-agenda-custom-commands
+                   '("u" "Unscheduled TODOs"
+                     ((todo ""
+                            ((org-agenda-overriding-header "\nUnscheduled TODO")
+                             (org-agenda-skip-function
+                              '(org-agenda-skip-entry-if
+                                'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                             (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+      (add-to-list 'org-agenda-custom-commands
+                   '("d" "Daily View"
+                     ((agenda "")
+                      (todo "TODO"))
+                     ((org-agenda-span 'day)))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -876,7 +880,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
-         '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
+         '((sequence "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
   (csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7) ;; fortnight
@@ -1261,8 +1265,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (when (eq system-type 'darwin)
-    (setq browse-url-browser-function 'eww)
-    (setq browse-url-secondary-browser-function 'browse-url-generic)
+    ;;(setq browse-url-browser-function 'eww)
+    ;;(setq browse-url-secondary-browser-function 'browse-url-generic)
     (setq browse-url-generic-program "open")
     (setq browse-url-generic-args '("--background")))
 #+end_src
@@ -1413,7 +1417,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
     (org-clock-persistence-insinuate))
-  (csetq org-clock-into-drawer "CLOCK")
+  (csetq org-clock-into-drawer "CLOCKING")
   ;;(csetq org-clock-persist t)
   (csetq org-clock-out-remove-zero-time-clocks t)
   (csetq org-clock-mode-line-total 'auto)
@@ -2568,6 +2572,7 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Winner
 #+begin_src emacs-lisp
   (run-with-idle-timer 2 nil #'winner-mode)
+  (csetq winner-boring-buffers-regexp "^\\*")
 #+end_src
 
 ** Flymake
@@ -2943,6 +2948,42 @@ This is almost certainly the wrong way to do this, but if plz.el and ement.el ar
 #+results:
 | self-insert-command | mwheel-scroll | forward-char | backward-char | previous-line | next-line |
 
+** Org timer
+[2021-08-11 Wed 14:58]
+
+#+begin_src emacs-lisp
+  ;;(csetq org-clock-sound "~/Downloads/ding.wav")
+  (csetq org-timer-default-timer 25)
+#+end_src
+
+** Fido mode
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+[2021-08-11 Wed 15:04]
+
+#+begin_src emacs-lisp
+  (run-with-idle-timer 1 nil #'fido-mode 1)
+  (add-hook 'fido-mode-hook 'icomplete-vertical-mode)
+  (csetq icomplete-scroll t)
+;;  (csetq icomplete-show-matches-on-no-input t)
+  (csetq read-buffer-completion-ignore-case t)
+  (csetq completion-ignore-case t)
+  (csetq read-file-name-completion-ignore-case t)
+
+  (with-eval-after-load 'fido-mode
+    (define-key icomplete-fido-mode-map
+      (kbd "\C-j") #'actuator-minibuffer-try-complete-and-exit))
+
+  (defun actuator-minibuffer-try-complete-and-exit ()
+    (interactive)
+    (minibuffer-force-complete)
+    (setq-local deactivate-mark nil)
+    (throw 'exit nil))
+#+end_src
+- faces
+   - highlight
+   - icomplete-selected-match
 
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
