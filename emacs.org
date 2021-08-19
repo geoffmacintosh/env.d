@@ -238,11 +238,15 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (setq package-selected-packages nil)
 #+end_src
 
-#+results:
-
+** DIR
 #+begin_src emacs-lisp
-  (defvar actuator-var-directory (expand-file-name (convert-standard-filename "var/") user-emacs-directory))
-  (make-directory actuator-var-directory t)
+  (defvar actuator-directory user-emacs-directory)
+  (make-directory actuator-directory t)
+
+  (defun dir (file)
+    "Expand the filename FILE relative to `actuator-directory'."
+    (expand-file-name (convert-standard-filename file)
+                      actuator-directory))
 #+end_src
 
 ** Exec path from shell
@@ -273,13 +277,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 ** Custom-set Variables
 
 #+begin_src emacs-lisp
-  (csetq custom-file (expand-file-name "custom-settings.el" actuator-var-directory))
   (csetq custom-file nil)
-  (defun actuator-load-custom-file ()
-    "The most basic of functions to load the custom file."
-
-    (load custom-file 'noerror))
-  ;;(add-hook 'after-init-hook #'actuator-load-custom-file)
 #+end_src
 
 ** Read only
@@ -350,11 +348,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
            savehist-minibuffer-history-variables
            shell-command-history
            mark-ring))
-  (csetq savehist-file (expand-file-name "savehist.el" actuator-var-directory))
 #+end_src
-
-#+results:
-: /home/g/.config/emacs/var/savehist.el
 
 1. Quick fixes:
 
@@ -500,10 +494,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
-** NSM
-#+begin_src emacs-lisp
-  (csetq nsm-settings-file (expand-file-name "nsm.el" actuator-var-directory))
-#+end_src
 ** Diary
 #+begin_src emacs-lisp
   (csetq diary-file (expand-file-name "diary" org-directory))
@@ -651,7 +641,6 @@ From  emacs-plus:
     (setq require-final-newline t)
 
     (run-with-idle-timer 2 nil #'save-place-mode 1)
-    (csetq save-place-file (expand-file-name "save-place.el" actuator-var-directory))
 
     (setq backup-by-copying    t)
     (setq delete-old-versions  t)
@@ -732,10 +721,9 @@ From  emacs-plus:
                      (declare-function recentf-cleanup "recentf"))
   (global-set-key (kbd "C-x C-r") #'recentf-open-files)
   (csetq recentf-max-saved-items 1000)
-  (csetq recentf-save-file (expand-file-name "recentf.el" actuator-var-directory))
-  (csetq recentf-exclude `(,actuator-var-directory
-                           "^/\\(?:ssh\\|su\\|sudo\\)?:"
-                           "/var/folders/"))
+  (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
+                           "/var/folders/"
+                           user-emacs-directory))
   (add-hook 'midnight-mode-hook #'recentf-cleanup)
 #+end_src
 
@@ -846,15 +834,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (make-directory (expand-file-name "org/" actuator-var-directory) t)
-
-  (make-directory (expand-file-name "org-publish/"
-                                    actuator-var-directory)
-                  t)
-  (csetq org-clock-persist-file (expand-file-name "org/org-clock-persist.el"
-                                                  actuator-var-directory))
-  (csetq org-publish-timestamp-directory (expand-file-name "org-publish/"
-                                                           actuator-var-directory))
+  (csetq org-publish-timestamp-directory (dir "org-publish/"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1204,14 +1184,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
 
 ** Web
-*** URL
-#+begin_src emacs-lisp
-  (make-directory (expand-file-name "url/" actuator-var-directory) t)
-  (make-directory (expand-file-name "url/" actuator-var-directory) t)
-  (csetq url-cache-directory (expand-file-name "url/" actuator-var-directory))
-  (csetq url-configuration-directory (expand-file-name "url/" actuator-var-directory))
-#+end_src
-
 *** Set up browsing handlers                      :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
@@ -1219,11 +1191,6 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
   (csetq browse-url-handlers '(("wikipedia"   . eww )
                                ("youtu\\.?be" . actuator-browse-video)
                                ("twitch"      . actuator-browse-video)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (make-directory (expand-file-name "eww" actuator-var-directory) t)
-  (csetq eww-bookmarks-directory (expand-file-name "eww" actuator-var-directory))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1324,15 +1291,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (require 'wdired))
   (eval-when-compile (declare-function dired-omit-mode "dired-x"))
   (add-hook 'dired-mode-hook #'dired-omit-mode)
-#+end_src
-
-#+begin_src emacs-lisp
-  (make-directory (expand-file-name "image-dired/gallery/" actuator-var-directory) t)
-  (csetq image-dired-dir (expand-file-name "image-dired/" actuator-var-directory))
-  (csetq image-dired-db-file (expand-file-name "image-dired/image-dired.db" actuator-var-directory))
-  (csetq image-dired-gallery (expand-file-name "image-dired/gallery/" actuator-var-directory))
-  (csetq image-dired-temp-image-file (expand-file-name "image-dired/temp-image" actuator-var-directory))
-  (csetq image-dired-temp-rotate-image-file (expand-file-name "image-dired/temp-rotate-image" actuator-var-directory))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1764,7 +1722,6 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'nov)
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-  (csetq nov-save-place-file (expand-file-name "nov-save-place.el" actuator-var-directory))
   (csetq nov-text-width 75)
   (defun actuator-novel-setup ()
     "Set up some defaults for nov.el that make it nicer to read in."
@@ -1778,7 +1735,6 @@ https://gist.github.com/spacebat/5500966
 ** Project
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'project)
-  (csetq project-list-file (expand-file-name "project-list.el" actuator-var-directory))
 #+end_src
 
 ** Org Link Minor Mode
@@ -1822,20 +1778,11 @@ https://gist.github.com/spacebat/5500966
 ** Forge
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'forge)
-  (make-directory (expand-file-name "forge/post/" actuator-var-directory) t)
-  (csetq forge-database-file (expand-file-name "forge/forge.db" actuator-var-directory))
-  (csetq forge-post-directory (expand-file-name "forge/post/" actuator-var-directory))
 #+end_src
-
-#+results:
 
 ** Transient
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'transient)
-  (make-directory (expand-file-name "transient" actuator-var-directory) t)
-  (csetq transient-history-file (expand-file-name "transient/history.el" actuator-var-directory))
-  (csetq transient-levels-file (expand-file-name "transient/levels.el" actuator-var-directory))
-  (csetq transient-values-file (expand-file-name "transient/values.el" actuator-var-directory))
 #+end_src
 
 ** Ivy
@@ -1906,11 +1853,10 @@ https://gist.github.com/spacebat/5500966
         (declare-function prescient-persist-mode "prescient"))
       (ivy-prescient-mode 1)
       (prescient-persist-mode 1)))
-
-  (csetq prescient-save-file (expand-file-name "prescient.el" actuator-var-directory))
   (csetq prescient-history-length 10000)
   (csetq prescient-aggressive-file-save t)
 #+end_src
+
 ** Cliplink
 
 #+begin_src emacs-lisp
@@ -2256,10 +2202,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Eshell
 
 #+begin_src emacs-lisp
-  (make-directory (expand-file-name "elfeed" actuator-var-directory) t)
-  (csetq eshell-directory-name (expand-file-name "elfeed" actuator-var-directory))
   (eval-when-compile (defvar eshell-directory-name))
-  (csetq eshell-history-file-name (expand-file-name "history" eshell-directory-name))
+  (csetq eshell-history-file-name (dir "eshell-history.el"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2445,9 +2389,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 ** Tramp
 #+begin_src emacs-lisp
-  (make-directory (expand-file-name "tramp/" actuator-var-directory) t)
-  (csetq tramp-auto-save-directory (expand-file-name "tramp/auto-save/" actuator-var-directory))
-  (csetq tramp-persistency-file-name (expand-file-name "tramp.el" actuator-var-directory))
+  (csetq tramp-auto-save-directory (dir "tramp/"))
+  (csetq tramp-persistency-file-name (dir "tramp.el" ))
 #+end_src
 
 ** Rainbow
@@ -2784,7 +2727,6 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Type break
 [2021-06-16 Wed 20:22]
 #+begin_src emacs-lisp
-  (csetq type-break-file-name (expand-file-name "type-break.el" actuator-var-directory))
   (run-with-idle-timer 2 nil #'type-break-mode 1)
   (csetq type-break-query-mode t)
   (csetq type-break-mode-line-message-mode t)
@@ -2918,35 +2860,6 @@ This is almost certainly the wrong way to do this, but if plz.el and ement.el ar
   (add-to-list 'compilation-finish-functions
                'actuator-notify-compilation-result)
 #+end_src
-
-** Keyfreq
-[2021-07-29 Thu 22:09]
-#+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'keyfreq)
-  (require 'keyfreq)
-  (csetq keyfreq-file (expand-file-name "keyfreq.el" actuator-var-directory))
-  (keyfreq-mode 1)
-  (keyfreq-autosave-mode 1)
-  (csetq keyfreq-excluded-commands
-         '(self-insert-command
-           mwheel-scroll
-           forward-char
-           backward-char
-           previous-line
-           next-line
-           org-self-insert-command
-           org-delete-backward-char
-           mouse-drag-region
-           mouse-set-point
-           org-agenda-next-line
-           elfeed-show-next
-           delete-backward-char
-           mouse-set-region
-           org-agenda-previous-line))
-#+end_src
-
-#+results:
-| self-insert-command | mwheel-scroll | forward-char | backward-char | previous-line | next-line |
 
 ** Org timer
 [2021-08-11 Wed 14:58]
