@@ -838,21 +838,21 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-    (with-eval-after-load 'org-agenda
-      (eval-when-compile (defvar org-agenda-custom-commands))
-      (add-to-list 'org-agenda-custom-commands
-                   '("u" "Unscheduled TODOs"
-                     ((todo ""
-                            ((org-agenda-overriding-header "\nUnscheduled TODO")
-                             (org-agenda-skip-function
-                              '(org-agenda-skip-entry-if
-                                'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
-                             (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
-      (add-to-list 'org-agenda-custom-commands
-                   '("d" "Daily View"
-                     ((agenda "")
-                      (todo "TODO"))
-                     ((org-agenda-span 'day)))))
+  (with-eval-after-load 'org-agenda
+    (eval-when-compile (defvar org-agenda-custom-commands))
+    (add-to-list 'org-agenda-custom-commands
+                 '("u" "Unscheduled TODOs"
+                   ((todo ""
+                          ((org-agenda-overriding-header "\nUnscheduled TODO")
+                           (org-agenda-skip-function
+                            '(org-agenda-skip-entry-if
+                              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("d" "Daily View"
+                   ((agenda "")
+                    (todo "TODO"))
+                   ((org-agenda-span 'day)))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -869,7 +869,8 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-sticky nil)
   (csetq org-agenda-dim-blocked-tasks t)
   (csetq org-list-indent-offset 1)
-  (csetq org-use-speed-commands t)
+  (csetq org-use-speed-commands
+      (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
   (csetq org-footnote-auto-adjust t)
   (csetq org-footnote-define-inline t)
   (csetq org-footnote-auto-label t)
@@ -910,10 +911,9 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-refile-allow-creating-parent-nodes 'confirm)
   (csetq org-outline-path-complete-in-steps nil)
   (csetq org-refile-use-outline-path 'file)
-  ;;(csetq org-refile-targets '((org-agenda-files :maxlevel . 3)))
 
-    (defun actuator-org-refile-candidates ()
-      "Collect all the org-mode files in the org-directory.
+  (defun actuator-org-refile-candidates ()
+    "Collect all the org-mode files in the org-directory.
 
   Currently it only collects files that start with a lowercase
   letter, which is probably the wrong way to go about it, but I
@@ -922,16 +922,9 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   other weird files that might temporarily get caught by the
   refiler that I don't want. This would be an easy fix, but I'm not
   doing it."
-      (directory-files org-directory t "^[a-z].*\\.org$"))
+    (directory-files org-directory t "^[a-z].*\\.org$"))
 
-    (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
-
-    ;; (defun actuator-inbuffer-org-refile ()
-    ;;   "Refile within the current buffer only."
-    ;;   (interactive)
-    ;;   (let ((org-refile-targets '((nil :maxlevel . 3)))
-    ;;         (org-refile-cache nil))
-    ;;     (org-refile)))
+  (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
 
   (defun actuator-rebuild-org-refile-cache ()
     "Rebuilds the refile cache so things refile quickly.
@@ -972,7 +965,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (with-eval-after-load 'org-agenda
     (csetq org-agenda-follow-mode nil))
 #+end_src
@@ -2897,6 +2890,20 @@ This is almost certainly the wrong way to do this, but if plz.el and ement.el ar
 - faces
    - highlight
    - icomplete-selected-match
+
+** Windmove
+#+begin_src emacs-lisp
+  (csetq windmove-create-window nil)
+  (global-set-key (kbd "<s-up>")   #'windmove-up)
+  (global-set-key (kbd "<s-down>") #'windmove-down)
+  (global-set-key (kbd "<s-left>")  #'windmove-left)
+  (global-set-key (kbd "s-<right>") #'windmove-right)
+
+  (global-set-key (kbd "<S-s-up>") #'windmove-swap-states-up)
+  (global-set-key (kbd "<S-s-down>") #'windmove-swap-states-down)
+  (global-set-key (kbd "<S-s-left>") #'windmove-swap-states-left)
+  (global-set-key (kbd "<S-s-right>") #'windmove-swap-states-right)
+#+end_src
 
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
