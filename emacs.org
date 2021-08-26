@@ -870,7 +870,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-dim-blocked-tasks t)
   (csetq org-list-indent-offset 1)
   (csetq org-use-speed-commands
-      (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
+      (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**" 5))))
   (csetq org-footnote-auto-adjust t)
   (csetq org-footnote-define-inline t)
   (csetq org-footnote-auto-label t)
