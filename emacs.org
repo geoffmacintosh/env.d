@@ -2829,6 +2829,7 @@ This is almost certainly the wrong way to do this, but if plz.el and ement.el ar
       (load "ement-autoloads")
       (defun actuator-matrix-connect ()
         "Connects to my Matrix Server."
+        (eval-when-compile (declare-function ement-connect "ement"))
         (interactive)
         (ement-connect
          (auth-source-pass-get "userid" "element.io")
