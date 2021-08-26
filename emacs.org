@@ -826,7 +826,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
 #+begin_src emacs-lisp
     (csetq org-stuck-projects
-           '("+TODO=\"PROJECT\"" ("TODO") nil ""))
+           '("+TODO=\"PROJECT\"" ("TODO" "NEXT") nil ""))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -851,7 +851,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (add-to-list 'org-agenda-custom-commands
                  '("d" "Daily View"
                    ((agenda "")
-                    (todo "TODO"))
+                    (todo "NEXT"))
                    ((org-agenda-span 'day)))))
 #+end_src
 
@@ -860,7 +860,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
-         '((sequence "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "PROJECT(p)" "|" "DONE(d)" "CANCELLED(c)")))
+         '((sequence "NEXT(n!)" "TODO(t)" "WAIT(w@)" "SOME(s!)" "PROJ(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
   (csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7) ;; fortnight
