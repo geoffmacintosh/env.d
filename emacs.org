@@ -1214,21 +1214,19 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 *** Open links in background                      :ignore:
 
 #+begin_src emacs-lisp
-  (csetq browse-url-browser-function 'browse-url-generic)
   (csetq browse-url-secondary-browser-function 'eww)
 #+end_src
 
 #+begin_src emacs-lisp
   (when (eq system-type 'gnu/linux)
-    (csetq browse-url-secondary-browser-function 'browse-url-firefox))
+    (csetq browse-url-browser-function 'browse-url-firefox))
 #+end_src
 
 #+begin_src emacs-lisp
   (when (eq system-type 'darwin)
-    ;;(setq browse-url-browser-function 'eww)
-    ;;(setq browse-url-secondary-browser-function 'browse-url-generic)
-    (setq browse-url-generic-program "open")
-    (setq browse-url-generic-args '("--background")))
+    (csetq browse-url-browser-function 'browse-url-generic)
+    (csetq browse-url-generic-program "open")
+    (csetq browse-url-generic-args '("--background")))
 #+end_src
 
 #+begin_src emacs-lisp
