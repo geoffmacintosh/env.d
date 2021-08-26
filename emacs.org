@@ -2796,7 +2796,9 @@ https://gitea.petton.fr/mpdel/mpdel
   --
   Geoff MacIntosh.
   ,#+end_signature")
-  (org-msg-mode)
+
+  (when (package-installed-p 'org-msg)
+    (run-with-idle-timer 2 nil #'org-msg-mode))
 #+end_src
 
 #+results:
