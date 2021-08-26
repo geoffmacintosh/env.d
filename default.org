@@ -159,15 +159,13 @@ that.
 #+begin_src conf  :mkdirp yes :tangle ~/.ssh/config
   Host *
        AddKeysToAgent yes
-       UseKeychain yes
        IdentityFile ~/.ssh/id_rsa
        ControlPath ~/.ssh/master-%h:%p
        ControlMaster auto
        ControlPersist 10m
        AddKeysToAgent yes
        IdentitiesOnly yes
-       UseKeychain yes
-       IdentityFile ~/.ssh/id_rsa
+#       UseKeychain yes
   Host router
        Hostname 192.168.1.1
        User root
