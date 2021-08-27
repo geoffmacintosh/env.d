@@ -2574,7 +2574,9 @@ https://gitea.petton.fr/mpdel/mpdel
       (`latex
        (replace-regexp-in-string "[<>]" "" string))))
 
+  (csetq org-export-in-background t)
   (with-eval-after-load 'ox
+    (require 'ox-icalendar)
     (eval-when-compile (defvar org-export-filter-timestamp-functions))
     (add-to-list 'org-export-filter-timestamp-functions
                  #'actuator-filter-timestamp))
