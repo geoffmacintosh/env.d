@@ -822,11 +822,11 @@ From  emacs-plus:
 #+end_src
 
 ** Org
-The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJECT" to match projects. The escaped quotes are needed.
+The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PROJ" to match projects. The escaped quotes are needed.
 
 #+begin_src emacs-lisp
     (csetq org-stuck-projects
-           '("+TODO=\"PROJECT\"" ("TODO" "NEXT") nil ""))
+           '("+TODO=\"PROJ\"" ("TODO" "NEXT") nil ""))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -846,7 +846,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                           ((org-agenda-overriding-header "\nUnscheduled TODO")
                            (org-agenda-skip-function
                             '(org-agenda-skip-entry-if
-                              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                              'timestamp 'todo '("WAIT" "NEXT" "SOME" "PROJ" "DONE" "CANCELLED")))
                            (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
     (add-to-list 'org-agenda-custom-commands
                  '("d" "Daily View"
