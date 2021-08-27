@@ -1522,12 +1522,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (csetq user-full-name "Geoff MacIntosh")
   (csetq user-mail-address "geoff@mac.into.sh")
-  (csetq mail-signature "Geoff.")
-  (csetq message-signature mail-signature)
+  ;;(csetq mail-signature "Geoff.")
+  ;;(csetq message-signature mail-signature)
 #+end_src
 
-#+begin_src emacs-lisp
-#+end_src
 
 #+begin_src emacs-lisp
   (csetq mm-encrypt-option 'guided)
@@ -2801,21 +2799,11 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq org-msg-greeting-name-limit 3)
   (csetq org-msg-convert-citation t)
   (csetq mail-user-agent 'mu4e-user-agent)
-  (csetq org-msg-signature "
-
-  Regards,
-
-  ,#+begin_signature
-  --
-  Geoff MacIntosh.
-  ,#+end_signature")
+  (csetq org-msg-signature "#+begin_signature\n-- \nGeoff MacIntosh.\n#+end_signature")
 
   (when (package-installed-p 'org-msg)
     (run-with-idle-timer 2 nil #'org-msg-mode))
 #+end_src
-
-#+results:
-: t
 
 ** Ement
 This is almost certainly the wrong way to do this, but if plz.el and ement.el are git-cloned to the correct location, this activates them. I don't like using external package managers because I am wrong.
