@@ -2248,10 +2248,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq eshell-path-env exec-path)
-#+end_src
-
-#+begin_src emacs-lisp
   (defalias 'eshell/f  'find-file-other-window)
   (defalias 'eshell/ff 'find-file)
   (defalias 'eshell/v  'view-file-other-window)
