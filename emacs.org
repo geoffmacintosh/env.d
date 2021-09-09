@@ -1515,21 +1515,24 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 ** Message
 
 #+begin_src emacs-lisp
-  (csetq send-mail-function 'sendmail-send-it)
-  (csetq message-send-mail-function send-mail-function)
+  ;;(csetq send-mail-function 'sendmail-send-it)
+  ;;(csetq message-send-mail-function send-mail-function)
+  (csetq send-mail-function 'smtpmail-send-it)
+  (csetq message-send-mail-function 'smtpmail-send-it)
 #+end_src
 
 #+begin_src emacs-lisp
   (csetq user-full-name "Geoff MacIntosh")
   (csetq user-mail-address "geoff@mac.into.sh")
-  ;;(csetq mail-signature "Geoff.")
-  ;;(csetq message-signature mail-signature)
+  (csetq smtpmail-smtp-server "smtp.fastmail.com")
+  (csetq smtpmail-smtp-service "587")
+  (csetq smtpmail-servers-requiring-authorization "fastmail")
+
+  (with-eval-after-load 'mu4e
+    (csetq smtpmail-smtp-user (auth-source-pass-get "user" "smtp.fastmail.com")))
 #+end_src
 
-
 #+begin_src emacs-lisp
-  (csetq mm-encrypt-option 'guided)
-  (csetq mm-sign-option 'guided)
   (csetq mml-secure-openpgp-encrypt-to-self t)
   (csetq mml-secure-openpgp-sign-with-sender t)
   (csetq mml-secure-smime-encrypt-to-self t)
@@ -1549,6 +1552,34 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (with-eval-after-load 'message
     (eval-when-compile (declare-function message-sort-headers "message"))
     (add-hook 'message-setup-hook #'message-sort-headers))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq mm-sign-option nil)
+  (csetq mm-verify-option 'known)
+  (csetq gnus-buttonized-mime-types '("multipart/signed"))
+  (csetq mm-decrypt-option 'known)
+
+  (defun actuator-sign-message ()
+    (message "Signing message.")
+    (mml-secure-message-sign-pgpmime))
+
+  (defun actuator-encrypt-message ()
+    (message "Encrypting message.")
+    (mml-secure-message-encrypt-pgpmime))
+
+  (defun actuator-sign-or-encrypt-message ()
+    (let ((answer (read-answer "Encrypt or sign message?"
+                               '(("encrypt" ?e "Encrypt message.")
+                                 ("sign"    ?s "Sign message.")
+                                 ("skip"    ?  "Skip and send.")))))
+      (cond ((equal "encrypt" answer)
+             (progn (actuator-encrypt-message) nil)))
+      (cond
+       ((equal "sign"    answer)
+        (progn (actuator-sign-message) nil)))))
+
+  (add-hook 'message-send-hook #'actuator-sign-or-encrypt-message)
 #+end_src
 
 ** Native Compile
@@ -1678,6 +1709,7 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (csetq epa-file-encrypt-to actuator-gpg-id)
   (csetq auth-sources '(password-store))
+  (run-with-idle-timer 1 nil #'auth-source-pass-enable)
   (csetq password-cache-expiry 600)
 #+end_src
 
