@@ -201,6 +201,13 @@
   (setq org-directory (expand-file-name "~/org/"))
 #+end_src
 
+** Mac and Linux variables
+
+#+begin_src emacs-lisp
+  (defvar *mac* (eq system-type 'darwin))
+  (defvar *linux* (eq system-type 'gnu/linux))
+#+end_src
+
 ** GPG ID
 
 #+begin_src emacs-lisp
