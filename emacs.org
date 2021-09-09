@@ -829,6 +829,16 @@ From  emacs-plus:
 #+end_src
 
 ** Org
+#+begin_src emacs-lisp
+  (defvar actuator-todo-todo-keyword "TODO")
+  (defvar actuator-todo-waiting-keyword "WAIT")
+  (defvar actuator-todo-next-keyword "NEXT")
+  (defvar actuator-todo-someday-keyword "SOME")
+  (defvar actuator-todo-project-keyword "PROJ")
+  (defvar actuator-todo-done-keyword "DONE")
+  (defvar actuator-todo-cancelled-keyword "CANCELLED")
+#+end_src
+
 The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PROJ" to match projects. The escaped quotes are needed.
 
 #+begin_src emacs-lisp
@@ -858,8 +868,24 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
     (add-to-list 'org-agenda-custom-commands
                  '("d" "Daily View"
                    ((agenda "")
-                    (todo "NEXT"))
-                   ((org-agenda-span 'day)))))
+                    (todo actuator-todo-next-keyword))
+                   ((org-agenda-span 'day))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("w" "Weekly View"
+                   ((agenda "")
+                    (todo actuator-todo-waiting-keyword)
+                    (todo actuator-todo-project-keyword)
+                    (org-agenda-list-stuck-projects))
+                   ((org-agenda-span 7)
+                    (org-agenda-start-day "+0d")
+                    (org-agenda-start-on-weekday nil)
+                    (org-agenda-start-with-log-mode nil)
+                    (org-agenda-start-with-clockreport-mode nil)
+                    (org-agenda-use-time-grid nil)
+                    (org-habit-show-habits nil))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("m" "Monthly View"
+                   ((todo actuator-todo-someday-keyword)))))
 #+end_src
 
 #+begin_src emacs-lisp
