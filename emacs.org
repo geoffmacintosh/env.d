@@ -860,7 +860,7 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
     (add-to-list 'org-agenda-custom-commands
                  '("u" "Unscheduled TODOs"
                    ((todo ""
-                          ((org-agenda-overriding-header "\nUnscheduled TODO")
+                          ((org-agenda-overriding-header "\nUnscheduled TODOs")
                            (org-agenda-skip-function
                             '(org-agenda-skip-entry-if
                               'timestamp 'todo '("WAIT" "NEXT" "SOME" "PROJ" "DONE" "CANCELLED")))
