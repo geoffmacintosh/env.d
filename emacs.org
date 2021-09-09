@@ -2739,7 +2739,7 @@ https://gitea.petton.fr/mpdel/mpdel
 ** Insert creation stamp on heading creation
 [2021-06-05 Sat 16:24]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-org-insert-heading-timestamp ()
     "Insert a timestamp below a new heading.
 
@@ -2975,6 +2975,19 @@ This is almost certainly the wrong way to do this, but if plz.el and ement.el ar
   (global-set-key (kbd "<S-s-right>") #'windmove-swap-states-right)
 #+end_src
 
+** Org-expiry
+:PROPERTIES:
+:CREATED:  <2021-09-09 Thu 13:25>
+:END:
+#+begin_src emacs-lisp
+  (defun actuator-org-expiry-setup ()
+    "Set up org-expiry to make creation stamps for headlines."
+    (require 'org-expiry)
+    (org-expiry-insinuate))
+  (run-with-idle-timer 1 nil #'actuator-org-expiry-setup)
+
+  (csetq org-expiry-handler-function #'org-expiry-archive-subtree)
+#+end_src
 * Footer
 #+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
   (provide 'init)
