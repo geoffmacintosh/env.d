@@ -1616,6 +1616,22 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (add-hook 'message-send-hook #'actuator-sign-or-encrypt-message)
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun actuator-check-for-network-before-sending-message ()
+    (if
+      (condition-case nil
+          (delete-process
+           (make-network-process
+            :name "check-internet-before-email"
+            :host "fastmail.com"
+            :service 80))
+        (error t))
+        (setq smtpmail-queue-mail t)
+      (setq smtpmail-queue-mail nil)))
+
+  (add-hook 'message-send-hook #'actuator-check-for-network-before-sending-message)
+#+end_src
+
 ** Native Compile
 #+begin_src emacs-lisp
   (when (boundp 'comp-async-report-warnings-errors)
