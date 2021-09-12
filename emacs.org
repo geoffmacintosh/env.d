@@ -1612,7 +1612,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
        ((equal "sign"    answer)
         (progn (actuator-sign-message) nil)))))
 
-  (add-hook 'message-send-hook #'actuator-sign-or-encrypt-message)
+  ;;(add-hook 'message-send-hook #'actuator-sign-or-encrypt-message)
 #+end_src
 
 #+begin_src emacs-lisp
