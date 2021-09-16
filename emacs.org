@@ -863,13 +863,14 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
                             '(org-agenda-skip-entry-if
                               'timestamp 'todo '("WAIT" "NEXT" "SOME" "PROJ" "DONE" "CANCELLED")))
                            (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+    (add-to-list 'org-agenda-custom-commands '("v" . "Recurring Views"))
     (add-to-list 'org-agenda-custom-commands
-                 '("d" "Daily View"
+                 '("vd" "Daily View"
                    ((agenda "")
                     (todo actuator-todo-next-keyword))
                    ((org-agenda-span 'day))))
     (add-to-list 'org-agenda-custom-commands
-                 '("w" "Weekly View"
+                 '("vw" "Weekly View"
                    ((agenda "")
                     (todo actuator-todo-waiting-keyword)
                     (todo actuator-todo-project-keyword)
@@ -882,7 +883,7 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
                     (org-agenda-use-time-grid nil)
                     (org-habit-show-habits nil))))
     (add-to-list 'org-agenda-custom-commands
-                 '("m" "Monthly View"
+                 '("vm" "Monthly View"
                    ((todo actuator-todo-someday-keyword)))))
 #+end_src
 
