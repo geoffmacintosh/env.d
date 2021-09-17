@@ -283,7 +283,6 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
     (setq native-comp-async-report-warnings-errors nil))
 #+end_src
 
-
 ** Custom-set Variables
 
 #+begin_src emacs-lisp
@@ -894,6 +893,11 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
                    ((agenda "")
                     (todo actuator-todo-next-keyword))
                    ((org-agenda-span 'day)
+                    (org-agenda-remove-tags t)
+                    (org-habit-preceding-days 7)
+                    (org-habit-following-days 3)
+                    (org-agenda-block-separator nil)
+                    (org-agenda-show-current-time-in-grid nil)
                     (org-agenda-start-with-log-mode nil)
                     (org-agenda-start-with-clockreport-mode nil))
                    ("~/agenda.html"))))
