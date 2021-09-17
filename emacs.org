@@ -186,13 +186,6 @@
   ;;; Code:
 #+end_src
 
-** Native compile
-#+begin_src emacs-lisp
-  (when (eq system-type 'darwin)
-    (eval-when-compile (defvar native-comp-async-report-warnings-errors))
-    (setq native-comp-async-report-warnings-errors nil))
-#+end_src
-
 ** Very early
 #+begin_src emacs-lisp
   (package-activate-all)
@@ -206,6 +199,8 @@
 #+begin_src emacs-lisp
   (defvar *mac* (eq system-type 'darwin))
   (defvar *linux* (eq system-type 'gnu/linux))
+  (defvar *graphical* (display-graphic-p))
+  (defvar *terminal* (not (display-graphic-p)))
 #+end_src
 
 ** GPG ID
@@ -281,6 +276,14 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
 :END:
+** Native compile
+#+begin_src emacs-lisp
+  (when *mac*
+    (eval-when-compile (defvar native-comp-async-report-warnings-errors))
+    (setq native-comp-async-report-warnings-errors nil))
+#+end_src
+
+
 ** Custom-set Variables
 
 #+begin_src emacs-lisp
@@ -584,7 +587,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 :END:
 
 #+begin_src emacs-lisp
-  (fringe-mode 12)
+  (when *graphical*
+    (fringe-mode 12))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -620,103 +624,103 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-    (setq help-window-select t) ; Select help window by default
-    (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
-    (defalias 'yes-or-no-p 'y-or-n-p)
+  (setq help-window-select t) ; Select help window by default
+  (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
+  (defalias 'yes-or-no-p 'y-or-n-p)
 
-    (global-set-key (kbd "M-o") #'other-window)
+  (global-set-key (kbd "M-o") #'other-window)
 
-    (run-with-idle-timer 2 nil #'delete-selection-mode t)
-    (run-with-idle-timer 2 nil #'midnight-mode t)
-    (setq sentence-end-double-space nil)
+  (run-with-idle-timer 2 nil #'delete-selection-mode t)
+  (run-with-idle-timer 2 nil #'midnight-mode t)
+  (setq sentence-end-double-space nil)
 
-    (defun actuator-prefer-utf-8 ()
-      "Set all the UTF-8 defaults."
-      (prefer-coding-system 'utf-8)
-      (set-default-coding-systems 'utf-8)
-      (set-terminal-coding-system 'utf-8)
-      (set-keyboard-coding-system 'utf-8)
-      (set-language-environment "UTF-8"))
+  (defun actuator-prefer-utf-8 ()
+    "Set all the UTF-8 defaults."
+    (prefer-coding-system 'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
+    (set-language-environment "UTF-8"))
 
-    (run-with-idle-timer 1 nil #'actuator-prefer-utf-8)
+  (run-with-idle-timer 1 nil #'actuator-prefer-utf-8)
 
-    (add-hook 'before-save-hook 'whitespace-cleanup)
+  (add-hook 'before-save-hook 'whitespace-cleanup)
 
-    (setq indent-tabs-mode nil) ; Never insert tabs with tab key
-    (setq require-final-newline t)
+  (setq indent-tabs-mode nil) ; Never insert tabs with tab key
+  (setq require-final-newline t)
 
-    (run-with-idle-timer 2 nil #'save-place-mode 1)
+  (run-with-idle-timer 2 nil #'save-place-mode 1)
 
-    (setq backup-by-copying    t)
-    (setq delete-old-versions  t)
-    (setq kept-new-versions    50)
-    (setq kept-old-versions    5) ; I don't know what an old version is
-    (setq version-control      t)
-    (setq vc-make-backup-files t)
+  (setq backup-by-copying    t)
+  (setq delete-old-versions  t)
+  (setq kept-new-versions    50)
+  (setq kept-old-versions    5) ; I don't know what an old version is
+  (setq version-control      t)
+  (setq vc-make-backup-files t)
 
-    (setq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
-    (setq uniquify-separator "/")
-    (setq uniquify-after-kill-buffer-p t)
-    (setq uniquify-ignore-buffers-re "^\\*")
-    (setq uniquify-strip-common-suffix nil)
+  (setq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
+  (setq uniquify-separator "/")
+  (setq uniquify-after-kill-buffer-p t)
+  (setq uniquify-ignore-buffers-re "^\\*")
+  (setq uniquify-strip-common-suffix nil)
 
-    (setq find-file-visit-truename nil) ; Don't resolve symlinks
-    (setq confirm-kill-emacs 'y-or-n-p)
+  (setq find-file-visit-truename nil) ; Don't resolve symlinks
+  (setq confirm-kill-emacs 'y-or-n-p)
 
-    (run-with-idle-timer 1 nil #'abbrev-mode 1)
-    (setq save-abbrevs 'silently)
+  (run-with-idle-timer 1 nil #'abbrev-mode 1)
+  (setq save-abbrevs 'silently)
 
-    (setq enable-recursive-minibuffers t)
-    (run-with-idle-timer 2 nil #'minibuffer-depth-indicate-mode t)
+  (setq enable-recursive-minibuffers t)
+  (run-with-idle-timer 2 nil #'minibuffer-depth-indicate-mode t)
 
-    (put 'narrow-to-region 'disabled nil)
-    (put 'narrow-to-defun  'disabled nil)
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-defun  'disabled nil)
 
-    (add-hook 'after-save-hook
-              #'executable-make-buffer-file-executable-if-script-p)
+  (add-hook 'after-save-hook
+            #'executable-make-buffer-file-executable-if-script-p)
 
-    (defun display-startup-echo-area-message ()
-      "Remove the GNU info from the minibuffer on startup.
+  (defun display-startup-echo-area-message ()
+    "Remove the GNU info from the minibuffer on startup.
 
-    All you have to do is create a function with this name.  It's
-    called automatically."
+  All you have to do is create a function with this name.  It's
+  called automatically."
 
-      (message ""))
-
+    (message ""))
+  (when (and *mac* *graphical*)
     (csetq default-frame-alist
-          '((ns-transparent-titlebar . t)
-            (ns-appearance           . 'light)))
+           '((ns-transparent-titlebar . t)
+             (ns-appearance           . 'light))))
 
-    (csetq completion-styles
-          '(fuzzy
-            partial-completion
-            substring
-            initials
-            basic
-            emacs22))
+  (csetq completion-styles
+        '(fuzzy
+          partial-completion
+          substring
+          initials
+          basic
+          emacs22))
 
-    (defun actuator-font-exists-p (font)
-      "Return non-nil if FONT is loaded."
-      (member font (font-family-list)))
+  (defun actuator-font-exists-p (font)
+    "Return non-nil if FONT is loaded."
+    (member font (font-family-list)))
 
-    (defun actuator-frame-init (&optional _frame)
-      "Initialize per-frame variables.
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
 
-    These variables need to be set every time a frame is created."
+  These variables need to be set every time a frame is created."
 
-      (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-      (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-      (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-      (when (and (not (display-graphic-p))
-                 (fboundp 'menu-bar-mode))
-        (menu-bar-mode   -1))
-      (when (actuator-font-exists-p "SF Mono")
-        (set-frame-font "SF Mono-12" nil t)))
+    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    (when (and *terminal*
+               (fboundp 'menu-bar-mode))
+      (menu-bar-mode -1))
+    (when (actuator-font-exists-p "SF Mono")
+      (set-frame-font "SF Mono-12" nil t)))
 
-    (add-hook 'after-make-frame-functions 'actuator-frame-init)
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
-    (unless noninteractive
-      (actuator-frame-init))
+  (unless noninteractive
+    (actuator-frame-init))
 #+end_src
 ** Misc
 
@@ -884,7 +888,15 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
                     (org-habit-show-habits nil))))
     (add-to-list 'org-agenda-custom-commands
                  '("vm" "Monthly View"
-                   ((todo actuator-todo-someday-keyword)))))
+                   ((todo actuator-todo-someday-keyword))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("p" "Daily Mail"
+                   ((agenda "")
+                    (todo actuator-todo-next-keyword))
+                   ((org-agenda-span 'day)
+                    (org-agenda-start-with-log-mode nil)
+                    (org-agenda-start-with-clockreport-mode nil))
+                   ("~/agenda.html"))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -893,7 +905,7 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
          '((sequence "TODO(t)" "NEXT(n!)" "WAIT(w@)" "SOME(s!)" "PROJ(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
-  (csetq org-agenda-window-setup 'other-frame)
+  ;;(csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7) ;; fortnight
   ;;(csetq org-agenda-include-diary t)
@@ -1251,12 +1263,12 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (eq system-type 'gnu/linux)
+  (when *linux*
     (csetq browse-url-browser-function 'browse-url-firefox))
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (eq system-type 'darwin)
+  (when *mac*
     (csetq browse-url-browser-function 'browse-url-generic)
     (csetq browse-url-generic-program "open")
     (csetq browse-url-generic-args '("--background")))
@@ -1560,7 +1572,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq smtpmail-smtp-service "587")
   (csetq smtpmail-servers-requiring-authorization "fastmail")
 
-  (with-eval-after-load 'mu4e
+  (when *graphical*
     (csetq smtpmail-smtp-user (auth-source-pass-get "user" "smtp.fastmail.com")))
 #+end_src
 
@@ -1669,7 +1681,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
           (byte-recompile-file init nil 0)
           (when package-quickstart-file
             (byte-recompile-file package-quickstart-file nil 0))))))
-  (unless noninteractive
+  (when *graphical*
     (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init))
 #+end_src
 
@@ -2354,7 +2366,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (eq system-type 'darwin)
+  (when *mac*
     (add-to-list 'package-selected-packages 'pcmpl-homebrew)
     (with-eval-after-load 'eshell
       (require 'pcmpl-homebrew nil t)))
@@ -2627,21 +2639,22 @@ https://gitea.petton.fr/mpdel/mpdel
 [[https://emacs.stackexchange.com/questions/48472/how-to-make-m-x-ansi-term-behave-like-m-x-shell-opening-in-new-window/48481#48481][Switch-to-buffer-obey-display-actions]]
 
 #+begin_src emacs-lisp
-  (csetq switch-to-buffer-obey-display-actions nil) ;; Currently fucks up badly Investiate this.
-  (csetq display-buffer-alist
-         '(("\\*\\(Org Lint\\|Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Completions\\)\\*"
-            (display-buffer-in-side-window)
-            (side . bottom)
-            (window-parameters . ((mode-line-format . none)))
-            (window-height . 0.2))
-           ("\\*Calendar.*"
-            (display-buffer-in-side-window)
-            (side . bottom)
-            (window-height . shrink-window-if-larger-than-buffer))
-           ("^[a-z]+\\.org-[A-Z]+ [a-z, ]+-[0-9]$"
-            (display-buffer-in-side-window)
-            (side . bottom)
-            (window-height . 0.5))))
+  (when *graphical*
+    (csetq switch-to-buffer-obey-display-actions nil) ;; Currently fucks up badly Investiate this.
+    (csetq display-buffer-alist
+           '(("\\*\\(Org Lint\\|Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Completions\\)\\*"
+              (display-buffer-in-side-window)
+              (side . bottom)
+              (window-parameters . ((mode-line-format . none)))
+              (window-height . 0.2))
+             ("\\*Calendar.*"
+              (display-buffer-in-side-window)
+              (side . bottom)
+              (window-height . shrink-window-if-larger-than-buffer))
+             ("^[a-z]+\\.org-[A-Z]+ [a-z, ]+-[0-9]$"
+              (display-buffer-in-side-window)
+              (side . bottom)
+              (window-height . 0.5)))))
 #+end_src
 
 ** Safe local variables
