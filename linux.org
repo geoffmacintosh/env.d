@@ -1066,3 +1066,13 @@ And to check how much space the journal is currently using:
 [[https://man.archlinux.org/man/vconsole.conf.5][VConsole]]
 [[https://wiki.archlinux.org/index.php/Linux_console/Keyboard_configuration#Loadkeys][Loadkeys]]
 [[https://askubuntu.com/questions/982863/change-caps-lock-to-control-in-virtual-console-on-ubuntu-17][Change caps lock to control in virtual console on ubuntu 17]]
+
+* Mango Hud
+:PROPERTIES:
+:CREATED:  [2021-09-18 Sat 15:44]
+:END:
+#+begin_src conf :tangle ~/.config/MangoHud//MangoHud.conf
+  cpu_temp
+  gpu_temp
+  ram
+#+end_src

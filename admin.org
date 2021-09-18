@@ -161,3 +161,11 @@ As per =/etc/security/faillock.conf=:
           Option "XkbOptions" "grp:shifts_toggle"
   EndSection
 #+end_src
+
+* Audio
+:PROPERTIES:
+:CREATED:  [2021-09-18 Sat 11:25]
+:END:
+#+begin_src conf :tangle (if *linux* "/sudo::/etc/modprobe.d/default.conf" "no") :comments no
+  options snd_hda_intel index=1
+#+end_src
