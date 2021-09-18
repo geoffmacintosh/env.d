@@ -729,34 +729,10 @@
 
 * Linux TKG
 #+begin_src conf :tangle ~/.config/frogminer/linux-tkg.cfg
-  # linux-TkG config file
-
-  # Linux distribution you are using, options are "Arch", "Void", "Ubuntu", "Debian", "Fedora" or "Suse".
-  # It is automatically set to "Arch" when using PKGBUILD.
-  # If left empty, the script will prompt
   _distro="Arch"
-
-  # Kernel Version - Options are "5.4", "5.7", "5.8", "5.9", "5.10", "5.11"
-  _version="5.11"
-
-  #### MISC OPTIONS ####
-
-  # External config file to use - If the given file exists in path, it will override default config (customization.cfg) - Default is ~/.config/frogminer/linux-tkg.cfg
   _EXT_CONFIG_PATH=~/.config/frogminer/linux-tkg.cfg
-
-  # [Arch specific] Set to anything else than "true" to limit cleanup operations and keep source and files generated during compilation.
-  # Default is "true".
   _NUKR="true"
-
-  # [install.sh specific] Git mirror to use to get the kernel sources, possible values are "googlesource.com" and "kernel.org"
-  _git_mirror="kernel.org"
-
-  # Custom compiler root dirs - Leave empty to use system compilers
-  # Example: CUSTOM_GCC_PATH="/home/frog/PKGBUILDS/mostlyportable-gcc/gcc-mostlyportable-9.2.0"
   CUSTOM_GCC_PATH=""
-
-  # Custom LLVM compiler root dirs - Leave empty to use system llvm compiler
-  # Example: CUSTOM_LLVM_PATH="/home/frog/PKGBUILDS/mostlyportable-llvm/llvm-mostlyportable-11.0.0"
   CUSTOM_LLVM_PATH=""
 
   # Set to the number corresponding to a predefined profile to use it. Current list of available profiles :
@@ -764,10 +740,7 @@
   # 2 - Ryzen desktop (performance)
   # 3 - Generic Desktop (Performance)
   _OPTIPROFILE=""
-
-  # Set to true to bypass makepkg.conf and use all available threads for compilation. False will respect your makepkg.conf options.
   _force_all_threads="true"
-
   # Set to true to prevent ccache from being used and set CONFIG_GCC_PLUGINS=y (which needs to be disabled for ccache to work properly)
   _noccache="false"
 
@@ -809,11 +782,11 @@
 
   # CPU scheduler - Options are "upds" (TkG's Undead PDS), "pds", "bmq", "muqss" or "cfs"
   # "upds" is the recommended option for gaming
-  _cpusched="pds"
+  #_cpusched="pds"
 
   # Compiler to use - Options are "gcc" or "llvm".
   # For advanced users.
-  _compiler=""
+  _compiler="gcc"
 
   # CPU sched_yield_type - Choose what sort of yield sched_yield will perform
   # For PDS and MuQSS: 0: No yield. (Recommended option for gaming on PDS and MuQSS)
