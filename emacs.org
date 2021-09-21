@@ -858,49 +858,60 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-agenda
     (eval-when-compile (defvar org-agenda-custom-commands))
-    (add-to-list 'org-agenda-custom-commands
-                 '("u" "Unscheduled TODOs"
-                   ((todo ""
-                          ((org-agenda-overriding-header "\nUnscheduled TODOs")
-                           (org-agenda-skip-function
-                            '(org-agenda-skip-entry-if
-                              'timestamp 'todo '("WAIT" "NEXT" "SOME" "PROJ" "DONE" "CANCELLED")))
-                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
-    (add-to-list 'org-agenda-custom-commands '("v" . "Recurring Views"))
-    (add-to-list 'org-agenda-custom-commands
-                 '("vd" "Daily View"
-                   ((agenda "")
-                    (todo actuator-todo-next-keyword))
-                   ((org-agenda-span 'day))))
-    (add-to-list 'org-agenda-custom-commands
-                 '("vw" "Weekly View"
-                   ((agenda "")
-                    (todo actuator-todo-waiting-keyword)
-                    (todo actuator-todo-project-keyword)
-                    (org-agenda-list-stuck-projects))
-                   ((org-agenda-span 7)
-                    (org-agenda-start-day "+0d")
-                    (org-agenda-start-on-weekday nil)
-                    (org-agenda-start-with-log-mode nil)
-                    (org-agenda-start-with-clockreport-mode nil)
-                    (org-agenda-use-time-grid nil)
-                    (org-habit-show-habits nil))))
-    (add-to-list 'org-agenda-custom-commands
-                 '("vm" "Monthly View"
-                   ((todo actuator-todo-someday-keyword))))
-    (add-to-list 'org-agenda-custom-commands
-                 '("p" "Daily Mail"
-                   ((agenda "")
-                    (todo actuator-todo-next-keyword))
-                   ((org-agenda-span 'day)
-                    (org-agenda-remove-tags t)
-                    (org-habit-preceding-days 7)
-                    (org-habit-following-days 3)
-                    (org-agenda-block-separator nil)
-                    (org-agenda-show-current-time-in-grid nil)
-                    (org-agenda-start-with-log-mode nil)
-                    (org-agenda-start-with-clockreport-mode nil))
-                   ("~/agenda.html"))))
+    (csetq org-agenda-custom-commands
+           '(("u" "Unscheduled TODOs"
+              ((todo ""
+                     ((org-agenda-overriding-header "\nUnscheduled TODOs")
+                      (org-agenda-skip-function
+                       '(org-agenda-skip-entry-if
+                         'timestamp 'todo '("WAIT" "NEXT" "SOME" "PROJ" "DONE" "CANCELLED")))
+                      (org-agenda-sorting-strategy '((todo tsia-up alpha-up)))))))
+             ("v" . "Recurring Views")
+             ("vd" "Daily View"
+              ((agenda "")
+               (todo actuator-todo-next-keyword))
+              ((org-agenda-span 'day)))
+             ("vw" "Weekly View"
+              ((agenda "")
+               (todo actuator-todo-waiting-keyword)
+               (todo actuator-todo-project-keyword)
+               (org-agenda-list-stuck-projects))
+              ((org-agenda-span 7)
+               (org-agenda-start-day "+0d")
+               (org-agenda-start-on-weekday nil)
+               (org-agenda-start-with-log-mode nil)
+               (org-agenda-start-with-clockreport-mode nil)
+               (org-agenda-use-time-grid nil)
+               (org-habit-show-habits nil)))
+             ("vm" "Monthly View"
+              ((todo actuator-todo-someday-keyword)))
+             ("p" "Daily Personal Mail"
+              ((agenda "")
+               (todo actuator-todo-next-keyword))
+              ((org-agenda-span 'day)
+               (org-agenda-remove-tags t)
+               (org-habit-preceding-days 7)
+               (org-habit-following-days 3)
+               (org-agenda-block-separator nil)
+               (org-agenda-show-current-time-in-grid nil)
+               (org-agenda-start-with-log-mode nil)
+               (org-agenda-start-with-clockreport-mode nil))
+              ("~/agenda.html"))
+             ("w" "Daily Work Mail"
+              ((agenda "")
+               (todo actuator-todo-next-keyword)
+               (todo actuator-todo-todo-keyword))
+              ((org-agenda-span 'day)
+               (org-agenda-files `("~/org/work.org"
+                                   ,org-agenda-diary-file))
+               (org-agenda-remove-tags t)
+               (org-habit-preceding-days 7)
+               (org-habit-following-days 3)
+               (org-agenda-block-separator nil)
+               (org-agenda-show-current-time-in-grid nil)
+               (org-agenda-start-with-log-mode nil)
+               (org-agenda-start-with-clockreport-mode nil))
+              ("~/agenda.html")))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1643,7 +1654,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
         (setq smtpmail-queue-mail t)
       (setq smtpmail-queue-mail nil)))
 
-  (add-hook 'message-send-hook #'actuator-check-for-network-before-sending-message)
+  ;;(add-hook 'message-send-hook #'actuator-check-for-network-before-sending-message)
 #+end_src
 
 ** Native Compile
