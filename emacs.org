@@ -767,8 +767,8 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 2 nil #'show-paren-mode 1)
-  (run-with-idle-timer 2 nil #'electric-pair-mode 1)
+  (run-with-idle-timer 2 nil #'show-paren-mode +1)
+  (run-with-idle-timer 2 nil #'electric-pair-mode +1)
   (csetq blink-matching-paren nil)
   (csetq show-paren-delay 0)
   (csetq show-paren-style 'mixed)
@@ -832,19 +832,19 @@ From  emacs-plus:
 ** Org
 #+begin_src emacs-lisp
   (defvar actuator-todo-todo-keyword "TODO")
-  (defvar actuator-todo-waiting-keyword "WAIT")
+  (defvar actuator-todo-waiting-keyword "WAITING")
   (defvar actuator-todo-next-keyword "NEXT")
-  (defvar actuator-todo-someday-keyword "SOME")
-  (defvar actuator-todo-project-keyword "PROJ")
+  (defvar actuator-todo-someday-keyword "SOMEDAY")
+  (defvar actuator-todo-project-keyword "PROJECT")
   (defvar actuator-todo-done-keyword "DONE")
   (defvar actuator-todo-cancelled-keyword "CANCELLED")
 #+end_src
 
-The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PROJ" to match projects. The escaped quotes are needed.
+The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJ" to match projects. The escaped quotes are needed.
 
 #+begin_src emacs-lisp
     (csetq org-stuck-projects
-           '("+TODO=\"PROJ\"" ("TODO" "NEXT") nil ""))
+           '("+TODO=\"PROJECT\"" ("TODO" "NEXT") nil ""))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -864,7 +864,7 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
                      ((org-agenda-overriding-header "\nUnscheduled TODOs")
                       (org-agenda-skip-function
                        '(org-agenda-skip-entry-if
-                         'timestamp 'todo '("WAIT" "NEXT" "SOME" "PROJ" "DONE" "CANCELLED")))
+                         'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                       (org-agenda-sorting-strategy '((todo tsia-up alpha-up)))))))
              ("v" . "Recurring Views")
              ("vd" "Daily View"
@@ -919,7 +919,7 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
-         '((sequence "TODO(t)" "NEXT(n!)" "WAIT(w@)" "SOME(s!)" "PROJ(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
+         '((sequence "TODO(t)" "NEXT(n!)" "WAITING(w@)" "SOMEDAY(s!)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
   ;;(csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7) ;; fortnight
@@ -1046,8 +1046,9 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
     (org-indent-mode 1)
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((emacs-lisp . t)
-                                   (calc       . t)
-                                   (shell      . t))))
+                                   (calc      . t)
+                                   (sqlite    . t)
+                                   (shell     . t))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1115,7 +1116,7 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
   (csetq org-closed-keep-when-no-todo t)
   (csetq org-enforce-todo-dependencies t)
   (csetq org-enforce-todo-checkbox-dependencies nil)
-  (csetq org-complete-tags-always-offer-all-agenda-tags nil)
+  (csetq org-complete-tags-always-offer-all-agenda-tags t)
   (csetq org-clone-delete-id t)
   (csetq org-tags-column -60)
   (csetq org-catch-invisible-edits 'show-and-error)
@@ -1131,22 +1132,27 @@ The first item "+TODO=\"PROJ\"" tells Org to look for a TODO keyword called "PRO
 #+end_src
 
 #+begin_src emacs-lisp
+  (when (fboundp 'counsel-org-tag)
+    (defalias 'org-set-tags-command 'counsel-org-tag))
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq org-tag-persistent-alist '(("noexport")
                                     ("ignore")
                                     ("crypt")
-                                    (:startgrouptag . nil)
-                                    ("@"      . nil)
-                                    (:grouptags     . nil)
-                                    ("@email"       . ?m)
-                                    ("@phone"       . ?p)
-                                    ("@computer"    . ?c)
-                                    ("@errand"      . ?e)
-                                    ("@download"    . ?d)
-                                    ("@exercise"    . ?x)
-                                    ("@home"        . ?h)
-                                    ("@research"    . ?r)
-                                    (:endgroup      . nil)
-                                    (:endgrouptag   . nil)))
+                                    (:startgrouptag)
+                                    ("context")
+                                    (:grouptags)
+                                    ("@email")
+                                    ("@phone")
+                                    ("@computer")
+                                    ("@errand")
+                                    ("@download")
+                                    ("@exercise")
+                                    ("@home")
+                                    ("@research")
+                                    (:endgroup)
+                                    (:endgrouptag)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1976,7 +1982,7 @@ https://gist.github.com/spacebat/5500966
     (eval-when-compile (defvar org-capture-templates))
     (add-to-list 'org-capture-templates
                  '("b" "Bookmark" entry
-                   (file "bookmarks.org")
+                   (file "bookmark.org")
                    "* %(org-cliplink-capture) %^g\n%U\n\n%?"
                    :prepend
                    :empty-lines 1
@@ -2305,7 +2311,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (csetq rmh-elfeed-org-ignore-tag "disconnected")
   (csetq rmh-elfeed-org-auto-ignore-invalid-feeds nil)
-  (csetq rmh-elfeed-org-files `(,(expand-file-name "feeds.org" org-directory)))
+  (csetq rmh-elfeed-org-files `(,(expand-file-name "feed.org" org-directory)))
 #+end_src
 
 ** Eshell
@@ -2911,38 +2917,6 @@ https://gitea.petton.fr/mpdel/mpdel
 
   (when (package-installed-p 'org-msg)
     (run-with-idle-timer 2 nil #'org-msg-mode))
-#+end_src
-
-** Ement
-This is almost certainly the wrong way to do this, but if plz.el and ement.el are git-cloned to the correct location, this activates them. I don't like using external package managers because I am wrong.
-
-#+begin_src emacs-lisp
-  (let ((ement-path
-         (expand-file-name "site-lisp/ement.el" user-emacs-directory))
-        (plz-path
-         (expand-file-name "site-lisp/plz.el" user-emacs-directory)))
-    (when (and (file-exists-p ement-path) (file-exists-p plz-path))
-      (add-to-list 'package-selected-packages 'ts)
-      (add-to-list 'load-path ement-path)
-      (add-to-list 'load-path plz-path)
-      (when (and (null (file-exists-p (expand-file-name "plz-autoloads.el" plz-path)))
-                 (null (file-exists-p (expand-file-name "ement-autoloads.el" ement-path))))
-        (package-refresh-contents)
-        (package-install 'ts)
-        (package-generate-autoloads "ement" ement-path)
-        (package-generate-autoloads "plz" plz-path)
-        (byte-recompile-directory (expand-file-name "site-lisp" user-emacs-directory) 0)
-        (native-compile-async (expand-file-name "site-lisp" user-emacs-directory) t t)
-        (message "Installing ement.el"))
-      (load "plz-autoloads")
-      (load "ement-autoloads")
-      (defun actuator-matrix-connect ()
-        "Connects to my Matrix Server."
-        (interactive)
-        (eval-when-compile (declare-function ement-connect "ement"))
-        (ement-connect
-         (auth-source-pass-get "userid" "element.io")
-         (auth-source-pass-get 'secret "element.io")))))
 #+end_src
 
 ** Compilation window
