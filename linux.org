@@ -154,68 +154,18 @@
 :END:
 
 #+begin_src conf
-
   set $mod Mod4
-
-  # Home row direction keys, like vim
-  set $left h
-  set $down j
-  set $up k
-  set $right l
-
   set $term kitty
-
-  # on the original workspace that the command was run on.
   set $menu dmenu_path | dmenu | xargs swaymsg exec --
 
-  ### Output configuration
-  #
-  # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-  output * bg #525252 solid_color
-  #
-  # Example configuration:
-  #
-  #   output HDMI-A-1 resolution 1920x1080 position 1920,0
-  #
-  # You can get the names of your outputs by running: swaymsg -t get_outputs
-
-  ### Idle configuration
-  #
-  # Example configuration:
-  #
-  # exec swayidle -w \
-  #          timeout 300 'swaylock -f -c 000000' \
-  #          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-  #          before-sleep 'swaylock -f -c 000000'
-  #
-  # This will lock your screen after 300 seconds of inactivity, then turn off
-  # your displays after another 300 seconds, and turn your screens back on when
-  # resumed. It will also lock your screen before your computer goes to sleep.
-
-  ### Input configuration
-  #
-  # Example configuration:
-  #
-  #   input "2:14:SynPS/2_Synaptics_TouchPad" {
-  #       dwt enabled
-  #       tap enabled
-  #       natural_scroll enabled
-  #       middle_emulation enabled
-  #   }
+  output * bg ~/Downloads/desktop.jpg fill
 
   input * {
           natural_scroll enabled
-  }
 
-
-  #
-  # You can get the names of your inputs by running: swaymsg -t get_inputs
-  # Read `man 5 sway-input` for more information about this section.
-
-  input * {
-          xkb_layout "us,us"
-          xkb_variant "colemak,,"
-          xkb_options "ctrl:nocaps,grp:shift_toggle"
+          xkb_layout "us"
+          xkb_variant "colemak"
+          xkb_options "ctrl:nocaps"
   }
 
 
@@ -248,6 +198,10 @@
       bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
   #
   # Moving around:
+     set $left b
+     set $right f
+     set $up p
+     set $down n
   #
       # Move your focus around
       bindsym $mod+$left focus left
@@ -303,8 +257,8 @@
       # You can "split" the current object of your focus with
       # $mod+b or $mod+v, for horizontal and vertical splits
       # respectively.
-      bindsym $mod+b splith
-      bindsym $mod+v splitv
+      #bindsym $mod+b splith
+      #bindsym $mod+v splitv
 
       # Switch the current container between different layout styles
       bindsym $mod+s layout stacking
@@ -312,7 +266,7 @@
       bindsym $mod+e layout toggle split
 
       # Make the current focus fullscreen
-      bindsym $mod+f fullscreen
+      #bindsym $mod+f fullscreen
 
       # Toggle the current focus between tiling and floating mode
       bindsym $mod+Shift+space floating toggle
@@ -457,7 +411,7 @@
 #+end_src
 
 * Waybar
-#+begin_src json :tangle ~/.config/waybar/config
+#+begin_src json :tangle ~/.config/waybar/config :comments no
   {
       "layer": "top",
       "height": 30,
@@ -479,7 +433,7 @@
   }
 #+end_src
 
-#+begin_src css :tangle ~/.config/waybar/style.css
+#+begin_src css :tangle ~/.config/waybar/style.css :comments no
   ,* {
       border: none;
       border-radius: 0;
@@ -582,7 +536,8 @@
   }
 
   #clock {
-      background-color: #64727D;
+      background-color: #000;
+      color: #fff;
   }
 
   #battery {
@@ -642,8 +597,8 @@
   }
 
   #pulseaudio {
-      background-color: #f1c40f;
-      color: #000000;
+      background-color: #000;
+      color: #fff;
   }
 
   #pulseaudio.muted {
@@ -674,7 +629,8 @@
   }
 
   #tray {
-      background-color: #2980b9;
+      background-color: #000;
+      color: #fff;
   }
 
   #idle_inhibitor {
@@ -696,7 +652,8 @@
   }
 
   #mpd.stopped {
-      background-color: #90b1b1;
+      background-color: rgba(0, 0, 0, 1);
+      color: #fff;
   }
 
   #mpd.paused {
@@ -1071,8 +1028,18 @@ And to check how much space the journal is currently using:
 :PROPERTIES:
 :CREATED:  [2021-09-18 Sat 15:44]
 :END:
-#+begin_src conf :tangle ~/.config/MangoHud//MangoHud.conf
+#+begin_src conf :tangle ~/.config/MangoHud/MangoHud.conf
   cpu_temp
+  cpu_color=FFFFFF
+
   gpu_temp
+  gpu_color=FFFFFF
+
   ram
+  ram_color=FFFFFF
+
+  swap
+
+  fps_limit=144
+  frame_timing=0
 #+end_src

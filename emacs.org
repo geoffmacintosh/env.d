@@ -2557,9 +2557,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** VTerm
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'vterm)
-  (when (executable-find "fish")
-    (csetq vterm-shell "fish"))
+  ;;(add-to-list 'package-selected-packages 'vterm)
+  ;;(when (executable-find "fish")
+  ;;  (csetq vterm-shell "fish"))
 #+end_src
 
 ** Auto-save
