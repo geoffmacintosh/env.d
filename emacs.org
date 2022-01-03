@@ -505,6 +505,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
+  (csetq org-agenda-insert-diary-strategy 'top-level)
+  (csetq org-agenda-include-diary t)
 #+end_src
 
 ** Capture Templates
@@ -1068,8 +1070,8 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (defun actuator-update-all-dynamic-blocks ()
     "Update all dynamic blocks in an Org-mode document.
 
-  Should only be called when in Org-mode, but also it shouldn't
-  cause an error if not."
+    Should only be called when in Org-mode, but also it shouldn't
+    cause an error if not."
 
     (require 'org)
     (require 'org-table)
@@ -1108,7 +1110,12 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-fontify-done-headline t)
   (csetq org-structure-template-alist
          '(("e" . "src emacs-lisp")
-           ("s" . "src shell")))
+           ("s" . "src shell")
+           ("c" . "src conf")
+           ("C" . "comment")
+           ("h" . "export html")
+           ("q" . "quote")
+           ("v" . "verse")))
   (csetq org-log-done 'time)
   (csetq org-log-into-drawer t)
   (csetq org-log-reschedule 'time)
@@ -1576,6 +1583,14 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (require 'mu4e-icalendar)
     (mu4e-icalendar-setup)
     (gnus-icalendar-org-setup))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq org-icalendar-use-scheduled '(event-if-todo))
+  (csetq org-icalendar-use-deadline '(evnet-if-not-todo todo-due))
+  (csetq org-icalendar-include-todo 'unblocked)
+  (csetq org-icalendar-include-sexps t)
+  (csetq org-icalendar-store-UID t)
 #+end_src
 
 ** Message
