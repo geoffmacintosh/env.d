@@ -156,16 +156,15 @@
 #+begin_src conf
   set $mod Mod4
   set $term kitty
-  set $menu dmenu_path | dmenu | xargs swaymsg exec --
+  #set $menu dmenu_path | dmenu | xargs swaymsg exec --
 
   output * bg ~/Downloads/desktop.jpg fill
 
   input * {
           natural_scroll enabled
-
-          xkb_layout "us"
-          xkb_variant "colemak"
-          xkb_options "ctrl:nocaps"
+          xkb_layout "us,us"
+          xkb_variant "colemak,,"
+          xkb_options "ctrl:nocaps,grp:shift_toggle"
   }
 
 
@@ -180,7 +179,14 @@
       bindsym $mod+Shift+q kill
 
       # Start your launcher
-      bindsym $mod+space exec --no-startup-id wofi --show=drun
+      #bindsym $mod+space exec --no-startup-id wofi --show=drun
+
+
+
+for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
+set $menu exec $term --class=launcher -e sway-launcher-desktop
+bindsym $mod+space exec $menu
+
 
       # Drag floating windows by holding down $mod and left mouse button.
       # Resize them with right mouse button + $mod.
@@ -192,7 +198,7 @@
       # Reload the configuration file
       bindsym $mod+Shift+c reload
 
-      bindsym $mod+Shift+x grim
+      bindsym $mod+Shift+x exec grim
 
       # Exit sway (logs you out of your Wayland session)
       bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
@@ -1039,7 +1045,67 @@ And to check how much space the journal is currently using:
   ram_color=FFFFFF
 
   swap
+  engine_color=FFFFFF
 
   fps_limit=144
   frame_timing=0
+
+  round_corners=0
+  position=top-center
+#+end_src
+
+* Mako
+:PROPERTIES:
+:header-args: :tangle ~/.config/mako/config
+:END:
+
+#+begin_src conf
+  sort=-time
+  max-history=3
+  on-button-middle=dismiss-all
+
+  font=Helvetica 12
+  background-color=#000000BF
+  text-color=#FFFFFF
+  border-size=5
+  border-color=#000000BF
+  border-radius=3
+  padding=0,5,15,5
+#+end_src
+
+* Systemd-bootd
+:PROPERTIES:
+:CREATED:  [2021-12-22 Wed 15:23]
+:END:
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/loader.conf" "no")
+  default frog.conf
+  timeout 0
+  console-mode auto
+  #console-mode keep
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/frog.conf" "no")
+  title Arch Gamer Linux
+  linux /vmlinuz-linux515-tkg-bmq
+  initrd /amd-ucode.img
+  initrd /initramfs-linux515-tkg-bmq.img
+  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet loglevel=3 rd.systemd.show_status=auto rd.udev.log_level=3 modprobe.blacklist=iTC0_wdtl acpi_enforce_resources=lax amdgpu.ppfeaturemask=0xffffffff nmi_watchdog=0
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/arch.conf" "no")
+  title Arch Linux
+  linux /vmlinuz-linux
+  initrd /amd-ucode.img
+  initrd /initramfs-linux.img
+  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet modprobe.blacklist=iTC0_wdt
+
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/arch-fallback.conf" "no")
+  title Arch Linux (Fallback)
+  linux /vmlinuz-linux
+  initrd /amd-ucode.img
+  initrd /initramfs-linux-fallback.img
+  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw
 #+end_src
