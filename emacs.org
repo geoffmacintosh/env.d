@@ -868,6 +868,17 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                        '(org-agenda-skip-entry-if
                          'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                       (org-agenda-sorting-strategy '((todo tsia-up alpha-up)))))))
+             ("P" "Print agenda "agenda ""
+               ((ps-number-of-columns 3)
+                (ps-landscape-mode t))
+               ("~/theagenda.pdf"))
+             ("b" "Purchase List" tags "+buy"
+              ((org-overriding-columns-format "%20ITEM %PRICE")
+               (org-agenda-view-columns-initially t)))
+             ("l" agenda ""
+              ((org-agenda-span 7)
+               (org-agenda-time-grid nil)
+               (org-agenda-repeating-timestamp-show-all t)))
              ("v" . "Recurring Views")
              ("vd" "Daily View"
               ((agenda "")
