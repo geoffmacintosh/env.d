@@ -1109,3 +1109,14 @@ And to check how much space the journal is currently using:
   initrd /initramfs-linux-fallback.img
   options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw
 #+end_src
+
+* X11 Input
+
+#+begin_src conf :tangle /sudo::/etc/X11/xorg.conf.d/00-keyboard.conf :comments none
+  Section "InputClass"
+          Identifier "system-keyboard"
+          MatchIsKeyboard "on"
+          Option "XkbLayout" "us"
+  EndSection
+
+#+end_src
