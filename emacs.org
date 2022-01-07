@@ -2190,8 +2190,17 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
               (elfeed-make-tagger :feed-url "reddit\\.com"
                                   :entry-title '(not "F1")
                                   :add '(junk debug8)
+                                  :remove 'unread))
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "kijiji"
+                                  :entry-title "yeezy\\|jordan\\|dunk"
+                                  :add '(junk debug9)
                                   :remove 'unread)))
 #+end_src
+
+#+results:
+| #[257 \311!\312!>\204 \313\314\315D"\210\316H\317\320\211\300\312!>\204- \313\314\321D"\210\322H"\205\277 \211\301\312!>\204G \313\314\321D"\210\323H"\205\277 \211\302\312!>\204b \313\314\315D"\210\323H"\205\277 \211\303\312!>\204} \313\314\315D"\210\322H"\205\277 \307\203\221 \324 \307ZV\205\277 \310\203\236 \324 \310ZW\205\277 \304\242\203\252 \325\326\304\242#\210\305\242\203\266 \325\327\305\242#\210\306\203\276 \306!\210\262)\207 [nil kijiji yeezy\ | jordan\ | dunk nil ((junk debug9)) ((unread)) nil nil nil elfeed-entry-feed type-of signal wrong-type-argument elfeed-entry 4 t #[514 ?\206( <\203 A@\301\302\303#)\266\203?\207\301\302\303#)\266\203\207 [inhibit-changing-match-data nil t string-match] 9 |
+
 
 You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
 
