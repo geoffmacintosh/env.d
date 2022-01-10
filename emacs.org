@@ -252,7 +252,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 #+end_src
 
 ** Exec path from shell
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (file-attributes "/usr/local/bin" t)
     (add-to-list 'exec-path "/usr/local/bin"))
 
