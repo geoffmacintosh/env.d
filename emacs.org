@@ -1635,8 +1635,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq smtpmail-smtp-service "587")
   (csetq smtpmail-servers-requiring-authorization "fastmail")
 
-  (when *graphical*
-    (csetq smtpmail-smtp-user (auth-source-pass-get "user" "smtp.fastmail.com")))
+  ;; (when *graphical*
+  ;;   (csetq smtpmail-smtp-user (auth-source-pass-get "user" "smtp.fastmail.com")))
 #+end_src
 
 #+begin_src emacs-lisp
