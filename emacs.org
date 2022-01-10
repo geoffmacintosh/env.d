@@ -963,6 +963,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-src-fontify-natively t)
   (csetq org-tags-exclude-from-inheritance '("crypt"))
   (csetq org-crypt-key actuator-gpg-id)
+  (csetq org-agenda-window-setup 'current-window)
   (csetq org-habit-show-habits-only-for-today t)
   (csetq org-capture-bookmark t)
   (csetq org-hide-macro-markers t)
