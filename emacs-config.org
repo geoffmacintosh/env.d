@@ -1,4 +1,38 @@
-* Mac and Linux variables
+* Requirements
+** Csetq
+https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
+
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+    "Macro to set the VALUE of VARIABLE, possibly a custom user option."
+    `(funcall (or (get ',variable 'custom-set)
+                  (and (plist-member (symbol-plist ',variable)
+                                     'standard-value)
+                       'set-default)
+                  'set)
+              ',variable ,value))
+#+end_src
+
+** Package Init
+
+#+begin_src emacs-lisp
+  (csetq package-archives
+         '(("melpa"  . "https://melpa.org/packages/")
+           ("gnu"    . "https://elpa.gnu.org/packages/")
+           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+
+  (csetq package-archive-priorities '(("melpa"  . 10)
+                                      ("gnu"    . 30)
+                                      ("nongnu" . 20)))
+  (csetq package-selected-packages nil)
+#+end_src
+
+
+
+
+
+
+** Mac and Linux variables
 
 #+begin_src emacs-lisp
   (defvar *mac* (eq system-type 'darwin))
@@ -7,14 +41,14 @@
   (defvar *terminal* (not (display-graphic-p)))
 #+end_src
 
-* GPG ID
+** GPG ID
 
 #+begin_src emacs-lisp
   (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
     "My GPG ID.")
 #+end_src
 
-* DIR
+** DIR
 #+begin_src emacs-lisp
   (defvar actuator-directory user-emacs-directory)
   (make-directory actuator-directory t)
@@ -24,31 +58,6 @@
     (expand-file-name (convert-standard-filename file)
                       actuator-directory))
 #+end_src
-* Exec path from shell
-#+begin_src emacs-lisp :tangle no
-  (when (file-attributes "/usr/local/bin" t)
-    (add-to-list 'exec-path "/usr/local/bin"))
-
-  (when (file-attributes "/usr/local/sbin" t)
-    (add-to-list 'exec-path "/usr/local/sbin"))
-
-  (when (file-attributes "/usr/local/bin" t)
-    (add-to-list 'exec-path "/usr/local/bin"))
-
-  (when (file-attributes "/Library/TeX/texbin" t)
-    (add-to-list 'exec-path "/Library/TeX/texbin"))
-
-  (when (file-attributes "/opt/local/bin" t)
-    (add-to-list 'exec-path "/opt/local/bin"))
-
-  (when (file-attributes "/opt/local/sbin" t)
-    (add-to-list 'exec-path "/opt/local/sbin"))
-#+end_src
-
-
-
-
-
 * Stable
 :PROPERTIES:
 #:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
