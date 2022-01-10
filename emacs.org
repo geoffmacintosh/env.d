@@ -3099,7 +3099,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (when (featurep 'alert)
     (csetq appt-display-format 'window)
     (csetq appt-disp-window-function
-           (lambda (nmins curtime msg)
+           (lambda (nmins _curtime msg)
              (alert msg
                     :title (format "Appointment in %s minutes" nmins)))))
 #+end_src
