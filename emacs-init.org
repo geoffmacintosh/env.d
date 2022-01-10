@@ -1,0 +1,69 @@
+#+title: Emacs init
+
+* Early Init
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/early-init.el :comments no :mkdirp yes
+:END:
+
+#+begin_src emacs-lisp
+  ;;; early-init.el --- Set up some pre-package.el defaults -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq load-prefer-newer t)
+  (setq frame-inhibit-implied-resize t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (eval-when-compile (defvar package-quickstart))
+  (when (file-exists-p package-quickstart-file)
+    (setq package-quickstart t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (provide 'early-init)
+  ;;; early-init.el ends here
+#+end_src
+
+* Init
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/init.el :comments no :mkdirp yes
+:END:
+** Lexical Binding
+#+begin_src emacs-lisp
+  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
+#+end_src
+
+** Very early
+
+#+begin_src emacs-lisp
+  (require 'package)
+  (package-activate-all)
+#+end_src
+
+** Tangle
+:PROPERTIES:
+:CREATED:  [2022-01-10 Mon 14:14]
+:END:
+
+#+begin_src emacs-lisp
+  (let ((gc-cons-threshold (* 5000 1024 1024))
+        (gc-cons-percentage))
+        (require 'ob-tangle)
+        (org-babel-load-file (expand-file-name "emacs-config.org" "~/env.d/"))
+        (org-babel-load-file (expand-file-name "emacs-theme.org" "~/env.d/")))
+#+end_src
+
+** Footer
+#+begin_src emacs-lisp
+  (provide 'init)
+  ;;; init.el ends here
+#+end_src

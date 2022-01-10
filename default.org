@@ -414,6 +414,7 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 
 #+begin_src conf
   cursor_blink_interval 0
+  cursor_shape block
   shell fish
   close_on_child_death yes
   editor emacs

@@ -1,217 +1,10 @@
-#+title: Emacs
+* Requirements
 
-* Theme
-#+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el :results replace
-  (deftheme actuator)
-
-  (add-hook 'minibuffer-setup-hook 'actuator--minibuffer-setup)
-
-  (defun actuator--minibuffer-setup ()
-         (set (make-local-variable 'face-remapping-alist)
-            '((org-document-title :height 1.0))))
-
-  (let ((blue  "#29BEEA")
-        (white "#FFFFFF")
-        (dark  "#000000")
-        (cyan  "#00FFFF")
-        (red   "#FF1616")
-        (grey  "#484e55")
-        (lgrey "#bdc4cc")
-
-        (highlight-dim "#B1F8FF")
-        (code-background "#FFFFFF")
-
-        (xgrey "#F5F6F8")
-        (xbord "#EDF0F4"))
-
-    (custom-theme-set-faces
-     'user
-     `(fixed-pitch ((t (:family "SF Mono" :weight light))))
-     `(variable-pitch ((t (:family "Helvetica" :weight light))))
-     `(default ((t (:background ,white :foreground ,dark :weight light))))
-     `(cursor ((t (:background ,blue))))
-     `(fringe ((t (:background ,white))))
-     `(region ((t (:background ,highlight-dim))))
-     `(highlight ((t (:background ,highlight-dim))))
-     `(hl-line ((t (:background ,grey :foreground ,white))))
-     `(header-line ((t (:background ,grey :foreground ,white))))
-
-     `(font-lock-builtin-face ((t (:weight bold))))
-     `(font-lock-constant-face ((t (:weight bold))))
-     `(font-lock-function-name-face ((t (:weight bold))))
-     `(font-lock-keyword-face ((t (:weight bold))))
-     `(font-lock-variable-name-face ((t (:weight bold))))
-     `(font-lock-type-face ((t (:weight bold))))
-     `(font-lock-string-face ((t (:weight thin))))
-
-     `(mu4e-header-highlight-face ((t (:inherit hl-line))))
-     `(mu4e-compose-separator-face ((t (:inherit org-drawer))))
-     `(message-header-name ((t (:weight light
-                                        :foreground ,lgrey))))
-     `(message-header-subject ((t :weight normal
-                                         :foreground ,dark)))
-     `(message-header-to ((t :weight normal
-                                         :foreground ,dark)))
-     `(message-header-other ((t (:weight normal
-                                         :foreground ,dark))))
-
-     `(font-lock-warning-face ((t (:foreground ,red))))
-     `(font-lock-comment-face ((t (:weight thin))))
-     `(font-lock-comment-delimiter-face ((t (:weight thin))))
-
-     `(org-drawer ((t (:foreground ,lgrey))))
-     `(org-special-keyword ((t (:inherit org-drawer
-                                         :foreground ,dark))))
-     `(org-ellipsis ((t (:foreground ,lgrey))))
-     `(org-block ((t (:background ,code-background :extend t))))
-     `(org-block-begin-line ((t :inherit org-block)))
-     `(link ((t :foreground ,dark
-                :underline t)))
-     `(org-document-title ((t :foreground ,dark
-                               :height 220)))
-     `(org-level-1 ((t :weight bold)))
-     `(org-done ((t :foreground ,lgrey
-                    :weight bold)))
-     `(org-headline-done ((t :foreground ,grey)))
-     `(org-todo ((t :foreground ,red
-                    :weight bold)))
-     `(org-special-keyword ((t :foreground ,grey)))
-
-     `(org-date ((t :foreground ,dark
-                    :underline t)))
-
-     `(pulse-highlight-start-face ((t :background ,red)))
-
-     ;; `(dired-filename ((t :foreground red)))
-     ;; `(dired-header ((t :foreground red)))
-     ;; `(dired-hide-details-information ((t :foreground red)))
-     ;; `(dired-hide-details-detail ((t :foreground red)))
-     ;; `(dired-ignored ((t :foreground red)))
-     ;; `(dired-broken-symlink ((t :foreground red)))
-     ;; `(dired-directory ((t :foreground red)))
-     ;; `(dired-symlink ((t :foreground red)))
-
-     ;; `(elfeed-search-date-face ((t :foreground red)))
-     ;; `(elfeed-search-title-face ((t :foreground red)))
-     ;; `(elfeed-search-unread-title-face ((t :foreground red)))
-     ;; `(elfeed-search-last-update-face ((t :foreground red)))
-     ;; `(elfeed-search-feed-face ((t :foreground red)))
-     ;; `(elfeed-search-tag-face ((t :foreground red)))
-
-     `(elfeed-search-unread-count-face ((t :foreground ,white)))
-
-     `(ivy-current-match ((t (:background ,grey :foreground ,white :extend t))))
-     `(minibuffer-prompt ((t (:inherit default))))
-     `(isearch ((t (:background ,lgrey))))
-     ;; `(show-paren-match ((t (:background ,lgrey))))
-     ;; `(show-paren-match-expression ((t (:background ,lgrey))))
-     ;; `(show-paren-mismatch ((t (:background ,lgrey))))
-     ;; `(magit-section-heading ((t (:background ,lgrey))))
-     ;; `(magit-section-highlight ((t (:background ,lgrey))))
-
-     `(mode-line ((t (:box (:line-width 7
-                                        :color ,grey)
-                           ;;:underline nil
-                           ;;:overline ,xbord
-                           :foreground ,white
-                           :background ,grey
-                           ;;:inherit variable-pitch
-                           :height 110))))
-     `(mode-line-inactive ((t (:inherit mode-line
-                               :foreground ,lgrey
-                               :background ,xgrey
-                               :box (:line-width 7 :color, xgrey)))))
-
-     `(mode-line-highlight ((t (:box (:line-width 7
-                                      :color ,grey)
-                                :background ,grey
-                                :foreground ,white))))
-     `(eshell-prompt ((t :foreground ,dark
-                         :weight bold)))
-
-
-     ))
-
-  (provide-theme 'actuator)
-
-  ;; Local Variables:
-  ;; no-byte-compile: t
-  ;; End:
-
-  ;;; actuator-theme.el ends here
-#+end_src
-
-#+results:
-: actuator-theme
-* Early Init
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/early-init.el
-:END:
-
-#+begin_src emacs-lisp :comments no
-  ;;; early-init.el --- Set up some pre-package.el defaults -*- lexical-binding: t; -*-
-
-  ;;; Commentary:
-
-  ;;; Code:
-#+end_src
-
-#+begin_src emacs-lisp
-  (setq load-prefer-newer t)
-  (setq frame-inhibit-implied-resize t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (eval-when-compile (defvar package-quickstart))
-  ;;(setq package-quickstart-file (expand-file-name "var/package-quickstart.el" user-emacs-directory))
-  (when (file-exists-p package-quickstart-file)
-    (setq package-quickstart t))
-#+end_src
-
-#+begin_src emacs-lisp :comments no
-  (provide 'early-init)
-  ;;; early-init.el ends here
-#+end_src
-
-* Init
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :mkdirp yes
-:END:
-** Lexical Binding
-#+begin_src emacs-lisp :comments no
-  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
-
-  ;;; Commentary:
-
-  ;;; Code:
-#+end_src
-
-** Very early
-#+begin_src emacs-lisp
-  (package-activate-all)
-
-  (eval-when-compile (defvar org-directory))
-  (setq org-directory (expand-file-name "~/org/"))
-#+end_src
-
-** Mac and Linux variables
-
-#+begin_src emacs-lisp
-  (defvar *mac* (eq system-type 'darwin))
-  (defvar *linux* (eq system-type 'gnu/linux))
-  (defvar *graphical* (display-graphic-p))
-  (defvar *terminal* (not (display-graphic-p)))
-#+end_src
-
-** GPG ID
-
-#+begin_src emacs-lisp
-  (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
-    "My GPG ID.")
-#+end_src
+Requirements are things that I need to do other stuff in my Emacs' init. This must be loaded before everything else or there will be troubles.
 
 ** Csetq
-https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
+
+The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things work. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
 
 #+begin_src emacs-lisp
   (defmacro csetq (variable value)
@@ -226,9 +19,9 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
 
 ** Package Init
 
-#+begin_src emacs-lisp
-  (require 'package)
+As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default. I add MELPA as a low-priority archive for now (Jan 2022).
 
+#+begin_src emacs-lisp
   (csetq package-archives
          '(("melpa"  . "https://melpa.org/packages/")
            ("gnu"    . "https://elpa.gnu.org/packages/")
@@ -237,69 +30,52 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (csetq package-archive-priorities '(("melpa"  . 10)
                                       ("gnu"    . 30)
                                       ("nongnu" . 20)))
-  (setq package-selected-packages nil)
 #+end_src
 
-** DIR
+#+begin_src emacs-lisp :tangle no
+  (csetq package-selected-packages nil)
+#+end_src
+
+** Mac and Linux variables
+
 #+begin_src emacs-lisp
-  (defvar actuator-directory user-emacs-directory)
-  (make-directory actuator-directory t)
-
-  (defun dir (file)
-    "Expand the filename FILE relative to `actuator-directory'."
-    (expand-file-name (convert-standard-filename file)
-                      actuator-directory))
+  (defvar *mac* (eq system-type 'darwin))
+  (defvar *linux* (eq system-type 'gnu/linux))
+  (defvar *graphical* (display-graphic-p))
+  (defvar *terminal* (not (display-graphic-p)))
 #+end_src
 
-** Exec path from shell
-#+begin_src emacs-lisp
-  (when (file-attributes "/usr/local/bin" t)
-    (add-to-list 'exec-path "/usr/local/bin"))
+** GPG ID
 
-  (when (file-attributes "/usr/local/sbin" t)
-    (add-to-list 'exec-path "/usr/local/sbin"))
-
-  (when (file-attributes "/usr/local/bin" t)
-    (add-to-list 'exec-path "/usr/local/bin"))
-
-  (when (file-attributes "/Library/TeX/texbin" t)
-    (add-to-list 'exec-path "/Library/TeX/texbin"))
-
-  (when (file-attributes "/opt/local/bin" t)
-    (add-to-list 'exec-path "/opt/local/bin"))
-
-  (when (file-attributes "/opt/local/sbin" t)
-    (add-to-list 'exec-path "/opt/local/sbin"))
+#+begin_src emacs-lisp :tangle no
+  (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
+    "My GPG ID.")
 #+end_src
 
-* Stable
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
-:END:
-** Native compile
+* Native compile
 #+begin_src emacs-lisp
   (when *mac*
     (eval-when-compile (defvar native-comp-async-report-warnings-errors))
     (setq native-comp-async-report-warnings-errors nil))
 #+end_src
 
-** Custom-set Variables
+* Custom-set Variables
 
 #+begin_src emacs-lisp
   (csetq custom-file nil)
 #+end_src
 
-** Read only
+* Read only
 #+begin_src emacs-lisp
   (csetq view-read-only t)
 #+end_src
 
-** Ctrl-Z
+* Ctrl-Z
 #+begin_src emacs-lisp
   (global-unset-key (kbd "C-z"))
 #+end_src
 
-** Just one space
+* Just one space
 #+begin_src emacs-lisp
   (defun actuator-just-one-space ()
     "Insert just one space, killing all other whitespace."
@@ -310,7 +86,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (global-set-key (kbd "M-/") #'actuator-just-one-space)
 #+end_src
 
-** Unfill paragraph
+* Unfill paragraph
 #+begin_src emacs-lisp
   (defun actuator-unfill-paragraph ()
     "Does the opposite of filling a paragraph.
@@ -327,7 +103,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
   (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
 #+end_src
 
-** Savehist
+* Savehist
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'savehist-mode)
   (csetq history-length 10000)
@@ -402,7 +178,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (add-hook 'kill-emacs-hook #'savehist-save))
   (add-hook 'after-save-hook #'savehist-save)
 #+end_src
-** Autorevert
+* Autorevert
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
   (csetq auto-revert-verbose t)
@@ -411,7 +187,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (csetq auto-revert-check-vc-info nil)
 #+end_src
 
-** Server
+* Server
 
 #+begin_src emacs-lisp
   (defun actuator-start-server-if-not-running ()
@@ -428,7 +204,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (run-with-idle-timer 2 nil #'actuator-start-server-if-not-running)
 #+end_src
 
-** Undo
+* Undo
 - [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
 
   #+begin_src emacs-lisp
@@ -436,7 +212,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (global-set-key (kbd "s-Z") #'undo-redo)
   #+end_src
 
-** Minibuffer Resize
+* Minibuffer Resize
 #+begin_src emacs-lisp
   (defun actuator-minibuffer-normalize-face-height ()
     "Reset faces in the minibuffer to be the default height."
@@ -446,7 +222,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
   (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-normalize-face-height)
 #+end_src
-** Hippie Expand
+* Hippie Expand
 
 #+begin_src emacs-lisp
   (csetq dabbrev-case-distinction t)
@@ -490,18 +266,14 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (global-set-key (kbd "M-S-SPC") #'actuator-hippie-unexpand)
 #+end_src
 
-** Open org-links in new window or not
+* Open org-links in new window or not
 #+begin_src emacs-lisp
   (csetq org-link-frame-setup '((vm . vm-visit-folder-other-frame)
                                 (vm-imap . vm-visit-imap-folder-other-frame)
                                 (gnus . org-gnus-no-new-news)
                                 (file . find-file)))
 #+end_src
-* Unstable
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :noweb yes
-:END:
-** Diary
+* Diary
 #+begin_src emacs-lisp
   (csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
@@ -509,7 +281,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (csetq org-agenda-include-diary t)
 #+end_src
 
-** Capture Templates
+* Capture Templates
 #+begin_src emacs-lisp
   (eval-when-compile (defvar org-capture-templates))
 #+end_src
@@ -553,7 +325,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   \n%?")))
 #+end_src
 
-** Calendar
+* Calendar
 
 #+begin_src emacs-lisp
   (csetq calendar-latitude [51 02 north])
@@ -582,7 +354,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (csetq calendar-offset -1)
 #+end_src
 
-** Unfiled Settings
+* Unfiled Settings
 :PROPERTIES:
 :ID:       3659786E-6B2D-4AF8-8901-434068730FC7
 :END:
@@ -595,6 +367,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (csetq bookmark-version-control t)
   (csetq bookmark-save-flag 1)
+  (csetq bookmark-set-fringe-mark nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -723,7 +496,7 @@ From  emacs-plus:
   (unless noninteractive
     (actuator-frame-init))
 #+end_src
-** Misc
+* Misc
 
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'recentf-mode 1)
@@ -737,12 +510,12 @@ From  emacs-plus:
   (add-hook 'midnight-mode-hook #'recentf-cleanup)
 #+end_src
 
-** Plain Font
+* Plain Font
 
 #+begin_src emacs-lisp
-  (when (file-exists-p (expand-file-name "actuator-theme.el" user-emacs-directory))
-    (csetq custom-safe-themes t)
-    (csetq custom-enabled-themes '(actuator)))
+  ;; (when (file-exists-p (expand-file-name "actuator-theme.el" user-emacs-directory))
+  ;;   (csetq custom-safe-themes t)
+  ;;   (csetq custom-enabled-themes '(actuator)))
 
   (blink-cursor-mode -1)
   (setq cursor-type 'box)
@@ -788,7 +561,7 @@ From  emacs-plus:
                       (time-subtract after-init-time before-init-time)))
              gcs-done))
 #+end_src
-** Eliminate frame title
+* Eliminate frame title
 #+begin_src emacs-lisp
   (csetq ns-use-proxy-icon nil)
   (csetq frame-title-format
@@ -797,12 +570,12 @@ From  emacs-plus:
            "%b"))
 #+end_src
 
-** Help
+* Help
 #+begin_src emacs-lisp
   ;;(global-set-key (kbd "C-h x k") #'describe-key)
 #+end_src
 
-** Delete by Moving to Trash
+* Delete by Moving to Trash
 [[elfeed:christiantietze.de#tag:christiantietze.de,2021-06-21:/posts/2021/06/emacs-trash-file-macos/][Trash File from Emacs with Put-Back Enabled on macOS]]
 
 #+begin_src emacs-lisp
@@ -820,7 +593,7 @@ From  emacs-plus:
                        "*Trash Error Buffer*"))))
 #+end_src
 
-** Copy sentence
+* Copy sentence
 #+begin_src emacs-lisp
   (defun actuator-copy-sentence ()
     "Save the entire sentence to the kill ring."
@@ -831,7 +604,7 @@ From  emacs-plus:
       (copy-region-as-kill nil nil t)))
 #+end_src
 
-** Org
+* Org
 #+begin_src emacs-lisp
   (defvar actuator-todo-todo-keyword "TODO")
   (defvar actuator-todo-waiting-keyword "WAITING")
@@ -854,7 +627,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-publish-timestamp-directory (dir "org-publish/"))
+  (csetq org-publish-timestamp-directory (expand-file-name "org-timestamps/" user-emacs-directory))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -868,10 +641,13 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                        '(org-agenda-skip-entry-if
                          'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                       (org-agenda-sorting-strategy '((todo tsia-up alpha-up)))))))
-             ("P" "Print agenda "agenda ""
-               ((ps-number-of-columns 3)
-                (ps-landscape-mode t))
-               ("~/theagenda.pdf"))
+             ("P" "Print agenda"agenda ""
+              ((ps-number-of-columns 3)
+               (ps-landscape-mode t))
+              ("~/theagenda.pdf"))
+             ("A" "Candidate trees for archiving" tags "-NOARCHIVE"
+            ((org-agenda-overriding-header "Candidate tasks for archiving")
+             (org-agenda-skip-function 'actuator-skip-non-archivable-tasks)))
              ("b" "Purchase List" tags "+buy"
               ((org-overriding-columns-format "%20ITEM %PRICE")
                (org-agenda-view-columns-initially t)))
@@ -927,6 +703,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
               ("~/agenda.html")))))
 #+end_src
 
+#+results:
+: ((u Unscheduled TODOs ((todo  ((org-agenda-overriding-header
+: Unscheduled TODOs) (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp 'todo '(WAITING NEXT SOMEDAY PROJECT DONE CANCELLED))) (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))) (P Print agenda agenda  ((ps-number-of-columns 3) (ps-landscape-mode t)) (~/theagenda.pdf)) (A Candidate trees for archiving tags -NOARCHIVE ((org-agenda-overriding-header Candidate tasks for archiving) (org-agenda-skip-function 'actuator-skip-non-archivable-tasks))) (b Purchase List tags +buy ((org-overriding-columns-format %20ITEM %PRICE) (org-agenda-view-columns-initially t))) (l agenda  ((org-agenda-span 7) (org-agenda-time-grid nil) (org-agenda-repeating-timestamp-show-all t))) (v . Recurring Views) (vd Daily View ((agenda ) (todo actuator-todo-next-keyword)) ((org-agenda-span 'day))) (vw Weekly View ((agenda ) (todo actuator-todo-waiting-keyword) (todo actuator-todo-project-keyword) (org-agenda-list-stuck-projects)) ((org-agenda-span 7) (org-agenda-start-day +0d) (org-agenda-start-on-weekday nil) (org-agenda-start-with-log-mode nil) (org-agenda-start-with-clockreport-mode nil) (org-agenda-use-time-grid nil) (org-habit-show-habits nil))) (vm Monthly View ((todo actuator-todo-someday-keyword))) (p Daily Personal Mail ((agenda ) (todo actuator-todo-next-keyword)) ((org-agenda-span 'day) (org-agenda-remove-tags t) (org-habit-preceding-days 7) (org-habit-following-days 3) (org-agenda-block-separator nil) (org-agenda-show-current-time-in-grid nil) (org-agenda-start-with-log-mode nil) (org-agenda-start-with-clockreport-mode nil)) (~/agenda.html)) (w Daily Work Mail ((agenda ) (todo actuator-todo-next-keyword) (todo actuator-todo-todo-keyword)) ((org-agenda-span 'day) (org-agenda-files `(~/org/work.org ,org-agenda-diary-file)) (org-agenda-remove-tags t) (org-habit-preceding-days 7) (org-habit-following-days 3) (org-agenda-block-separator nil) (org-agenda-show-current-time-in-grid nil) (org-agenda-start-with-log-mode nil) (org-agenda-start-with-clockreport-mode nil)) (~/agenda.html)))
+
 #+begin_src emacs-lisp
   (csetq org-agenda-text-search-extra-files '(agenda-archives))
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
@@ -936,7 +716,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   ;;(csetq org-agenda-window-setup 'other-frame)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7) ;; fortnight
-  ;;(csetq org-agenda-include-diary t)
   (csetq org-agenda-todo-list-sublevels t)
   (csetq org-agenda-sticky nil)
   (csetq org-agenda-dim-blocked-tasks t)
@@ -956,6 +735,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-src-fontify-natively t)
   (csetq org-tags-exclude-from-inheritance '("crypt"))
   (csetq org-crypt-key actuator-gpg-id)
+  (csetq org-agenda-window-setup 'current-window)
   (csetq org-habit-show-habits-only-for-today t)
   (csetq org-capture-bookmark t)
   (csetq org-hide-macro-markers t)
@@ -1185,7 +965,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (add-hook 'org-capture-mode-hook #'actuator-org-capture-turn-off-header-line)
 #+end_src
 
-** Holidays
+* Holidays
 :PROPERTIES:
 :CATEGORY: Holiday
 :END:
@@ -1237,7 +1017,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq holiday-other-holidays (append holiday-canada-holidays
                                         holiday-american-holidays))
 #+end_src
-** Keyboard Macros
+* Keyboard Macros
 
 - ~C-x (~ Start defining a keyboard macro.
 - ~C-x )~ End a keyboard macro.
@@ -1249,20 +1029,20 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 - ~M-x insert-kbd-macro~ Insert the most recent macro into the buffer as lisp. That’s how you save it.
 - ~C-x C-k 0-9~ and ~C-x C-k A-Z~ are reserved for keyboard macros
 
-*** Make Checklist
+** Make Checklist
 #+begin_src emacs-lisp
   (fset 'actuator-make-checklist
         (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
   ;;(global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
 
-*** References
+** References
 - [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
 - [[https://www.emacswiki.org/emacs/KeyboardMacros][EmacsWiki: Keyboard Macros]] [2020-06-08 Mon]
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
 
-** Web
-*** Set up browsing handlers                      :ignore:
+* Web
+** Set up browsing handlers                        :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
 #+begin_src emacs-lisp :tangle no
@@ -1275,7 +1055,7 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
   (csetq eww-history-limit 1000)
 #+end_src
 
-*** Handle video urls                             :ignore:
+** Handle video urls                               :ignore:
 I want video links to be opened in MPV. This helps my battery life as well as my personal life because I don't have to visit YouTube. This requires [[https://mpv.io][MPV]] to be installed, which is best installed via [[http://brew.sh][Brew]] on macOS. I've tried to use [[https://nixos.org/download.html][Nix]], but it doesn't work well.
 
 #+begin_src emacs-lisp
@@ -1285,7 +1065,7 @@ I want video links to be opened in MPV. This helps my battery life as well as my
     (call-process "mpv" nil 0 nil url))
 #+end_src
 
-*** Simple HTML renderer                          :ignore:
+** Simple HTML renderer                            :ignore:
 SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts and Nov.el books. Normally it wraps at the page width, but that can be adjusted.
 
 #+begin_src emacs-lisp
@@ -1296,7 +1076,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq shr-cookie-policy nil)
 #+end_src
 
-*** Open links in background                      :ignore:
+** Open links in background                        :ignore:
 
 #+begin_src emacs-lisp
   (csetq browse-url-secondary-browser-function 'eww)
@@ -1319,7 +1099,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq eww-bookmarks-directory "~/Sync/.sync/eww/")
 #+end_src
 
-** iBuffer
+* iBuffer
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x C-b") #'ibuffer)
   (csetq ibuffer-expert t)
@@ -1355,11 +1135,11 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
 #+end_src
 
-** Encryption (EPG)
+* Encryption (EPG)
 #+begin_src emacs-lisp
   (csetq epg-pinentry-mode 'loopback)
 #+end_src
-** Dired
+* Dired
 #+begin_src emacs-lisp
   (with-eval-after-load 'dired
     (require 'dired-x)
@@ -1439,7 +1219,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   ;; S :: sort by size
 #+end_src
 
-** Attach
+* Attach
 :PROPERTIES:
 :ID:       7542A761-77AB-4B42-B25E-33BFE7A45FE9
 :END:
@@ -1453,7 +1233,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq org-attach-auto-tag "attach")
   (csetq org-attach-archive-delete 'query)
 #+end_src
-** Clock
+* Clock
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
@@ -1464,7 +1244,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq org-clock-mode-line-total 'auto)
 #+end_src
 
-** World Time
+* World Time
 #+begin_src emacs-lisp
   (csetq world-clock-list '(("America/New_York" "New York")
                             ("Europe/London"    "London")
@@ -1473,7 +1253,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
                             ("America/St_Johns" "St. John's")))
 #+end_src
 
-** Ediff
+* Ediff
 #+begin_src emacs-lisp
   (csetq ediff-window-setup-function 'ediff-setup-windows-plain)
   (csetq ediff-split-window-function 'split-window-horizontally)
@@ -1552,7 +1332,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 [[https://www.reddit.com/r/emacs/comments/dxzi96/have_some_code_make_ediffing_folded_org_files/][Have some code: make ediffing folded org files better : emacs]]
 
-** Mu4e
+* Mu4e
 
 [[https://rakhim.org/fastmail-setup-with-emacs-mu4e-and-mbsync-on-macos/][Fastmail + mu4e]]
 
@@ -1611,7 +1391,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq org-icalendar-store-UID t)
 #+end_src
 
-** Message
+* Message
 
 #+begin_src emacs-lisp
   ;;(csetq send-mail-function 'sendmail-send-it)
@@ -1627,8 +1407,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq smtpmail-smtp-service "587")
   (csetq smtpmail-servers-requiring-authorization "fastmail")
 
-  (when *graphical*
-    (csetq smtpmail-smtp-user (auth-source-pass-get "user" "smtp.fastmail.com")))
+  ;; (when *graphical*
+  ;;   (csetq smtpmail-smtp-user (auth-source-pass-get "user" "smtp.fastmail.com")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1697,7 +1477,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   ;;(add-hook 'message-send-hook #'actuator-check-for-network-before-sending-message)
 #+end_src
 
-** Native Compile
+* Native Compile
 #+begin_src emacs-lisp
   (when (boundp 'comp-async-report-warnings-errors)
     (setq comp-async-report-warnings-errors nil))
@@ -1707,14 +1487,14 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq package-native-compile t)
 #+end_src
 
-** Package Quickstart
+* Package Quickstart
 
 #+begin_src emacs-lisp :tangle no
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
 #+end_src
 
-** Byte compile init
+* Byte compile init
 
 #+begin_src emacs-lisp
   (defun actuator-byte-recompile-init ()
@@ -1740,7 +1520,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init))
 #+end_src
 
-** Allow different places in the same buffer
+* Allow different places in the same buffer
 #+begin_src emacs-lisp
   (csetq switch-to-buffer-preserve-window-point t)
 #+end_src
@@ -1748,7 +1528,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+results:
 : t
 
-** ERC
+* ERC
 #+begin_src emacs-lisp
   (defun actuator-twitch-start-irc ()
     "Connect to Twitch IRC channel.
@@ -1762,7 +1542,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
              :password (auth-source-pass-get "oauth" "twitch.tv")))
 #+end_src
 
-** Doc View
+* Doc View
 #+begin_src emacs-lisp
   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
@@ -1802,24 +1582,24 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 https://gist.github.com/spacebat/5500966
 
-** Sync stuff
+* Sync stuff
 #+begin_src emacs-lisp
   (csetq elfeed-db-directory   "~/Sync/.sync/elfeed")
   (csetq abbrev-file-name      (expand-file-name "etc/abbrev.el" org-directory))
 #+end_src
 
-** Bookmarks
+* Bookmarks
 #+begin_src emacs-lisp
   (csetq bookmark-fontify nil)
   (csetq bookmark-default-file "~/Sync/.sync/bookmark.el")
 #+end_src
 
-** Org Randomnote
+* Org Randomnote
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-randomnote)
 #+end_src
 
-** Auth Source / EPA / EPG
+* Auth Source / EPA / EPG
 
 #+begin_src emacs-lisp
   (csetq epa-file-encrypt-to actuator-gpg-id)
@@ -1828,46 +1608,46 @@ https://gist.github.com/spacebat/5500966
   (csetq password-cache-expiry 600)
 #+end_src
 
-** Fish Mode
+* Fish Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'fish-mode)
 #+end_src
-** Ledger Mode
+* Ledger Mode
 #+begin_src emacs-lisp
   (when (executable-find "ledger")
     (csetq ledger-default-date-format "%Y-%m-%d")
     (add-to-list 'package-selected-packages 'ledger-mode))
 #+end_src
-** Markdown Mode
+* Markdown Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'markdown-mode)
 #+end_src
 
-** YAML Mode
+* YAML Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'yaml-mode)
 #+end_src
-** TOML Mode
+* TOML Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'toml-mode)
 #+end_src
-** Lua Mode
+* Lua Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'lua-mode)
 #+end_src
-** Gitignore Mode
+* Gitignore Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'gitignore-mode)
 #+end_src
-** Gitconfig Mode
+* Gitconfig Mode
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'gitconfig-mode)
 #+end_src
-** Ripgrep
+* Ripgrep
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'rg)
 #+end_src
-** Nov.el
+* Nov.el
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'nov)
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
@@ -1881,12 +1661,12 @@ https://gist.github.com/spacebat/5500966
   (add-hook 'nov-mode-hook 'actuator-novel-setup)
 #+end_src
 
-** Project
+* Project
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'project)
 #+end_src
 
-** Org Link Minor Mode
+* Org Link Minor Mode
 
 #+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'org-link-minor-mode)
@@ -1895,12 +1675,12 @@ https://gist.github.com/spacebat/5500966
     (add-hook 'emacs-lisp-mode #'org-link-minor-mode))
 #+end_src
 
-** HTMLize
+* HTMLize
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'htmlize)
 #+end_src
 
-** Eldoc
+* Eldoc
 
 [[https://www.reddit.com/r/emacs/comments/c1zl0s/weekly_tipstricketc_thread/ergullj/?context=1][Improve eldoc's documentation]]
 
@@ -1924,17 +1704,17 @@ https://gist.github.com/spacebat/5500966
            (concat " " (propertize oneline 'face 'italic)))))))
 #+end_src
 
-** Forge
+* Forge
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'forge)
 #+end_src
 
-** Transient
+* Transient
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'transient)
 #+end_src
 
-** Ivy
+* Ivy
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'counsel)
@@ -2006,7 +1786,7 @@ https://gist.github.com/spacebat/5500966
   (csetq prescient-aggressive-file-save t)
 #+end_src
 
-** Cliplink
+* Cliplink
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-cliplink)
@@ -2023,18 +1803,18 @@ https://gist.github.com/spacebat/5500966
                    :kill-buffer)))
 #+end_src
 
-** Anki
+* Anki
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'anki-editor)
 #+end_src
 
-** Auctex
+* Auctex
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'auctex)
   (csetq TeX-engine 'luatex)
   (csetq TeX-source-correlate-start-server t)
 #+end_src
-** Magit
+* Magit
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'magit)
 
@@ -2081,7 +1861,7 @@ https://gist.github.com/spacebat/5500966
     (jump-to-register :magit-fullscreen))
 #+end_src
 
-** Org download
+* Org download
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-download)
@@ -2102,7 +1882,7 @@ https://gist.github.com/spacebat/5500966
 
 #+end_src
 
-** Web Mode
+* Web Mode
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'web-mode)
@@ -2118,7 +1898,7 @@ https://gist.github.com/spacebat/5500966
   (csetq web-mode-code-indent-offset 2)
   (csetq web-mode-css-indent-offset 2)
 #+end_src
-** Elfeed
+* Elfeed
 #+begin_src emacs-lisp
   (csetq elfeed-search-filter "@1-week-ago +unread ")
   (csetq elfeed-enclosure-default-dir "~/Download/")
@@ -2192,8 +1972,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
                                   :remove 'unread)))
 #+end_src
 
-#+results:
-| #[257 \311!\312!>\204 \313\314\315D"\210\316H\317\320\211\300\312!>\204- \313\314\321D"\210\322H"\205\277 \211\301\312!>\204G \313\314\321D"\210\323H"\205\277 \211\302\312!>\204b \313\314\315D"\210\323H"\205\277 \211\303\312!>\204} \313\314\315D"\210\322H"\205\277 \307\203\221 \324 \307ZV\205\277 \310\203\236 \324 \310ZW\205\277 \304\242\203\252 \325\326\304\242#\210\305\242\203\266 \325\327\305\242#\210\306\203\276 \306!\210\262)\207 [nil kijiji yeezy\ | jordan\ | dunk nil ((junk debug9)) ((unread)) nil nil nil elfeed-entry-feed type-of signal wrong-type-argument elfeed-entry 4 t #[514 ?\206( <\203 A@\301\302\303#)\266\203?\207\301\302\303#)\266\203\207 [inhibit-changing-match-data nil t string-match] 9 |
+
 
 
 You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
@@ -2343,7 +2122,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
                         (hash-table-count feeds))))))
 #+end_src
 
-** Org-elfeed
+* Org-elfeed
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'elfeed-org)
 
@@ -2357,12 +2136,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (csetq rmh-elfeed-org-files `(,(expand-file-name "feed.org" org-directory)))
 #+end_src
 
-** Eshell
-
-#+begin_src emacs-lisp
-  (eval-when-compile (defvar eshell-directory-name))
-  (csetq eshell-history-file-name (dir "eshell-history.el"))
-#+end_src
+* Eshell
 
 #+begin_src emacs-lisp
   (defalias 'eshell/f  'find-file-other-window)
@@ -2504,7 +2278,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (csetq eshell-prompt-function #'actuator-eshell-prompt)
 #+end_src
 
-** Mu4e Alert
+* Mu4e Alert
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'mu4e-alert)
 
@@ -2531,7 +2305,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)
 #+end_src
-** Alert
+* Alert
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'alert)
@@ -2540,25 +2314,24 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
         ((eq system-type 'darwin)
          (csetq alert-default-style 'osx-notifier)))
 #+end_src
-** Systemd
+* Systemd
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'systemd)
 #+end_src
 
-** Tramp
+* Tramp
 #+begin_src emacs-lisp
-  (csetq tramp-auto-save-directory (dir "tramp/"))
-  (csetq tramp-persistency-file-name (dir "tramp.el" ))
+  (csetq tramp-auto-save-directory (expand-file-name "tramp/" user-emacs-directory))
 #+end_src
 
-** Rainbow
+* Rainbow
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'rainbow-mode)
   (when (package-installed-p 'rainbow-mode)
     (eval-when-compile (declare-function rainbow-mode "rainbow-mode"))
     (run-with-idle-timer 2 nil #'rainbow-mode))
 #+end_src
-** Modeline
+* Modeline
 
 #+begin_src emacs-lisp
   (setq-default mode-line-format
@@ -2580,9 +2353,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
                            minions-mode-line-modes))))
 #+end_src
 
-*** References
+** References
 - [[https://occasionallycogent.com/custom_emacs_modeline/index.html][Custom Emacs Modeline]]
-** Minions
+* Minions
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'minions)
 
@@ -2590,13 +2363,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (eval-when-compile (declare-function minions-mode "minions"))
     (run-with-idle-timer 1 nil #'minions-mode))
 #+end_src
-** Sudoers
+* Sudoers
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'etc-sudoers-mode)
 #+end_src
 
-** VTerm
+* VTerm
 
 #+begin_src emacs-lisp
   ;;(add-to-list 'package-selected-packages 'vterm)
@@ -2604,7 +2377,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   ;;  (csetq vterm-shell "fish"))
 #+end_src
 
-** Auto-save
+* Auto-save
 #+begin_src emacs-lisp
   (csetq auto-save-list-file-prefix
          (expand-file-name "auto-save-list/" user-emacs-directory))
@@ -2613,18 +2386,18 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+results:
 
-** Backups
+* Backups
 #+begin_src emacs-lisp
   (csetq backup-directory-alist
          `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 #+end_src
 
-** Ignore disabled commands
+* Ignore disabled commands
 #+begin_src emacs-lisp
   (setq disabled-command-function 'ignore)
 #+end_src
 
-** MPDel
+* MPDel
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'mpdel)
   (require 'mpdel nil t)
@@ -2634,7 +2407,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 https://gitea.petton.fr/mpdel/mpdel
 
-** Spell check
+* Spell check
 #+begin_src emacs-lisp
   ;;(csetq ispell-program-name "aspell")
   (csetq ispell-personal-dictionary (expand-file-name "etc/dictionary" org-directory))
@@ -2648,35 +2421,35 @@ https://gitea.petton.fr/mpdel/mpdel
   (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around)
 #+end_src
 
-** Remove bidirectional editing to make long lines better
+* Remove bidirectional editing to make long lines better
 #+begin_src emacs-lisp
   (csetq bidi-paragraph-direction 'left-to-right)
   (csetq bidi-inhibit-bpa t)
 #+end_src
 
-** Long lines mode
+* Long lines mode
 #+begin_src emacs-lisp
   (run-with-idle-timer 2 nil #'global-so-long-mode 1)
 #+end_src
 
-** Package
+* Package
 #+begin_src emacs-lisp
   (csetq package-name-column-width 40)
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
 #+end_src
 
-** Proced
+* Proced
 #+begin_src emacs-lisp
   (csetq proced-auto-update-flag t)
 #+end_src
 
-** Winner
+* Winner
 #+begin_src emacs-lisp
   (run-with-idle-timer 2 nil #'winner-mode)
   (csetq winner-boring-buffers-regexp "^\\*")
 #+end_src
 
-** Flymake
+* Flymake
 #+begin_src emacs-lisp :tangle no
   (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
 #+end_src
@@ -2698,7 +2471,7 @@ https://gitea.petton.fr/mpdel/mpdel
     (define-key flymake-mode-map (kbd "C-c ! p") #'flymake-goto-prev-error))
 #+end_src
 
-** Display buffer
+* Display buffer
 
 [[https://emacs.stackexchange.com/questions/48472/how-to-make-m-x-ansi-term-behave-like-m-x-shell-opening-in-new-window/48481#48481][Switch-to-buffer-obey-display-actions]]
 
@@ -2721,7 +2494,7 @@ https://gitea.petton.fr/mpdel/mpdel
               (window-height . 0.5)))))
 #+end_src
 
-** Safe local variables
+* Safe local variables
 #+begin_src emacs-lisp
   (add-to-list 'safe-local-variable-values
                '(buffer-auto-save-file-name . nil))
@@ -2729,7 +2502,7 @@ https://gitea.petton.fr/mpdel/mpdel
                '(org-archive-location . "archive.org::datetree/* From %"))
 #+end_src
 
-** Org publish org
+* Org publish org
 
 #+begin_src emacs-lisp
   (defun actuator-filter-timestamp (string backend _comm)
@@ -2827,7 +2600,7 @@ https://gitea.petton.fr/mpdel/mpdel
     (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
 #+end_src
 
-** Insert creation stamp on heading creation
+* Insert creation stamp on heading creation
 [2021-06-05 Sat 16:24]
 
 #+begin_src emacs-lisp :tangle no
@@ -2844,13 +2617,13 @@ https://gitea.petton.fr/mpdel/mpdel
   (add-hook 'org-insert-heading-hook #'actuator-org-insert-heading-timestamp)
 #+end_src
 
-** Org-edna
+* Org-edna
 [2021-06-11 Fri 15:44]
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-edna)
 #+end_src
 
-** Org agenda sunrise/set
+* Org agenda sunrise/set
 [2021-06-11 Fri 20:18]
 
 #+begin_src emacs-lisp
@@ -2885,7 +2658,7 @@ https://gitea.petton.fr/mpdel/mpdel
         (buffer-substring start end))))
 #+end_src
 
-** Type break
+* Type break
 [2021-06-16 Wed 20:22]
 #+begin_src emacs-lisp :tangle no
   (run-with-idle-timer 2 nil #'type-break-mode 1)
@@ -2893,13 +2666,13 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq type-break-mode-line-message-mode t)
 #+end_src
 
-** Auto-insert
+* Auto-insert
 [2021-06-16 Wed 20:23]
 #+begin_src emacs-lisp
   (run-with-idle-timer 2 nil #'auto-insert-mode 1)
 #+end_src
 
-** Show tooltips in modeline
+* Show tooltips in modeline
 
 #+begin_src emacs-lisp
   (csetq org-return-follows-link nil)
@@ -2918,7 +2691,7 @@ https://gitea.petton.fr/mpdel/mpdel
   (add-hook 'org-mode-hook #'actuator-echo-area-tooltips nil t)
 #+end_src
 
-** Pulse line
+* Pulse line
 
 #+begin_src emacs-lisp
   (defun pulse-line (&rest _)
@@ -2932,18 +2705,18 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq pulse-delay .07)
 #+end_src
 
-** Registers
+* Registers
 [2021-07-18 Sun 21:27]
 #+begin_src emacs-lisp
   (set-register ?i (cons 'file "~/org/inbox.org"))
 #+end_src
 
-** Lockfiles
+* Lockfiles
 #+begin_src emacs-lisp
   (csetq create-lockfiles nil)
 #+end_src
 
-** Org-msg
+* Org-msg
 [2021-07-29 Thu 13:03]
 
 #+begin_src emacs-lisp
@@ -2962,7 +2735,7 @@ https://gitea.petton.fr/mpdel/mpdel
     (run-with-idle-timer 2 nil #'org-msg-mode))
 #+end_src
 
-** Compilation window
+* Compilation window
 [2021-07-28 Wed 11:09]
 
 #+begin_src emacs-lisp
@@ -2983,7 +2756,7 @@ https://gitea.petton.fr/mpdel/mpdel
                'actuator-notify-compilation-result)
 #+end_src
 
-** Org timer
+* Org timer
 [2021-08-11 Wed 14:58]
 
 #+begin_src emacs-lisp
@@ -2991,7 +2764,7 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq org-timer-default-timer 25)
 #+end_src
 
-** Fido mode
+* Fido mode
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -3020,7 +2793,7 @@ https://gitea.petton.fr/mpdel/mpdel
    - highlight
    - icomplete-selected-match
 
-** Windmove
+* Windmove
 #+begin_src emacs-lisp
   (csetq windmove-create-window nil)
   (global-set-key (kbd "<s-up>")   #'windmove-up)
@@ -3034,7 +2807,7 @@ https://gitea.petton.fr/mpdel/mpdel
   (global-set-key (kbd "<S-s-right>") #'windmove-swap-states-right)
 #+end_src
 
-** Org-expiry
+* Org-expiry
 :PROPERTIES:
 :CREATED:  <2021-09-09 Thu 13:25>
 :END:
@@ -3048,8 +2821,54 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq org-expiry-handler-function #'org-expiry-archive-subtree)
   (csetq org-expiry-inactive-timestamps t)
 #+end_src
-* Footer
-#+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
-  (provide 'init)
-  ;;; init.el ends here
+* Archive old stuff
+:PROPERTIES:
+:CREATED:  [2022-01-06 Thu 15:32]
+:END:
+
+Stolen from http://doc.norang.ca/org-mode.html#Archiving
+
+#+begin_src emacs-lisp
+  (defun actuator-skip-non-archivable-tasks ()
+    "Skip trees that are not available for archiving"
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      ;; consider only tasks with done todo headings as archivable tasks
+      (if (member (org-get-todo-state) org-done-keywords)
+          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                 (daynr (string-to-number (format-time-string "%d" (current-time))))
+                 (a-month-ago (* 60 60 24 (+ daynr 1)))
+                 (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+                 (this-month (format-time-string "%Y-%m-" (current-time)))
+                 (subtree-is-current (save-excursion
+                                       (forward-line 1)
+                                       (and (< (point) subtree-end)
+                                            (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
+            (if subtree-is-current
+                next-headline ;; has a date in this month or last month, so skip it
+              nil)) ;; available to archive
+        (or next-headline (point-max)))))
+#+end_src
+
+* Appts
+:PROPERTIES:
+:CREATED:  [2022-01-06 Thu 15:15]
+:END:
+#+begin_src emacs-lisp
+  (run-with-idle-timer 1 nil #'appt-activate 1)
+
+  (csetq appt-display-mode-line nil)
+  (add-hook 'org-agenda-finalize-hook #'org-agenda-to-appt)
+  (csetq appt-message-warning-time 15)
+  (csetq appt-display-interval 5)
+
+  (when (featurep 'alert)
+    (csetq appt-display-format 'window)
+    (csetq appt-disp-window-function
+           (lambda (nmins _curtime msg)
+             (alert msg
+                    :title (format "Appointment in %s minutes" nmins)))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq org-archive-mark-done actuator-todo-done-keyword)
 #+end_src
