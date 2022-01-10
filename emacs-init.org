@@ -1,0 +1,94 @@
+#+title: Emacs init
+
+* Early Init
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/early-init.el :comments no :mkdirp yes
+:END:
+
+#+begin_src emacs-lisp :comments no
+  ;;; early-init.el --- Set up some pre-package.el defaults -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq load-prefer-newer t)
+  (setq frame-inhibit-implied-resize t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (eval-when-compile (defvar package-quickstart))
+  (when (file-exists-p package-quickstart-file)
+    (setq package-quickstart t))
+#+end_src
+
+#+begin_src emacs-lisp :comments no
+  (provide 'early-init)
+  ;;; early-init.el ends here
+#+end_src
+
+* Init
+:PROPERTIES:
+:header-args: :tangle ~/.config/emacs/init.el :comments no :mkdirp yes
+:END:
+** Lexical Binding
+#+begin_src emacs-lisp
+  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;;; Code:
+#+end_src
+
+** Very early
+#+begin_src emacs-lisp
+  (package-activate-all)
+
+  ;;(eval-when-compile (defvar org-directory))
+  ;;(setq org-directory (expand-file-name "~/org/"))
+#+end_src
+
+** Csetq
+https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
+
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+    "Macro to set the VALUE of VARIABLE, possibly a custom user option."
+    `(funcall (or (get ',variable 'custom-set)
+                  (and (plist-member (symbol-plist ',variable)
+                                     'standard-value)
+                       'set-default)
+                  'set)
+              ',variable ,value))
+#+end_src
+
+** Package Init
+
+#+begin_src emacs-lisp
+  (require 'package)
+
+  (csetq package-archives
+         '(("melpa"  . "https://melpa.org/packages/")
+           ("gnu"    . "https://elpa.gnu.org/packages/")
+           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+
+  (csetq package-archive-priorities '(("melpa"  . 10)
+                                      ("gnu"    . 30)
+                                      ("nongnu" . 20)))
+  (setq package-selected-packages nil)
+#+end_src
+
+#+begin_src emacs-lisp
+  (require 'ob-tangle)
+  (org-babel-load-file (expand-file-name "emacs-config.org" "~/env.d/"))
+  (org-babel-load-file (expand-file-name "emacs-theme.org" "~/env.d/"))
+#+end_src
+
+** Footer
+
+#+begin_src emacs-lisp
+  (provide 'init)
+  ;;; init.el ends here
+#+end_src

@@ -1,200 +1,4 @@
-#+title: Emacs
-
-* Theme
-#+begin_src emacs-lisp :tangle ~/.config/emacs/actuator-theme.el :results replace
-  (deftheme actuator)
-
-  (add-hook 'minibuffer-setup-hook 'actuator--minibuffer-setup)
-
-  (defun actuator--minibuffer-setup ()
-         (set (make-local-variable 'face-remapping-alist)
-            '((org-document-title :height 1.0))))
-
-  (let ((blue  "#29BEEA")
-        (white "#FFFFFF")
-        (dark  "#000000")
-        (cyan  "#00FFFF")
-        (red   "#FF1616")
-        (grey  "#484e55")
-        (lgrey "#bdc4cc")
-
-        (highlight-dim "#B1F8FF")
-        (code-background "#FFFFFF")
-
-        (xgrey "#F5F6F8")
-        (xbord "#EDF0F4"))
-
-    (custom-theme-set-faces
-     'user
-     `(fixed-pitch ((t (:family "SF Mono" :weight light))))
-     `(variable-pitch ((t (:family "Helvetica" :weight light))))
-     `(default ((t (:background ,white :foreground ,dark :weight light))))
-     `(cursor ((t (:background ,blue))))
-     `(fringe ((t (:background ,white))))
-     `(region ((t (:background ,highlight-dim))))
-     `(highlight ((t (:background ,highlight-dim))))
-     `(hl-line ((t (:background ,grey :foreground ,white))))
-     `(header-line ((t (:background ,grey :foreground ,white))))
-
-     `(font-lock-builtin-face ((t (:weight bold))))
-     `(font-lock-constant-face ((t (:weight bold))))
-     `(font-lock-function-name-face ((t (:weight bold))))
-     `(font-lock-keyword-face ((t (:weight bold))))
-     `(font-lock-variable-name-face ((t (:weight bold))))
-     `(font-lock-type-face ((t (:weight bold))))
-     `(font-lock-string-face ((t (:weight thin))))
-
-     `(mu4e-header-highlight-face ((t (:inherit hl-line))))
-     `(mu4e-compose-separator-face ((t (:inherit org-drawer))))
-     `(message-header-name ((t (:weight light
-                                        :foreground ,lgrey))))
-     `(message-header-subject ((t :weight normal
-                                         :foreground ,dark)))
-     `(message-header-to ((t :weight normal
-                                         :foreground ,dark)))
-     `(message-header-other ((t (:weight normal
-                                         :foreground ,dark))))
-
-     `(font-lock-warning-face ((t (:foreground ,red))))
-     `(font-lock-comment-face ((t (:weight thin))))
-     `(font-lock-comment-delimiter-face ((t (:weight thin))))
-
-     `(org-drawer ((t (:foreground ,lgrey))))
-     `(org-special-keyword ((t (:inherit org-drawer
-                                         :foreground ,dark))))
-     `(org-ellipsis ((t (:foreground ,lgrey))))
-     `(org-block ((t (:background ,code-background :extend t))))
-     `(org-block-begin-line ((t :inherit org-block)))
-     `(link ((t :foreground ,dark
-                :underline t)))
-     `(org-document-title ((t :foreground ,dark
-                               :height 220)))
-     `(org-level-1 ((t :weight bold)))
-     `(org-done ((t :foreground ,lgrey
-                    :weight bold)))
-     `(org-headline-done ((t :foreground ,grey)))
-     `(org-todo ((t :foreground ,red
-                    :weight bold)))
-     `(org-special-keyword ((t :foreground ,grey)))
-
-     `(org-date ((t :foreground ,dark
-                    :underline t)))
-
-     `(pulse-highlight-start-face ((t :background ,red)))
-
-     ;; `(dired-filename ((t :foreground red)))
-     ;; `(dired-header ((t :foreground red)))
-     ;; `(dired-hide-details-information ((t :foreground red)))
-     ;; `(dired-hide-details-detail ((t :foreground red)))
-     ;; `(dired-ignored ((t :foreground red)))
-     ;; `(dired-broken-symlink ((t :foreground red)))
-     ;; `(dired-directory ((t :foreground red)))
-     ;; `(dired-symlink ((t :foreground red)))
-
-     ;; `(elfeed-search-date-face ((t :foreground red)))
-     ;; `(elfeed-search-title-face ((t :foreground red)))
-     ;; `(elfeed-search-unread-title-face ((t :foreground red)))
-     ;; `(elfeed-search-last-update-face ((t :foreground red)))
-     ;; `(elfeed-search-feed-face ((t :foreground red)))
-     ;; `(elfeed-search-tag-face ((t :foreground red)))
-
-     `(elfeed-search-unread-count-face ((t :foreground ,white)))
-
-     `(ivy-current-match ((t (:background ,grey :foreground ,white :extend t))))
-     `(minibuffer-prompt ((t (:inherit default))))
-     `(isearch ((t (:background ,lgrey))))
-     ;; `(show-paren-match ((t (:background ,lgrey))))
-     ;; `(show-paren-match-expression ((t (:background ,lgrey))))
-     ;; `(show-paren-mismatch ((t (:background ,lgrey))))
-     ;; `(magit-section-heading ((t (:background ,lgrey))))
-     ;; `(magit-section-highlight ((t (:background ,lgrey))))
-
-     `(mode-line ((t (:box (:line-width 7
-                                        :color ,grey)
-                           ;;:underline nil
-                           ;;:overline ,xbord
-                           :foreground ,white
-                           :background ,grey
-                           ;;:inherit variable-pitch
-                           :height 110))))
-     `(mode-line-inactive ((t (:inherit mode-line
-                               :foreground ,lgrey
-                               :background ,xgrey
-                               :box (:line-width 7 :color, xgrey)))))
-
-     `(mode-line-highlight ((t (:box (:line-width 7
-                                      :color ,grey)
-                                :background ,grey
-                                :foreground ,white))))
-     `(eshell-prompt ((t :foreground ,dark
-                         :weight bold)))
-
-
-     ))
-
-  (provide-theme 'actuator)
-
-  ;; Local Variables:
-  ;; no-byte-compile: t
-  ;; End:
-
-  ;;; actuator-theme.el ends here
-#+end_src
-
-#+results:
-: actuator-theme
-* Early Init
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/early-init.el
-:END:
-
-#+begin_src emacs-lisp :comments no
-  ;;; early-init.el --- Set up some pre-package.el defaults -*- lexical-binding: t; -*-
-
-  ;;; Commentary:
-
-  ;;; Code:
-#+end_src
-
-#+begin_src emacs-lisp
-  (setq load-prefer-newer t)
-  (setq frame-inhibit-implied-resize t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (eval-when-compile (defvar package-quickstart))
-  ;;(setq package-quickstart-file (expand-file-name "var/package-quickstart.el" user-emacs-directory))
-  (when (file-exists-p package-quickstart-file)
-    (setq package-quickstart t))
-#+end_src
-
-#+begin_src emacs-lisp :comments no
-  (provide 'early-init)
-  ;;; early-init.el ends here
-#+end_src
-
-* Init
-:PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :mkdirp yes
-:END:
-** Lexical Binding
-#+begin_src emacs-lisp :comments no
-  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
-
-  ;;; Commentary:
-
-  ;;; Code:
-#+end_src
-
-** Very early
-#+begin_src emacs-lisp
-  (package-activate-all)
-
-  (eval-when-compile (defvar org-directory))
-  (setq org-directory (expand-file-name "~/org/"))
-#+end_src
-
-** Mac and Linux variables
+* Mac and Linux variables
 
 #+begin_src emacs-lisp
   (defvar *mac* (eq system-type 'darwin))
@@ -203,44 +7,14 @@
   (defvar *terminal* (not (display-graphic-p)))
 #+end_src
 
-** GPG ID
+* GPG ID
 
 #+begin_src emacs-lisp
   (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
     "My GPG ID.")
 #+end_src
 
-** Csetq
-https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
-
-#+begin_src emacs-lisp
-  (defmacro csetq (variable value)
-    "Macro to set the VALUE of VARIABLE, possibly a custom user option."
-    `(funcall (or (get ',variable 'custom-set)
-                  (and (plist-member (symbol-plist ',variable)
-                                     'standard-value)
-                       'set-default)
-                  'set)
-              ',variable ,value))
-#+end_src
-
-** Package Init
-
-#+begin_src emacs-lisp
-  (require 'package)
-
-  (csetq package-archives
-         '(("melpa"  . "https://melpa.org/packages/")
-           ("gnu"    . "https://elpa.gnu.org/packages/")
-           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-
-  (csetq package-archive-priorities '(("melpa"  . 10)
-                                      ("gnu"    . 30)
-                                      ("nongnu" . 20)))
-  (setq package-selected-packages nil)
-#+end_src
-
-** DIR
+* DIR
 #+begin_src emacs-lisp
   (defvar actuator-directory user-emacs-directory)
   (make-directory actuator-directory t)
@@ -250,8 +24,7 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
     (expand-file-name (convert-standard-filename file)
                       actuator-directory))
 #+end_src
-
-** Exec path from shell
+* Exec path from shell
 #+begin_src emacs-lisp :tangle no
   (when (file-attributes "/usr/local/bin" t)
     (add-to-list 'exec-path "/usr/local/bin"))
@@ -272,9 +45,13 @@ https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html
     (add-to-list 'exec-path "/opt/local/sbin"))
 #+end_src
 
+
+
+
+
 * Stable
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
+#:header-args: :tangle ~/.config/emacs/init.el :comments link :noweb yes
 :END:
 ** Native compile
 #+begin_src emacs-lisp
@@ -499,7 +276,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 * Unstable
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :noweb yes
+#:header-args: :tangle ~/.config/emacs/init.el :noweb yes
 :END:
 ** Diary
 #+begin_src emacs-lisp
@@ -741,9 +518,9 @@ From  emacs-plus:
 ** Plain Font
 
 #+begin_src emacs-lisp
-  (when (file-exists-p (expand-file-name "actuator-theme.el" user-emacs-directory))
-    (csetq custom-safe-themes t)
-    (csetq custom-enabled-themes '(actuator)))
+  ;; (when (file-exists-p (expand-file-name "actuator-theme.el" user-emacs-directory))
+  ;;   (csetq custom-safe-themes t)
+  ;;   (csetq custom-enabled-themes '(actuator)))
 
   (blink-cursor-mode -1)
   (setq cursor-type 'box)
@@ -2200,8 +1977,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
                                   :remove 'unread)))
 #+end_src
 
-#+results:
-| #[257 \311!\312!>\204 \313\314\315D"\210\316H\317\320\211\300\312!>\204- \313\314\321D"\210\322H"\205\277 \211\301\312!>\204G \313\314\321D"\210\323H"\205\277 \211\302\312!>\204b \313\314\315D"\210\323H"\205\277 \211\303\312!>\204} \313\314\315D"\210\322H"\205\277 \307\203\221 \324 \307ZV\205\277 \310\203\236 \324 \310ZW\205\277 \304\242\203\252 \325\326\304\242#\210\305\242\203\266 \325\327\305\242#\210\306\203\276 \306!\210\262)\207 [nil kijiji yeezy\ | jordan\ | dunk nil ((junk debug9)) ((unread)) nil nil nil elfeed-entry-feed type-of signal wrong-type-argument elfeed-entry 4 t #[514 ?\206( <\203 A@\301\302\303#)\266\203?\207\301\302\303#)\266\203\207 [inhibit-changing-match-data nil t string-match] 9 |
+
 
 
 You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
@@ -3106,10 +2882,4 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 #+begin_src emacs-lisp
   (csetq org-archive-mark-done actuator-todo-done-keyword)
-#+end_src
-
-* Footer
-#+begin_src emacs-lisp :comments no :tangle ~/.config/emacs/init.el
-  (provide 'init)
-  ;;; init.el ends here
 #+end_src
