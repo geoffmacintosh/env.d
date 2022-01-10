@@ -595,6 +595,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (csetq bookmark-version-control t)
   (csetq bookmark-save-flag 1)
+  (csetq bookmark-set-fringe-mark nil)
 #+end_src
 
 #+begin_src emacs-lisp
