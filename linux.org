@@ -146,6 +146,7 @@
   if [ "$(tty)" = "/dev/tty1" ]; then
       exec sway
   fi
+  setxkbmap us
 #+end_src
 
 * Sway
@@ -1112,7 +1113,7 @@ And to check how much space the journal is currently using:
 
 * X11 Input
 
-#+begin_src conf :tangle /sudo::/etc/X11/xorg.conf.d/00-keyboard.conf :comments none
+#+begin_src conf # :tangle /sudo::/etc/X11/xorg.conf.d/00-keyboard.conf :comments none
   Section "InputClass"
           Identifier "system-keyboard"
           MatchIsKeyboard "on"

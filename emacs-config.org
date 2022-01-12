@@ -47,7 +47,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 
 ** GPG ID
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
     "My GPG ID.")
 #+end_src
