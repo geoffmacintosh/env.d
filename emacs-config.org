@@ -713,7 +713,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
          '((sequence "TODO(t)" "NEXT(n!)" "WAITING(w@)" "SOMEDAY(s!)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
-  ;;(csetq org-agenda-window-setup 'other-frame)
+  (csetq org-agenda-window-setup 'current-window)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7) ;; fortnight
   (csetq org-agenda-todo-list-sublevels t)
