@@ -2495,7 +2495,7 @@ https://gitea.petton.fr/mpdel/mpdel
 #+end_src
 
 * Safe local variables
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'safe-local-variable-values
                '(buffer-auto-save-file-name . nil))
   (add-to-list 'safe-local-variable-values
