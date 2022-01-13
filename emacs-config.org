@@ -2861,14 +2861,24 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (csetq appt-message-warning-time 15)
   (csetq appt-display-interval 5)
 
-  (when (featurep 'alert)
-    (csetq appt-display-format 'window)
-    (csetq appt-disp-window-function
-           (lambda (nmins _curtime msg)
-             (alert msg
-                    :title (format "Appointment in %s minutes" nmins)))))
+  (csetq appt-display-format 'window)
+  (csetq appt-disp-window-function #'actuator-appt-alert)
+
+  (defun actuator-appt-alert (minutes _curtime message)
+    "An alternative function for `appt-disp-window-funcion' to show an alert.
+
+  This function uses the alert.el package."
+    (when (featurep 'alert)
+      (alert message
+             :title (format "Appointment in %s minutes" minutes))))
+#+end_src
+
+* Org archive
+#+begin_src emacs-lisp
+  (csetq org-archive-mark-done actuator-todo-done-keyword)
+  (csetq org-archive-location "archive/%s::")
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-archive-mark-done actuator-todo-done-keyword)
+  (csetq org-agenda-text-search-extra-files (file-expand-wildcards "~/org/archive/*.org"))
 #+end_src
