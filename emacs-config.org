@@ -53,7 +53,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 #+end_src
 
 * Native compile
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when *mac*
     (eval-when-compile (defvar native-comp-async-report-warnings-errors))
     (setq native-comp-async-report-warnings-errors nil))
