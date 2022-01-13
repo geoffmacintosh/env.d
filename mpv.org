@@ -1,0 +1,33 @@
+#+title: MPV
+#+index: MPV
+#+index: Video!MPV
+
+* MPV
+*Defaults*
+
+
+ #+begin_src conf :tangle ~/.config/mpv/mpv.conf
+   screenshot-directory=~/Downloads/
+   screenshot-format=png
+   screenshot-template="%F-%whh%wMm%wSs%wT"
+
+   save-position-on-quit
+   hwdec
+ #+end_src
+
+*Audio level normalization*
+
+ #+begin_src conf :tangle ~/.config/mpv/mpv.conf
+   #af="lavfi=[dynaudnorm=f=75:g=25:n=0:p=0.58]"
+   af=loudnorm=I=-30
+ #+end_src
+
+*Keybindings*
+
+ #+begin_src conf :tangle ~/.config/mpv/input.conf
+   z           no-osd async screenshot video
+   WHEEL_UP    ignore
+   WHEEL_DOWN  ignore
+   WHEEL_RIGHT ignore
+   WHEEL_LEFT  ignore
+ #+end_src

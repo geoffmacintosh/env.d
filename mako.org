@@ -1,0 +1,21 @@
+#+title: Mako
+#+index: Linux!Mako
+
+* Mako
+:PROPERTIES:
+:header-args: :tangle ~/.config/mako/config
+:END:
+
+#+begin_src conf
+  sort=-time
+  max-history=3
+  on-button-middle=dismiss-all
+
+  font=Helvetica 12
+  background-color=#000000BF
+  text-color=#FFFFFF
+  border-size=5
+  border-color=#000000BF
+  border-radius=3
+  padding=0,5,15,5
+#+end_src

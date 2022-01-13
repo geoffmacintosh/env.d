@@ -1,0 +1,21 @@
+#+title: NCMPCPP
+#+index: NCMPCPP
+#+index: Music!NCMPCPP
+
+* NCMPCPP
+:PROPERTIES:
+:header-args: :tangle ~/.config/ncmpcpp/config
+:END:
+
+#+begin_src conf
+  mpd_host = localhost
+  mpd_port = 6600
+  mpd_music_dir = "~/Music/Music Files"
+
+  progressbar_look = "─░─"
+  display_volume_level = no
+  user_interface = alternative
+  ignore_leading_the = yes
+  media_library_hide_album_dates = yes
+  media_library_primary_tag = album_artist
+#+end_src

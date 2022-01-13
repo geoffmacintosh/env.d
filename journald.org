@@ -1,0 +1,18 @@
+#+title: Journald
+#+index: Linux!Journald
+
+* Journald
+By default, journald can use up to 4 GB of storage for logs or something like that.
+
+#+begin_src conf :tangle /sudo::/etc/systemd/system.conf.d/journald.conf
+  SystemMaxUse=100M
+#+end_src
+
+And to check how much space the journal is currently using:
+
+#+begin_src shell :results replace :tangle no
+  journalctl --disk-usage
+#+end_src
+
+#+results:
+: Archived and active journals take up 72.0M in the file system.

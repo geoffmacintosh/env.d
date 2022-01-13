@@ -1,0 +1,15 @@
+#+title: Default
+Archived entries from file /Users/g/env.d/default.org
+
+
+* Tmux
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-01-13 Thu 10:53
+:ARCHIVE_FILE: ~/env.d/default.org
+:END:
+#+begin_src conf :tangle ~/.tmux.conf
+  set-window-option -g mode-keys emacs
+  unbind-key C-b
+  set-option -g prefix C-']'
+  bind-key r source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded"
+#+end_src

@@ -1,0 +1,22 @@
+#+title: Kitty
+#+index: Kitty
+
+* Kitty
+:PROPERTIES:
+:header-args: :tangle ~/.config/kitty/kitty.conf
+:END:
+
+#+begin_src conf
+  cursor_blink_interval 0
+  cursor_shape block
+  shell fish
+  close_on_child_death yes
+  editor emacs
+  font_size 13.0
+  font_family SF Mono
+  tab_bar_style separator
+  tab_separator "  "
+  # tab_activity_symbol "*"
+  foreground #000000
+  background #FFFFFF
+#+end_src

@@ -1,0 +1,43 @@
+#+title: Mbsync
+#+index: Mbsync
+#+index: Email!Mbsync
+
+* Mbsync
+
+#+begin_src conf :tangle ~/.mbsyncrc :comments none
+    IMAPAccount fastmail
+    Host imap.fastmail.com
+    Port 993
+    User gmacintosh@fastmail.fm
+    PassCmd "pass mbsync.fastmail.com"
+    SSLType IMAPS
+
+    IMAPStore fastmail-remote
+    Account fastmail
+
+    MaildirStore fastmail-local
+    Path ~/Mail/
+    Inbox ~/Mail/INBOX
+    SubFolders Verbatim
+
+    Channel fastmail
+    Far :fastmail-remote:
+    Near :fastmail-local:
+    Patterns *
+    Expunge Both
+    CopyArrivalDate yes
+    Sync All
+    Create Both
+    Remove Both
+    SyncState *
+#+end_src
+
+Before everything works, you'll still need to set up mbsync and mu, so run the following commands:
+
+#+begin_src shell :tangle no
+  mbsync --all
+  mu init --maildir=~/Mail --my-address=geoff@mac.into.sh
+  mu index
+#+end_src
+
+I think mu will actually index correctly on its own the first time you launch mu4e, but I'm not sure.

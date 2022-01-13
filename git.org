@@ -1,0 +1,63 @@
+#+title: Git
+#+index: Git
+
+* Git
+#+begin_src gitignore :tangle ~/.config/git/ignore
+  .DS_Store
+  ,*~
+  \#*\#
+  .\#*
+  ,*.elc
+  ,*.pyc
+#+end_src
+
+#+begin_src conf :tangle ~/.config/git/config
+  [core]
+          excludesfile = ~/.config/git/ignore
+          quotepath = false
+          editor = emacsclient
+          ignorecase = false
+
+  [user]
+          name = Geoff MacIntosh
+          email = geoff@mac.into.sh
+
+  [color]
+          diff = auto
+          status = auto
+          branch = auto
+          interactive = auto
+          ui = auto
+
+  [diff]
+          renameLimit = 5000
+
+  [pull]
+          rebase = false
+
+  [init]
+          defaultBranch = main
+
+  [fetch]
+          prune = true
+          pruneTags = true
+
+  [diff "org"]
+        xfuncname = "^\\*+.*"
+
+  [diff "lisp"]
+        xfuncname = "^\\([^ ]+ [^ ]+"
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.config/git/config" "no")
+  [credential]
+            helper = osxkeychain
+#+end_src
+
+#+begin_src conf :tangle ~/.config/git/attributes
+  ,,*.org   diff=org
+  ,,*.lisp  diff=lisp
+  ,,*.el    diff=lisp
+  ,,*.hy    diff=lisp
+  ,,*.scm   diff=lisp
+#+end_src

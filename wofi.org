@@ -1,0 +1,66 @@
+#+title: Wofi
+#+index: Linux!Wofi
+
+* Wofi
+** Config
+:PROPERTIES:
+:header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/wofi/config" "no")
+:END:
+
+#+begin_src conf
+  prompt=Run
+#+end_src
+
+
+** CSS
+:PROPERTIES:
+:header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/wofi/style.css" "no")
+:END:
+
+#+begin_src css
+  window {
+  #margin: 5px;
+  #border: 2px solid red;
+  background-color: #bdc4cc;
+  }
+
+  #input {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #inner-box {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #outer-box {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #scroll {
+  margin: 5px;
+  border: 2px solid white;
+  background-color: white;
+  }
+
+  #text {
+  margin: 5px;
+  color: black;
+  #border: 2px solid white;
+  #background-color: white;
+  }
+
+  #entry:selected {
+      background-color: #bdc4cc;
+      #color: red;
+  }
+
+  #text:selected {
+      #background-color: blue;
+  }
+#+end_src

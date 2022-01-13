@@ -1,0 +1,13 @@
+#+title: MacOS
+
+Archived entries from file /Users/g/env.d/macos.org
+
+* Hide dock
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-01-13 Thu 11:01
+:ARCHIVE_FILE: ~/env.d/macos.org
+:END:
+#+begin_src shell
+  defaults write com.apple.Dock autohide-delay -float 2
+  killall dock
+#+end_src
