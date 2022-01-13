@@ -291,7 +291,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (add-to-list 'org-capture-templates
                  `("l" "Todo (with link)" entry
                    (file "inbox.org")
-                   "* TODO %?\n%U\n%i\n%a\n")))
+                   "* %(org-expiry-insert-created)TODO %?\n%i\n%a\n")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -299,7 +299,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (add-to-list 'org-capture-templates
                  `("t" "Todo (no link)" entry
                    (file "inbox.org")
-                   "* TODO %?\n%U\n%i\n")))
+                   "* %(org-expiry-insert-created)TODO %?\n%i\n")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -309,14 +309,14 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (add-to-list 'org-capture-templates
                  `("j" "Journal" entry
                    (file+olp+datetree "journal.org")
-                   "* %(actuator-date-stamp)\n%?")))
+                   "* %(org-expiry-insert-created)%(actuator-date-stamp)\n%?")))
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
                  '("C" "Contact" entry (file "contacts.org")
-                   "* %^{Name}
+                   "* %(org-expiry-insert-created)%^{Name}
   :PROPERTIES:
   :EMAIL: %^{Email}
   :PHONE: %^{Phone}
@@ -1797,7 +1797,7 @@ https://gist.github.com/spacebat/5500966
     (add-to-list 'org-capture-templates
                  '("b" "Bookmark" entry
                    (file "bookmark.org")
-                   "* %(org-cliplink-capture) %^g\n%U\n\n%?"
+                   "* %(org-expiry-insert-created)%(org-cliplink-capture) %^g\n%?"
                    :prepend
                    :empty-lines 1
                    :kill-buffer)))
