@@ -201,7 +201,7 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
     (require 'server)
     (eval-when-compile (declare-function server-running-p "server"))
     (unless (server-running-p) (server-start)))
-  (run-with-idle-timer 2 nil #'actuator-start-server-if-not-running)
+  (run-with-idle-timer 1 nil #'actuator-start-server-if-not-running)
 #+end_src
 
 * Undo
@@ -404,8 +404,8 @@ From  emacs-plus:
 
   (global-set-key (kbd "M-o") #'other-window)
 
-  (run-with-idle-timer 2 nil #'delete-selection-mode t)
-  (run-with-idle-timer 2 nil #'midnight-mode t)
+  (run-with-idle-timer 1 nil #'delete-selection-mode t)
+  (run-with-idle-timer 1 nil #'midnight-mode t)
   (add-hook 'midnight-hook #'clean-buffer-list)
   (setq sentence-end-double-space nil)
 
@@ -420,7 +420,7 @@ From  emacs-plus:
   (setq indent-tabs-mode nil) ; Never insert tabs with tab key
   (setq require-final-newline t)
 
-  (run-with-idle-timer 2 nil #'save-place-mode 1)
+  (run-with-idle-timer 1 nil #'save-place-mode 1)
 
   (setq backup-by-copying    t)
   (setq delete-old-versions  t)
@@ -442,7 +442,7 @@ From  emacs-plus:
   (setq save-abbrevs 'silently)
 
   (setq enable-recursive-minibuffers t)
-  (run-with-idle-timer 2 nil #'minibuffer-depth-indicate-mode t)
+  (run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
 
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-defun  'disabled nil)
@@ -539,8 +539,8 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 2 nil #'show-paren-mode +1)
-  (run-with-idle-timer 2 nil #'electric-pair-mode +1)
+  (run-with-idle-timer 1 nil #'show-paren-mode +1)
+  (run-with-idle-timer 1 nil #'electric-pair-mode +1)
   (csetq blink-matching-paren nil)
   (csetq show-paren-delay 0)
   (csetq show-paren-style 'mixed)
@@ -2270,7 +2270,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     "Set up mu4e alerts if both mu4e and mu4e-alert are installed.
 
   If run with an idle timer such as:
-  `(run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)'
+  `(run-with-idle-timer 1 nil #'actuator-set-up-mu4e-alert)'
   it will not hurt the startup time."
 
     (require 'mu4e-alert nil t)
@@ -2287,7 +2287,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
         (mu4e-alert-enable-notifications)
         (mu4e-alert-enable-mode-line-display))))
 
-  (run-with-idle-timer 2 nil #'actuator-set-up-mu4e-alert)
+  (run-with-idle-timer 1 nil #'actuator-set-up-mu4e-alert)
 #+end_src
 * Alert
 
@@ -2313,7 +2313,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (add-to-list 'package-selected-packages 'rainbow-mode)
   (when (package-installed-p 'rainbow-mode)
     (eval-when-compile (declare-function rainbow-mode "rainbow-mode"))
-    (run-with-idle-timer 2 nil #'rainbow-mode))
+    (run-with-idle-timer 1 nil #'rainbow-mode))
 #+end_src
 * Modeline
 
@@ -2413,7 +2413,7 @@ https://gitea.petton.fr/mpdel/mpdel
 
 * Long lines mode
 #+begin_src emacs-lisp
-  (run-with-idle-timer 2 nil #'global-so-long-mode 1)
+  (run-with-idle-timer 1 nil #'global-so-long-mode 1)
 #+end_src
 
 * Package
@@ -2429,7 +2429,7 @@ https://gitea.petton.fr/mpdel/mpdel
 
 * Winner
 #+begin_src emacs-lisp
-  (run-with-idle-timer 2 nil #'winner-mode)
+  (run-with-idle-timer 1 nil #'winner-mode)
   (csetq winner-boring-buffers-regexp "^\\*")
 #+end_src
 
@@ -2645,7 +2645,7 @@ https://gitea.petton.fr/mpdel/mpdel
 * Type break
 [2021-06-16 Wed 20:22]
 #+begin_src emacs-lisp :tangle no
-  (run-with-idle-timer 2 nil #'type-break-mode 1)
+  (run-with-idle-timer 1 nil #'type-break-mode 1)
   (csetq type-break-query-mode t)
   (csetq type-break-mode-line-message-mode t)
 #+end_src
@@ -2653,7 +2653,7 @@ https://gitea.petton.fr/mpdel/mpdel
 * Auto-insert
 [2021-06-16 Wed 20:23]
 #+begin_src emacs-lisp
-  (run-with-idle-timer 2 nil #'auto-insert-mode 1)
+  (run-with-idle-timer 1 nil #'auto-insert-mode 1)
 #+end_src
 
 * Show tooltips in modeline
@@ -2716,7 +2716,7 @@ https://gitea.petton.fr/mpdel/mpdel
   (csetq org-msg-signature "#+begin_signature\n-- \nGeoff MacIntosh.\n#+end_signature")
 
   (when (package-installed-p 'org-msg)
-    (run-with-idle-timer 2 nil #'org-msg-mode))
+    (run-with-idle-timer 1 nil #'org-msg-mode))
 #+end_src
 
 * Compilation window
