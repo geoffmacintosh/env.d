@@ -2930,5 +2930,5 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
       (run-at-time "12:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))
       (run-at-time "17:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))))
 
-    (add-hook 'midnight-mode-hook #'actuator-set-up-weather-check-daily)
+    (add-hook 'midnight-hook #'actuator-set-up-weather-check-daily)
   #+end_src
