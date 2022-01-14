@@ -62,7 +62,8 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 * Custom-set Variables
 
 #+begin_src emacs-lisp
-  (csetq custom-file nil)
+  (csetq custom-file (expand-file-name "custom-settings.el" user-emacs-directory))
+  (load custom-file 'noerror)
 #+end_src
 
 * Read only
@@ -2867,4 +2868,30 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 #+begin_src emacs-lisp
   (csetq org-agenda-text-search-extra-files (file-expand-wildcards "~/org/archive/*.org"))
+#+end_src
+
+* Automate org-mode backup
+
+#+begin_src emacs-lisp
+  (defvar actuator-last-backup 0)
+  (defvar actuator-time-between-backups (* 15 60))
+
+  (defun actuator-backup-org ()
+    "Backs up `org-directory' with borg.
+  Time between backups is controlled by the
+  variable`actuator-last-backup'."
+
+    (let* ((current-time (time-convert nil 'integer))
+           (time-since-last-backup (- current-time actuator-last-backup))
+           (backup-command (format "borg create --compression zstd,3 --exclude \"/.git\" --exclude \"**.DS_Store\" --exclude \"**#*#\" ~/Backup/archive::org-%s %s" (format-time-string "%FT%T%z") org-directory)))
+
+      (when (>= time-since-last-backup actuator-time-between-backups)
+
+        (shell-command backup-command  nil "*Actuator Backup Error Log*")
+
+        (if (= actuator-last-backup 0)
+            (message "Backup up org directory. No backup this session so far.")
+          (message (format "Backing up org directory. %s minutes since last backup."
+                           (/ time-since-last-backup 60)))))
+      (setq actuator-last-backup current-time)))
 #+end_src
