@@ -183,8 +183,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
   (csetq auto-revert-verbose t)
-  (when *linux*
-   (csetq auto-revert-avoid-polling t))
+  ;; (when *linux*
+  ;;  (csetq auto-revert-avoid-polling t))
   (csetq auto-revert-check-vc-info nil)
 #+end_src
 
