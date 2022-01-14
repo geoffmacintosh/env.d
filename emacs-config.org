@@ -406,6 +406,7 @@ From  emacs-plus:
 
   (run-with-idle-timer 2 nil #'delete-selection-mode t)
   (run-with-idle-timer 2 nil #'midnight-mode t)
+  (add-hook 'midnight-hook #'clean-buffer-list)
   (setq sentence-end-double-space nil)
 
   (defun actuator-prefer-utf-8 ()
@@ -615,7 +616,7 @@ From  emacs-plus:
   (defvar actuator-todo-cancelled-keyword "CANCELLED")
 #+end_src
 
-The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJ" to match projects. The escaped quotes are needed.
+The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJECT" to match projects. The escaped quotes are needed.
 
 #+begin_src emacs-lisp
     (csetq org-stuck-projects
@@ -2847,6 +2848,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (add-hook 'org-agenda-finalize-hook #'org-agenda-to-appt)
   (csetq appt-message-warning-time 15)
   (csetq appt-display-interval 5)
+
+  (add-hook 'midnight-hook #'org-agenda-to-appt)
 
   (csetq appt-display-format 'window)
   (csetq appt-disp-window-function #'actuator-appt-alert)
