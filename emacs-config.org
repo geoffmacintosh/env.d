@@ -1187,10 +1187,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
   (csetq ls-lisp-use-localized-time-format nil)
 
-  (cond ((or (eq system-type 'gnu/linux) (executable-find "gls"))
+  (cond ((or *linux* (executable-find "gls"))
          (when (executable-find "gls") (csetq insert-directory-program "gls"))
          (csetq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso --dired"))
-        ((eq system-type 'darwin)
+        (*mac*
          (csetq dired-listing-switches "-alhFo")))
 
   ;; a :: include files beginning with dots
@@ -1322,7 +1322,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (eval-when-compile
-    (when (and (eq system-type 'darwin) (file-exists-p "/usr/local/bin/fish"))
+    (when (and *mac* (file-exists-p "/usr/local/bin/fish"))
       (csetq shell-file-name "/usr/local/bin/fish")))
 #+end_src
 
@@ -2280,9 +2280,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
         (declare-function mu4e-alert-set-default-style "mu4e-alert")
         (declare-function mu4e-alert-enable-notifications "mu4e-alert")
         (declare-function mu4e-alert-enable-mode-line-display "mu4e-alert")
-        (cond ((eq system-type 'gnu/linux)
+        (cond (*linux*
                (mu4e-alert-set-default-style 'libnotify))
-              ((eq system-type 'darwin)
+              (*mac*
                (mu4e-alert-set-default-style 'osx-notifier)))
         (mu4e-alert-enable-notifications)
         (mu4e-alert-enable-mode-line-display))))
@@ -2293,9 +2293,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'alert)
-  (cond ((eq system-type 'gnu/linux)
+  (cond (*linux*
          (csetq alert-default-style 'libnotify))
-        ((eq system-type 'darwin)
+        (*mac*
          (csetq alert-default-style 'osx-notifier)))
 #+end_src
 * Systemd
