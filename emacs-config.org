@@ -409,15 +409,11 @@ From  emacs-plus:
   (add-hook 'midnight-hook #'clean-buffer-list)
   (setq sentence-end-double-space nil)
 
-  (defun actuator-prefer-utf-8 ()
-    "Set all the UTF-8 defaults."
-    (prefer-coding-system 'utf-8)
-    (set-default-coding-systems 'utf-8)
-    (set-terminal-coding-system 'utf-8)
-    (set-keyboard-coding-system 'utf-8)
-    (set-language-environment "UTF-8"))
-
-  (run-with-idle-timer 1 nil #'actuator-prefer-utf-8)
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-language-environment "UTF-8")
 
   (add-hook 'before-save-hook 'whitespace-cleanup)
 
