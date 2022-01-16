@@ -909,8 +909,8 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-M-RET-may-split-line '((default . nil)))
   (csetq org-special-ctrl-k t)
   (csetq org-special-ctrl-a/e t)
-  ;; (csetq org-blank-before-new-entry '((heading         . t)
-  ;;                               (plain-list-item . auto)))
+  (csetq org-blank-before-new-entry '((heading         . t)
+                                      (plain-list-item . t)))
   (csetq org-use-property-inheritance t)
   (csetq org-modules nil)
 #+end_src
