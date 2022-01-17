@@ -2874,8 +2874,20 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 * Automate org-mode backup
 
 #+begin_src emacs-lisp
-  (defvar actuator-last-backup 0)
-  (defvar actuator-time-between-backups (* 15 60))
+  (defvar actuator-last-backup 0
+    "The time when `actuator-backup-org' was last run.
+  This is not a variable you'll want to set by hand it's just a way
+  of tracking when things were last run. I think it uses UNIX
+  epoch.")
+
+  (defvar actuator-time-between-backups (* 15 60)
+    "Amount of time in seconds that should elapse between backups.")
+
+  (defvar actuator-backup-command "crud")
+
+  (defvar actuator-backup-archive)
+
+  (defvar actuator-backup-local)
 
   (defun actuator-backup-org ()
     "Backs up `org-directory' with borg.
@@ -2884,17 +2896,17 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
     (let* ((current-time (time-convert nil 'integer))
            (time-since-last-backup (- current-time actuator-last-backup))
+           (minutes-since-last-backup (/ time-since-last-backup 60))
            (backup-command (format "borg create --compression zstd,3 --exclude \"**/.git\" --exclude \"**.DS_Store\" --exclude \"**#*#\" ~/Backup/archive::org-%s %s" (format-time-string "%FT%T%z") org-directory)))
-
-      (when (>= time-since-last-backup actuator-time-between-backups)
-
-        (shell-command backup-command  nil "*Actuator Backup Error Log*")
-
-        (if (= actuator-last-backup 0)
-            (message "Backup up org directory. No backup this session so far.")
-          (message (format "Backing up org directory. %s minutes since last backup."
-                           (/ time-since-last-backup 60)))))
-      (setq actuator-last-backup current-time)))
+      (if (>= time-since-last-backup actuator-time-between-backups)
+          (progn
+            (shell-command backup-command  nil "*Actuator Backup Error Log*")
+            (if (= actuator-last-backup 0)
+                (message "Backup up org directory. No backup this session so far.")
+              (message (format "Backing up org directory. %s minutes since last backup."
+              minutes-since-last-backup))
+            (setq actuator-last-backup current-time)))
+        (message "%s minutes since last backup" minutes-since-last-backup))))
 #+end_src
 
 * Org Weather
