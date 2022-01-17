@@ -776,7 +776,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     ;;(org-refile-cache-clear)
     (org-refile-get-targets))
 
-  (add-hook 'midnight-hook #'actuator-rebuild-org-refile-cache)
+  ;;(add-hook 'midnight-hook #'actuator-rebuild-org-refile-cache)
   ;;(run-with-idle-timer 300 t #'actuator-rebuild-org-refile-cache)
 #+end_src
 
