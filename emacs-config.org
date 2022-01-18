@@ -2939,7 +2939,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
     (defun actuator-set-up-check-weather-check-daily ()
     (when *linux*
-      (run-at-time "7:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))
+      (run-at-time "07:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))
       (run-at-time "12:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))
       (run-at-time "17:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))))
 
