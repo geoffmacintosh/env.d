@@ -2890,7 +2890,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
         (shell-command backup-command  nil "*Actuator Backup Error Log*")
 
         (if (= actuator-last-backup 0)
-            (message "Backup up org directory. No backup this session so far.")
+            (message "Backing up org directory. No backup this session so far.")
           (message (format "Backing up org directory. %s minutes since last backup."
                            (/ time-since-last-backup 60)))))
       (setq actuator-last-backup current-time)))
