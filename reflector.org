@@ -1,0 +1,16 @@
+#+title: Reflector
+
+* Reflector
+:PROPERTIES:
+:CREATED:  [2022-01-17 Mon 17:18]
+:END:
+
+#+begin_src conf :tangle /sudo::/etc/xdg/reflector/reflector.conf
+  --save /etc/pacman.d/mirrorlist
+  --protocol https
+  --country CA
+  --country US
+  --latest 25
+  --age 12
+  --sort rate
+#+end_src
