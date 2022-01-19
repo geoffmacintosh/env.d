@@ -2883,34 +2883,66 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (defvar actuator-time-between-backups (* 15 60)
     "Amount of time in seconds that should elapse between backups.")
 
-  (defvar actuator-backup-command "crud")
+ (defvar actuator-backup-command
+    "borg create --compression zstd,3 --exclude \"**.DS_Store\" --exclude \"**#*#\"")
 
-  (defvar actuator-backup-archive)
+  (defvar actuator-backup-create-archive-command "borg init --encryption=none")
 
-  (defvar actuator-backup-local)
+  (defvar actuator-backup-archive-dir (directory-file-name "~/Backup/"))
+#+end_src
 
-  (defun actuator-backup-org ()
-    "Backs up `org-directory' with borg.
-  Time between backups is controlled by the
-  variable`actuator-last-backup'."
+#+begin_src emacs-lisp
+   (defun actuator-backup-elpa ()
+      (actuator-backup package-user-dir)
+      (message "Backing up ELPA directory."))
 
-    (let* ((current-time (time-convert nil 'integer))
-           (time-since-last-backup (- current-time actuator-last-backup))
-           (minutes-since-last-backup (/ time-since-last-backup 60))
-           (backup-command (format "borg create --compression zstd,3 --exclude \"**/.git\" --exclude \"**.DS_Store\" --exclude \"**#*#\" ~/Backup/archive::org-%s %s &" (format-time-string "%FT%T%z") org-directory)))
-      (if (>= time-since-last-backup actuator-time-between-backups)
-          (progn
-            (shell-command backup-command  nil "*Actuator Backup Error Log*")
-            (if (= actuator-last-backup 0)
-                (message "Backup up org directory. No backup this session so far.")
-              (message (format "Backing up org directory. %s minutes since last backup."
-              minutes-since-last-backup))
-            (setq actuator-last-backup current-time)))
-        (message "%s minutes since last backup" minutes-since-last-backup))))
+    (add-hook 'package-menu-mode-hook #'actuator-backup-elpa)
+#+end_src
+
+#+begin_src emacs-lisp
+   (defun actuator-backup-org-v2 ()
+        "Backs up `org-directory' with borg.
+      Time between backups is controlled by the
+      variable`actuator-last-backup'."
+
+      (let* ((current-time (time-convert nil 'integer))
+             (time-since-last-backup (- current-time actuator-last-backup))
+             (minutes-since-last-backup (/ time-since-last-backup 60)))
+
+             (if (>= time-since-last-backup actuator-time-between-backups)
+                 (progn
+                   (setq actuator-last-backup current-time)
+                   (actuator-backup org-directory)
+                   (if (= actuator-last-backup 0)
+                       (message "Backing up org directory. No backup this session so far.")
+                     (message (format "Backing up org directory. %s minutes since last backup."
+                                      minutes-since-last-backup))))
+               (message "%s minutes since last backup" minutes-since-last-backup))))
+#+end_src
+
+#+begin_src emacs-lisp
+   (defun actuator-backup (path)
+      "Neu"
+      (let* ((current-time (time-convert nil 'integer))
+             (time-stamp (format-time-string "%FT%H%M%S%z"))
+             (archive-name (string-trim path "^.*/" "/$"))
+             (archive-path (expand-file-name archive-name actuator-backup-archive-dir)))
+        (unless (file-exists-p archive-path)
+          (call-process-shell-command
+           (concat actuator-backup-create-archive-command " " archive-path) nil nil nil))
+
+        (call-process-shell-command (concat
+                                     actuator-backup-command
+                                     " "
+                                     archive-path
+                                     "::"
+                                     time-stamp
+                                     " "
+                                     path))))
 #+end_src
 
 * Org Weather
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle no
     (defvar actuator-org-weather-file (expand-file-name "weather.org" org-directory)
       "The file which should have weather data appended to it.
     This really should be an Org file that shouldn't usually be
