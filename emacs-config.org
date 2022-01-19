@@ -1148,6 +1148,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 * Dired
 #+begin_src emacs-lisp
+  (global-set-key (kbd "C-x C-d") #'dired)
+#+end_src
+
+#+begin_src emacs-lisp
   (with-eval-after-load 'dired
     (require 'dired-x)
     (require 'dired-aux)
@@ -2922,24 +2926,24 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
-   (defun actuator-backup-org-v2 ()
-        "Backs up `org-directory' with borg.
-      Time between backups is controlled by the
-      variable`actuator-last-backup'."
+  (defun actuator-backup-org ()
+       "Backs up `org-directory' with borg.
+     Time between backups is controlled by the
+     variable`actuator-last-backup'."
 
-      (let* ((current-time (time-convert nil 'integer))
-             (time-since-last-backup (- current-time actuator-last-backup))
-             (minutes-since-last-backup (/ time-since-last-backup 60)))
+     (let* ((current-time (time-convert nil 'integer))
+            (time-since-last-backup (- current-time actuator-last-backup))
+            (minutes-since-last-backup (/ time-since-last-backup 60)))
 
-             (if (>= time-since-last-backup actuator-time-between-backups)
-                 (progn
-                   (setq actuator-last-backup current-time)
-                   (actuator-backup org-directory)
-                   (if (= actuator-last-backup 0)
-                       (message "Backing up org directory. No backup this session so far.")
-                     (message (format "Backing up org directory. %s minutes since last backup."
-                                      minutes-since-last-backup))))
-               (message "%s minutes since last backup" minutes-since-last-backup))))
+            (if (>= time-since-last-backup actuator-time-between-backups)
+                (progn
+                  (setq actuator-last-backup current-time)
+                  (actuator-backup org-directory)
+                  (if (= actuator-last-backup 0)
+                      (message "Backing up org directory. No backup this session so far.")
+                    (message (format "Backing up org directory. %s minutes since last backup."
+                                     minutes-since-last-backup))))
+              (message "%s minutes since last backup" minutes-since-last-backup))))
 #+end_src
 
 #+begin_src emacs-lisp
