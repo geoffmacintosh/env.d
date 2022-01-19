@@ -616,6 +616,25 @@ From  emacs-plus:
   (defvar actuator-todo-cancelled-keyword "CANCELLED")
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun actuator-enable-org-id ()
+    "Enable Org-id functions."
+    (require 'org-id)
+    (message "Enabled org-id"))
+
+  (run-with-idle-timer 1 nil #'actuator-enable-org-id)
+  (csetq org-id-locations-file (expand-file-name "org-id-locations.el" user-emacs-directory))
+  (csetq org-id-track-globally t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c d") #'org-decrypt-entry)
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c C-x C-o") #'org-clock-out)
+#+end_src
+
 The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJECT" to match projects. The escaped quotes are needed.
 
 #+begin_src emacs-lisp
