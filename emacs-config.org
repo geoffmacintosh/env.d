@@ -2880,12 +2880,6 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (defvar actuator-time-between-backups (* 15 60)
     "Amount of time in seconds that should elapse between backups.")
 
-  (defvar actuator-backup-command "crud")
-
-  (defvar actuator-backup-archive)
-
-  (defvar actuator-backup-local)
-
   (defun actuator-backup-org ()
     "Backs up `org-directory' with borg.
   Time between backups is controlled by the
@@ -2897,12 +2891,12 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
            (backup-command (format "borg create --compression zstd,3 --exclude \"**/.git\" --exclude \"**.DS_Store\" --exclude \"**#*#\" ~/Backup/archive::org-%s %s &" (format-time-string "%FT%T%z") org-directory)))
       (if (>= time-since-last-backup actuator-time-between-backups)
           (progn
-            (shell-command backup-command  nil "*Actuator Backup Error Log*")
+            (setq actuator-last-backup current-time)
+            (call-process-shell-command backup-command nil nil nil)
             (if (= actuator-last-backup 0)
-                (message "Backup up org directory. No backup this session so far.")
+                (message "Backing up org directory. No backup this session so far.")
               (message (format "Backing up org directory. %s minutes since last backup."
-              minutes-since-last-backup))
-            (setq actuator-last-backup current-time)))
+              minutes-since-last-backup))))
         (message "%s minutes since last backup" minutes-since-last-backup))))
 #+end_src
 
