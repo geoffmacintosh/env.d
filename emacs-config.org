@@ -1,3 +1,6 @@
+#+title: Emacs
+#+startup: contents
+
 * Requirements
 
 Requirements are things that I need to do other stuff in my Emacs' init. This must be loaded before everything else or there will be troubles.
