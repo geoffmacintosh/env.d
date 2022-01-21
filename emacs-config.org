@@ -1101,11 +1101,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (csetq browse-url-generic-args '("--background")))
 #+end_src
 
-#+begin_src emacs-lisp
-  (make-directory "~/Sync/.sync/eww/" t)
-  (csetq eww-bookmarks-directory "~/Sync/.sync/eww/")
-#+end_src
-
 * iBuffer
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x C-b") #'ibuffer)
@@ -1595,14 +1590,14 @@ https://gist.github.com/spacebat/5500966
 
 * Sync stuff
 #+begin_src emacs-lisp
-  (csetq elfeed-db-directory   "~/Sync/.sync/elfeed")
+  (csetq elfeed-db-directory   (expand-file-name "elfeed" user-emacs-directory))
   (csetq abbrev-file-name      (expand-file-name "etc/abbrev.el" org-directory))
 #+end_src
 
 * Bookmarks
 #+begin_src emacs-lisp
   (csetq bookmark-fontify nil)
-  (csetq bookmark-default-file "~/Sync/.sync/bookmark.el")
+;;  (csetq bookmark-default-file "~/Sync/.sync/bookmark.el")
 #+end_src
 
 * Org Randomnote
