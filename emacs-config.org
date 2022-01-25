@@ -146,14 +146,14 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 https://github.com/syl20bnr/spacemacs/issues/9409
 
 #+begin_src emacs-lisp
-  (put 'minibuffer-history 'history-length 100)
-  (put 'kill-ring 'history-length 25)
+  ;;(put 'minibuffer-history 'history-length 100)
+  ;;(put 'kill-ring 'history-length 25)
   (setq save-interprogram-paste-before-kill nil)
 #+end_src
 
 https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
-2. Unpropertize kill ring on quit
+2. Unpropertize kill ring
 #+begin_src emacs-lisp
   (defun actuator-unpropertize-kill-ring ()
     "Remove properties from items in the kill ring.
@@ -170,25 +170,25 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
   (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
   (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
+  (run-with-idle-timer 120 t #'actuator-unpropertize-kill-ring)
 #+end_src
-
-3. Savehist on kill only
 
 #+begin_src emacs-lisp
-  (eval-when-compile ;;(defvar savehist-autosave-interval)
-                     (declare-function savehist-save "savehist"))
+   (csetq auto-save-no-message t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (eval-when-compile (declare-function savehist-save "savehist"))
   (csetq savehist-autosave-interval nil)
-  (unless noninteractive
-    (add-hook 'kill-emacs-hook #'savehist-save))
   (add-hook 'after-save-hook #'savehist-save)
 #+end_src
+
 * Autorevert
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
   (csetq auto-revert-verbose t)
-  ;; (when *linux*
-  ;;  (csetq auto-revert-avoid-polling t))
   (csetq auto-revert-check-vc-info nil)
+  (global-set-key (kbd "C-c g") #'revert-buffer)
 #+end_src
 
 * Server
@@ -606,6 +606,10 @@ From  emacs-plus:
 #+end_src
 
 * Org
+#+begin_src emacs-lisp
+  (run-with-idle-timer 60 t #'org-save-all-org-buffers)
+#+end_src
+
 #+begin_src emacs-lisp
   (defvar actuator-todo-todo-keyword "TODO")
   (defvar actuator-todo-waiting-keyword "WAITING")
@@ -1832,7 +1836,6 @@ https://gist.github.com/spacebat/5500966
   (eval-when-compile
     (declare-function magit-status "magit-status")
     (declare-function magit-list-repositories "magit-repos"))
-  (global-set-key (kbd "C-c g") #'magit-status)
   (global-set-key (kbd "C-x g") #'magit-status)
   (global-set-key (kbd "C-x G") #'magit-list-repositories)
 
@@ -2887,7 +2890,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 * Org archive
 #+begin_src emacs-lisp
   (csetq org-archive-mark-done actuator-todo-done-keyword)
-  (csetq org-archive-location "archive/%s::")
+  (csetq org-archive-location "archive/%s_archive::")
 #+end_src
 
 #+begin_src emacs-lisp
