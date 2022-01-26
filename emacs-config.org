@@ -443,6 +443,12 @@ From  emacs-plus:
   (setq confirm-kill-emacs 'y-or-n-p)
 
   (run-with-idle-timer 1 nil #'abbrev-mode 1)
+
+  (defun actuator-enable-abbrev-mode ()
+    (abbrev-mode 1))
+
+  (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
+  (add-hook 'prog-mode-hook #'actuator-enable-abbrev-mode)
   (setq save-abbrevs 'silently)
 
   (setq enable-recursive-minibuffers t)
