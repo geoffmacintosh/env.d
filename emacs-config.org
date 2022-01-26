@@ -1891,7 +1891,6 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 
 
-
 * Web Mode
 
 #+begin_src emacs-lisp
@@ -2965,6 +2964,15 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                                      time-stamp
                                      " "
                                      path))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-backup-org-dir-on-save ()
+    "Testing"
+    (when (string-equal default-directory (file-name-as-directory (expand-file-name org-directory)))
+      (actuator-backup-org)))
+
+  (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save)
 #+end_src
 
 * Org Weather
