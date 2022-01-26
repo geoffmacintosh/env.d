@@ -1388,16 +1388,14 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq gnus-icalendar-org-capture-file "~/org/inbox.org")
-  (csetq gnus-icalendar-org-capture-headline '("Calendar"))
   (csetq mu4e-icalendar-trash-after-reply t)
   (csetq mu4e-icalendar-diary-file "~/org/inbox.org")
-
   (with-eval-after-load 'mu4e
     (require 'mu4e-icalendar)
-    (mu4e-icalendar-setup)
-    (gnus-icalendar-org-setup))
+    (mu4e-icalendar-setup))
 #+end_src
+
+* Org iCalendar
 
 #+begin_src emacs-lisp
   (csetq org-icalendar-use-scheduled '(event-if-todo))
