@@ -3011,3 +3011,11 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
     (add-hook 'midnight-hook #'actuator-set-up-weather-check-daily)
   #+end_src
+
+* Rmail
+:PROPERTIES:
+:CREATED:  [2022-01-25 Tue 17:42]
+:END:
+ #+begin_src emacs-lisp
+   (remove-hook 'after-save-hook #'rmail-after-save-hook)
+ #+end_src
