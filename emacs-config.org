@@ -428,8 +428,8 @@ From  emacs-plus:
 
   (setq backup-by-copying    t)
   (setq delete-old-versions  t)
-  (setq kept-new-versions    50)
-  (setq kept-old-versions    5) ; I don't know what an old version is
+  (setq kept-new-versions    100)
+  (setq kept-old-versions    50) ; I don't know what an old version is
   (setq version-control      t)
   (setq vc-make-backup-files t)
 
