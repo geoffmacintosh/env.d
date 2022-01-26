@@ -24,6 +24,13 @@
     (setq package-quickstart t))
 #+end_src
 
+I moved the custom-file to early init because when it was in the auto-tangled Org file some things ended up being saved in the init.el file and some in the custom-file, so there were weird errors occurring. This way there's only one location that I need to worry about.
+
+#+begin_src emacs-lisp
+  (setq custom-file (expand-file-name "custom-settings.el" user-emacs-directory))
+  (load custom-file 'noerror)
+#+end_src
+
 #+begin_src emacs-lisp
   (provide 'early-init)
   ;;; early-init.el ends here

@@ -62,13 +62,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (setq native-comp-async-report-warnings-errors nil))
 #+end_src
 
-* Custom-set Variables
-
-#+begin_src emacs-lisp
-  (csetq custom-file (expand-file-name "custom-settings.el" user-emacs-directory))
-  (load custom-file 'noerror)
-#+end_src
-
 * Read only
 #+begin_src emacs-lisp
   (csetq view-read-only t)
