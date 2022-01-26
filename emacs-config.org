@@ -178,9 +178,9 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 
 #+begin_src emacs-lisp
-  (eval-when-compile (declare-function savehist-save "savehist"))
-  (csetq savehist-autosave-interval nil)
-  (add-hook 'after-save-hook #'savehist-save)
+  ;;(eval-when-compile (declare-function savehist-save "savehist"))
+  ;;(csetq savehist-autosave-interval nil)
+  ;;(add-hook 'after-save-hook #'savehist-save)
 #+end_src
 
 * Autorevert
