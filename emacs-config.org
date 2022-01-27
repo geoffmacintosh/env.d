@@ -770,7 +770,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-refile-cache t)
+  (csetq org-refile-use-cache t)
   (csetq org-refile-allow-creating-parent-nodes 'confirm)
   (csetq org-outline-path-complete-in-steps nil)
   (csetq org-refile-use-outline-path 'file)
@@ -788,7 +788,9 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (directory-files org-directory t "^[a-z].*\\.org$"))
 
   (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
+#+end_src
 
+#+begin_src emacs-lisp
   (defun actuator-rebuild-org-refile-cache ()
     "Rebuilds the refile cache so things refile quickly.
 
@@ -798,11 +800,24 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (eval-when-compile
       (declare-function org-refile-cache-clear "org-refile")
       (declare-function org-refile-get-targets "org-refile"))
-    ;;(org-refile-cache-clear)
+    (org-refile-cache-clear)
     (org-refile-get-targets))
 
   ;;(add-hook 'midnight-hook #'actuator-rebuild-org-refile-cache)
-  ;;(run-with-idle-timer 300 t #'actuator-rebuild-org-refile-cache)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-org-refile-restricted ()
+    "Refile org headings to the agenda.
+
+  Using this function instead of the big one means that hopefully
+  the org refile cache won't open every org file all the time."
+
+    (interactive)
+    (let ((org-refile-use-cache nil)
+          (org-refile-targets '((org-agenda-files :maxlevel . 3))))
+      (org-refile)))
+  (define-key org-mode-map (kbd "C-c w") #'actuator-org-refile-restricted)
 #+end_src
 
 #+begin_src emacs-lisp
