@@ -814,9 +814,13 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   the org refile cache won't open every org file all the time."
 
     (interactive)
-    (let ((org-refile-use-cache nil)
+    (let ((temp-cache org-refile-cache)
+          (org-refile-use-cache nil)
           (org-refile-targets '((org-agenda-files :maxlevel . 3))))
-      (org-refile)))
+      (unwind-protect
+          (org-refile)
+             (setq org-refile-cache temp-cache))))
+
   (define-key org-mode-map (kbd "C-c w") #'actuator-org-refile-restricted)
 #+end_src
 
