@@ -177,11 +177,13 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 #+end_src
 
 * Autorevert
+Autorevert via notify is supposed to be much lower power than polling. It should work by default, but on Arch you need to install inotify-tools or it does not work at all.
+
 #+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
+  (csetq auto-revert-avoid-polling t)
   (csetq auto-revert-verbose t)
   (csetq auto-revert-check-vc-info nil)
-  (global-set-key (kbd "C-c g") #'revert-buffer)
 #+end_src
 
 * Server
@@ -1882,7 +1884,6 @@ https://gist.github.com/spacebat/5500966
     "Restore the previous window configuration and kill the magit buffer."
     (interactive)
     (kill-buffer)
-    (auto-revert-mode -1)
     (jump-to-register :magit-fullscreen))
 #+end_src
 
