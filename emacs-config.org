@@ -2880,10 +2880,11 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (run-with-idle-timer 1 nil #'appt-activate 1)
 
   (csetq appt-display-mode-line nil)
-  (add-hook 'org-agenda-finalize-hook #'org-agenda-to-appt)
   (csetq appt-message-warning-time 15)
   (csetq appt-display-interval 5)
 
+  (run-with-idle-timer 120 t #'org-agenda-to-appt)
+  (add-hook 'org-agenda-finalize-hook #'org-agenda-to-appt)
   (add-hook 'midnight-hook #'org-agenda-to-appt)
 
   (csetq appt-display-format 'window)
