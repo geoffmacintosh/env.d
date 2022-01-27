@@ -1445,10 +1445,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mml-secure-smime-encrypt-to-self t)
   (csetq mml-secure-smime-sign-with-sender t)
   (csetq mail-user-agent 'message-user-agent)
-  ;;(setq mail-header-separator (purecopy "*****"))
   (csetq compose-mail-user-agent-warnings nil)
   (csetq message-mail-user-agent nil)
-  ;;(setq message-citation-line-format "On %Y-%m-%d, %R %z, %f wrote:\n")
+  ;;(csetq message-citation-line-format "On %Y-%m-%d, %R %z, %f wrote:\n")
   (csetq message-confirm-send nil)
   (csetq message-kill-buffer-on-exit t)
   (csetq message-wide-reply-confirm-recipients t)
@@ -1499,16 +1498,16 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
             :host "fastmail.com"
             :service 80))
         (error t))
-        (setq smtpmail-queue-mail t)
-      (setq smtpmail-queue-mail nil)))
+        (csetq smtpmail-queue-mail t)
+      (csetq smtpmail-queue-mail nil)))
 
   ;;(add-hook 'message-send-hook #'actuator-check-for-network-before-sending-message)
 #+end_src
 
 * Native Compile
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (boundp 'comp-async-report-warnings-errors)
-    (setq comp-async-report-warnings-errors nil))
+    (csetq comp-async-report-warnings-errors nil))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2416,7 +2415,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Ignore disabled commands
 #+begin_src emacs-lisp
-  (setq disabled-command-function 'ignore)
+  (csetq disabled-command-function 'ignore)
 #+end_src
 
 * MPDel
@@ -2561,7 +2560,6 @@ https://gitea.petton.fr/mpdel/mpdel
   (with-eval-after-load
    'ox-publish
    (eval-when-compile (defvar org-publish-project-alist))
-   (setq org-publish-project-alist nil)
    (add-to-list
     'org-publish-project-alist
     `("org-content"
@@ -2955,7 +2953,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                       (message "Backing up org directory. No backup this session so far.")
                     (message (format "Backing up org directory. %s minutes since last backup."
                                      minutes-since-last-backup)))
-                  (setq actuator-last-backup current-time))
+                  (csetq actuator-last-backup current-time))
               (message "%s minutes since last backup" minutes-since-last-backup))))
 #+end_src
 
