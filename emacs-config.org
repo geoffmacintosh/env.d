@@ -161,9 +161,9 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
-  (add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
+  ;;(add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
   (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
-  (run-with-idle-timer 120 t #'actuator-unpropertize-kill-ring)
+  ;;(run-with-idle-timer 120 t #'actuator-unpropertize-kill-ring)
 #+end_src
 
 #+begin_src emacs-lisp
