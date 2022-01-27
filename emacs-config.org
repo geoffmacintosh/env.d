@@ -141,7 +141,7 @@ https://github.com/syl20bnr/spacemacs/issues/9409
 #+begin_src emacs-lisp
   ;;(put 'minibuffer-history 'history-length 100)
   ;;(put 'kill-ring 'history-length 25)
-  (setq save-interprogram-paste-before-kill nil)
+  (csetq save-interprogram-paste-before-kill nil)
 #+end_src
 
 https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
@@ -370,15 +370,15 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq window-combination-resize t)
-  (setq undo-limit (* 80 1024 1024))
+  (csetq window-combination-resize t)
+  (csetq undo-limit (* 80 1024 1024))
 #+end_src
 
 From  emacs-plus:
 
 #+begin_src emacs-lisp
   ;; C source code
-  (setq frame-resize-pixelwise t)
+  (csetq frame-resize-pixelwise t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -397,8 +397,8 @@ From  emacs-plus:
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq help-window-select t) ; Select help window by default
-  (setq jit-lock-defer-time 0) ; Delay font-lock if its slow
+  (csetq help-window-select t) ; Select help window by default
+  (csetq jit-lock-defer-time 0) ; Delay font-lock if its slow
   (defalias 'yes-or-no-p 'y-or-n-p)
 
   (global-set-key (kbd "M-o") #'other-window)
@@ -406,7 +406,7 @@ From  emacs-plus:
   (run-with-idle-timer 1 nil #'delete-selection-mode t)
   (run-with-idle-timer 1 nil #'midnight-mode t)
   (add-hook 'midnight-hook #'clean-buffer-list)
-  (setq sentence-end-double-space nil)
+  (csetq sentence-end-double-space nil)
 
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8)
@@ -416,26 +416,26 @@ From  emacs-plus:
 
   (add-hook 'before-save-hook 'whitespace-cleanup)
 
-  (setq indent-tabs-mode nil) ; Never insert tabs with tab key
-  (setq require-final-newline t)
+  (csetq indent-tabs-mode nil) ; Never insert tabs with tab key
+  (csetq require-final-newline t)
 
   (run-with-idle-timer 1 nil #'save-place-mode 1)
 
-  (setq backup-by-copying    t)
-  (setq delete-old-versions  t)
-  (setq kept-new-versions    100)
-  (setq kept-old-versions    50) ; I don't know what an old version is
-  (setq version-control      t)
-  (setq vc-make-backup-files t)
+  (csetq backup-by-copying    t)
+  (csetq delete-old-versions  t)
+  (csetq kept-new-versions    100)
+  (csetq kept-old-versions    50) ; I don't know what an old version is
+  (csetq version-control      t)
+  (csetq vc-make-backup-files t)
 
-  (setq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
-  (setq uniquify-separator "/")
-  (setq uniquify-after-kill-buffer-p t)
-  (setq uniquify-ignore-buffers-re "^\\*")
-  (setq uniquify-strip-common-suffix nil)
+  (csetq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
+  (csetq uniquify-separator "/")
+  (csetq uniquify-after-kill-buffer-p t)
+  (csetq uniquify-ignore-buffers-re "^\\*")
+  (csetq uniquify-strip-common-suffix nil)
 
-  (setq find-file-visit-truename nil) ; Don't resolve symlinks
-  (setq confirm-kill-emacs 'y-or-n-p)
+  (csetq find-file-visit-truename nil) ; Don't resolve symlinks
+  (csetq confirm-kill-emacs 'y-or-n-p)
 
   (run-with-idle-timer 1 nil #'abbrev-mode 1)
 
@@ -444,9 +444,9 @@ From  emacs-plus:
 
   (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
   (add-hook 'prog-mode-hook #'actuator-enable-abbrev-mode)
-  (setq save-abbrevs 'silently)
+  (csetq save-abbrevs 'silently)
 
-  (setq enable-recursive-minibuffers t)
+  (csetq enable-recursive-minibuffers t)
   (run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
 
   (put 'narrow-to-region 'disabled nil)
@@ -520,13 +520,13 @@ From  emacs-plus:
   ;;   (csetq custom-enabled-themes '(actuator)))
 
   (blink-cursor-mode -1)
-  (setq cursor-type 'box)
-  (setq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
-  (setq scroll-margin 0)
-  (setq mouse-wheel-scroll-amount '(1))
+  (csetq cursor-type 'box)
+  (csetq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
+  (csetq scroll-margin 0)
+  (csetq mouse-wheel-scroll-amount '(1))
 
-  (setq inhibit-startup-message t)
-  (setq initial-scratch-message "")
+  (csetq inhibit-startup-message t)
+  (csetq initial-scratch-message "")
 #+end_src
 
 #+begin_src emacs-lisp
