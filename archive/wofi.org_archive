@@ -1,7 +1,15 @@
-#+title: Wofi
-#+index: Linux!Wofi
+#    -*- mode: org -*-
 
-* Wofi
+
+Archived entries from file /Users/g/env.d/wofi.org
+
+
+* DONE Wofi
+:PROPERTIES:
+:CREATED:  [2022-01-28 Fri 13:08]
+:ARCHIVE_TIME: 2022-01-28 Fri 13:08
+:ARCHIVE_FILE: ~/env.d/wofi.org
+:END:
 ** Config
 :PROPERTIES:
 :header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/wofi/config" "no")
