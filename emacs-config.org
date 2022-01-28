@@ -1412,11 +1412,13 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 * Org iCalendar
 
 #+begin_src emacs-lisp
-  (csetq org-icalendar-use-scheduled '(event-if-todo))
-  (csetq org-icalendar-use-deadline '(evnet-if-not-todo todo-due))
-  (csetq org-icalendar-include-todo 'unblocked)
+  (csetq org-icalendar-use-scheduled '(event-if-not-todo))
+  (csetq org-icalendar-use-deadline '(event-if-not-todo todo-due))
+  (csetq org-icalendar-include-todo nil)
   (csetq org-icalendar-include-sexps t)
   (csetq org-icalendar-store-UID t)
+  (csetq org-icalendar-exclude-tags "habit")
+  (csetq org-icalendar-combined-agenda-file "~/Desktop/org.ics")
 #+end_src
 
 * Message
