@@ -412,7 +412,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (global-set-key (kbd "M-l") #'actuator-downcase-word-at-point)
 #+end_src
 
-* Unfiled Settings
+* Fringe
 :PROPERTIES:
 :ID:       3659786E-6B2D-4AF8-8901-434068730FC7
 :END:
@@ -422,58 +422,107 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (fringe-mode 12))
 #+end_src
 
+* Bookmarks
+
 #+begin_src emacs-lisp
   (csetq bookmark-version-control t)
   (csetq bookmark-save-flag 1)
   (csetq bookmark-set-fringe-mark nil)
 #+end_src
 
+* Window resize
+
 #+begin_src emacs-lisp
   (csetq window-combination-resize t)
+#+end_src
+
+* Undo
+
+#+begin_src emacs-lisp
   (csetq undo-limit (* 80 1024 1024))
 #+end_src
 
-From  emacs-plus:
+* Frame resize
 
 #+begin_src emacs-lisp
-  ;; C source code
   (csetq frame-resize-pixelwise t)
 #+end_src
+
+* Count words
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "M-=") #'count-words)
 #+end_src
+
+* Ctrl-scroll
 
 #+begin_src emacs-lisp
   (global-unset-key (kbd "<C-wheel-down>"))
   (global-unset-key (kbd "<C-wheel-up>"))
 #+end_src
 
+* Help window select
 
 #+begin_src emacs-lisp
   (csetq help-window-select t) ; Select help window by default
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq jit-lock-defer-time 0) ; Delay font-lock if its slow
+#+end_src
+
+#+begin_src emacs-lisp
   (defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (global-set-key (kbd "M-o") #'other-window)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (run-with-idle-timer 1 nil #'delete-selection-mode t)
+#+end_src
+
+#+begin_src emacs-lisp
   (run-with-idle-timer 1 nil #'midnight-mode t)
-  (add-hook 'midnight-hook #'clean-buffer-list)
+#+end_src
+
+#+begin_src emacs-lisp
+  ;;(add-hook 'midnight-hook #'clean-buffer-list)
   (csetq sentence-end-double-space nil)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8)
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment "UTF-8")
+#+end_src
+
+#+begin_src emacs-lisp
 
   (add-hook 'before-save-hook 'whitespace-cleanup)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (csetq indent-tabs-mode nil) ; Never insert tabs with tab key
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq require-final-newline t)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (run-with-idle-timer 1 nil #'save-place-mode 1)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (csetq backup-by-copying    t)
   (csetq delete-old-versions  t)
@@ -481,15 +530,27 @@ From  emacs-plus:
   (csetq kept-old-versions    50) ; I don't know what an old version is
   (csetq version-control      t)
   (csetq vc-make-backup-files t)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (csetq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
   (csetq uniquify-separator "/")
   (csetq uniquify-after-kill-buffer-p t)
   (csetq uniquify-ignore-buffers-re "^\\*")
   (csetq uniquify-strip-common-suffix nil)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (csetq find-file-visit-truename nil) ; Don't resolve symlinks
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq confirm-kill-emacs 'y-or-n-p)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (run-with-idle-timer 1 nil #'abbrev-mode 1)
 
@@ -499,15 +560,27 @@ From  emacs-plus:
   (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
   (add-hook 'prog-mode-hook #'actuator-enable-abbrev-mode)
   (csetq save-abbrevs 'silently)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (csetq enable-recursive-minibuffers t)
   (run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-defun  'disabled nil)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (add-hook 'after-save-hook
             #'executable-make-buffer-file-executable-if-script-p)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (defun display-startup-echo-area-message ()
     "Remove the GNU info from the minibuffer on startup.
@@ -516,10 +589,17 @@ From  emacs-plus:
   called automatically."
 
     (message ""))
+#+end_src
+
+#+begin_src emacs-lisp
+
   (when (and *mac* *graphical*)
     (csetq default-frame-alist
            '((ns-transparent-titlebar . t)
              (ns-appearance           . 'light))))
+#+end_src
+
+#+begin_src emacs-lisp
 
   (csetq completion-styles
         '(fuzzy
@@ -529,10 +609,18 @@ From  emacs-plus:
           basic
           emacs22))
 
+#+end_src
+
+#+begin_src emacs-lisp
+
   (defun actuator-font-exists-p (font)
     "Return non-nil if FONT is loaded."
     (member font (font-family-list)))
+#+end_src
 
+* Frame init
+
+#+begin_src emacs-lisp
   (defun actuator-frame-init (&optional _frame)
     "Initialize per-frame variables.
 
@@ -552,10 +640,10 @@ From  emacs-plus:
   (unless noninteractive
     (actuator-frame-init))
 #+end_src
-* Misc
+
+* Recentf
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'recentf-mode 1)
   (eval-when-compile (declare-function recentf-open-files "recentf")
                      (declare-function recentf-cleanup "recentf"))
   (global-set-key (kbd "C-x C-r") #'recentf-open-files)
@@ -564,6 +652,7 @@ From  emacs-plus:
                            "/var/folders/"
                            user-emacs-directory))
   (add-hook 'midnight-mode-hook #'recentf-cleanup)
+  (recentf-mode 1)
 #+end_src
 
 * Plain Font
