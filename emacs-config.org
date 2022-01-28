@@ -353,6 +353,65 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq calendar-offset -1)
 #+end_src
 
+* Change word case
+:PROPERTIES:
+:CREATED:  [2022-01-28 Fri 11:48]
+:END:
+
+[[https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/][Change Case of Word at Point in Emacs, But for Real This Time • Christian Tietze]]
+
+#+begin_src emacs-lisp
+  (defun actuator-capitalize-word-at-point ()
+    "A replacement which operates on the entire word."
+    (interactive)
+    (actuator-word-boundary-at-point-or-region #'actuator-capitalize-region))
+
+  (defun actuator-downcase-word-at-point ()
+    "A replacement which operates on the entire word."
+    (interactive)
+    (actuator-word-boundary-at-point-or-region #'downcase-region))
+
+  (defun actuator-upcase-word-at-point ()
+    "A replacement which operates on the entire word."
+    (interactive)
+    (actuator-word-boundary-at-point-or-region #'upcase-region))
+
+  (defun actuator-capitalize-region (beginning end)
+    "Downcases then capitalizes between BEGINNING and END only.
+  The default capitalization function upcases the first characters
+  in the word. This replacement first downcases the word and then
+  capitalizes it, which is really what you want."
+    (downcase-region beginning end)
+    (upcase-initials-region beginning end))
+
+  (defun actuator-word-boundary-at-point-or-region (&optional callback)
+    "Return the boundary (beginning and end) of the word at point, or region, if any.
+  Forwards the points to CALLBACK as (CALLBACK p1 p2), if
+  present.
+
+  Entirely lifted form Christian Tietze, who modified it from Xah Lee.
+  https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/
+  http://ergoemacs.org/emacs/modernization_upcase-word.html"
+
+    (let ((deactivate-mark nil)
+          beginning end)
+      (if (use-region-p)
+          (setq beginning (region-beginning)
+                end (region-end))
+        (save-excursion
+          (skip-chars-backward "[:alpha:]")
+          (setq beginning (point))
+          (skip-chars-forward "[:alpha:]")
+          (setq end (point))))
+      (when callback
+        (funcall callback beginning end))
+      (list beginning end)))
+
+  (global-set-key (kbd "M-c") #'actuator-capitalize-word-at-point)
+  (global-set-key (kbd "M-u") #'actuator-upcase-word-at-point)
+  (global-set-key (kbd "M-l") #'actuator-downcase-word-at-point)
+#+end_src
+
 * Unfiled Settings
 :PROPERTIES:
 :ID:       3659786E-6B2D-4AF8-8901-434068730FC7
@@ -390,11 +449,6 @@ From  emacs-plus:
   (global-unset-key (kbd "<C-wheel-up>"))
 #+end_src
 
-#+begin_src emacs-lisp
-  (global-set-key (kbd "M-c") 'capitalize-dwim)
-  (global-set-key (kbd "M-l") 'downcase-dwim)
-  (global-set-key (kbd "M-u") 'upcase-dwim)
-#+end_src
 
 #+begin_src emacs-lisp
   (csetq help-window-select t) ; Select help window by default
