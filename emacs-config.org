@@ -1471,7 +1471,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq org-icalendar-include-todo nil)
   (csetq org-icalendar-include-sexps t)
   (csetq org-icalendar-store-UID t)
-  (csetq org-icalendar-exclude-tags "habit")
+  (csetq org-icalendar-exclude-tags '("habit" "noexport" "weather"))
   (csetq org-icalendar-combined-agenda-file "~/Desktop/org.ics")
 #+end_src
 
