@@ -1,7 +1,7 @@
 #+title: Waybar
 #+index: Linux!Waybar
 
-* Waybar
+* Config
 #+begin_src json :tangle ~/.config/waybar/config :comments no
   {
       "layer": "top",
@@ -23,6 +23,8 @@
       }
   }
 #+end_src
+
+* Styling
 
 #+begin_src css :tangle ~/.config/waybar/style.css :comments no
   ,* {
