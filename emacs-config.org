@@ -468,7 +468,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq jit-lock-defer-time 0) ; Delay font-lock if its slow
+  (csetq jit-lock-defer-time 0.1) ; Delay font-lock if its slow
 #+end_src
 
 #+begin_src emacs-lisp
