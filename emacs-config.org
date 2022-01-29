@@ -919,7 +919,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-refile-allow-creating-parent-nodes 'confirm)
   (csetq org-outline-path-complete-in-steps nil)
   (csetq org-refile-use-outline-path 'file)
+  (csetq org-refile-targets '((org-agenda-files :maxlevel . 4)))
+#+end_src
 
+#+begin_src emacs-lisp :tangle no
   (defun actuator-org-refile-candidates ()
     "Collect all the org-mode files in the org-directory.
 
@@ -935,7 +938,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-rebuild-org-refile-cache ()
     "Rebuilds the refile cache so things refile quickly.
 
@@ -951,7 +954,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   ;;(add-hook 'midnight-hook #'actuator-rebuild-org-refile-cache)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-org-refile-restricted ()
     "Refile org headings to the agenda.
 
