@@ -35,10 +35,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
                                       ("nongnu" . 20)))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (csetq package-selected-packages nil)
-#+end_src
-
 ** Mac and Linux variables
 
 #+begin_src emacs-lisp
@@ -53,13 +49,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 #+begin_src emacs-lisp
   (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
     "My GPG ID.")
-#+end_src
-
-* Native compile
-#+begin_src emacs-lisp :tangle no
-  (when *mac*
-    (eval-when-compile (defvar native-comp-async-report-warnings-errors))
-    (setq native-comp-async-report-warnings-errors nil))
 #+end_src
 
 * Read only
@@ -970,11 +959,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (with-eval-after-load 'org-agenda
-    (csetq org-agenda-follow-mode nil))
-#+end_src
-
 #+begin_src emacs-lisp
   (eval-when-compile
     (defvar org-default-properties)
@@ -1626,10 +1610,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 * Native Compile
-#+begin_src emacs-lisp :tangle no
-  (when (boundp 'comp-async-report-warnings-errors)
-    (csetq comp-async-report-warnings-errors nil))
-#+end_src
 
 #+begin_src emacs-lisp
   (csetq package-native-compile t)
@@ -1637,7 +1617,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 * Package Quickstart
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
 #+end_src
@@ -1815,7 +1795,7 @@ https://gist.github.com/spacebat/5500966
 
 * Org Link Minor Mode
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-link-minor-mode)
 
   (when (package-installed-p 'org-link-minor-mode)
@@ -2614,14 +2594,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
               (window-height . 0.5)))))
 #+end_src
 
-* Safe local variables
-#+begin_src emacs-lisp :tangle no
-  (add-to-list 'safe-local-variable-values
-               '(buffer-auto-save-file-name . nil))
-  (add-to-list 'safe-local-variable-values
-               '(org-archive-location . "archive.org::datetree/* From %"))
-#+end_src
-
 * Org publish org
 
 #+begin_src emacs-lisp
@@ -2719,23 +2691,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
 #+end_src
 
-* Insert creation stamp on heading creation
-[2021-06-05 Sat 16:24]
-
-#+begin_src emacs-lisp :tangle no
-  (defun actuator-org-insert-heading-timestamp ()
-    "Insert a timestamp below a new heading.
-
-  Org counts an inactive timestamp on the start of a line as a
-  creation date."
-    (eval-when-compile (declare-function org-time-stamp-inactive "org"))
-    (save-excursion
-      (insert "\n")
-      (org-time-stamp-inactive '(16))))
-
-  (add-hook 'org-insert-heading-hook #'actuator-org-insert-heading-timestamp)
-#+end_src
-
 * Org-edna
 [2021-06-11 Fri 15:44]
 #+begin_src emacs-lisp
@@ -2774,14 +2729,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
         (goto-char start)
         (capitalize-word 1)
         (buffer-substring start end))))
-#+end_src
-
-* Type break
-[2021-06-16 Wed 20:22]
-#+begin_src emacs-lisp :tangle no
-  (run-with-idle-timer 1 nil #'type-break-mode 1)
-  (csetq type-break-query-mode t)
-  (csetq type-break-mode-line-message-mode t)
 #+end_src
 
 * Auto-insert

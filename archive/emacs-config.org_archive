@@ -50,3 +50,63 @@ https://gitea.petton.fr/mpdel/mpdel
   ;;(when (executable-find "fish")
   ;;  (csetq vterm-shell "fish"))
 #+end_src
+
+* DONE Native compile
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 11:59]
+:ARCHIVE_TIME: 2022-01-30 Sun 11:59
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+#+begin_src emacs-lisp :tangle no
+  (when *mac*
+    (eval-when-compile (defvar native-comp-async-report-warnings-errors))
+    (setq native-comp-async-report-warnings-errors nil))
+#+end_src
+
+* DONE Type break
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 12:00]
+:ARCHIVE_TIME: 2022-01-30 Sun 12:00
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+[2021-06-16 Wed 20:22]
+#+begin_src emacs-lisp :tangle no
+  (run-with-idle-timer 1 nil #'type-break-mode 1)
+  (csetq type-break-query-mode t)
+  (csetq type-break-mode-line-message-mode t)
+#+end_src
+
+* DONE Insert creation stamp on heading creation
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 12:00]
+:ARCHIVE_TIME: 2022-01-30 Sun 12:00
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+[2021-06-05 Sat 16:24]
+
+#+begin_src emacs-lisp :tangle no
+  (defun actuator-org-insert-heading-timestamp ()
+    "Insert a timestamp below a new heading.
+
+  Org counts an inactive timestamp on the start of a line as a
+  creation date."
+    (eval-when-compile (declare-function org-time-stamp-inactive "org"))
+    (save-excursion
+      (insert "\n")
+      (org-time-stamp-inactive '(16))))
+
+  (add-hook 'org-insert-heading-hook #'actuator-org-insert-heading-timestamp)
+#+end_src
+
+* DONE Safe local variables
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 12:00]
+:ARCHIVE_TIME: 2022-01-30 Sun 12:00
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+#+begin_src emacs-lisp :tangle no
+  (add-to-list 'safe-local-variable-values
+	       '(buffer-auto-save-file-name . nil))
+  (add-to-list 'safe-local-variable-values
+	       '(org-archive-location . "archive.org::datetree/* From %"))
+#+end_src
