@@ -134,7 +134,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 
 1. Quick fixes:
 
-   ;; the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
+   the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
 
 https://github.com/syl20bnr/spacemacs/issues/9409
 
@@ -180,7 +180,8 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 Autorevert via notify is supposed to be much lower power than polling. It should work by default, but on Arch you need to install inotify-tools or it does not work at all.
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
+  ;;(run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
+  (global-auto-revert-mode 1)
   (csetq auto-revert-avoid-polling t)
   (csetq auto-revert-verbose t)
   (csetq auto-revert-check-vc-info nil)
@@ -481,8 +482,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
-  (run-with-idle-timer 1 nil #'delete-selection-mode t)
+  (delete-selection-mode 1)
+  ;;(run-with-idle-timer 1 nil #'delete-selection-mode t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -552,7 +553,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
 
-  (run-with-idle-timer 1 nil #'abbrev-mode 1)
+  ;;(run-with-idle-timer 1 nil #'abbrev-mode 1)
 
   (defun actuator-enable-abbrev-mode ()
     (abbrev-mode 1))
@@ -564,8 +565,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
 
-  (csetq enable-recursive-minibuffers t)
-  (run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
+  ;;(csetq enable-recursive-minibuffers t)
+
+  ;;(run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3029,9 +3031,10 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (csetq appt-message-warning-time 15)
   (csetq appt-display-interval 5)
 
-  (run-with-idle-timer 120 t #'org-agenda-to-appt)
-  (add-hook 'org-agenda-finalize-hook #'org-agenda-to-appt)
-  (add-hook 'midnight-hook #'org-agenda-to-appt)
+  (defun actuator-org-agenda-to-appt-refresh ()
+    "Run `org-agenda-to-appt' with refresh."
+    (org-agenda-to-appt t))
+  (add-hook 'midnight-hook #'actuator-org-agenda-to-appt-refresh)
 
   (csetq appt-display-format 'window)
   (csetq appt-disp-window-function #'actuator-appt-alert)
@@ -3044,6 +3047,16 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
       (alert message
              :title (format "Appointment in %s minutes" minutes))))
 #+end_src
+
+#+begin_src emacs-lisp
+  (run-at-time "90 minutes" t #'actuator-org-agenda-to-appt-timer)
+
+  (defun actuator-org-agenda-to-appt-timer ()
+    "Runs `org-agenda-to-appt' whenever there is an idle period."
+    (run-with-idle-timer 5 nil #'org-agenda-to-appt))
+#+end_src
+
+(list-timers)
 
 * Org archive
 #+begin_src emacs-lisp
