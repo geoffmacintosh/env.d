@@ -151,10 +151,6 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
 #+end_src
 
-#+begin_src emacs-lisp
-   (csetq auto-save-no-message t)
-#+end_src
-
 * Autorevert
 Autorevert via notify is supposed to be much lower power than polling. It should work by default, but on Arch you need to install inotify-tools or it does not work at all.
 
@@ -2001,7 +1997,6 @@ https://gist.github.com/spacebat/5500966
   (csetq org-download-timestamp "")
 #+end_src
 
-
 * Web Mode
 
 #+begin_src emacs-lisp
@@ -2490,13 +2485,20 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 * Auto-save
+
+#+begin_src emacs-lisp
+   (csetq auto-save-no-message t)
+#+end_src
+
 #+begin_src emacs-lisp
   (csetq auto-save-list-file-prefix
          (expand-file-name "auto-save-list/" user-emacs-directory))
   (csetq auto-save-default t)
 #+end_src
 
-#+results:
+#+begin_src emacs-lisp
+  (csetq auto-save-file-name-transforms `((".*" ,(expand-file-name "autosaves/" user-emacs-directory) t)))
+#+end_src
 
 * Backups
 #+begin_src emacs-lisp
@@ -2689,12 +2691,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       'ox
     (eval-when-compile (defvar org-export-filter-link-functions))
     (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
-#+end_src
-
-* Org-edna
-[2021-06-11 Fri 15:44]
-#+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'org-edna)
 #+end_src
 
 * Org agenda sunrise/set

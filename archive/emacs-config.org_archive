@@ -110,3 +110,14 @@ https://gitea.petton.fr/mpdel/mpdel
   (add-to-list 'safe-local-variable-values
 	       '(org-archive-location . "archive.org::datetree/* From %"))
 #+end_src
+
+* DONE Org-edna
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 12:09]
+:ARCHIVE_TIME: 2022-01-30 Sun 12:09
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+[2021-06-11 Fri 15:44]
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'org-edna)
+#+end_src
