@@ -139,8 +139,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 https://github.com/syl20bnr/spacemacs/issues/9409
 
 #+begin_src emacs-lisp
-  ;;(put 'minibuffer-history 'history-length 100)
-  ;;(put 'kill-ring 'history-length 25)
   (csetq save-interprogram-paste-before-kill nil)
 #+end_src
 
@@ -161,26 +159,17 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
-  ;;(add-hook 'kill-emacs-hook #'actuator-unpropertize-kill-ring)
   (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
-  ;;(run-with-idle-timer 120 t #'actuator-unpropertize-kill-ring)
 #+end_src
 
 #+begin_src emacs-lisp
    (csetq auto-save-no-message t)
 #+end_src
 
-#+begin_src emacs-lisp
-  ;;(eval-when-compile (declare-function savehist-save "savehist"))
-  ;;(csetq savehist-autosave-interval nil)
-  ;;(add-hook 'after-save-hook #'savehist-save)
-#+end_src
-
 * Autorevert
 Autorevert via notify is supposed to be much lower power than polling. It should work by default, but on Arch you need to install inotify-tools or it does not work at all.
 
 #+begin_src emacs-lisp
-  ;;(run-with-idle-timer 1 nil #'global-auto-revert-mode 1)
   (global-auto-revert-mode 1)
   (csetq auto-revert-avoid-polling t)
   (csetq auto-revert-verbose t)
@@ -468,6 +457,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq help-window-select t) ; Select help window by default
 #+end_src
 
+* JIT lock
+
 #+begin_src emacs-lisp
   (csetq jit-lock-defer-time 0.1) ; Delay font-lock if its slow
 #+end_src
@@ -483,7 +474,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (delete-selection-mode 1)
-  ;;(run-with-idle-timer 1 nil #'delete-selection-mode t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -491,7 +481,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  ;;(add-hook 'midnight-hook #'clean-buffer-list)
   (csetq sentence-end-double-space nil)
 #+end_src
 
@@ -552,9 +541,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
-  ;;(run-with-idle-timer 1 nil #'abbrev-mode 1)
-
   (defun actuator-enable-abbrev-mode ()
     (abbrev-mode 1))
 
@@ -563,11 +549,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq save-abbrevs 'silently)
 #+end_src
 
-#+begin_src emacs-lisp
-
-  ;;(csetq enable-recursive-minibuffers t)
-
-  ;;(run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
+#+begin_src emacs-lisp :tangle no
+  (csetq enable-recursive-minibuffers t)
+  (run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -660,10 +644,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 * Plain Font
 
 #+begin_src emacs-lisp
-  ;; (when (file-exists-p (expand-file-name "actuator-theme.el" user-emacs-directory))
-  ;;   (csetq custom-safe-themes t)
-  ;;   (csetq custom-enabled-themes '(actuator)))
-
   (blink-cursor-mode -1)
   (csetq cursor-type 'box)
   (csetq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
@@ -678,7 +658,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (unless 'window-system
     (require 'mouse)
     (require 'xt-mouse)
-    ;;(csetq mouse-sel-mode t)
     (xterm-mouse-mode t)
     (defun track-mouse (_e)))
 #+end_src
@@ -715,11 +694,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
          '((:eval (when (buffer-file-name)
                     (abbreviate-file-name default-directory)))
            "%b"))
-#+end_src
-
-* Help
-#+begin_src emacs-lisp
-  ;;(global-set-key (kbd "C-h x k") #'describe-key)
 #+end_src
 
 * Delete by Moving to Trash
@@ -872,7 +846,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
          '((sequence "TODO(t)" "NEXT(n!)" "WAITING(w@)" "SOMEDAY(s!)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
   (csetq org-agenda-window-setup 'current-window)
   (csetq org-agenda-restore-windows-after-quit t)
-  (csetq org-agenda-span 7) ;; fortnight
+  (csetq org-agenda-span 7)
   (csetq org-agenda-todo-list-sublevels t)
   (csetq org-agenda-sticky nil)
   (csetq org-agenda-dim-blocked-tasks t)
@@ -1003,7 +977,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
 #+begin_src emacs-lisp
   (eval-when-compile
-    ;;(defvar org-modules)
     (defvar org-default-properties)
     (declare-function org-indent-mode "org-indent"))
 
@@ -1572,8 +1545,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 * Message
 
 #+begin_src emacs-lisp
-  ;;(csetq send-mail-function 'sendmail-send-it)
-  ;;(csetq message-send-mail-function send-mail-function)
   (csetq send-mail-function 'smtpmail-send-it)
   (csetq message-send-mail-function 'smtpmail-send-it)
 #+end_src
@@ -1768,7 +1739,6 @@ https://gist.github.com/spacebat/5500966
 * Bookmarks
 #+begin_src emacs-lisp
   (csetq bookmark-fontify nil)
-;;  (csetq bookmark-default-file "~/Sync/.sync/bookmark.el")
 #+end_src
 
 * Org Randomnote
@@ -2008,7 +1978,6 @@ https://gist.github.com/spacebat/5500966
            (unstaged  . show)
            (unpushed  . show)
            (upstream  . show)))
-  ;;(csetq magit-auto-revert-mode t)
   (csetq magit-push-always-verify nil)
   (csetq magit-no-confirm '(stage-all-changes
                             unstage-all-changes))
@@ -2540,14 +2509,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (add-to-list 'package-selected-packages 'etc-sudoers-mode)
 #+end_src
 
-* VTerm
-
-#+begin_src emacs-lisp
-  ;;(add-to-list 'package-selected-packages 'vterm)
-  ;;(when (executable-find "fish")
-  ;;  (csetq vterm-shell "fish"))
-#+end_src
-
 * Auto-save
 #+begin_src emacs-lisp
   (csetq auto-save-list-file-prefix
@@ -2568,19 +2529,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (csetq disabled-command-function 'ignore)
 #+end_src
 
-* MPDel
-#+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'mpdel)
-  (require 'mpdel nil t)
-  ;; (mpdel-mode)
-  (csetq mpdel-prefix-key (kbd "C-z"))
-#+end_src
-
-https://gitea.petton.fr/mpdel/mpdel
-
 * Spell check
 #+begin_src emacs-lisp
-  ;;(csetq ispell-program-name "aspell")
   (csetq ispell-personal-dictionary (expand-file-name "etc/dictionary" org-directory))
   (csetq ispell-silently-savep t)
   (defun actuator-org-reveal-around ()
@@ -2648,7 +2598,6 @@ https://gitea.petton.fr/mpdel/mpdel
 
 #+begin_src emacs-lisp
   (when *graphical*
-    (csetq switch-to-buffer-obey-display-actions nil) ;; Currently fucks up badly Investiate this.
     (csetq display-buffer-alist
            '(("\\*\\(Org Lint\\|Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Completions\\)\\*"
               (display-buffer-in-side-window)
@@ -2809,7 +2758,6 @@ https://gitea.petton.fr/mpdel/mpdel
         (search-forward ",")
         (buffer-substring (point-min) (match-beginning 0)))))
 
-  ;; sunset
   (defun diary-sunset ()
     (let ((dss (diary-sunrise-sunset))
           start end)
@@ -2944,7 +2892,7 @@ https://gitea.petton.fr/mpdel/mpdel
   (run-with-idle-timer 1 nil #'fido-mode 1)
   (add-hook 'fido-mode-hook 'icomplete-vertical-mode)
   (csetq icomplete-scroll t)
-;;  (csetq icomplete-show-matches-on-no-input t)
+  (csetq icomplete-show-matches-on-no-input t)
   (csetq read-buffer-completion-ignore-case t)
   (csetq completion-ignore-case t)
   (csetq read-file-name-completion-ignore-case t)

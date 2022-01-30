@@ -1,0 +1,52 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/env.d/emacs-config.org
+
+
+* DONE Spell check
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 11:43]
+:ARCHIVE_TIME: 2022-01-30 Sun 11:43
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+#+begin_src emacs-lisp
+  ;;(csetq ispell-program-name "aspell")
+  (csetq ispell-personal-dictionary (expand-file-name "etc/dictionary" org-directory))
+  (csetq ispell-silently-savep t)
+  (defun actuator-org-reveal-around ()
+    "Reveals the area around the point in Org-mode files."
+
+    (when (derived-mode-p 'org-mode)
+      (eval-when-compile (declare-function org-reveal "org"))
+      (org-reveal t)))
+  (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around)
+#+end_src
+
+* DONE MPDel
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 11:44]
+:ARCHIVE_TIME: 2022-01-30 Sun 11:44
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'mpdel)
+  (require 'mpdel nil t)
+  ;; (mpdel-mode)
+  (csetq mpdel-prefix-key (kbd "C-z"))
+#+end_src
+
+https://gitea.petton.fr/mpdel/mpdel
+
+* DONE VTerm
+:PROPERTIES:
+:CREATED:  [2022-01-30 Sun 11:45]
+:ARCHIVE_TIME: 2022-01-30 Sun 11:45
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+
+#+begin_src emacs-lisp
+  ;;(add-to-list 'package-selected-packages 'vterm)
+  ;;(when (executable-find "fish")
+  ;;  (csetq vterm-shell "fish"))
+#+end_src
