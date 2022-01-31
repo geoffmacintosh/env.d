@@ -934,10 +934,9 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-agenda-start-with-log-mode '(closed clock))
-  (csetq org-agenda-start-with-clockreport-mode t)
+  (csetq org-agenda-start-with-log-mode nil) ;;'(closed clock)
+  (csetq org-agenda-start-with-clockreport-mode nil)
   (csetq org-agenda-columns-add-appointments-to-effort-sum t)
-
 #+end_src
 
 #+begin_src emacs-lisp
