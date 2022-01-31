@@ -2821,7 +2821,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 [2021-08-11 Wed 14:58]
 
 #+begin_src emacs-lisp
-  ;;(csetq org-clock-sound "~/Downloads/ding.wav")
+  (csetq org-clock-sound (expand-file-name "etc/DeusExSounds0437.wav" org-directory))
   (csetq org-timer-default-timer 25)
 #+end_src
 
@@ -2934,6 +2934,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
     "An alternative function for `appt-disp-window-funcion' to show an alert.
 
   This function uses the alert.el package."
+    (play-sound org-clock-sound)
     (when (featurep 'alert)
       (alert message
              :title (format "Appointment in %s minutes" minutes))))
@@ -2946,8 +2947,6 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
     "Runs `org-agenda-to-appt' whenever there is an idle period."
     (run-with-idle-timer 5 nil #'org-agenda-to-appt))
 #+end_src
-
-(list-timers)
 
 * Org archive
 #+begin_src emacs-lisp
@@ -3046,3 +3045,18 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
  #+begin_src emacs-lisp
    (remove-hook 'after-save-hook #'rmail-after-save-hook)
  #+end_src
+
+* Audio
+:PROPERTIES:
+
+:CREATED:  [2022-01-31 Mon 15:38]
+:END:
+#+begin_src emacs-lisp
+  (when (and *mac* (not (fboundp 'play-sound-internal)))
+      (defun play-sound-internal (sound)
+        "Internal function for `play sound'.
+
+  There is no error checking to make sure that things are handled,
+  so be careful."
+        (start-process "Sound" nil "afplay" sound)))
+#+end_src
