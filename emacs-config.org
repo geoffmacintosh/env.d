@@ -2496,7 +2496,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq auto-save-file-name-transforms `((".*" ,(expand-file-name "autosaves/" user-emacs-directory) t)))
+  (make-directory (expand-file-name "auto-saves" user-emacs-directory) t)
+  (csetq auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
 #+end_src
 
 * Backups
