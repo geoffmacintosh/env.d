@@ -2934,7 +2934,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
     "An alternative function for `appt-disp-window-funcion' to show an alert.
 
   This function uses the alert.el package."
-    (play-sound org-clock-sound)
+    (org-clock-play-sound org-clock-sound)
     (when (featurep 'alert)
       (alert message
              :title (format "Appointment in %s minutes" minutes))))
