@@ -156,7 +156,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (global-auto-revert-mode 1)
-  (csetq auto-revert-avoid-polling t)
+  ;;(csetq auto-revert-avoid-polling t)
   (csetq auto-revert-verbose t)
   (csetq auto-revert-check-vc-info nil)
 #+end_src
