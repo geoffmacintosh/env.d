@@ -716,6 +716,11 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
+  (add-function :after after-focus-change-function
+                #'org-save-all-org-buffers)
+#+end_src
+
+#+begin_src emacs-lisp
   (defvar actuator-todo-todo-keyword "TODO")
   (defvar actuator-todo-waiting-keyword "WAITING")
   (defvar actuator-todo-next-keyword "NEXT")
