@@ -1073,20 +1073,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+begin_src emacs-lisp
   (csetq org-tag-persistent-alist '(("noexport")
                                     ("ignore")
-                                    ("crypt")
-                                    (:startgrouptag)
-                                    ("context")
-                                    (:grouptags)
-                                    ("email")
-                                    ("phone")
-                                    ("computer")
-                                    ("errand")
-                                    ("download")
-                                    ("exercise")
-                                    ("home")
-                                    ("research")
-                                    (:endgroup)
-                                    (:endgrouptag)))
+                                    ("crypt")))
 #+end_src
 
 #+begin_src emacs-lisp
