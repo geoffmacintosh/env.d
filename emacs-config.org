@@ -2612,7 +2612,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (`latex
        (replace-regexp-in-string "[<>]" "" string))))
 
-  (csetq org-export-in-background t)
   (with-eval-after-load 'ox
     (require 'ox-icalendar)
     (eval-when-compile (defvar org-export-filter-timestamp-functions))
