@@ -15,7 +15,6 @@
 
 #+begin_src emacs-lisp
   (setq load-prefer-newer t)
-  (setq frame-inhibit-implied-resize t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -47,12 +46,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;;; Commentary:
 
   ;;; Code:
-#+end_src
-
-** Very early
-
-#+begin_src emacs-lisp
-
 #+end_src
 
 ** Tangle

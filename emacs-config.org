@@ -1,5 +1,6 @@
 #+title: Emacs
 #+startup: contents
+#+property: header-args :tangle emacs-config.el :comments link
 
 * Requirements
 
@@ -458,6 +459,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (csetq frame-resize-pixelwise t)
+  (csetq frame-inhibit-implied-resize t)
 #+end_src
 
 * Count words
