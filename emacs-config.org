@@ -934,7 +934,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   doing it."
     (append
      (directory-files org-directory t "^[a-z].*\\.org$")
-     (directory-files "~/env.d/" t "^[a-z].*\\.org$")))
+     (directory-files actuator-directory t "^[a-z].*\\.org$")))
 
   (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
 #+end_src
@@ -1985,9 +1985,9 @@ https://gist.github.com/spacebat/5500966
                             unstage-all-changes))
   (csetq magit-status-initial-section nil)
   (csetq magit-repository-directories
-         `((,org-directory . 0)
-           ("~/env.d"      . 0)
-           ("~/Projects"   . 1)))
+         `((,org-directory      . 0)
+           (,actuator-directory . 0)
+           ("~/Projects"        . 1)))
 #+end_src
 
 #+begin_src emacs-lisp

@@ -62,11 +62,18 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 :END:
 
 #+begin_src emacs-lisp
+  (defvar actuator-directory (expand-file-name "~/env.d/")
+    "Directory with actuator Org files.
+  This is the directory where Emacs will try to tangle the config
+  files from.")
+#+end_src
+
+#+begin_src emacs-lisp
   (let ((gc-cons-threshold (* 5000 1024 1024))
         (gc-cons-percentage))
         (require 'ob-tangle)
-        (org-babel-load-file (expand-file-name "emacs-config.org" "~/env.d/"))
-        (org-babel-load-file (expand-file-name "emacs-theme.org" "~/env.d/")))
+        (org-babel-load-file (expand-file-name "emacs-config.org" actuator-directory))
+        (org-babel-load-file (expand-file-name "emacs-theme.org" actuator-directory)))
 #+end_src
 
 ** Footer
