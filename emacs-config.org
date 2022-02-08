@@ -2475,6 +2475,31 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
         (*mac*
          (csetq alert-default-style 'osx-notifier)))
 #+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-notify (title message)
+    "Send a system notification based on capabilities.
+  Requires TITLE and MESSAGE strings."
+    (eval-when-compile
+     (defvar *mac*)
+     (defvar org-show-notification-timeout)
+     (declare-function notifications-notify "notifications")
+     (declare-function notifications-get-capabilities "notifications"))
+    (cond ((notifications-get-capabilities)
+           (notifications-notify
+            :title title
+            :body message
+            :timeout (* org-show-notification-timeout 1000)
+            :urgency 'low))
+          (*mac*
+           (ns-do-applescript
+            (format "display notification \"%s\" with title \"%s\""
+                    (replace-regexp-in-string "\"" "#" message)
+                    (replace-regexp-in-string "\"" "#" title))))
+          (t
+           (error "No notification system available"))))
+#+end_src
+
 * Systemd
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'systemd)
@@ -2957,45 +2982,59 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
         (or next-headline (point-max)))))
 #+end_src
 
-* Appts
+* Appt - Appointment Notifications
 :PROPERTIES:
 :CREATED:  [2022-01-06 Thu 15:15]
 :END:
-#+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'appt-activate 1)
 
+Appt can connect with org-mode to grab all the events for the day and issue alerts.
+
+#+begin_src emacs-lisp
   (csetq appt-display-mode-line nil)
   (csetq appt-message-warning-time 15)
   (csetq appt-display-interval 5)
-
-  (defun actuator-org-agenda-to-appt-refresh ()
-    "Run `org-agenda-to-appt' with refresh."
-    (org-agenda-to-appt t))
-  ;;(add-hook 'midnight-hook #'actuator-org-agenda-to-appt-refresh)
-
   (csetq appt-display-format 'window)
-  (csetq appt-disp-window-function #'actuator-appt-alert)
+  (csetq appt-disp-window-function #'actuator-appt-notify)
 
-  (defun actuator-appt-alert (minutes _curtime message)
-    "An alternative function for `appt-disp-window-function' to show an alert.
+  (run-with-idle-timer 1 nil #'appt-activate 1)
+#+end_src
 
-  This function uses the alert.el package."
-    (org-clock-play-sound org-clock-sound)
-    (when (featurep 'alert)
-      (alert message
-             :title (format "Appointment in %s minutes" minutes))))
+I'm using a custom alert function so that I can use the system's notification system instead of only internal Emacs features. This way I can use it as either a wrapper or a complete replacement.
+
+#+begin_src emacs-lisp
+  (defun actuator-appt-notify (minutes-until _current-time message)
+    "An alternative `appt-disp-window-function' to show an alert.
+
+   This function accepts three arguments, MINUTES-UNTIL, which
+   should be an integer number of minutes until the event occurs,
+   the CURRENT-TIME which is discarded, and MESSAGE, which is the
+   name of the TODO item that is upcoming."
+    (declare-function actuator-notify "emacs-config")
+    (actuator-notify (format "Appointment in %s minutes" minutes-until) message))
 #+end_src
 
 #+begin_src emacs-lisp
-  (run-at-time "90 minutes" t #'actuator-org-agenda-to-appt-timer)
+  (defun actuator-org-agenda-to-appt-refresh ()
+    "Run `org-agenda-to-appt' with refresh.
 
+  This (I believe) collects the appointments scheduled for the
+  current day, so it is wise to run this at least daily to update
+  the list."
+    (org-agenda-to-appt t))
+
+  (add-to-list 'midnight-hook #'actuator-org-agenda-to-appt-refresh)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
   (defun actuator-org-agenda-to-appt-timer ()
     "Runs `org-agenda-to-appt' whenever there is an idle period."
     (run-with-idle-timer 5 nil #'actuator-org-agenda-to-appt-refresh))
+
+  (run-at-time "90 minutes" t #'actuator-org-agenda-to-appt-timer)
 #+end_src
 
 #+begin_src emacs-lisp
-  (advice-add #'org-agenda-to-appt :after #'actuator-org-agenda-quit-refresh)
+  (advice-add #'actuator-org-agenda-to-appt-refresh :after #'org-agenda-to-appt)
 #+end_src
 
 * Org archive
