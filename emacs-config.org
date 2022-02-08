@@ -916,12 +916,29 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-diary-file "~/org/diary.org")
 #+end_src
 
+
+#+begin_src emacs-lisp
+(defun actuator-org-refile-candidates ()
+  "Collect all the org-mode files in the org-directory.
+
+Currently it only collects files that start with a lowercase
+letter, which is probably the wrong way to go about it, but I
+don't have any files that start with uppercase or numbers (this
+is on purpose) and that eliminates adding any autosave, backup or
+other weird files that might temporarily get caught by the
+refiler that I don't want. This would be an easy fix, but I'm not
+doing it."
+  (directory-files org-directory t "^[a-z].*\\.org$"))
+
+(csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
+#+end_src
+
 #+begin_src emacs-lisp
   (csetq org-refile-use-cache t)
   (csetq org-refile-allow-creating-parent-nodes 'confirm)
   (csetq org-outline-path-complete-in-steps nil)
   (csetq org-refile-use-outline-path 'file)
-  (csetq org-refile-targets '((org-agenda-files :maxlevel . 4)))
+  ;;(csetq org-refile-targets '((org-agenda-files :maxlevel . 4)))
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
