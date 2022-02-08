@@ -479,6 +479,11 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq help-window-select t) ; Select help window by default
 #+end_src
 
+#+begin_src emacs-lisp
+  (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back)
+  (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
+#+end_src
+
 * JIT lock
 
 #+begin_src emacs-lisp
@@ -995,6 +1000,16 @@ doing it."
   (csetq org-agenda-start-with-log-mode nil) ;;'(closed clock)
   (csetq org-agenda-start-with-clockreport-mode nil)
   (csetq org-agenda-columns-add-appointments-to-effort-sum t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines))
+#+end_src
+
+#+begin_src emacs-lisp
+  (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
+  (define-key org-agenda-mode-map (kbd "<mouse-9>") #'org-agenda-later)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2969,13 +2984,13 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (defun actuator-org-agenda-to-appt-refresh ()
     "Run `org-agenda-to-appt' with refresh."
     (org-agenda-to-appt t))
-  (add-hook 'midnight-hook #'actuator-org-agenda-to-appt-refresh)
+  ;;(add-hook 'midnight-hook #'actuator-org-agenda-to-appt-refresh)
 
   (csetq appt-display-format 'window)
   (csetq appt-disp-window-function #'actuator-appt-alert)
 
   (defun actuator-appt-alert (minutes _curtime message)
-    "An alternative function for `appt-disp-window-funcion' to show an alert.
+    "An alternative function for `appt-disp-window-function' to show an alert.
 
   This function uses the alert.el package."
     (org-clock-play-sound org-clock-sound)
@@ -2989,7 +3004,11 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
   (defun actuator-org-agenda-to-appt-timer ()
     "Runs `org-agenda-to-appt' whenever there is an idle period."
-    (run-with-idle-timer 5 nil #'org-agenda-to-appt))
+    (run-with-idle-timer 5 nil #'actuator-org-agenda-to-appt-refresh))
+#+end_src
+
+#+begin_src emacs-lisp
+  (advice-add #'org-agenda-to-appt :after #'actuator-org-agenda-quit-refresh)
 #+end_src
 
 * Org archive
@@ -3089,3 +3108,12 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
  #+begin_src emacs-lisp
    (remove-hook 'after-save-hook #'rmail-after-save-hook)
  #+end_src
+
+* Info
+:PROPERTIES:
+:CREATED:  [2022-02-07 Mon 13:32]
+:END:
+#+begin_src emacs-lisp
+  (define-key Info-mode-map (kbd "<mouse-8>") #'Info-backward-node)
+  (define-key Info-mode-map (kbd "<mouse-9>") #'Info-forward-node)
+#+end_src
