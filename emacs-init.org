@@ -52,8 +52,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 ** Very early
 
 #+begin_src emacs-lisp
-  (require 'package)
-  (package-activate-all)
+
 #+end_src
 
 ** Tangle
@@ -69,11 +68,12 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (let ((gc-cons-threshold (* 5000 1024 1024))
-        (gc-cons-percentage))
-        (require 'ob-tangle)
-        (org-babel-load-file (expand-file-name "emacs-config.org" actuator-directory))
-        (org-babel-load-file (expand-file-name "emacs-theme.org" actuator-directory)))
+  (let ((gc-cons-threshold (* 5000 1024 1024)))
+    (require 'package)
+    (package-activate-all)
+    (require 'ob-tangle)
+    (org-babel-load-file (expand-file-name "emacs-config.org" actuator-directory))
+    (org-babel-load-file (expand-file-name "emacs-theme.org" actuator-directory)))
 #+end_src
 
 ** Footer
