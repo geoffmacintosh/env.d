@@ -918,7 +918,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                  1200 1300 1400 1500 1600
                  1700 1800 1900 2000 2100)
            " ....." "-----------------"))
-  (csetq org-agenda-diary-file "~/org/diary.org")
+  (csetq org-agenda-diary-file (expand-file-name "diary.org" org-directory))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1530,7 +1530,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 #+begin_src emacs-lisp
   (csetq mu4e-icalendar-trash-after-reply t)
-  (csetq mu4e-icalendar-diary-file "~/org/inbox.org")
+  (csetq mu4e-icalendar-diary-file (expand-file-name "inbox.org" org-directory))
   (with-eval-after-load 'mu4e
     (require 'mu4e-icalendar)
     (mu4e-icalendar-setup))
@@ -2795,7 +2795,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 * Registers
 [2021-07-18 Sun 21:27]
 #+begin_src emacs-lisp
-  (set-register ?i (cons 'file "~/org/inbox.org"))
+  (set-register ?i (cons 'file (expand-file-name "inbox.org" org-directory)))
 #+end_src
 
 * Lockfiles
@@ -2985,7 +2985,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-agenda-text-search-extra-files (file-expand-wildcards "~/org/archive/*.org"))
+  (csetq org-agenda-text-search-extra-files (file-expand-wildcards (expand-file-name "archive/*.org_archive" org-directory)))
 #+end_src
 
 * Automate org-mode backup
