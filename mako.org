@@ -10,6 +10,7 @@
   sort=-time
   max-history=3
   on-button-middle=dismiss-all
+  on-notify=exec mpv ~/org/etc/DeusExSounds0437.wav
 
   font=Helvetica 12
   background-color=#000000BF
