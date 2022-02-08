@@ -970,8 +970,11 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (require 'ox-extra)
-  (ox-extras-activate '(ignore-headlines))
+  (when (package-installed-p 'org-contrib)
+    (eval-when-compile
+      (declare-function ox-extras-activate "ox-extra"))
+    (require 'ox-extra)
+    (ox-extras-activate '(ignore-headlines)))
 #+end_src
 
 #+begin_src emacs-lisp
