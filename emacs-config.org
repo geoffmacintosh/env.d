@@ -1261,31 +1261,51 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+begin_src emacs-lisp
   (csetq ibuffer-show-empty-filter-groups nil)
   (csetq ibuffer-saved-filter-groups
-         '(("default"
-            ("Misc"      (name . "^\\*.*\\*$"))
-            ("Magit"     (name . "magit"))
-            ("Src"       (name . "\*Org Src"))
-            ("Dired"     (mode . dired-mode))
-            ("My Org"    (directory . "/Users/g/org"))
-            ("Config"    (or
-                          (directory . "/Users/g/.config")
-                          (directory . "/usr/local/share/emacs"))))))
+         `(("default"
+            ("Scratch" (name . "\*scratch\*"))
+            ("Org" (or
+                    (name . "\*Org Src")
+                    (mode . org-agenda-mode)
+                    (directory . "org/")))
+            ("Config" (directory . "env.d/"))
+            ("Magit" (derived-mode . magit-mode))
+            ("Docs" (mode . doc-view-mode))
+            ("Dired" (mode      . dired-mode))
+            ("Help" (or
+                     (name . "\*Help\*")
+                     (name . "\*Apropos\*")
+                     (name . "\*info\*")))
+            ("Internal" (or
+                         (name . "\*Compile-log\*")
+                         (name . "\*Buffer List\*")
+                         (name . "\*Backtrace\*")
+                         (name . "\*Messages\*")
+                         (name . "\*Completions\*")
+                         (name . "\*Calendar\*")
+                         (name . "\*tramp/sudo")
+                         (name . "\*elfeed-log\*")
+                         (name . "\*Packages\*")
+                         (mode . compilation-mode)))
+            ;; ("Misc"      (name . "^\\*.*\\*$"))
+            )))
 #+end_src
 
 #+begin_src emacs-lisp
-    (defun actuator-ibuffer-setup ()
-      "Set up ibuffer defaults that require running functions.
+  (defun actuator-ibuffer-setup ()
+    "Set up ibuffer defaults that require running functions.
 
-    This should be run as in a hook that is called when ibuffer-mode is run."
+  This should be run as in a hook that is called when ibuffer-mode is run."
 
-      (require 'ibuf-ext)
-      (eval-when-compile
-        (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext")
-        (declare-function ibuffer-auto-mode "ibuf-ext"))
-      (ibuffer-switch-to-saved-filter-groups "default")
-      (ibuffer-auto-mode 1)
-      (toggle-truncate-lines +1))
-    (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
+    (require 'ibuf-ext)
+    (eval-when-compile
+      (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext")
+      (declare-function ibuffer-auto-mode "ibuf-ext"))
+    (ibuffer-switch-to-saved-filter-groups "default")
+    (ibuffer-auto-mode 1)
+    (ibuffer-do-sort-by-alphabetic)
+    (toggle-truncate-lines +1))
+
+  (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
 #+end_src
 
 * Encryption (EPG)
