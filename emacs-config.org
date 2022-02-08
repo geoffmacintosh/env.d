@@ -139,6 +139,18 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 * Configuration
+** Open read only files in view mode
+#+begin_src emacs-lisp
+  (csetq view-read-only t)
+#+end_src
+
+** Disable C-z to suspend Emacs
+#+begin_src emacs-lisp
+  (global-unset-key (kbd "C-z"))
+#+end_src
+
+
+
 * Afterword
 
 #+begin_src emacs-lisp :tangle no :comments no
@@ -146,47 +158,10 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;;; actuator.el ends here
 #+end_src
 
-* Requirements
-
-Requirements are things that I need to do other stuff in my Emacs' init. This must be loaded before everything else or there will be troubles.
-
-** Package Init
-
-As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default. I add MELPA as a low-priority archive for now (Jan 2022).
-
-#+begin_src emacs-lisp
-  (csetq package-archives
-         '(("melpa"  . "https://melpa.org/packages/")
-           ("gnu"    . "https://elpa.gnu.org/packages/")
-           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
-
-  (csetq package-archive-priorities '(("melpa"  . 10)
-                                      ("gnu"    . 30)
-                                      ("nongnu" . 20)))
-#+end_src
-
-** GPG ID
-
-#+begin_src emacs-lisp
-  (defvar actuator-gpg-id "CB7647349621074630BED0DADDCB697E089A4F88"
-    "My GPG ID.")
-#+end_src
-
-* Read only
-#+begin_src emacs-lisp
-  (csetq view-read-only t)
-#+end_src
-
-* Ctrl-Z
-#+begin_src emacs-lisp
-  (global-unset-key (kbd "C-z"))
-#+end_src
-
 * Just one space
 #+begin_src emacs-lisp
   (defun actuator-just-one-space ()
     "Insert just one space, killing all other whitespace."
-
     (interactive)
     (just-one-space -1))
 
@@ -1018,7 +993,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-src-ask-before-returning-to-edit-buffer nil)
   (csetq org-src-fontify-natively t)
   (csetq org-tags-exclude-from-inheritance '("crypt"))
-  (csetq org-crypt-key actuator-gpg-id)
+  (csetq org-crypt-key "geoff@mac.into.sh")
   (csetq org-agenda-window-setup 'current-window)
   (csetq org-habit-show-habits-only-for-today t)
   (csetq org-capture-bookmark t)
@@ -1693,7 +1668,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq org-icalendar-combined-agenda-file "~/Desktop/org.ics")
 #+end_src
 
-* Message
+* Mes()sage
 
 #+begin_src emacs-lisp
   (csetq send-mail-function 'smtpmail-send-it)
@@ -1896,7 +1871,7 @@ https://gist.github.com/spacebat/5500966
 * Auth Source / EPA / EPG
 
 #+begin_src emacs-lisp
-  (csetq epa-file-encrypt-to actuator-gpg-id)
+  (csetq epa-file-encrypt-to "geoff@mac.into.sh")
   (csetq auth-sources '(password-store))
   (run-with-idle-timer 1 nil #'auth-source-pass-enable)
   (csetq password-cache-expiry 600)
@@ -3272,4 +3247,18 @@ I'm using a custom alert function so that I can use the system's notification sy
 #+begin_src emacs-lisp
   (define-key Info-mode-map (kbd "<mouse-8>") #'Info-backward-node)
   (define-key Info-mode-map (kbd "<mouse-9>") #'Info-forward-node)
+#+end_src
+* Package Init
+
+As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default. I add MELPA as a low-priority archive for now (Jan 2022).
+
+#+begin_src emacs-lisp
+  (csetq package-archives
+         '(("melpa"  . "https://melpa.org/packages/")
+           ("gnu"    . "https://elpa.gnu.org/packages/")
+           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+
+  (csetq package-archive-priorities '(("melpa"  . 10)
+                                      ("gnu"    . 30)
+                                      ("nongnu" . 20)))
 #+end_src
