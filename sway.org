@@ -1,6 +1,6 @@
 #+title: Sway
 #+index: Linux!Sway
-#+header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")
+#+property: header-args :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")
 
 * Intro
 
@@ -22,7 +22,7 @@
           natural_scroll enabled
           xkb_layout "us,us"
           xkb_variant "colemak,,"
-          xkb_options "ctrl:nocaps,grp:shift_toggle"
+          xkb_options "ctrl:nocaps"
   }
 #+end_src
 
