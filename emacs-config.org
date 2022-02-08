@@ -1453,7 +1453,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
       (defvar ediff-buffer-A)
       (defvar ediff-buffer-B)
       (defvar ediff-buffer-C)
-      (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body)))
+      (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body) t))
     (require 'ediff)
 
     (dolist (buf (list ediff-buffer-A ediff-buffer-B ediff-buffer-C))
@@ -2265,7 +2265,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (defvar elfeed-search-filter-overflowing)
       (defvar elfeed-search-entries)
       (declare-function elfeed-tagged-p "elfeed-db")
-      (declare-function elfeed-feed-url "elfeed-db")
+      (declare-function elfeed-feed-url "elfeed-db" t t)
       (declare-function elfeed-entry-feed "elfeed-db"))
     (if (and elfeed-search-filter-active elfeed-search-filter-overflowing)
         "?/?:?"
@@ -2637,14 +2637,19 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (eval-when-compile
       (defvar flymake-mode-map)
       (declare-function flymake-start "flymake")
-      (declare-function flymake-show-diagnostics-buffer "flymake")
+      (declare-function flymake-show-buffer-diagnostics "flymake")
       (declare-function flymake-goto-next-error "flymake")
       (declare-function flymake-goto-prev-error "flymake"))
     (define-key flymake-mode-map (kbd "C-c ! s") #'flymake-start)
-    (define-key flymake-mode-map (kbd "C-c ! d") #'flymake-show-diagnostics-buffer)
+    (define-key flymake-mode-map (kbd "C-c ! d") #'flymake-show-buffer-diagnostics)
     (define-key flymake-mode-map (kbd "C-c ! n") #'flymake-goto-next-error)
     (define-key flymake-mode-map (kbd "C-c ! p") #'flymake-goto-prev-error))
 #+end_src
+
+*
+:PROPERTIES:
+:CREATED:  [2022-02-08 Tue 12:10]
+:END:
 
 * Display buffer
 
