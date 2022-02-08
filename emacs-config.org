@@ -261,44 +261,81 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("l" "Todo (with link)" entry
-                   (file "inbox.org")
-                   "* %(org-expiry-insert-created)TODO %?\n%i\n%a\n")))
+  (csetq org-capture-use-agenda-date t)
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("t" "Todo (no link)" entry
+                 `("t" "Todo" entry
                    (file "inbox.org")
-                   "* %(org-expiry-insert-created)TODO %?\n%i\n")))
+                   "* %(org-expiry-insert-created)TODO %?"
+                   :empty-lines 1)))
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (defun actuator-date-stamp ()
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
+
     (add-to-list 'org-capture-templates
                  `("j" "Journal" entry
                    (file+olp+datetree "journal.org")
-                   "* %(org-expiry-insert-created)%(actuator-date-stamp)\n%?")))
+                   "* %(org-expiry-insert-created)%(actuator-date-stamp)\n%?"
+                   :empty-lines 1)))
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("C" "Contact" entry (file "contacts.org")
-                   "* %(org-expiry-insert-created)%^{Name}
-  :PROPERTIES:
-  :EMAIL: %^{Email}
-  :PHONE: %^{Phone}
-  :END:
-  %U
-  \n%?")))
+                 `("d" "Diary" entry
+                   (file "diary.org")
+                   "* TODO %^{Title} %^G \n%^T \n%? \n"
+                   :empty-lines 1)))
 #+end_src
 
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("n" "Note" entry
+                   (file "inbox.org")
+                   "* %(org-expiry-insert-created)TODO Note for %U \n- %?"
+                   :empty-lines 1)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 '("s" "Shopping item" table-line
+                   (file+headline "shopping.org" "List")
+                   "|%^{Status|Unapproved|Approved|Purchased}|%^{Category}|%?|%^{Price}|%^{Location}|%u|"
+                   :prepend
+                   :empty-lines 1
+                   :kill-buffer)))
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 '("b" "Book" entry
+                   (file+headline "media.org" "Books")
+                   (file "book-template.org")
+                   :prepend
+                   :empty-lines 1
+                   :kill-buffer)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 '("m" "Movie" entry
+                   (file+headline "media.org" "Movies")
+                   (file "movie-template.org")
+                   :prepend
+                   :empty-lines 1
+                   :kill-buffer)))
+#+end_src
 * Calendar
 
 #+begin_src emacs-lisp
