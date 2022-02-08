@@ -4,12 +4,64 @@
 
 * Forward
 
-#+begin_src emacs-lisp
-  ;;; emacs-config.el --- Configuration -*- lexical-binding: t; -*-
+#+begin_src emacs-lisp :tangle no :comments no
+  ;;; actuator.el --- Literate configuration files -*- lexical-binding: t; -*-
 
   ;;; Commentary:
 
   ;;; Code:
+#+end_src
+
+** Csetq
+
+The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things work. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
+
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+    "Macro to set the VALUE of VARIABLE, possibly a custom user option.
+
+  Should be a drop-in replacement for `setq', switching between the
+  two should only cause issues if the variable is supposed to be
+  set with customize."
+    `(funcall (or (get ',variable 'custom-set)
+                  (and (plist-member (symbol-plist ',variable)
+                                     'standard-value)
+                       'set-default)
+                  'set)
+              ',variable ,value))
+#+end_src
+
+
+** Mac and Linux variables
+
+#+begin_src emacs-lisp
+  (defvar *mac* (eq system-type 'darwin)
+    "Non-nil if system is a Mac.")
+
+  (defvar *linux* (eq system-type 'gnu/linux)
+    "Non-nil if system is Linux.")
+
+  (defvar *graphical* (display-graphic-p)
+    "Non-nil if system has a graphical display.")
+
+  (defvar *terminal* (not (display-graphic-p))
+    "Non-nil if system does not havea graphical display.")
+
+  (defun *mac* ()
+    "Return non-nil if system is a Mac."
+    (eq system-type 'darwin))
+
+  (defun *linux* ()
+    "Return non-nil if system is Linux."
+    (eq system-type 'gnu/linux))
+
+  (defun *graphical* ()
+    "Return non-nil if system has a graphical display."
+    (display-graphic-p))
+
+  (defun *terminal* ()
+    "Return non-nil if system does not have a graphical display."
+    (not (display-graphic-p)))
 #+end_src
 
 * Early init
@@ -89,26 +141,14 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 * Configuration
 * Afterword
 
-
+#+begin_src emacs-lisp :tangle no :comments no
+  (provide 'actuator)
+  ;;; actuator.el ends here
+#+end_src
 
 * Requirements
 
 Requirements are things that I need to do other stuff in my Emacs' init. This must be loaded before everything else or there will be troubles.
-
-** Csetq
-
-The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things work. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
-
-#+begin_src emacs-lisp
-  (defmacro csetq (variable value)
-    "Macro to set the VALUE of VARIABLE, possibly a custom user option."
-    `(funcall (or (get ',variable 'custom-set)
-                  (and (plist-member (symbol-plist ',variable)
-                                     'standard-value)
-                       'set-default)
-                  'set)
-              ',variable ,value))
-#+end_src
 
 ** Package Init
 
@@ -123,15 +163,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (csetq package-archive-priorities '(("melpa"  . 10)
                                       ("gnu"    . 30)
                                       ("nongnu" . 20)))
-#+end_src
-
-** Mac and Linux variables
-
-#+begin_src emacs-lisp
-  (defvar *mac* (eq system-type 'darwin))
-  (defvar *linux* (eq system-type 'gnu/linux))
-  (defvar *graphical* (display-graphic-p))
-  (defvar *terminal* (not (display-graphic-p)))
 #+end_src
 
 ** GPG ID
