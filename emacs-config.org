@@ -223,7 +223,38 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (global-set-key (kbd "M-/") #'actuator-maybe-just-one-space)
 #+end_src
 
+** Copy sentence
+:PROPERTIES:
+:CREATED:  [2022-02-08 Tue 19:18]
+:END:
+
+#+begin_src emacs-lisp
+  (defun actuator-kill-ring-save ()
+    "Save the entire sentence to the kill ring."
+    (interactive)
+    (cond ((region-active-p)
+           (kill-ring-save (region-beginning) (region-end)))
+          ((derived-mode-p 'text-mode)
+            (save-excursion
+              (backward-sentence)
+              (mark-end-of-sentence nil)
+              (copy-region-as-kill nil nil t)))
+          ((derived-mode-p 'prog-mode)
+           (save-excursion
+             (backward-sexp)
+             (backward-char)
+           (mark-sexp nil t)
+           (copy-region-as-kill nil nil t)))))
+
+  (global-set-key (kbd "M-w") #'actuator-kill-ring-save)
+#+end_src
+
 * Org-mode
+** Switches
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (define-key org-agenda-mode-map (kbd "T") #'org-agenda-todo-yesterday))
+#+end_src
 * Afterword
 
 #+begin_src emacs-lisp :tangle no :comments no
@@ -442,7 +473,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (add-to-list 'org-capture-templates
                  `("n" "Note" entry
                    (file "inbox.org")
-                   "* %(org-expiry-insert-created)TODO Note for %U \n- %?"
+                   "* %(org-expiry-insert-created)Note for %U \n- %?"
                    :empty-lines 1)))
 #+end_src
 
@@ -461,23 +492,19 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("b" "Book" entry
-                   (file+headline "media.org" "Books")
-                   (file "book-template.org")
-                   :prepend
-                   :empty-lines 1
-                   :kill-buffer)))
+                 '("b" "Book" table-line
+                   (file+headline "books.org" "Read list")
+                   "|%u|%^{Title}|%^{Author}|%^{Series} %^{Number}|%^{Year}|%^{Rating|Bad|Good|Great}|"
+                   )))
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("m" "Movie" entry
-                   (file+headline "media.org" "Movies")
-                   (file "movie-template.org")
-                   :prepend
-                   :empty-lines 1
-                   :kill-buffer)))
+                 '("m" "Media" entry
+                   (file+headline "media.org" "Media")
+                   "|%u|%^{Title}|%^{Series} %^{Number}|%^{Year}|%^{Rating|Bad|Good|Great}|"
+                 )))
 #+end_src
 * Calendar
 
@@ -580,25 +607,25 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 * Frame init
 
 #+begin_src emacs-lisp
-    (defun actuator-frame-init (&optional _frame)
-      "Initialize per-frame variables.
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
 
-    These variables need to be set every time a frame is created."
+  These variables need to be set every time a frame is created."
 
-      (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-      (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-      (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-      (when (and (is-terminal-p)
-                 (fboundp 'menu-bar-mode))
-        (menu-bar-mode -1))
-      (with-eval-after-load 'emacs-config
-          (when (actuator-font-exists-p "SF Mono")
-        (set-frame-font "SF Mono-12" nil t))))
+    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    (when (and (is-terminal-p)
+               (fboundp 'menu-bar-mode))
+      (menu-bar-mode -1))
+    (when (fboundp 'actuator-font-exists-p)
+        (when (actuator-font-exists-p "SF Mono")
+      (set-frame-font "SF Mono-12" nil t))))
 
-    (add-hook 'after-make-frame-functions 'actuator-frame-init)
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
-    (unless noninteractive
-      (actuator-frame-init))
+  (unless noninteractive
+    (add-hook 'after-init-hook #'actuator-frame-init))
 #+end_src
 
 * Recentf
