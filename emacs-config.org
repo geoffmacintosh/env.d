@@ -31,8 +31,8 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 #+end_src
 
 
-** Mac and Linux variables
-I have defined a bunch of
+** Functions to determine platforms
+I need a bunch of convenience functions to check the capabilities of the system and make different things happen in different situations.
 
 #+begin_src emacs-lisp
   (defun is-mac-p ()
@@ -51,6 +51,37 @@ I have defined a bunch of
     "Return non-nil if system does not have a graphical display."
     (not (display-graphic-p)))
 #+end_src
+
+** Just one space
+
+#+begin_src emacs-lisp
+  (defun actuator-just-one-space ()
+    "Insert just one space, killing all other whitespace."
+    (interactive)
+    (just-one-space -1))
+
+  (global-set-key (kbd "M-/") #'actuator-just-one-space)
+#+end_src
+
+
+** Unfill paragraph
+
+#+begin_src emacs-lisp
+  (defun actuator-unfill-paragraph ()
+    "Does the opposite of filling a paragraph.
+
+  This technically causes it to wrap only at a really huge number.
+  It should be safe in most instances, but Emacs does have some
+  issues with really long lines, so if you run this on a really,
+  really huge paragraph, you might be sorry."
+
+    (interactive)
+    (let ((fill-column most-positive-fixnum))
+      (fill-paragraph)))
+
+  (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
+#+end_src
+
 
 * Early init
 :PROPERTIES:
@@ -146,45 +177,20 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;;; actuator.el ends here
 #+end_src
 
-* Just one space
-
-#+begin_src emacs-lisp
-  (defun actuator-just-one-space ()
-    "Insert just one space, killing all other whitespace."
-    (interactive)
-    (just-one-space -1))
-
-  (global-set-key (kbd "M-/") #'actuator-just-one-space)
-#+end_src
-
-* Unfill paragraph
-
-#+begin_src emacs-lisp
-  (defun actuator-unfill-paragraph ()
-    "Does the opposite of filling a paragraph.
-
-  This technically causes it to wrap only at a really huge number.
-  It should be safe in most instances, but Emacs does have some
-  issues with really long lines, so if you run this on a really,
-  really huge paragraph, you might be sorry."
-
-    (interactive)
-    (let ((fill-column most-positive-fixnum))
-      (fill-paragraph)))
-
-  (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
-#+end_src
-
 * Savehist
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'savehist-mode)
   (csetq history-length 10000)
   (csetq history-delete-duplicates t)
   (csetq message-log-max 10000)
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq savehist-save-minibuffer-history t)
   (csetq savehist-additional-variables
-         '(buffer-name-history
+         '(bookmark-history
+           buffer-name-history
            command-history
+           compile-command
            compile-history
            extended-command-history
            file-name-history
@@ -194,32 +200,38 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
            kill-ring
            kmacro-ring
            last-kbd-macro
+           mark-ring
            minibuffer-history
+           occur-collect-regexp-history
+           org-agenda-search-history
+           org-clock-history
+           org-clock-stored-history
            org-link--history
+           org-link--insert-history
+           org-mark-ring
            org-read-date-history
+           org-refile-cache
            org-refile-history
            org-table-formula-history
            org-tags-history
+           query-replace-history
            regexp-search-ring
            register-alist
            savehist-minibuffer-history-variables
-           shell-command-history
-           mark-ring))
+           search-ring
+           shell-command-history))
+
+  (run-with-idle-timer 1 nil #'savehist-mode)
 #+end_src
 
-1. Quick fixes:
-
-   the issue could be that save-interprogram-paste-before-kill means a large clipboard which becomes part of savehist:
-
-https://github.com/syl20bnr/spacemacs/issues/9409
+Interprogram paste can cause [[https://github.com/syl20bnr/spacemacs/issues/9409][issues]] if it saves too much, setting it to an integer or nil limits it.
 
 #+begin_src emacs-lisp
-  (csetq save-interprogram-paste-before-kill nil)
+  (csetq save-interprogram-paste-before-kill 100)
 #+end_src
 
-https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
+Unpropertizing the kill ring is [[https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist][good for the kill ring]].
 
-2. Unpropertize kill ring
 #+begin_src emacs-lisp
   (defun actuator-unpropertize-kill-ring ()
     "Remove properties from items in the kill ring.
@@ -231,10 +243,17 @@ https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
   ring. This removes properties, which makes the kill ring lossy in
   a fashion, but means that saving huge numbers of kill ring items
   to disk should no longer cause weird issues."
-
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
-  (add-hook 'after-save-hook #'actuator-unpropertize-kill-ring)
+  (add-hook 'savehist-save-hook #'actuator-unpropertize-kill-ring)
+#+end_src
+
+* Sorting
+:PROPERTIES:
+:CREATED:  [2022-02-08 Tue 17:26]
+:END:
+#+begin_src emacs-lisp
+  (csetq sort-fold-case t)
 #+end_src
 
 * Autorevert
@@ -574,7 +593,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 * JIT lock
 
 #+begin_src emacs-lisp
-  (csetq jit-lock-defer-time 0.1) ; Delay font-lock if its slow
+  (csetq jit-lock-defer-time 0)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -582,7 +601,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (global-set-key (kbd "M-o") #'other-window)
 #+end_src
 
