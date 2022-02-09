@@ -1,6 +1,6 @@
 #+title: Emacs
 #+startup: contents
-#+property: header-args :tangle emacs-config.el :comments link
+#+property: header-args :tangle (concat (file-name-base (buffer-file-name)) ".el") :comments link
 
 * Forward
 
@@ -51,7 +51,6 @@ I need a bunch of convenience functions to check the capabilities of the system 
     "Return non-nil if system does not have a graphical display."
     (not (display-graphic-p)))
 #+end_src
-
 
 * Early init
 :PROPERTIES:
@@ -170,7 +169,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
   (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
 #+end_src
-
 
 * Afterword
 
