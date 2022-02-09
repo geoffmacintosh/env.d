@@ -168,8 +168,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (global-unset-key (kbd "C-z"))
 #+end_src
 
-
-
 * Afterword
 
 #+begin_src emacs-lisp :tangle no :comments no
@@ -625,12 +623,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (add-hook 'before-save-hook 'whitespace-cleanup)
 #+end_src
 
 #+begin_src emacs-lisp
-
   (csetq indent-tabs-mode nil) ; Never insert tabs with tab key
 #+end_src
 
@@ -639,12 +635,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (run-with-idle-timer 1 nil #'save-place-mode 1)
 #+end_src
 
 #+begin_src emacs-lisp
-
   (csetq backup-by-copying    t)
   (csetq delete-old-versions  t)
   (csetq kept-new-versions    100)
@@ -654,7 +648,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (csetq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
   (csetq uniquify-separator "/")
   (csetq uniquify-after-kill-buffer-p t)
@@ -663,7 +656,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (csetq find-file-visit-truename nil) ; Don't resolve symlinks
 #+end_src
 
@@ -686,19 +678,16 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-defun  'disabled nil)
 #+end_src
 
 #+begin_src emacs-lisp
-
   (add-hook 'after-save-hook
             #'executable-make-buffer-file-executable-if-script-p)
 #+end_src
 
 #+begin_src emacs-lisp
-
   (defun display-startup-echo-area-message ()
     "Remove the GNU info from the minibuffer on startup.
 
@@ -709,7 +698,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (when (and (is-mac-p) (is-graphical-p))
     (csetq default-frame-alist
            '((ns-transparent-titlebar . t)
@@ -717,7 +705,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (csetq completion-styles
         '(fuzzy
           partial-completion
@@ -729,7 +716,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-
   (defun actuator-font-exists-p (font)
     "Return non-nil if FONT is loaded."
     (member font (font-family-list)))
@@ -1676,7 +1662,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq org-icalendar-combined-agenda-file "~/Desktop/org.ics")
 #+end_src
 
-* Mes()sage
+* Message
 
 #+begin_src emacs-lisp
   (csetq send-mail-function 'smtpmail-send-it)
