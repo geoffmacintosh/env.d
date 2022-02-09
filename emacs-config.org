@@ -13,7 +13,7 @@
 #+end_src
 
 ** Csetq
-The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things work. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
+The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things worse. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
 
 #+begin_src emacs-lisp
   (defmacro csetq (variable value)
@@ -126,32 +126,71 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;;; init.el ends here
 #+end_src
 
-* Configuration
-** Open read only files in view mode
-#+begin_src emacs-lisp
-  (csetq view-read-only t)
-#+end_src
-
-** Disable C-z to suspend Emacs
-#+begin_src emacs-lisp
-  (global-unset-key (kbd "C-z"))
-#+end_src
-
-** Just one space
+* Switches
 
 #+begin_src emacs-lisp
-  (defun actuator-maybe-just-one-space ()
-    "Insert just one space, killing all other whitespace."
-    (interactive)
-    (just-one-space -1)
-      (when (and (looking-at ")")
-               (looking-back ") "))
-          (delete-char -1)))
+  (csetq view-read-only t)                ; Open read-only files in view mode
+  (global-unset-key (kbd "C-z"))          ; Disable suspend keybinding
+  (csetq window-combination-resize t)
+  (csetq undo-limit (* 80 1024 1024))
+  (global-unset-key (kbd "<C-wheel-down>"))
+  (global-unset-key (kbd "<C-wheel-up>"))
+  (csetq help-window-select t)            ; Select help window by default
+  (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back)
+  (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
+  (csetq jit-lock-defer-time 0)
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (global-set-key (kbd "M-o") #'other-window)
+  (delete-selection-mode 1)
+  (run-with-idle-timer 1 nil #'midnight-mode t)
+  (csetq sentence-end-double-space nil)
+  (set-language-environment "UTF-8")
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (csetq indent-tabs-mode nil)            ; Never insert tabs with tab key
+  (csetq require-final-newline t)
+  (run-with-idle-timer 1 nil #'save-place-mode 1)
+  (csetq find-file-visit-truename nil) ; Don't resolve symlinks
+  (csetq confirm-kill-emacs 'y-or-n-p)
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-defun  'disabled nil)
+  (add-hook 'after-save-hook
+            #'executable-make-buffer-file-executable-if-script-p)
+  (global-set-key (kbd "s-z") #'undo-only)
+  (global-set-key (kbd "s-Z") #'undo-redo)
+  (csetq bookmark-save-flag 1)
+  (csetq bookmark-set-fringe-mark nil)
+  (csetq frame-resize-pixelwise t)
+  (csetq frame-inhibit-implied-resize t)
+  (global-set-key (kbd "M-=") #'count-words)
+  (blink-cursor-mode -1)
+  (csetq cursor-type 'box)
+  (csetq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
+  (csetq scroll-margin 0)
+  (csetq mouse-wheel-scroll-amount '(1))
+  (csetq inhibit-startup-message t)
+  (csetq initial-scratch-message "")
+  (when (executable-find "mdfind")
+    (csetq locate-command "mdfind"))
+  (run-with-idle-timer 1 nil #'show-paren-mode +1)
+  (run-with-idle-timer 1 nil #'electric-pair-mode +1)
+  (csetq blink-matching-paren nil)
+  (csetq show-paren-delay 0)
+  (csetq show-paren-style 'mixed)
+  (csetq epg-pinentry-mode 'loopback)
+  (csetq package-native-compile t)
+  (csetq switch-to-buffer-preserve-window-point t)
+  (csetq bookmark-fontify nil)
+  (csetq sort-fold-case t)
+  (csetq disabled-command-function 'ignore)
+  (csetq bidi-paragraph-direction 'left-to-right)
+  (csetq bidi-inhibit-bpa t)
+  (run-with-idle-timer 1 nil #'global-so-long-mode 1)
+  (csetq proced-auto-update-flag t)
+  (csetq create-lockfiles nil)
+  (remove-hook 'after-save-hook #'rmail-after-save-hook)
+ #+end_src
 
-  (global-set-key (kbd "M-/") #'actuator-maybe-just-one-space)
-#+end_src
-
-
+* Drop-in functions
 ** Unfill paragraph
 
 #+begin_src emacs-lisp
@@ -170,6 +209,21 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
 #+end_src
 
+** Just one space
+
+#+begin_src emacs-lisp
+  (defun actuator-maybe-just-one-space ()
+    "Insert just one space, killing all other whitespace."
+    (interactive)
+    (just-one-space -1)
+      (when (and (looking-at ")")
+               (looking-back ") "))
+          (delete-char -1)))
+
+  (global-set-key (kbd "M-/") #'actuator-maybe-just-one-space)
+#+end_src
+
+* Org-mode
 * Afterword
 
 #+begin_src emacs-lisp :tangle no :comments no
@@ -248,14 +302,6 @@ Unpropertizing the kill ring is [[https://emacs.stackexchange.com/questions/4187
   (add-hook 'savehist-save-hook #'actuator-unpropertize-kill-ring)
 #+end_src
 
-* Sorting
-:PROPERTIES:
-:CREATED:  [2022-02-08 Tue 17:26]
-:END:
-#+begin_src emacs-lisp
-  (csetq sort-fold-case t)
-#+end_src
-
 * Autorevert
 Autorevert via notify is supposed to be much lower power than polling. It should work by default, but on Arch you need to install inotify-tools or it does not work at all.
 
@@ -282,14 +328,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (unless (server-running-p) (server-start)))
   (run-with-idle-timer 1 nil #'actuator-start-server-if-not-running)
 #+end_src
-
-* Undo
-- [[https://b3n.sdf-eu.org/undo-in-emacs.html][Undo in Emacs]]
-
-  #+begin_src emacs-lisp
-    (global-set-key (kbd "s-z") #'undo-only)
-    (global-set-key (kbd "s-Z") #'undo-redo)
-  #+end_src
 
 * Minibuffer Resize
 #+begin_src emacs-lisp
@@ -539,211 +577,28 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (fringe-mode 12))
 #+end_src
 
-* Bookmarks
-
-#+begin_src emacs-lisp
-  (csetq bookmark-version-control t)
-  (csetq bookmark-save-flag 1)
-  (csetq bookmark-set-fringe-mark nil)
-#+end_src
-
-* Window resize
-
-#+begin_src emacs-lisp
-  (csetq window-combination-resize t)
-#+end_src
-
-* Undo
-
-#+begin_src emacs-lisp
-  (csetq undo-limit (* 80 1024 1024))
-#+end_src
-
-* Frame resize
-
-#+begin_src emacs-lisp
-  (csetq frame-resize-pixelwise t)
-  (csetq frame-inhibit-implied-resize t)
-#+end_src
-
-* Count words
-
-#+begin_src emacs-lisp
-  (global-set-key (kbd "M-=") #'count-words)
-#+end_src
-
-* Ctrl-scroll
-
-#+begin_src emacs-lisp
-  (global-unset-key (kbd "<C-wheel-down>"))
-  (global-unset-key (kbd "<C-wheel-up>"))
-#+end_src
-
-* Help window select
-
-#+begin_src emacs-lisp
-  (csetq help-window-select t) ; Select help window by default
-#+end_src
-
-#+begin_src emacs-lisp
-  (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back)
-  (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
-#+end_src
-
-* JIT lock
-
-#+begin_src emacs-lisp
-  (csetq jit-lock-defer-time 0)
-#+end_src
-
-#+begin_src emacs-lisp
-  (defalias 'yes-or-no-p 'y-or-n-p)
-#+end_src
-
-#+begin_src emacs-lisp
-  (global-set-key (kbd "M-o") #'other-window)
-#+end_src
-
-#+begin_src emacs-lisp
-  (delete-selection-mode 1)
-#+end_src
-
-#+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'midnight-mode t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq sentence-end-double-space nil)
-#+end_src
-
-#+begin_src emacs-lisp
-  ;;(prefer-coding-system 'utf-8)
-  ;;(set-default-coding-systems 'utf-8)
-  ;;(set-terminal-coding-system 'utf-8)
-  ;;(set-keyboard-coding-system 'utf-8)
-  (set-language-environment "UTF-8")
-#+end_src
-
-#+begin_src emacs-lisp
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq indent-tabs-mode nil) ; Never insert tabs with tab key
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq require-final-newline t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'save-place-mode 1)
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq backup-by-copying    t)
-  (csetq delete-old-versions  t)
-  (csetq kept-new-versions    100)
-  (csetq kept-old-versions    50) ; I don't know what an old version is
-  (csetq version-control      t)
-  (csetq vc-make-backup-files t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
-  (csetq uniquify-separator "/")
-  (csetq uniquify-after-kill-buffer-p t)
-  (csetq uniquify-ignore-buffers-re "^\\*")
-  (csetq uniquify-strip-common-suffix nil)
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq find-file-visit-truename nil) ; Don't resolve symlinks
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq confirm-kill-emacs 'y-or-n-p)
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-enable-abbrev-mode ()
-    (abbrev-mode 1))
-
-  (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
-  (add-hook 'prog-mode-hook #'actuator-enable-abbrev-mode)
-  (csetq save-abbrevs 'silently)
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (csetq enable-recursive-minibuffers t)
-  (run-with-idle-timer 1 nil #'minibuffer-depth-indicate-mode t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (put 'narrow-to-region 'disabled nil)
-  (put 'narrow-to-defun  'disabled nil)
-#+end_src
-
-#+begin_src emacs-lisp
-  (add-hook 'after-save-hook
-            #'executable-make-buffer-file-executable-if-script-p)
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun display-startup-echo-area-message ()
-    "Remove the GNU info from the minibuffer on startup.
-
-  All you have to do is create a function with this name.  It's
-  called automatically."
-
-    (message ""))
-#+end_src
-
-#+begin_src emacs-lisp
-  (when (and (is-mac-p) (is-graphical-p))
-    (csetq default-frame-alist
-           '((ns-transparent-titlebar . t)
-             (ns-appearance           . 'light))))
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq completion-styles
-        '(fuzzy
-          partial-completion
-          substring
-          initials
-          basic
-          emacs22))
-
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-font-exists-p (font)
-    "Return non-nil if FONT is loaded."
-    (member font (font-family-list)))
-#+end_src
-
 * Frame init
 
 #+begin_src emacs-lisp
-  (defun actuator-frame-init (&optional _frame)
-    "Initialize per-frame variables.
+    (defun actuator-frame-init (&optional _frame)
+      "Initialize per-frame variables.
 
-  These variables need to be set every time a frame is created."
+    These variables need to be set every time a frame is created."
 
-    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-    (when (and (is-terminal-p)
-               (fboundp 'menu-bar-mode))
-      (menu-bar-mode -1))
-    (when (actuator-font-exists-p "SF Mono")
-      (set-frame-font "SF Mono-12" nil t)))
+      (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+      (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+      (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+      (when (and (is-terminal-p)
+                 (fboundp 'menu-bar-mode))
+        (menu-bar-mode -1))
+      (with-eval-after-load 'emacs-config
+          (when (actuator-font-exists-p "SF Mono")
+        (set-frame-font "SF Mono-12" nil t))))
 
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+    (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
-  (unless noninteractive
-    (actuator-frame-init))
+    (unless noninteractive
+      (actuator-frame-init))
 #+end_src
 
 * Recentf
@@ -760,52 +615,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (recentf-mode 1)
 #+end_src
 
-* Plain Font
-
-#+begin_src emacs-lisp
-  (blink-cursor-mode -1)
-  (csetq cursor-type 'box)
-  (csetq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
-  (csetq scroll-margin 0)
-  (csetq mouse-wheel-scroll-amount '(1))
-
-  (csetq inhibit-startup-message t)
-  (csetq initial-scratch-message "")
-#+end_src
-
-#+begin_src emacs-lisp
-  (unless 'window-system
-    (require 'mouse)
-    (require 'xt-mouse)
-    (xterm-mouse-mode t)
-    (defun track-mouse (_e)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (when (executable-find "mdfind")
-    (csetq locate-command "mdfind"))
-#+end_src
-
-#+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'show-paren-mode +1)
-  (run-with-idle-timer 1 nil #'electric-pair-mode +1)
-  (csetq blink-matching-paren nil)
-  (csetq show-paren-delay 0)
-  (csetq show-paren-style 'mixed)
-#+end_src
-
-#+begin_src emacs-lisp
-  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
-
-  (defun actuator-startup-profile ()
-    "Display the startup time and garbage collections in the minibuffer."
-
-    (message "Emacs ready in %s with %d garbage collections."
-             (format "%.2f seconds"
-                     (float-time
-                      (time-subtract after-init-time before-init-time)))
-             gcs-done))
-#+end_src
 * Eliminate frame title
 #+begin_src emacs-lisp
   (csetq ns-use-proxy-icon nil)
@@ -1401,10 +1210,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
 #+end_src
 
-* Encryption (EPG)
-#+begin_src emacs-lisp
-  (csetq epg-pinentry-mode 'loopback)
-#+end_src
 * Dired
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x C-d") #'dired)
@@ -1744,19 +1549,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   ;;(add-hook 'message-send-hook #'actuator-check-for-network-before-sending-message)
 #+end_src
 
-* Native Compile
-
-#+begin_src emacs-lisp
-  (csetq package-native-compile t)
-#+end_src
-
-* Package Quickstart
-
-#+begin_src emacs-lisp
-  (unless noninteractive
-    (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
-#+end_src
-
 * Byte compile init
 
 #+begin_src emacs-lisp
@@ -1782,14 +1574,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (when (is-graphical-p)
     (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init))
 #+end_src
-
-* Allow different places in the same buffer
-#+begin_src emacs-lisp
-  (csetq switch-to-buffer-preserve-window-point t)
-#+end_src
-
-#+results:
-: t
 
 * ERC
 #+begin_src emacs-lisp
@@ -1849,11 +1633,6 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (csetq elfeed-db-directory   (expand-file-name "elfeed" user-emacs-directory))
   (csetq abbrev-file-name      (expand-file-name "etc/abbrev.el" org-directory))
-#+end_src
-
-* Bookmarks
-#+begin_src emacs-lisp
-  (csetq bookmark-fontify nil)
 #+end_src
 
 * Org Randomnote
@@ -2670,11 +2449,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
          `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 #+end_src
 
-* Ignore disabled commands
-#+begin_src emacs-lisp
-  (csetq disabled-command-function 'ignore)
-#+end_src
-
 * Spell check
 #+begin_src emacs-lisp
   (csetq ispell-personal-dictionary (expand-file-name "etc/dictionary" org-directory))
@@ -2688,26 +2462,10 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around)
 #+end_src
 
-* Remove bidirectional editing to make long lines better
-#+begin_src emacs-lisp
-  (csetq bidi-paragraph-direction 'left-to-right)
-  (csetq bidi-inhibit-bpa t)
-#+end_src
-
-* Long lines mode
-#+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'global-so-long-mode 1)
-#+end_src
-
 * Package
 #+begin_src emacs-lisp
   (csetq package-name-column-width 40)
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
-#+end_src
-
-* Proced
-#+begin_src emacs-lisp
-  (csetq proced-auto-update-flag t)
 #+end_src
 
 * Winner
@@ -2938,11 +2696,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 [2021-07-18 Sun 21:27]
 #+begin_src emacs-lisp
   (set-register ?i (cons 'file (expand-file-name "inbox.org" org-directory)))
-#+end_src
-
-* Lockfiles
-#+begin_src emacs-lisp
-  (csetq create-lockfiles nil)
 #+end_src
 
 * Org-msg
@@ -3224,14 +2977,6 @@ I'm using a custom alert function so that I can use the system's notification sy
   (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save)
 #+end_src
 
-* Rmail
-:PROPERTIES:
-:CREATED:  [2022-01-25 Tue 17:42]
-:END:
- #+begin_src emacs-lisp
-   (remove-hook 'after-save-hook #'rmail-after-save-hook)
- #+end_src
-
 * Info
 :PROPERTIES:
 :CREATED:  [2022-02-07 Mon 13:32]
@@ -3253,4 +2998,93 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (csetq package-archive-priorities '(("melpa"  . 10)
                                       ("gnu"    . 30)
                                       ("nongnu" . 20)))
+#+end_src
+
+* Oops
+:PROPERTIES:
+:CREATED:  [2022-02-09 Wed 09:04]
+:END:
+
+#+begin_src emacs-lisp
+  (csetq backup-by-copying    t)
+  (csetq delete-old-versions  t)
+  (csetq kept-new-versions    100)
+  (csetq kept-old-versions    50) ; I don't know what an old version is
+  (csetq version-control      t)
+  (csetq vc-make-backup-files t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
+  (csetq uniquify-separator "/")
+  (csetq uniquify-after-kill-buffer-p t)
+  (csetq uniquify-ignore-buffers-re "^\\*")
+  (csetq uniquify-strip-common-suffix nil)
+#+end_src
+#+begin_src emacs-lisp
+  (defun actuator-enable-abbrev-mode ()
+    (abbrev-mode 1))
+
+  (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
+  (add-hook 'prog-mode-hook #'actuator-enable-abbrev-mode)
+  (csetq save-abbrevs 'silently)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun display-startup-echo-area-message ()
+    "Remove the GNU info from the minibuffer on startup.
+
+  All you have to do is create a function with this name.  It's
+  called automatically."
+
+    (message ""))
+#+end_src
+
+#+begin_src emacs-lisp
+  (when (and (is-mac-p) (is-graphical-p))
+    (csetq default-frame-alist
+           '((ns-transparent-titlebar . t)
+             (ns-appearance           . 'light))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq completion-styles
+        '(fuzzy
+          partial-completion
+          substring
+          initials
+          basic
+          emacs22))
+
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-font-exists-p (font)
+    "Return non-nil if FONT is loaded."
+    (member font (font-family-list)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
+
+  (defun actuator-startup-profile ()
+    "Display the startup time and garbage collections in the minibuffer."
+
+    (message "Emacs ready in %s with %d garbage collections."
+             (format "%.2f seconds"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))
+             gcs-done))
+#+end_src
+#+begin_src emacs-lisp
+  (unless 'window-system
+    (require 'mouse)
+    (require 'xt-mouse)
+    (xterm-mouse-mode t)
+    (defun track-mouse (_e)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
 #+end_src
