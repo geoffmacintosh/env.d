@@ -112,12 +112,17 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (let ((gc-cons-threshold (* 5000 1024 1024)))
+  (let ((gc-cons-threshold (* 5000 1024 1024))
+        (config (expand-file-name "emacs-config.org" actuator-directory))
+        (theme (expand-file-name "emacs-theme.org" actuator-directory)))
     (require 'package)
     (package-activate-all)
     (require 'ob-tangle)
-    (org-babel-load-file (expand-file-name "emacs-config.org" actuator-directory))
-    (org-babel-load-file (expand-file-name "emacs-theme.org" actuator-directory)))
+
+    (when (file-readable-p config)
+      (org-babel-load-file config))
+    (when (file-readable-p theme)
+      (org-babel-load-file theme)))
 #+end_src
 
 ** Footer
@@ -129,65 +134,66 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 * Switches
 
 #+begin_src emacs-lisp
-  (csetq view-read-only t)                ; Open read-only files in view mode
-  (global-unset-key (kbd "C-z"))          ; Disable suspend keybinding
-  (csetq window-combination-resize t)
-  (csetq undo-limit (* 80 1024 1024))
-  (global-unset-key (kbd "<C-wheel-down>"))
+  (csetq view-read-only t)           ; Open read-only files in view mode
+  (global-unset-key (kbd "C-z"))     ; Disable suspend keybinding
+  (csetq window-combination-resize t) ; Split windows so that it's proportional-ish
+  (csetq undo-limit (* 10 1024 1024)) ; Set a high undo limit (bytes)
+  (global-unset-key (kbd "<C-wheel-down>")) ; I hate scroll-resizing fonts
   (global-unset-key (kbd "<C-wheel-up>"))
-  (csetq help-window-select t)            ; Select help window by default
-  (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back)
+  (csetq help-window-select t)            ; Select help window by default, so it's easy
+                                          ; to kill
+  (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back) ; Mouse back and forward buttons
   (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
-  (csetq jit-lock-defer-time 0)
-  (defalias 'yes-or-no-p 'y-or-n-p)
-  (global-set-key (kbd "M-o") #'other-window)
-  (delete-selection-mode 1)
-  (run-with-idle-timer 1 nil #'midnight-mode t)
-  (csetq sentence-end-double-space nil)
-  (set-language-environment "UTF-8")
-  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (csetq jit-lock-defer-time 0)           ; Defer doing font lock if there's input pending
+  (defalias 'yes-or-no-p 'y-or-n-p)       ; Never have to type "yes" anymore
+  (global-set-key (kbd "M-o") #'other-window) ; M-o is otherwise unused
+  (delete-selection-mode 1)                   ; Delete selection instead of be confusing
+  (run-with-idle-timer 1 nil #'midnight-mode t) ; Run stuff at a random morning cycle
+  (csetq sentence-end-double-space nil)         ; Single space FTW
+  (set-language-environment "UTF-8")            ; This is all that's needed to ensure UTF-8
+  (add-hook 'before-save-hook 'whitespace-cleanup) ; Remove trailing spaces and most blank lines at the end
   (csetq indent-tabs-mode nil)            ; Never insert tabs with tab key
   (csetq require-final-newline t)
-  (run-with-idle-timer 1 nil #'save-place-mode 1)
+  (run-with-idle-timer 1 nil #'save-place-mode 1) ; Save the place the point lived in
   (csetq find-file-visit-truename nil) ; Don't resolve symlinks
-  (csetq confirm-kill-emacs 'y-or-n-p)
-  (put 'narrow-to-region 'disabled nil)
-  (put 'narrow-to-defun  'disabled nil)
+  (csetq confirm-kill-emacs 'y-or-n-p) ; Ensures there is a confirmation
+  (put 'narrow-to-region 'disabled nil) ; I don't use this though
+  (put 'narrow-to-defun  'disabled nil) ; I don't use this either
   (add-hook 'after-save-hook
-            #'executable-make-buffer-file-executable-if-script-p)
-  (global-set-key (kbd "s-z") #'undo-only)
-  (global-set-key (kbd "s-Z") #'undo-redo)
-  (csetq bookmark-save-flag 1)
-  (csetq bookmark-set-fringe-mark nil)
-  (csetq frame-resize-pixelwise t)
-  (csetq frame-inhibit-implied-resize t)
-  (global-set-key (kbd "M-=") #'count-words)
-  (blink-cursor-mode -1)
+            #'executable-make-buffer-file-executable-if-script-p) ; CHMOD scripts on save. Doesn't work on tangle
+  ;;(global-set-key (kbd "s-z") #'undo-only)
+  ;;(global-set-key (kbd "s-Z") #'undo-redo)
+  ;;(csetq bookmark-save-flag 1)            ; Save every time
+  (csetq bookmark-set-fringe-mark nil)    ; Those marks drive me mad
+  (csetq frame-resize-pixelwise t)        ; Allow resize by pixels, not just columns or rows
+  (csetq frame-inhibit-implied-resize t)  ; The frame isn't resized when the contents are
+  (global-set-key (kbd "M-=") #'count-words) ; Dumb count words
+  (blink-cursor-mode -1)                     ; Remove blink
   (csetq cursor-type 'box)
   (csetq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
-  (csetq scroll-margin 0)
-  (csetq mouse-wheel-scroll-amount '(1))
-  (csetq inhibit-startup-message t)
-  (csetq initial-scratch-message "")
+  (csetq scroll-margin 10)           ; Scroll when the point hits the edge of the screen if 0
+  (csetq mouse-wheel-scroll-amount '(1))  ; I should fancify this
+  (csetq inhibit-startup-message t)       ; No startup message
+  (csetq initial-scratch-message "")      ; No scratch message
   (when (executable-find "mdfind")
     (csetq locate-command "mdfind"))
-  (run-with-idle-timer 1 nil #'show-paren-mode +1)
-  (run-with-idle-timer 1 nil #'electric-pair-mode +1)
+  (run-with-idle-timer 1 nil #'show-paren-mode +1) ; Show paren-friends
+  (run-with-idle-timer 1 nil #'electric-pair-mode +1) ; Make closing parens
   (csetq blink-matching-paren nil)
   (csetq show-paren-delay 0)
   (csetq show-paren-style 'mixed)
-  (csetq epg-pinentry-mode 'loopback)
-  (csetq package-native-compile t)
-  (csetq switch-to-buffer-preserve-window-point t)
-  (csetq bookmark-fontify nil)
-  (csetq sort-fold-case t)
-  (csetq disabled-command-function 'ignore)
-  (csetq bidi-paragraph-direction 'left-to-right)
+  (csetq epg-pinentry-mode 'loopback)     ; Loopback allows Emacs to request passwords in the minibuffer I think
+  (csetq package-native-compile t)        ; Allow native compiled packages
+  ;;(csetq switch-to-buffer-preserve-window-point t) ;
+  ;;(csetq bookmark-fontify nil)
+  (csetq sort-fold-case t)                ; Sort regardless of case
+  (csetq disabled-command-function 'ignore) ; Don't yell when doing stuff that's been disabled
+  (csetq bidi-paragraph-direction 'left-to-right) ; This way is faster to process if you never use other paragraph directions
   (csetq bidi-inhibit-bpa t)
-  (run-with-idle-timer 1 nil #'global-so-long-mode 1)
-  (csetq proced-auto-update-flag t)
-  (csetq create-lockfiles nil)
-  (remove-hook 'after-save-hook #'rmail-after-save-hook)
+  ;;(run-with-idle-timer 1 nil #'global-so-long-mode 1) ; Fancy hooks to deal with big files.
+  (csetq proced-auto-update-flag t)       ; Auto-update proced
+  (csetq create-lockfiles nil)            ; Lockfiles are bad news
+  (remove-hook 'after-save-hook #'rmail-after-save-hook) ; I don't use rmail
  #+end_src
 
 * Drop-in functions
@@ -250,7 +256,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 * Org-mode
-** Switches
+** Agenda
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-agenda
     (define-key org-agenda-mode-map (kbd "T") #'org-agenda-todo-yesterday))
