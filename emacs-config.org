@@ -52,36 +52,6 @@ I need a bunch of convenience functions to check the capabilities of the system 
     (not (display-graphic-p)))
 #+end_src
 
-** Just one space
-
-#+begin_src emacs-lisp
-  (defun actuator-just-one-space ()
-    "Insert just one space, killing all other whitespace."
-    (interactive)
-    (just-one-space -1))
-
-  (global-set-key (kbd "M-/") #'actuator-just-one-space)
-#+end_src
-
-
-** Unfill paragraph
-
-#+begin_src emacs-lisp
-  (defun actuator-unfill-paragraph ()
-    "Does the opposite of filling a paragraph.
-
-  This technically causes it to wrap only at a really huge number.
-  It should be safe in most instances, but Emacs does have some
-  issues with really long lines, so if you run this on a really,
-  really huge paragraph, you might be sorry."
-
-    (interactive)
-    (let ((fill-column most-positive-fixnum))
-      (fill-paragraph)))
-
-  (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
-#+end_src
-
 
 * Early init
 :PROPERTIES:
@@ -167,6 +137,40 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+begin_src emacs-lisp
   (global-unset-key (kbd "C-z"))
 #+end_src
+
+** Just one space
+
+#+begin_src emacs-lisp
+  (defun actuator-maybe-just-one-space ()
+    "Insert just one space, killing all other whitespace."
+    (interactive)
+    (just-one-space -1)
+      (when (and (looking-at ")")
+               (looking-back ") "))
+          (delete-char -1)))
+
+  (global-set-key (kbd "M-/") #'actuator-maybe-just-one-space)
+#+end_src
+
+
+** Unfill paragraph
+
+#+begin_src emacs-lisp
+  (defun actuator-unfill-paragraph ()
+    "Does the opposite of filling a paragraph.
+
+  This technically causes it to wrap only at a really huge number.
+  It should be safe in most instances, but Emacs does have some
+  issues with really long lines, so if you run this on a really,
+  really huge paragraph, you might be sorry."
+
+    (interactive)
+    (let ((fill-column most-positive-fixnum))
+      (fill-paragraph)))
+
+  (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
+#+end_src
+
 
 * Afterword
 
@@ -1362,7 +1366,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
                     (mode . org-agenda-mode)
                     (directory . "org/")))
             ("Config" (directory . "env.d/"))
-            ("Magit" (derived-mode . magit-mode))
             ("Docs" (mode . doc-view-mode))
             ("Dired" (mode      . dired-mode))
             ("Help" (or
@@ -1379,9 +1382,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
                          (name . "\*tramp/sudo")
                          (name . "\*elfeed-log\*")
                          (name . "\*Packages\*")
-                         (mode . compilation-mode)))
-            ;; ("Misc"      (name . "^\\*.*\\*$"))
-            )))
+                         (mode . compilation-mode))))))
 #+end_src
 
 #+begin_src emacs-lisp
