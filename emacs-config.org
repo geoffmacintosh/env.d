@@ -557,8 +557,20 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 * Calendar
 
 #+begin_src emacs-lisp
-  (csetq calendar-latitude [51 02 north])
-  (csetq calendar-longitude [114 03 west])
+  (defun actuator-set-location (location)
+
+    (cond ((string-equal (downcase location) "calgary")
+           (csetq calendar-latitude [51 02 north])
+           (csetq calendar-longitude [114 03 west])
+           (csetq calendar-location-name "Calgary"))
+          ((string-equal (downcase location)"st. john's")
+           (csetq calendar-latitude [47 28 north])
+           (csetq calendar-longitude [52 47 west])
+           (csetq calendar-location-name "St. John's"))
+          (t
+           (error "Bad location set"))))
+
+  (actuator-set-location "Calgary")
 #+end_src
 
 #+begin_src emacs-lisp
