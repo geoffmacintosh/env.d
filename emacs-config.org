@@ -1069,12 +1069,12 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
   These variables need to be set every time a frame is created."
 
-    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-    (when (and (is-terminal-p)
-               (fboundp 'menu-bar-mode))
-      (menu-bar-mode -1))
+    ;; (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    ;; (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    ;; (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    ;; (when (and (is-terminal-p)
+    ;;            (fboundp 'menu-bar-mode))
+    ;;   (menu-bar-mode -1))
         (when (member "SF Mono" (font-family-list)))
       (set-frame-font "SF Mono-12" nil t))
 
@@ -1082,6 +1082,15 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
   (unless noninteractive
     (add-hook 'after-init-hook #'actuator-frame-init))
+#+end_src
+
+#+begin_src emacs-lisp
+  (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+  (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+  (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+  (when (and (is-terminal-p)
+             (fboundp 'menu-bar-mode))
+    (menu-bar-mode -1))
 #+end_src
 
 * Server
@@ -1101,7 +1110,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
   (run-with-idle-timer 1 nil #'actuator-start-server-if-not-running)
 #+end_src
-
 
 * Actuator startup profile
 
