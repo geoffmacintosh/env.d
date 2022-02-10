@@ -106,9 +106,9 @@ https://gitea.petton.fr/mpdel/mpdel
 :END:
 #+begin_src emacs-lisp :tangle no
   (add-to-list 'safe-local-variable-values
-	       '(buffer-auto-save-file-name . nil))
+               '(buffer-auto-save-file-name . nil))
   (add-to-list 'safe-local-variable-values
-	       '(org-archive-location . "archive.org::datetree/* From %"))
+               '(org-archive-location . "archive.org::datetree/* From %"))
 #+end_src
 
 * DONE Org-edna
@@ -120,4 +120,34 @@ https://gitea.petton.fr/mpdel/mpdel
 [2021-06-11 Fri 15:44]
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-edna)
+#+end_src
+
+* DONE Copy sentence
+:PROPERTIES:
+:CREATED:  [2022-02-09 Wed 17:22]
+:ARCHIVE_TIME: 2022-02-09 Wed 17:22
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:END:
+#+begin_src emacs-lisp
+  (defun actuator-copy-sentence ()
+    "Save the entire sentence to the kill ring."
+    (interactive)
+    (save-excursion
+      (backward-sentence)
+      (mark-end-of-sentence nil)
+      (copy-region-as-kill nil nil t)))
+#+end_src
+
+* DONE Font exists
+:PROPERTIES:
+:CREATED:  [2022-02-09 Wed 17:29]
+:ARCHIVE_TIME: 2022-02-09 Wed 17:29
+:ARCHIVE_FILE: ~/env.d/emacs-config.org
+:ARCHIVE_OLPATH: Drop-in functions
+:END:
+
+#+begin_src emacs-lisp
+  (defun actuator-font-exists-p (font)
+    "Return non-nil if FONT is loaded."
+    (member font (font-family-list)))
 #+end_src

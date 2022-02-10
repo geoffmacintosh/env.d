@@ -255,6 +255,65 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (global-set-key (kbd "M-w") #'actuator-kill-ring-save)
 #+end_src
 
+** Change word case
+:PROPERTIES:
+:CREATED:  [2022-01-28 Fri 11:48]
+:END:
+
+[[https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/][Change Case of Word at Point in Emacs, But for Real This Time • Christian Tietze]]
+
+#+begin_src emacs-lisp
+  (defun actuator-capitalize-word-at-point ()
+    "A replacement which operates on the entire word."
+    (interactive)
+    (actuator-word-boundary-at-point-or-region #'actuator-capitalize-region))
+
+  (defun actuator-downcase-word-at-point ()
+    "A replacement which operates on the entire word."
+    (interactive)
+    (actuator-word-boundary-at-point-or-region #'downcase-region))
+
+  (defun actuator-upcase-word-at-point ()
+    "A replacement which operates on the entire word."
+    (interactive)
+    (actuator-word-boundary-at-point-or-region #'upcase-region))
+
+  (defun actuator-capitalize-region (beginning end)
+    "Downcases then capitalizes between BEGINNING and END only.
+  The default capitalization function upcases the first characters
+  in the word. This replacement first downcases the word and then
+  capitalizes it, which is really what you want."
+    (downcase-region beginning end)
+    (upcase-initials-region beginning end))
+
+  (defun actuator-word-boundary-at-point-or-region (&optional callback)
+    "Return the boundary (beginning and end) of the word at point, or region, if any.
+  Forwards the points to CALLBACK as (CALLBACK p1 p2), if
+  present.
+
+  Entirely lifted form Christian Tietze, who modified it from Xah Lee.
+  https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/
+  http://ergoemacs.org/emacs/modernization_upcase-word.html"
+
+    (let ((deactivate-mark nil)
+          beginning end)
+      (if (use-region-p)
+          (setq beginning (region-beginning)
+                end (region-end))
+        (save-excursion
+          (skip-chars-backward "[:alpha:]")
+          (setq beginning (point))
+          (skip-chars-forward "[:alpha:]")
+          (setq end (point))))
+      (when callback
+        (funcall callback beginning end))
+      (list beginning end)))
+
+  (global-set-key (kbd "M-c") #'actuator-capitalize-word-at-point)
+  (global-set-key (kbd "M-u") #'actuator-upcase-word-at-point)
+  (global-set-key (kbd "M-l") #'actuator-downcase-word-at-point)
+#+end_src
+
 * Org-mode
 ** Agenda
 #+begin_src emacs-lisp
@@ -347,23 +406,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   ;;(csetq auto-revert-avoid-polling t)
   (csetq auto-revert-verbose t)
   (csetq auto-revert-check-vc-info nil)
-#+end_src
-
-* Server
-
-#+begin_src emacs-lisp
-  (defun actuator-start-server-if-not-running ()
-    "If Emacs' server is not running, start it.
-
-  This allows Emacs client to function. This does not check to see
-  if the current Emacs instance is running the server, only that at
-  least one server is running. I don't care about running multiple
-  servers, so that's fine."
-
-    (require 'server)
-    (eval-when-compile (declare-function server-running-p "server"))
-    (unless (server-running-p) (server-start)))
-  (run-with-idle-timer 1 nil #'actuator-start-server-if-not-running)
 #+end_src
 
 * Minibuffer Resize
@@ -541,65 +583,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq calendar-offset -1)
 #+end_src
 
-* Change word case
-:PROPERTIES:
-:CREATED:  [2022-01-28 Fri 11:48]
-:END:
-
-[[https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/][Change Case of Word at Point in Emacs, But for Real This Time • Christian Tietze]]
-
-#+begin_src emacs-lisp
-  (defun actuator-capitalize-word-at-point ()
-    "A replacement which operates on the entire word."
-    (interactive)
-    (actuator-word-boundary-at-point-or-region #'actuator-capitalize-region))
-
-  (defun actuator-downcase-word-at-point ()
-    "A replacement which operates on the entire word."
-    (interactive)
-    (actuator-word-boundary-at-point-or-region #'downcase-region))
-
-  (defun actuator-upcase-word-at-point ()
-    "A replacement which operates on the entire word."
-    (interactive)
-    (actuator-word-boundary-at-point-or-region #'upcase-region))
-
-  (defun actuator-capitalize-region (beginning end)
-    "Downcases then capitalizes between BEGINNING and END only.
-  The default capitalization function upcases the first characters
-  in the word. This replacement first downcases the word and then
-  capitalizes it, which is really what you want."
-    (downcase-region beginning end)
-    (upcase-initials-region beginning end))
-
-  (defun actuator-word-boundary-at-point-or-region (&optional callback)
-    "Return the boundary (beginning and end) of the word at point, or region, if any.
-  Forwards the points to CALLBACK as (CALLBACK p1 p2), if
-  present.
-
-  Entirely lifted form Christian Tietze, who modified it from Xah Lee.
-  https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/
-  http://ergoemacs.org/emacs/modernization_upcase-word.html"
-
-    (let ((deactivate-mark nil)
-          beginning end)
-      (if (use-region-p)
-          (setq beginning (region-beginning)
-                end (region-end))
-        (save-excursion
-          (skip-chars-backward "[:alpha:]")
-          (setq beginning (point))
-          (skip-chars-forward "[:alpha:]")
-          (setq end (point))))
-      (when callback
-        (funcall callback beginning end))
-      (list beginning end)))
-
-  (global-set-key (kbd "M-c") #'actuator-capitalize-word-at-point)
-  (global-set-key (kbd "M-u") #'actuator-upcase-word-at-point)
-  (global-set-key (kbd "M-l") #'actuator-downcase-word-at-point)
-#+end_src
-
 * Fringe
 :PROPERTIES:
 :ID:       3659786E-6B2D-4AF8-8901-434068730FC7
@@ -608,30 +591,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (when (is-graphical-p)
     (fringe-mode 12))
-#+end_src
-
-* Frame init
-
-#+begin_src emacs-lisp
-  (defun actuator-frame-init (&optional _frame)
-    "Initialize per-frame variables.
-
-  These variables need to be set every time a frame is created."
-
-    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-    (when (and (is-terminal-p)
-               (fboundp 'menu-bar-mode))
-      (menu-bar-mode -1))
-    (when (fboundp 'actuator-font-exists-p)
-        (when (actuator-font-exists-p "SF Mono")
-      (set-frame-font "SF Mono-12" nil t))))
-
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
-
-  (unless noninteractive
-    (add-hook 'after-init-hook #'actuator-frame-init))
 #+end_src
 
 * Recentf
@@ -673,17 +632,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
                                "| sed -e 's/^/Trashed: /'")
                        nil ;; Name of output buffer
                        "*Trash Error Buffer*"))))
-#+end_src
-
-* Copy sentence
-#+begin_src emacs-lisp
-  (defun actuator-copy-sentence ()
-    "Save the entire sentence to the kill ring."
-    (interactive)
-    (save-excursion
-      (backward-sentence)
-      (mark-end-of-sentence nil)
-      (copy-region-as-kill nil nil t)))
 #+end_src
 
 * Org
@@ -1113,6 +1061,66 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq holiday-other-holidays (append holiday-canada-holidays
                                         holiday-american-holidays))
 #+end_src
+* Frame init
+
+#+begin_src emacs-lisp
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
+
+  These variables need to be set every time a frame is created."
+
+    (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+    (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+    (when (and (is-terminal-p)
+               (fboundp 'menu-bar-mode))
+      (menu-bar-mode -1))
+        (when (member "SF Mono" (font-family-list)))
+      (set-frame-font "SF Mono-12" nil t))
+
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+
+  (unless noninteractive
+    (add-hook 'after-init-hook #'actuator-frame-init))
+#+end_src
+
+* Server
+
+#+begin_src emacs-lisp
+  (defun actuator-start-server-if-not-running ()
+    "If Emacs' server is not running, start it.
+
+  This allows Emacs client to function. This does not check to see
+  if the current Emacs instance is running the server, only that at
+  least one server is running. I don't want to run multiple
+  servers, so that's fine."
+
+    (require 'server)
+    (eval-when-compile (declare-function server-running-p "server"))
+    (unless (server-running-p) (server-start)))
+
+  (run-with-idle-timer 1 nil #'actuator-start-server-if-not-running)
+#+end_src
+
+
+* Actuator startup profile
+
+#+begin_src emacs-lisp
+  ;;(add-hook 'emacs-startup-hook #'actuator-startup-profile)
+  (run-with-idle-timer 3 nil #'actuator-startup-profile)
+
+  (defun actuator-startup-profile ()
+    "Display the startup time and garbage collections in the minibuffer."
+
+    (message "Emacs %s ready in %s with %d garbage collections."
+             emacs-version
+             (format "%.2f seconds"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))
+             gcs-done))
+#+end_src
+
+
 * Keyboard Macros
 
 - ~C-x (~ Start defining a keyboard macro.
@@ -3091,24 +3099,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 
 #+end_src
 
-#+begin_src emacs-lisp
-  (defun actuator-font-exists-p (font)
-    "Return non-nil if FONT is loaded."
-    (member font (font-family-list)))
-#+end_src
 
-#+begin_src emacs-lisp
-  (add-hook 'emacs-startup-hook #'actuator-startup-profile)
-
-  (defun actuator-startup-profile ()
-    "Display the startup time and garbage collections in the minibuffer."
-
-    (message "Emacs ready in %s with %d garbage collections."
-             (format "%.2f seconds"
-                     (float-time
-                      (time-subtract after-init-time before-init-time)))
-             gcs-done))
-#+end_src
 #+begin_src emacs-lisp
   (unless 'window-system
     (require 'mouse)
