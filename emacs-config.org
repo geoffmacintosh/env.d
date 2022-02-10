@@ -1140,7 +1140,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
              gcs-done))
 #+end_src
 
-
 * Keyboard Macros
 
 - ~C-x (~ Start defining a keyboard macro.
@@ -1612,7 +1611,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 * Byte compile init
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-byte-recompile-init ()
     "Byte compiles the init files.
 
