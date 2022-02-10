@@ -3131,3 +3131,50 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
 #+end_src
+
+* Weather
+:PROPERTIES:
+:ID:       7BC51A05-239C-4E55-8933-D7A2789130B9
+:CREATED:  [2022-02-01 Tue 13:27]
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-10 Thu 10:35]
+- State "NEXT"       from "TODO"       [2022-02-02 Wed 14:21]
+- Refiled on [2022-02-01 Tue 13:41]
+- Refiled on [2022-01-28 Fri 14:31]
+:END:
+  #+begin_src emacs-lisp :tangle no
+    (defvar actuator-org-weather-file (expand-file-name "weather.org" org-directory)
+      "The file which should have weather data appended to it.
+    This really should be an Org file that shouldn't usually be
+    edited by hand as a top-level Org header will be uncaringly
+    appended to the end of the file.")
+
+    (defvar actuator-current-city "Calgary"
+      "The current city that the user is located in.
+    This is currently only used for weather. You'll need to use a
+    city name that the wttr.in weather service can handle.")
+
+    (defun actuator-org-weather ()
+      "Insert the current weather into an Org file.
+    This grabs the current weather for `actuator-current-city' from
+    wttr.in and appends it to `actuator-org-weather-file'. It has no
+    error checking and will probably explode if something ever goes
+    wrong. Sorry about that."
+      (with-temp-buffer "*Weather*"
+                        (insert (format "\n\n* %s weather: " actuator-current-city))
+                        (call-process-shell-command (format "curl -s \"wttr.in/%s?format=%%C+%%t+%%w\"" actuator-current-city) nil t)
+                        ;;(url-insert-file-contents "http://wttr.in/Calgary?format=%C+%t+%w") ;;ASYNC
+                        (insert "\n")
+                        (org-insert-time-stamp nil t)
+                        (append-to-file (point-min) (point-max) actuator-org-weather-file)))
+
+    (defun actuator-set-up-check-weather-check-daily ()
+
+      (run-at-time "07:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))
+      (run-at-time "12:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather)))
+      (run-at-time "17:00" nil (lambda () (run-with-idle-timer 15 nil #'actuator-org-weather))))
+
+    (when (is-linux-p)
+      (add-hook 'midnight-hook #'actuator-set-up-weather-check-daily))
+  #+end_src
