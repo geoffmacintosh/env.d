@@ -3178,3 +3178,49 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (when (is-linux-p)
       (add-hook 'midnight-hook #'actuator-set-up-weather-check-daily))
   #+end_src
+
+* Type break
+:PROPERTIES:
+:CREATED:  [2022-02-10 Thu 11:17]
+:END:
+  #+begin_src emacs-lisp
+    (csetq type-break-query-mode t)
+    (csetq type-break-mode-line-message-mode t)
+    (csetq type-break-demo-boring-stats t)
+    (csetq type-break-terse-messages t)
+
+    (run-with-idle-timer 1 nil #'type-break-mode 1)
+  #+end_src
+
+* Emms
+:PROPERTIES:
+:CREATED:  [2022-02-02 Wed 11:25]
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-04 Fri 10:52]
+:END:
+#+begin_src emacs-lisp
+    (add-to-list 'package-selected-packages 'emms)
+    (add-to-list 'package-selected-packages 'org-emms)
+
+    (csetq emms-player-list '(emms-player-mpd))
+    (csetq emms-player-mpd-server-name "localhost")
+    (csetq emms-player-mpd-server-port "6600")
+    (csetq emms-player-mpd-music-directory (expand-file-name "~/Music/Music Files/"))
+
+    (defun actuator-setup-emms ()
+      "Test"
+      (require 'emms-setup)
+      (require 'emms-player-mpd)
+      (emms-all)
+      (add-to-list 'emms-info-functions 'emms-info-mpd)
+      (add-to-list 'emms-player-list 'emms-player-mpd)
+      (emms-player-mpd-connect)
+      (emms-mode-line-mode -1)
+      (emms-playing-time-display-mode -1)
+      (global-set-key (kbd "C-c m") #'emms-smart-browse)
+      (emms-player-mpd-update-all)
+      (emms-cache-set-from-mpd-all))
+
+    (run-with-idle-timer 1 nil #'actuator-setup-emms)
+#+end_src
