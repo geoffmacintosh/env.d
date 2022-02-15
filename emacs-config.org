@@ -2991,7 +2991,7 @@ I'm using a custom alert function so that I can use the system's notification sy
     (add-hook 'package-menu-mode-hook #'actuator-backup-elpa)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-backup-org ()
        "Backs up `org-directory' with borg.
      Time between backups is controlled by the
@@ -3032,6 +3032,26 @@ I'm using a custom alert function so that I can use the system's notification sy
                                      time-stamp
                                      " "
                                      path))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-minutes-since-last-vc ()
+    (let* ((current-time (time-convert nil 'integer))
+           (last-vc-time (time-convert
+                          (string-to-number
+                           (with-temp-buffer
+                             (vc-git-command t nil nil "log" "-1" "--format=%at")
+                             (substring (buffer-string) 0 -1)))
+                          'integer))
+           (time-since-last-vc (- current-time last-vc-time))
+           (minutes-since-last-vc (/ time-since-last-vc 60)))
+      minutes-since-last-vc))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-backup-org ()
+    (when (< 15 (actuator-minutes-since-last-vc))
+      (shell-command (format "git add --all; git commit --message \"%s\"" "Autocommit"))))
 #+end_src
 
 #+begin_src emacs-lisp
