@@ -133,6 +133,12 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 * Switches
 
+
+#+begin_src emacs-lisp
+  (define-key key-translation-map (kbd "<mouse-8>") (kbd "<XF86Back>"))
+  (define-key key-translation-map (kbd "<mouse-9>") (kbd "<XF86Forward>"))
+#+end_src
+
 #+begin_src emacs-lisp
   (csetq view-read-only t)           ; Open read-only files in view mode
   (global-unset-key (kbd "C-z"))     ; Disable suspend keybinding
