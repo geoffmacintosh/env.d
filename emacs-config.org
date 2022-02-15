@@ -516,15 +516,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("d" "Diary" entry
-                   (file "diary.org")
-                   "* TODO %^{Title} %^G \n%^T \n%? \n"
-                   :empty-lines 1)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
                  `("n" "Note" entry
                    (file "inbox.org")
                    "* %(org-expiry-insert-created)Note for %U \n- %?"
