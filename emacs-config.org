@@ -177,7 +177,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (blink-cursor-mode -1)                     ; Remove blink
   (csetq cursor-type 'box)
   (csetq scroll-conservatively 101) ; Move the buffer just enough to display point, but no more
-  (csetq scroll-margin 10)           ; Scroll when the point hits the edge of the screen if 0
+  (csetq scroll-margin 3)           ; Scroll when the point hits the edge of the screen if 0
   (csetq mouse-wheel-scroll-amount '(1))  ; I should fancify this
   (csetq inhibit-startup-message t)       ; No startup message
   (csetq initial-scratch-message "")      ; No scratch message
