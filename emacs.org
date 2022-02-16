@@ -113,7 +113,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 #+begin_src emacs-lisp
   (let ((gc-cons-threshold (* 5000 1024 1024))
-        (config (expand-file-name "emacs-config.org" actuator-directory))
+        (config (expand-file-name "emacs.org" actuator-directory))
         (theme (expand-file-name "emacs-theme.org" actuator-directory)))
     (require 'package)
     (package-activate-all)
@@ -133,10 +133,11 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 * Switches
 
-
 #+begin_src emacs-lisp
   (define-key key-translation-map (kbd "<mouse-8>") (kbd "<XF86Back>"))
   (define-key key-translation-map (kbd "<mouse-9>") (kbd "<XF86Forward>"))
+  (define-key key-translation-map (kbd "<wheel-left>") (kbd "<XF86Back>"))
+  (define-key key-translation-map (kbd "<wheel-right>") (kbd "<XF86Forward>"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3240,4 +3241,73 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
       (emms-cache-set-from-mpd-all))
 
     (run-with-idle-timer 1 nil #'actuator-setup-emms)
+#+end_src
+
+* Org path-independent link
+:PROPERTIES:
+:CREATED:  [2022-02-15 Tue 14:19]
+:END:
+
+This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfile/][Karl Voit]]. I use "locate" as the link type because I like the way this looks. It works very well if you link to the exact file name. HTML export works no issue.
+
+#+begin_src emacs-lisp
+  (defun actuator-handle-locate-link (querystring)
+    (let ((queryresults (split-string
+                         (s-trim
+                          (shell-command-to-string
+                           (concat
+                            "locate \""
+                            querystring
+                            "\" "
+                            )))
+                         "\n" t)))
+      (cond
+       ((= 0 (length queryresults))
+        (message "Sorry, no results found for query: %s" querystring))
+       ((= 1 (length queryresults))
+        (xah-open-in-external-app (car queryresults)))
+       (t
+        (message "Sorry, multiple results found for query: %s" querystring)))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (org-link-set-parameters
+   "locate"
+   :follow (lambda (filename) (actuator-handle-locate-link filename))
+   :help-echo "Opens the file located via \"locate\" with your default application")
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun xah-open-in-external-app (&optional @fname)
+    "Open the current file or dired marked files in external app.
+  When called in emacs lisp, if @fname is given, open that.
+  URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
+  Version 2019-11-04 2021-02-16"
+    (interactive)
+    (let* (
+           ($file-list
+            (if @fname
+                (progn (list @fname))
+              (if (string-equal major-mode "dired-mode")
+                  (dired-get-marked-files)
+                (list (buffer-file-name)))))
+           ($do-it-p (if (<= (length $file-list) 5)
+                         t
+                       (y-or-n-p "Open more than 5 files? "))))
+      (when $do-it-p
+        (cond
+         ((string-equal system-type "windows-nt")
+          (mapc
+           (lambda ($fpath)
+             (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name $fpath )) "'")))
+           $file-list))
+         ((string-equal system-type "darwin")
+          (mapc
+           (lambda ($fpath)
+             (shell-command
+              (concat "open " (shell-quote-argument $fpath))))  $file-list))
+         ((string-equal system-type "gnu/linux")
+          (mapc
+           (lambda ($fpath) (let ((process-connection-type nil))
+                              (start-process "" nil "xdg-open" $fpath))) $file-list))))))
 #+end_src
