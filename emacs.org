@@ -844,7 +844,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   ;;(csetq org-refile-targets '((org-agenda-files :maxlevel . 4)))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-rebuild-org-refile-cache ()
     "Rebuilds the refile cache so things refile quickly.
 
