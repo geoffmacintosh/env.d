@@ -30,7 +30,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
               ',variable ,value))
 #+end_src
 
-
 ** Functions to determine platforms
 I need a bunch of convenience functions to check the capabilities of the system and make different things happen in different situations.
 
@@ -120,9 +119,9 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     (require 'ob-tangle)
 
     (when (file-readable-p config)
-      (org-babel-load-file config))
+      (org-babel-load-file config t))
     (when (file-readable-p theme)
-      (org-babel-load-file theme)))
+      (org-babel-load-file theme t)))
 #+end_src
 
 ** Footer
