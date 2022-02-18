@@ -233,7 +233,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     (interactive)
     (just-one-space -1)
       (when (and (looking-at ")")
-               (looking-back ") "))
+               (looking-back ") " 200))
           (delete-char -1)))
 
   (global-set-key (kbd "M-/") #'actuator-maybe-just-one-space)
@@ -328,6 +328,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 ** Agenda
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-agenda
+    (eval-when-compile (defvar org-agenda-mode-map)
+                       (declare-function org-agenda-todo-yesterday "org-agenda" (&optional ARG)))
     (define-key org-agenda-mode-map (kbd "T") #'org-agenda-todo-yesterday))
 #+end_src
 * Afterword
@@ -609,15 +611,16 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 * Recentf
 
 #+begin_src emacs-lisp
-  (eval-when-compile (declare-function recentf-open-files "recentf")
-                     (declare-function recentf-cleanup "recentf"))
-  (global-set-key (kbd "C-x C-r") #'recentf-open-files)
-  (csetq recentf-max-saved-items 1000)
-  (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
-                           "/var/folders/"
-                           user-emacs-directory))
-  (add-hook 'midnight-mode-hook #'recentf-cleanup)
-  (recentf-mode 1)
+    (eval-when-compile
+      (declare-function recentf-open-files "recentf")
+                       (declare-function recentf-cleanup "recentf"))
+    (global-set-key (kbd "C-x C-r") #'recentf-open-files)
+    (csetq recentf-max-saved-items 1000)
+    (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
+                             "/var/folders/"
+                             user-emacs-directory))
+    (add-hook 'midnight-mode-hook #'recentf-cleanup)
+    (recentf-mode 1)
 #+end_src
 
 * Eliminate frame title
@@ -874,6 +877,9 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function org-agenda-earlier "org-agenda" (ARG))
+    (declare-function org-agenda-later   "org-agenda" (ARG)))
   (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
   (define-key org-agenda-mode-map (kbd "<mouse-9>") #'org-agenda-later)
 #+end_src
@@ -1088,8 +1094,8 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     ;; (when (and (is-terminal-p)
     ;;            (fboundp 'menu-bar-mode))
     ;;   (menu-bar-mode -1))
-        (when (member "SF Mono" (font-family-list)))
-      (set-frame-font "SF Mono-12" nil t))
+    (when (member "SF Mono" (font-family-list))
+      (set-frame-font "SF Mono-12" nil t)))
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
@@ -1261,8 +1267,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
     (require 'ibuf-ext)
     (eval-when-compile
-      (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext")
-      (declare-function ibuffer-auto-mode "ibuf-ext"))
+      (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext" (name))
+      (declare-function ibuffer-auto-mode "ibuf-ext" (arg))
+      (declare-function ibuffer-do-sort-by-alphabetic "ibuf-ext" nil))
     (ibuffer-switch-to-saved-filter-groups "default")
     (ibuffer-auto-mode 1)
     (ibuffer-do-sort-by-alphabetic)
@@ -1473,9 +1480,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 [[https://rakhim.org/fastmail-setup-with-emacs-mu4e-and-mbsync-on-macos/][Fastmail + mu4e]]
 
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (when (and (is-mac-p) (file-exists-p "/usr/local/bin/fish"))
-      (csetq shell-file-name "/usr/local/bin/fish")))
+  (when (and (is-mac-p) (file-exists-p "/usr/local/bin/fish"))
+    (csetq shell-file-name "/usr/local/bin/fish"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1511,6 +1517,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq mu4e-icalendar-trash-after-reply t)
   (csetq mu4e-icalendar-diary-file (expand-file-name "inbox.org" org-directory))
   (with-eval-after-load 'mu4e
+    (eval-when-compile
+      (declare-function mu4e-icalendar-setup "ext:mu4e-icalendar-setup" nil))
     (require 'mu4e-icalendar)
     (mu4e-icalendar-setup))
 #+end_src
@@ -1770,11 +1778,12 @@ https://gist.github.com/spacebat/5500966
 
 * Org Link Minor Mode
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'org-link-minor-mode)
-
+  (eval-when-compile
+    (declare-function org-link-minor-mode ))
   (when (package-installed-p 'org-link-minor-mode)
-    (add-hook 'emacs-lisp-mode #'org-link-minor-mode))
+    (add-hook 'emacs-lisp-mode-hook #'org-link-minor-mode))
 #+end_src
 
 * HTMLize
@@ -2410,20 +2419,21 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (defvar org-show-notification-timeout)
+    (declare-function notifications-notify "notifications" (&rest params))
+    (declare-function notifications-get-capabilities "notifications" (&optional bus)))
+
   (defun actuator-notify (title message)
     "Send a system notification based on capabilities.
   Requires TITLE and MESSAGE strings."
-    (eval-when-compile
-     (defvar org-show-notification-timeout)
-     (declare-function notifications-notify "notifications")
-     (declare-function notifications-get-capabilities "notifications"))
     (cond ((notifications-get-capabilities)
            (notifications-notify
             :title title
             :body message
             :timeout (* org-show-notification-timeout 1000)
             :urgency 'low))
-          ((is-mac-p)
+          ((and (is-mac-p) (fboundp 'ns-do-applescript))
            (ns-do-applescript
             (format "display notification \"%s\" with title \"%s\""
                     (replace-regexp-in-string "\"" "#" message)
@@ -2855,6 +2865,10 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :CREATED:  <2021-09-09 Thu 13:25>
 :END:
 #+begin_src emacs-lisp
+  (eval-when-compile
+   (declare-function org-expiry-insinuate "ext:org-expiry" (&optional arg))
+   (declare-function org-expiry-archive-subtree "ext:org-expiry" nil))
+
   (defun actuator-org-expiry-setup ()
     "Set up org-expiry to make creation stamps for headlines."
     (require 'org-expiry)
@@ -2928,12 +2942,14 @@ I'm using a custom alert function so that I can use the system's notification sy
   (defun actuator-org-agenda-to-appt-refresh ()
     "Run `org-agenda-to-appt' with refresh.
 
-  This (I believe) collects the appointments scheduled for the
-  current day, so it is wise to run this at least daily to update
-  the list."
+   This (I believe) collects the appointments scheduled for the
+   current day, so it is wise to run this at least daily to update
+   the list."
     (org-agenda-to-appt t))
 
-  (add-to-list 'midnight-hook #'actuator-org-agenda-to-appt-refresh)
+  (with-eval-after-load 'midnight-mode
+    (eval-when-compile (defvar midnight-hook))
+    (add-to-list 'midnight-hook #'actuator-org-agenda-to-appt-refresh))
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
@@ -3221,29 +3237,35 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 - Refiled on [2022-02-04 Fri 10:52]
 :END:
 #+begin_src emacs-lisp
-    (add-to-list 'package-selected-packages 'emms)
-    (add-to-list 'package-selected-packages 'org-emms)
+  (add-to-list 'package-selected-packages 'emms)
+  (add-to-list 'package-selected-packages 'org-emms)
 
-    (csetq emms-player-list '(emms-player-mpd))
-    (csetq emms-player-mpd-server-name "localhost")
-    (csetq emms-player-mpd-server-port "6600")
-    (csetq emms-player-mpd-music-directory (expand-file-name "~/Music/Music Files/"))
+  (csetq emms-player-list '(emms-player-mpd))
+  (csetq emms-player-mpd-server-name "localhost")
+  (csetq emms-player-mpd-server-port "6600")
+  (csetq emms-player-mpd-music-directory (expand-file-name "~/Music/Music Files/"))
 
-    (defun actuator-setup-emms ()
-      "Test"
-      (require 'emms-setup)
-      (require 'emms-player-mpd)
-      (emms-all)
-      (add-to-list 'emms-info-functions 'emms-info-mpd)
-      (add-to-list 'emms-player-list 'emms-player-mpd)
-      (emms-player-mpd-connect)
-      (emms-mode-line-mode -1)
-      (emms-playing-time-display-mode -1)
-      (global-set-key (kbd "C-c m") #'emms-smart-browse)
-      (emms-player-mpd-update-all)
-      (emms-cache-set-from-mpd-all))
+  (eval-when-compile
+    (declare-function emms-player-mpd-update-all "ext:emms-player-mpd" nil)
+    (declare-function emms-cache-set-from-mpd-all "ext:emms-player-mpd" nil)
+    (defvar emms-info-functions)
+    (defvar emms-player-list))
 
-    (run-with-idle-timer 1 nil #'actuator-setup-emms)
+  (defun actuator-setup-emms ()
+    "Test"
+    (require 'emms-setup)
+    (require 'emms-player-mpd)
+    (emms-all)
+    (add-to-list 'emms-info-functions 'emms-info-mpd)
+    (add-to-list 'emms-player-list 'emms-player-mpd)
+    (emms-player-mpd-connect)
+    (emms-mode-line-mode -1)
+    (emms-playing-time-display-mode -1)
+    (global-set-key (kbd "C-c m") #'emms-smart-browse)
+    (emms-player-mpd-update-all)
+    (emms-cache-set-from-mpd-all))
+
+  (run-with-idle-timer 1 nil #'actuator-setup-emms)
 #+end_src
 
 * Org path-independent link
@@ -3254,7 +3276,11 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfile/][Karl Voit]]. I use "locate" as the link type because I like the way this looks. It works very well if you link to the exact file name. HTML export works no issue.
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function s-trim "ext:s" (s)))
+
   (defun actuator-handle-locate-link (querystring)
+    (require 's)
     (let ((queryresults (split-string
                          (s-trim
                           (shell-command-to-string
