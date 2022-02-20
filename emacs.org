@@ -324,6 +324,31 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (global-set-key (kbd "M-l") #'actuator-downcase-word-at-point)
 #+end_src
 
+** Find-definitions
+:PROPERTIES:
+:CREATED:  [2022-02-19 Sat 11:05]
+:END:
+
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
+    (declare-function xref-find-definitions "xref" (identifier)))
+  (defun actuator-jump-to-correct-location ()
+    "Replacement for `xref-find-definitions' to be org-aware.
+
+  This function attempts to jump to the Org source file if it
+  exists and falls back on xref if that fails. Should be a drop-in
+  replacement."
+    (interactive)
+    (require 'ob-tangle)
+    (require 'xref)
+    (condition-case nil
+        (org-babel-tangle-jump-to-org)
+      (error
+       (call-interactively #'xref-find-definitions))))
+  (define-key prog-mode-map (kbd "M-.") #'actuator-jump-to-correct-location)
+#+end_src
+
 * Org-mode
 ** Agenda
 #+begin_src emacs-lisp
