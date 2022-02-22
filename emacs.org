@@ -120,8 +120,9 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
     (when (file-readable-p config)
       (org-babel-load-file config t))
-    (when (file-readable-p theme)
-      (org-babel-load-file theme t)))
+    ;;(when (file-readable-p theme)
+    ;;  (org-babel-load-file theme t))
+    )
 #+end_src
 
 ** Footer
@@ -3302,7 +3303,8 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (emms-playing-time-display-mode -1)
     (global-set-key (kbd "C-c m") #'emms-smart-browse)
     (emms-player-mpd-update-all)
-    (emms-cache-set-from-mpd-all))
+    ;;(emms-cache-set-from-mpd-all)
+)
 
   (run-with-idle-timer 1 nil #'actuator-setup-emms)
 #+end_src
@@ -3378,4 +3380,147 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
           (mapc
            (lambda ($fpath) (let ((process-connection-type nil))
                               (start-process "" nil "xdg-open" $fpath))) $file-list))))))
+#+end_src
+* Theme
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:29]
+:END:
+#+begin_src emacs-lisp
+  (deftheme actuator)
+
+  (add-hook 'minibuffer-setup-hook 'actuator--minibuffer-setup)
+
+  (defun actuator--minibuffer-setup ()
+         (set (make-local-variable 'face-remapping-alist)
+            '((org-document-title :height 1.0))))
+
+  (let ((blue  "#29BEEA")
+        (white "#FFFFFF")
+        (dark  "#000000")
+        (cyan  "#00FFFF")
+        (red   "#FF1616")
+        (grey  "#484e55")
+        (lgrey "#bdc4cc")
+
+        (highlight-dim "#B1F8FF")
+        (code-background "#FFFFFF")
+
+        (xgrey "#F5F6F8")
+        (xbord "#EDF0F4"))
+
+    (custom-theme-set-faces
+     'user
+     `(fixed-pitch ((t (:family "SF Mono" :weight light))))
+     `(variable-pitch ((t (:family "Helvetica" :weight light))))
+     `(default ((t (:background ,white :foreground ,dark :weight light))))
+     `(cursor ((t (:background ,blue))))
+     `(fringe ((t (:background ,white))))
+     `(region ((t (:background ,highlight-dim))))
+     `(highlight ((t (:background ,highlight-dim))))
+     `(hl-line ((t (:background ,grey :foreground ,white))))
+     `(header-line ((t (:background ,grey :foreground ,white))))
+
+     `(font-lock-builtin-face ((t (:weight bold))))
+     `(font-lock-constant-face ((t (:weight bold))))
+     `(font-lock-function-name-face ((t (:weight bold))))
+     `(font-lock-keyword-face ((t (:weight bold))))
+     `(font-lock-variable-name-face ((t (:weight bold))))
+     `(font-lock-type-face ((t (:weight bold))))
+     `(font-lock-string-face ((t (:weight thin))))
+
+     `(mu4e-header-highlight-face ((t (:inherit hl-line))))
+     `(mu4e-compose-separator-face ((t (:inherit org-drawer))))
+     `(message-header-name ((t (:weight light
+                                        :foreground ,lgrey))))
+     `(message-header-subject ((t :weight normal
+                                         :foreground ,dark)))
+     `(message-header-to ((t :weight normal
+                                         :foreground ,dark)))
+     `(message-header-other ((t (:weight normal
+                                         :foreground ,dark))))
+
+     `(font-lock-warning-face ((t (:foreground ,red))))
+     `(font-lock-comment-face ((t (:weight thin))))
+     `(font-lock-comment-delimiter-face ((t (:weight thin))))
+
+     `(org-drawer ((t (:foreground ,lgrey))))
+     `(org-special-keyword ((t (:inherit org-drawer
+                                         :foreground ,dark))))
+     `(org-ellipsis ((t (:foreground ,lgrey))))
+     `(org-block ((t (:background ,code-background :extend t))))
+     `(org-block-begin-line ((t :inherit org-block)))
+     `(link ((t :foreground ,dark
+                :underline t)))
+     `(org-document-title ((t :foreground ,dark
+                               :height 220)))
+     `(org-level-1 ((t :weight bold)))
+     `(org-done ((t :foreground ,lgrey
+                    :weight bold)))
+     `(org-headline-done ((t :foreground ,grey)))
+     `(org-todo ((t :foreground ,red
+                    :weight bold)))
+     `(org-special-keyword ((t :foreground ,grey)))
+
+     `(org-date ((t :foreground ,dark
+                    :underline t)))
+
+     `(pulse-highlight-start-face ((t :background ,red)))
+
+     ;; `(dired-filename ((t :foreground red)))
+     ;; `(dired-header ((t :foreground red)))
+     ;; `(dired-hide-details-information ((t :foreground red)))
+     ;; `(dired-hide-details-detail ((t :foreground red)))
+     ;; `(dired-ignored ((t :foreground red)))
+     ;; `(dired-broken-symlink ((t :foreground red)))
+     ;; `(dired-directory ((t :foreground red)))
+     ;; `(dired-symlink ((t :foreground red)))
+
+     ;; `(elfeed-search-date-face ((t :foreground red)))
+     ;; `(elfeed-search-title-face ((t :foreground red)))
+     ;; `(elfeed-search-unread-title-face ((t :foreground red)))
+     ;; `(elfeed-search-last-update-face ((t :foreground red)))
+     ;; `(elfeed-search-feed-face ((t :foreground red)))
+     ;; `(elfeed-search-tag-face ((t :foreground red)))
+
+     `(elfeed-search-unread-count-face ((t :foreground ,white)))
+
+     `(ivy-current-match ((t (:background ,grey :foreground ,white :extend t))))
+     `(minibuffer-prompt ((t (:inherit default))))
+     `(isearch ((t (:background ,lgrey))))
+     ;; `(show-paren-match ((t (:background ,lgrey))))
+     ;; `(show-paren-match-expression ((t (:background ,lgrey))))
+     ;; `(show-paren-mismatch ((t (:background ,lgrey))))
+     ;; `(magit-section-heading ((t (:background ,lgrey))))
+     ;; `(magit-section-highlight ((t (:background ,lgrey))))
+
+     `(mode-line ((t (:box (:line-width 7
+                                        :color ,grey)
+                           ;;:underline nil
+                           ;;:overline ,xbord
+                           :foreground ,white
+                           :background ,grey
+                           ;;:inherit variable-pitch
+                           :height 110))))
+     `(mode-line-inactive ((t (:inherit mode-line
+                               :foreground ,lgrey
+                               :background ,xgrey
+                               :box (:line-width 7 :color, xgrey)))))
+
+     `(mode-line-highlight ((t (:box (:line-width 7
+                                      :color ,grey)
+                                :background ,grey
+                                :foreground ,white))))
+     `(eshell-prompt ((t :foreground ,dark
+                         :weight bold)))
+
+
+     ))
+
+  (provide-theme 'actuator)
+
+  ;; Local Variables:
+  ;; no-byte-compile: t
+  ;; End:
+
+  ;;; actuator-theme.el ends here
 #+end_src
