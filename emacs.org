@@ -3524,3 +3524,20 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
   ;;; actuator-theme.el ends here
 #+end_src
+* Desktop
+:PROPERTIES:
+:CREATED:  [2022-02-21 Mon 10:46]
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:35]
+:END:
+
+#+begin_src emacs-lisp
+  (csetq desktop-base-file-name "desktop-save-file.el")
+  (csetq desktop-dirname  user-emacs-directory)
+  (csetq desktop-base-lock-name "desktop-lock")
+  (csetq desktop-save t)
+  (desktop-save-mode 1)
+  ;;(desktop-read)
+  ;;(desktop-save "~/.config/emacs/")
+#+end_src
