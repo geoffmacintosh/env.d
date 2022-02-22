@@ -1017,6 +1017,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
+  (add-hook 'org-after-refile-insert-hook #'save-buffer)
   (csetq org-refile-use-cache nil) ;; Change back if slow?
   (csetq org-refile-allow-creating-parent-nodes 'confirm)
   (csetq org-outline-path-complete-in-steps nil)
@@ -1171,7 +1172,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-enforce-todo-checkbox-dependencies nil)
   (csetq org-complete-tags-always-offer-all-agenda-tags t)
   (csetq org-clone-delete-id t)
-  (csetq org-tags-column -60)
+  ;;(csetq org-tags-column -60)
   (csetq org-catch-invisible-edits 'show-and-error)
   (csetq org-insert-heading-respect-content t)
   (csetq org-ctrl-k-protect-subtree t)
@@ -1312,7 +1313,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
   ;;(add-hook 'emacs-startup-hook #'actuator-startup-profile)
-  (run-with-idle-timer 3 nil #'actuator-startup-profile)
+  (run-with-idle-timer 5 nil #'actuator-startup-profile)
 
   (defun actuator-startup-profile ()
     "Display the startup time and garbage collections in the minibuffer."
@@ -2198,7 +2199,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
   (with-eval-after-load 'elfeed
     (eval-when-compile (declare-function elfeed-make-tagger "elfeed"))
     (add-hook 'elfeed-new-entry-hook
-              (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
+              (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial\\|philosophy"
                                   :add '(junk debug1)
                                   :remove 'unread))
     (add-hook 'elfeed-new-entry-hook
@@ -3126,7 +3127,7 @@ I'm using a custom alert function so that I can use the system's notification sy
     (add-to-list 'midnight-hook #'actuator-org-agenda-to-appt-refresh))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (defun actuator-org-agenda-to-appt-timer ()
     "Runs `org-agenda-to-appt' whenever there is an idle period."
     (run-with-idle-timer 5 nil #'actuator-org-agenda-to-appt-refresh))
@@ -3523,7 +3524,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 - Refiled on [2022-02-21 Mon 17:35]
 :END:
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (csetq desktop-base-file-name "desktop-save-file.el")
   (csetq desktop-dirname  user-emacs-directory)
   (csetq desktop-base-lock-name "desktop-lock")
