@@ -2746,11 +2746,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (define-key flymake-mode-map (kbd "C-c ! p") #'flymake-goto-prev-error))
 #+end_src
 
-*
-:PROPERTIES:
-:CREATED:  [2022-02-08 Tue 12:10]
-:END:
-
 * Display buffer
 
 [[https://emacs.stackexchange.com/questions/48472/how-to-make-m-x-ansi-term-behave-like-m-x-shell-opening-in-new-window/48481#48481][Switch-to-buffer-obey-display-actions]]
@@ -3405,7 +3400,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (csetq type-break-demo-boring-stats t)
     (csetq type-break-terse-messages t)
 
-    (run-with-idle-timer 1 nil #'type-break-mode 1)
+    ;;(run-with-idle-timer 1 nil #'type-break-mode 1)
   #+end_src
 
 * Emms
@@ -3528,7 +3523,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 - Refiled on [2022-02-21 Mon 17:35]
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (csetq desktop-base-file-name "desktop-save-file.el")
   (csetq desktop-dirname  user-emacs-directory)
   (csetq desktop-base-lock-name "desktop-lock")
