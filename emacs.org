@@ -845,7 +845,19 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-diary-file (expand-file-name "diary.org" org-directory))
 #+end_src
 
+https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
+
 #+begin_src emacs-lisp
+    (defun actuator-opened-buffer-files ()
+      "Return the list of files currently opened in emacs."
+      (delq nil
+            (mapcar (lambda (x)
+                      (if (and (buffer-file-name x)
+                               (string-match "\\.org$"
+                                             (buffer-file-name x)))
+                          (buffer-file-name x)))
+                    (buffer-list))))
+
   (defun actuator-org-refile-candidates ()
     "Collect all the org-mode files in the org-directory.
 
@@ -856,15 +868,16 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   other weird files that might temporarily get caught by the
   refiler that I don't want. This would be an easy fix, but I'm not
   doing it."
-    (append
-     (directory-files org-directory t "^[a-z].*\\.org$")
-     (directory-files actuator-directory t "^[a-z].*\\.org$")))
 
-  (csetq org-refile-targets '((actuator-org-refile-candidates :maxlevel . 2)))
+     (directory-files actuator-directory t "^[a-z].*\\.org$"))
+
+  (csetq org-refile-targets '((org-agenda-files               :maxlevel . 9)
+                              (actuator-opened-buffer-files   :maxlevel . 9)
+                              (actuator-org-refile-candidates :maxlevel . 9)))
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-refile-use-cache t)
+  (csetq org-refile-use-cache nil) ;; Change back if slow?
   (csetq org-refile-allow-creating-parent-nodes 'confirm)
   (csetq org-outline-path-complete-in-steps nil)
   (csetq org-refile-use-outline-path 'file)
@@ -1337,7 +1350,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
          (csetq image-dired-external-viewer "xdg-open")))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (eval-when-compile (defvar dired-mode-map))
   ;;(defun actuator-attach-from-dired ()
   (define-key dired-mode-map
