@@ -1,9 +1,0 @@
-#+title: Hushlogin
-#+index: Hushlogin
-#+index: MacOS!Hushlogin
-
-* Hushlogin
-
-#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.hushlogin" "no")
-  # Silence
-#+end_src

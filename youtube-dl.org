@@ -1,7 +1,0 @@
-#+title: Youtube-DL
-#+index: Youtube-DL
-
-* Youtube DL
-#+begin_src conf :tangle ~/.config/youtube-dl/config
-  -o ~/Downloads/%(title)s-%(id)s.%(ext)s
-#+end_src
