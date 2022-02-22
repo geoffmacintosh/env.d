@@ -1466,8 +1466,6 @@ Install pacman-contrib.
   Exec = /usr/bin/paccache -r
 #+end_src
 
-*
-
 * Pacman
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
@@ -1588,23 +1586,6 @@ Install pacman-contrib.
 #+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/logind.conf.d/10-logind.conf" "no") :comments no
   [Login]
   HandlePowerKey=suspend
-#+end_src
-* Reflector
-:PROPERTIES:
-:CREATED:  [2022-01-17 Mon 17:18]
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:13]
-:END:
-
-#+begin_src conf :tangle /sudo::/etc/xdg/reflector/reflector.conf
-  --save /etc/pacman.d/mirrorlist
-  --protocol https
-  --country CA
-  --country US
-  --latest 25
-  --age 12
-  --sort rate
 #+end_src
 * Reflector
 :LOGBOOK:
