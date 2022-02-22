@@ -278,8 +278,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+begin_src emacs-lisp
   (define-key key-translation-map (kbd "<mouse-8>") (kbd "<XF86Back>"))
   (define-key key-translation-map (kbd "<mouse-9>") (kbd "<XF86Forward>"))
-  (define-key key-translation-map (kbd "<wheel-left>") (kbd "<XF86Back>"))
-  (define-key key-translation-map (kbd "<wheel-right>") (kbd "<XF86Forward>"))
+  ;;(define-key key-translation-map (kbd "<wheel-left>") (kbd "<XF86Back>"))
+  ;;(define-key key-translation-map (kbd "<wheel-right>") (kbd "<XF86Forward>"))
 #+end_src
 
 #+begin_src emacs-lisp
