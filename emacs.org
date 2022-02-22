@@ -4,10 +4,12 @@
 
 * Forward
 
-#+begin_src emacs-lisp :tangle no :comments no
-  ;;; actuator.el --- Literate configuration files -*- lexical-binding: t; -*-
+#+begin_src emacs-lisp :comments no
+  ;;; actuator-emacs.el --- Literate configuration -*- lexical-binding: t; -*-
 
   ;;; Commentary:
+
+  ;; This is a tangled file, see actuator-emacs.org for information.
 
   ;;; Code:
 #+end_src
@@ -61,6 +63,8 @@ I need a bunch of convenience functions to check the capabilities of the system 
 
   ;;; Commentary:
 
+  ;; This is a tangled file, see actuator-emacs.org for information.
+
   ;;; Code:
 #+end_src
 
@@ -78,7 +82,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 #+begin_src emacs-lisp
   (setq custom-file (expand-file-name "custom-settings.el" user-emacs-directory))
-  (load custom-file 'noerror)
+  (load custom-file 'noerror 'nomessage)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -94,6 +98,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
 
   ;;; Commentary:
+
+  ;; This is a tangled file, see actuator-emacs.org for information.
 
   ;;; Code:
 #+end_src
@@ -112,17 +118,13 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 #+begin_src emacs-lisp
   (let ((gc-cons-threshold (* 5000 1024 1024))
-        (config (expand-file-name "emacs.org" actuator-directory))
-        (theme (expand-file-name "emacs-theme.org" actuator-directory)))
+        (config (expand-file-name "emacs.org" actuator-directory)))
     (require 'package)
     (package-activate-all)
     (require 'ob-tangle)
 
     (when (file-readable-p config)
-      (org-babel-load-file config t))
-    ;;(when (file-readable-p theme)
-    ;;  (org-babel-load-file theme t))
-    )
+      (org-babel-load-file config t)))
 #+end_src
 
 ** Footer
@@ -138,16 +140,21 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+begin_src emacs-lisp
   ;;(deftheme actuator)
 
-  (add-hook 'minibuffer-setup-hook 'actuator--minibuffer-setup)
+  (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
 
-  (defun actuator--minibuffer-setup ()
+  (defun actuator-minibuffer-setup ()
+    "Remap minibuffer faces to ensure uniformity.
+
+  I really don't like it when the minibuffer has different font
+  sizes. Currently I have to remap everything manually, but that's
+  probably okay."
          (set (make-local-variable 'face-remapping-alist)
             '((org-document-title :height 1.0))))
 
   (let ((blue  "#29BEEA")
         (white "#FFFFFF")
         (dark  "#000000")
-        (cyan  "#00FFFF")
+        ;;(cyan  "#00FFFF")
         (red   "#FF1616")
         (grey  "#484e55")
         (lgrey "#bdc4cc")
@@ -156,7 +163,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
         (code-background "#FFFFFF")
 
         (xgrey "#F5F6F8")
-        (xbord "#EDF0F4"))
+        ;;(xbord "#EDF0F4")
+        )
 
     (custom-theme-set-faces
      'user
