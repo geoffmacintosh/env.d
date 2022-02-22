@@ -1,4 +1,4 @@
-#+title: Emacs
+#+title: Actuator Emacs
 #+startup: contents
 #+property: header-args :tangle (concat (file-name-base (buffer-file-name)) ".el") :comments link
 
@@ -59,7 +59,7 @@ I need a bunch of convenience functions to check the capabilities of the system 
 :END:
 
 #+begin_src emacs-lisp
-  ;;; early-init.el --- Set up some pre-package.el defaults -*- lexical-binding: t; -*-
+  ;;; early-init.el --- Pre-package.el settings -*- lexical-binding: t; -*-
 
   ;;; Commentary:
 
@@ -89,13 +89,14 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (provide 'early-init)
   ;;; early-init.el ends here
 #+end_src
+
 * Init
 :PROPERTIES:
 :header-args: :tangle ~/.config/emacs/init.el :comments no :mkdirp yes
 :END:
 ** Lexical Binding
 #+begin_src emacs-lisp
-  ;;; init.el --- Emacs init -*- lexical-binding: t; -*-
+  ;;; init.el --- Load literate config -*- lexical-binding: t; -*-
 
   ;;; Commentary:
 
@@ -118,7 +119,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 #+begin_src emacs-lisp
   (let ((gc-cons-threshold (* 5000 1024 1024))
-        (config (expand-file-name "emacs.org" actuator-directory)))
+        (config (expand-file-name "actuator-emacs.org" actuator-directory)))
     (require 'package)
     (package-activate-all)
     (require 'ob-tangle)
@@ -480,6 +481,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (eval-when-compile
     (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
     (declare-function xref-find-definitions "xref" (identifier)))
+
   (defun actuator-jump-to-correct-location ()
     "Replacement for `xref-find-definitions' to be org-aware.
 
@@ -499,18 +501,13 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 * Org-mode
 ** Agenda
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (defvar org-agenda-mode-map)
+    (declare-function org-agenda-todo-yesterday "org-agenda" (&optional arg)))
+
   (with-eval-after-load 'org-agenda
-    (eval-when-compile (defvar org-agenda-mode-map)
-                       (declare-function org-agenda-todo-yesterday "org-agenda" (&optional ARG)))
     (define-key org-agenda-mode-map (kbd "T") #'org-agenda-todo-yesterday))
 #+end_src
-* Afterword
-
-#+begin_src emacs-lisp :tangle no :comments no
-  (provide 'actuator)
-  ;;; actuator.el ends here
-#+end_src
-
 * Savehist
 #+begin_src emacs-lisp
   (csetq history-length 10000)
@@ -664,7 +661,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 * Capture Templates
 #+begin_src emacs-lisp
-  (eval-when-compile (defvar org-capture-templates))
+  (eval-when-compile
+    (defvar org-capture-templates))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -687,7 +685,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
     (add-to-list 'org-capture-templates
                  `("j" "Journal" entry
-                   (file+olp+datetree "journal.org")
+                   (file+olp+datetree "journal.org.gpg")
                    "* %(org-expiry-insert-created)%(actuator-date-stamp)\n%?"
                    :empty-lines 1)))
 #+end_src
@@ -809,7 +807,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 [[elfeed:christiantietze.de#tag:christiantietze.de,2021-06-21:/posts/2021/06/emacs-trash-file-macos/][Trash File from Emacs with Put-Back Enabled on macOS]]
 
 #+begin_src emacs-lisp
-  (eval-when-compile
     (when (executable-find "trash")
       (csetq delete-by-moving-to-trash t)
       (csetq trash-directory "~/.Trash")
@@ -820,7 +817,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
         (shell-command (concat "trash -vF \"" path "\""
                                "| sed -e 's/^/Trashed: /'")
                        nil ;; Name of output buffer
-                       "*Trash Error Buffer*"))))
+                       "*Trash Error Buffer*")))
 #+end_src
 
 * Org
@@ -1148,7 +1145,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
   (global-set-key (kbd "C-c c") #'org-capture)
   (global-set-key (kbd "C-c a") #'org-agenda)
-  (eval-when-compile (declare-function org-store-link "ol"))
+  (eval-when-compile
+    (declare-function org-store-link "ol"))
   (global-set-key (kbd "C-c l") #'org-store-link)
 
   (csetq org-startup-folded 'content)
@@ -1311,7 +1309,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   servers, so that's fine."
 
     (require 'server)
-    (eval-when-compile (declare-function server-running-p "server"))
+    (eval-when-compile
+      (declare-function server-running-p "server"))
     (unless (server-running-p) (server-start)))
 
   (run-with-idle-timer 1 nil #'actuator-start-server-if-not-running)
@@ -1455,8 +1454,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (require 'ibuf-ext)
     (eval-when-compile
       (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext" (name))
-      (declare-function ibuffer-auto-mode "ibuf-ext" (arg))
-      (declare-function ibuffer-do-sort-by-alphabetic "ibuf-ext" nil))
+      (declare-function ibuffer-auto-mode "ibuf-ext" (&optional arg))
+      (declare-function ibuffer-do-sort-by-alphabetic "ibuf-ext"))
     (ibuffer-switch-to-saved-filter-groups "default")
     (ibuffer-auto-mode 1)
     (ibuffer-do-sort-by-alphabetic)
@@ -1475,7 +1474,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (require 'dired-x)
     (require 'dired-aux)
     (require 'wdired))
-  (eval-when-compile (declare-function dired-omit-mode "dired-x"))
+  (eval-when-compile
+    (declare-function dired-omit-mode "dired-x"))
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 #+end_src
 
@@ -1515,7 +1515,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (eval-when-compile (defvar savehist-additional-variables))
     (add-to-list 'savehist-additional-variables 'dired-shell-command-history))
 
-  (eval-when-compile (declare-function dired-directory-changed-p "dired"))
+  (eval-when-compile
+    (declare-function dired-directory-changed-p "dired"))
   (csetq dired-auto-revert-buffer #'dired-directory-changed-p)
   (csetq dired-dwim-target t)
   (csetq wdired-create-parent-directories t)
@@ -1651,7 +1652,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
   Sometimes it's better to show the entire buffer, for example when
   trying to run ediff on an Org-mode file. That way context for the diff is shown."
-    (eval-when-compile (declare-function outline-show-all "outline"))
+    (eval-when-compile
+      (declare-function outline-show-all "outline"))
     (when (derived-mode-p 'org-mode)
       (require 'outline)
       (outline-show-all)))
@@ -1758,7 +1760,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64)))
 
   (with-eval-after-load 'message
-    (eval-when-compile (declare-function message-sort-headers "message"))
+    (eval-when-compile
+      (declare-function message-sort-headers "message"))
     (add-hook 'message-setup-hook #'message-sort-headers))
 #+end_src
 
@@ -1864,7 +1867,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     "Jump to bookmark location if available when opening a document."
 
     (require 'bookmark)
-    (eval-when-compile (declare-function bookmark-maybe-load-default-file "bookmark"))
+    (eval-when-compile
+      (declare-function bookmark-maybe-load-default-file "bookmark"))
     (bookmark-maybe-load-default-file)
     (bookmark-jump (buffer-name)))
 
@@ -1990,7 +1994,8 @@ https://gist.github.com/spacebat/5500966
   (csetq eldoc-idle-delay 0)
 
   (with-eval-after-load 'eldoc
-    (eval-when-compile (declare-function elisp-get-fnsym-args-string@docstring "elisp-mode"))
+    (eval-when-compile
+      (declare-function elisp-get-fnsym-args-string@docstring "elisp-mode"))
     ;;(require 'elisp-mode)
     (define-advice elisp-get-fnsym-args-string (:around (orig-fun sym &rest r) docstring)
       "If SYM is a function, append its docstring."
@@ -2042,7 +2047,8 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (when (package-installed-p 'ivy)
-    (eval-when-compile (declare-function ivy-switch-buffer "ivy"))
+    (eval-when-compile
+      (declare-function ivy-switch-buffer "ivy"))
     (global-set-key (kbd "C-x b") #'ivy-switch-buffer))
 
   (with-eval-after-load 'ivy
@@ -2089,10 +2095,12 @@ https://gist.github.com/spacebat/5500966
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-cliplink)
-  (eval-when-compile (declare-function org-cliplink "org-cliplink"))
+  (eval-when-compile
+    (declare-function org-cliplink "org-cliplink")
+    (defvar org-capture-templates))
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
-    (eval-when-compile (defvar org-capture-templates))
+
     (add-to-list 'org-capture-templates
                  '("b" "Bookmark" entry
                    (file "bookmark.org")
@@ -2205,7 +2213,8 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'elfeed
-    (eval-when-compile (declare-function elfeed-make-tagger "elfeed"))
+    (eval-when-compile
+      (declare-function elfeed-make-tagger "elfeed"))
     (add-hook 'elfeed-new-entry-hook
               (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial\\|philosophy"
                                   :add '(junk debug1)
@@ -2313,7 +2322,8 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 
   Taken from Mike Zamansky"
       (interactive)
-      (eval-when-compile (declare-function elfeed-search-untag-all-unread "elfeed-search"))
+      (eval-when-compile
+        (declare-function elfeed-search-untag-all-unread "elfeed-search"))
       (with-no-warnings (mark-whole-buffer))
       (elfeed-search-untag-all-unread))
 #+end_src
@@ -2454,7 +2464,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     "Set up Plan9/Smart shell in eshell."
 
     (require 'em-smart)
-    (eval-when-compile (declare-function eshell-smart-initialize "em-smart"))
+    (eval-when-compile
+      (declare-function eshell-smart-initialize "em-smart"))
     (eshell-smart-initialize))
   (csetq eshell-where-to-jump 'begin)
   (csetq eshell-review-quick-commands nil)
@@ -2557,7 +2568,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
     (require 'eshell)
     (require 'em-dirs)
-    (eval-when-compile (declare-function eshell/pwd "em-dirs"))
+    (eval-when-compile
+      (declare-function eshell/pwd "em-dirs"))
     (concat
      ;;(user-login-name)
      ;;"@"
@@ -2644,7 +2656,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'rainbow-mode)
   (when (package-installed-p 'rainbow-mode)
-    (eval-when-compile (declare-function rainbow-mode "rainbow-mode"))
+    (eval-when-compile
+      (declare-function rainbow-mode "rainbow-mode"))
     (run-with-idle-timer 1 nil #'rainbow-mode))
 #+end_src
 * Modeline
@@ -2676,7 +2689,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (add-to-list 'package-selected-packages 'minions)
 
   (when (package-installed-p 'minions)
-    (eval-when-compile (declare-function minions-mode "minions"))
+    (eval-when-compile
+      (declare-function minions-mode "minions"))
     (run-with-idle-timer 1 nil #'minions-mode))
 #+end_src
 * Sudoers
@@ -2716,7 +2730,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     "Reveals the area around the point in Org-mode files."
 
     (when (derived-mode-p 'org-mode)
-      (eval-when-compile (declare-function org-reveal "org"))
+      (eval-when-compile
+        (declare-function org-reveal "org"))
       (org-reveal t)))
   (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around)
 #+end_src
@@ -2855,7 +2870,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     "Build org html."
     (interactive)
     (require 'ox-publish)
-    (eval-when-compile (declare-function org-publish "ox-publish"))
+    (eval-when-compile
+      (declare-function org-publish "ox-publish"))
     (org-publish "org" nil t))
   (global-set-key (kbd "C-c p") #'actuator-export-org)
 #+end_src
@@ -2864,7 +2880,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defun actuator-filter-local-links (link backend _info)
     "Filter to convert all the forms of /index.html to /."
     (require 'ox)
-    (eval-when-compile (declare-function org-export-derived-backend-p "ox"))
+    (eval-when-compile
+      (declare-function org-export-derived-backend-p "ox"))
     (if (org-export-derived-backend-p backend 'html)
         (replace-regexp-in-string "/index.html" "/" link)))
   (with-eval-after-load
@@ -2878,7 +2895,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (defun diary-sunrise ()
-    (eval-when-compile (declare-function diary-sunrise-sunset "solar"))
+    (eval-when-compile
+      (declare-function diary-sunrise-sunset "solar"))
     (let ((dss (diary-sunrise-sunset)))
       (with-temp-buffer
         (insert dss)
@@ -3537,7 +3555,14 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
   (csetq desktop-dirname  user-emacs-directory)
   (csetq desktop-base-lock-name "desktop-lock")
   (csetq desktop-save t)
-  (desktop-save-mode 1)
-  ;;(desktop-read)
-  ;;(desktop-save "~/.config/emacs/")
+  (unless (equal init-file-debug t)
+    (message "Skipping desktop-save-mode for --debug-init")
+    (desktop-save-mode 1))
+#+end_src
+
+* Afterword
+
+#+begin_src emacs-lisp :comments no
+  (provide 'actuator-emacs)
+  ;;; actuator-emacs.el ends here
 #+end_src
