@@ -3,6 +3,26 @@
 #+property: header-args :tangle (concat (file-name-base (buffer-file-name)) ".el") :comments link
 
 * Forward
+Install Emacs via your chosen system. It works with native-compile on both macOS and Linux for me.
+
+Then to actually install stuff evaluate the following source block. If it works (untested currently) it should install a bunch of packages and kill Emacs when it's done. Then you should be good to go!
+
+#+begin_src emacs-lisp :tangle no
+  (require 'ob-tangle)
+  (require 'package)
+  (org-babel-tangle nil (buffer-file-name))
+  (load-file (expand-file-name "early-init.el" user-emacs-directory))
+  (load-file (expand-file-name "init.el" user-emacs-directory))
+  (load-file (concat (file-name-base (buffer-file-name)) ".el"))
+  (package-refresh-contents)
+  (package-install-selected-packages)
+  (package-quickstart-refresh)
+  (kill-emacs)
+#+end_src
+
+I'm calling this whole thing Actuator. It's a name I came up with because I needed a prefix for naming functions and variables in my Emacs config, and the original name---env.d---has a dot in it which doesn't work for me. I don't know. Anyway, it's named after an Arc'Teryx Veilance jacket that I don't particularly have strong opinions on it, but the name is fun.
+
+Oh, I should probably note that I love pleasing the Emacs byte-compiler, but also am not very good at it. So there's a lot of completely unneeded boilerplate that makes some parts of it happy, but also there will warnings all over the place.
 
 #+begin_src emacs-lisp :comments no
   ;;; actuator-emacs.el --- Literate configuration -*- lexical-binding: t; -*-
@@ -13,6 +33,8 @@
 
   ;;; Code:
 #+end_src
+
+There are three main Emacs files. This one, {{{input-file}}}, makes all the others. [[*Early init][Early init]] and [[*Init][init]] are housed inside this file, but they're purposefullly as minimal as possible, and they tangle out separately. The next few sections before them are the things that need to be on top. Everything else is supposed to be completely location-independent. Emphasis on /supposed/.
 
 ** Csetq
 The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things worse. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
@@ -43,6 +65,10 @@ I need a bunch of convenience functions to check the capabilities of the system 
   (defun is-linux-p ()
     "Return non-nil if system is Linux."
     (eq system-type 'gnu/linux))
+
+  (defun is-win-p ()
+    "Return non-nil if system is Windows."
+    (eq system-type 'windows-nt))
 
   (defun is-graphical-p ()
     "Return non-nil if system has a graphical display."
@@ -83,6 +109,26 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+begin_src emacs-lisp
   (setq custom-file (expand-file-name "custom-settings.el" user-emacs-directory))
   (load custom-file 'noerror 'nomessage)
+#+end_src
+
+#+begin_src emacs-lisp
+  (when (file-exists-p "/opt/local/sbin")
+    (add-to-list 'exec-path "/opt/local/bin"))
+  (when (file-exists-p "/opt/local/bin")
+    (add-to-list 'exec-path "/opt/local/bin"))
+
+  (when (file-exists-p "/Library/Tex/texbin")
+    (add-to-list 'exec-path "/Library/Tex/texbin"))
+
+
+  (when (file-exists-p "/usr/local/opt/ruby/libexec/gembin")
+    (add-to-list 'exec-path "/usr/local/opt/ruby/libexec/gembin"))
+  (when (file-exists-p "/usr/local/opt/ruby/bin")
+    (add-to-list 'exec-path "/usr/local/opt/ruby/bin"))
+  (when (file-exists-p "/usr/local/bin")
+    (add-to-list 'exec-path "/usr/local/bin"))
+  (when (file-exists-p "/usr/local/sbin")
+    (add-to-list 'exec-path "/usr/local/sbin"))
 #+end_src
 
 #+begin_src emacs-lisp
