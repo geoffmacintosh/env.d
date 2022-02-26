@@ -836,7 +836,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
                              "/var/folders/"
                              user-emacs-directory))
-    (add-hook 'midnight-mode-hook #'recentf-cleanup)
+    (add-hook 'midnight-hook #'recentf-cleanup)
     (recentf-mode 1)
 #+end_src
 
