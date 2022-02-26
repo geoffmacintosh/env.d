@@ -877,28 +877,13 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar actuator-todo-todo-keyword "TODO")
-  (defvar actuator-todo-waiting-keyword "WAITING")
-  (defvar actuator-todo-next-keyword "NEXT")
-  (defvar actuator-todo-someday-keyword "SOMEDAY")
-  (defvar actuator-todo-project-keyword "PROJECT")
-  (defvar actuator-todo-done-keyword "DONE")
-  (defvar actuator-todo-cancelled-keyword "CANCELLED")
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-enable-org-id ()
-    "Enable Org-id functions."
-    (require 'org-id)
-    (message "Enabled org-id"))
-
-  (run-with-idle-timer 1 nil #'actuator-enable-org-id)
+  (run-with-idle-timer 1 nil #'require 'org-id)
   (csetq org-id-locations-file (expand-file-name "org-id-locations.el" user-emacs-directory))
   (csetq org-id-track-globally t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-c d") #'org-decrypt-entry)
+  (define-key org-mode-map (kbd "C-c d") #'org-decrypt-entry)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -944,14 +929,14 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (add-to-list 'org-agenda-custom-commands
                  '("vd" "Daily View"
                    ((agenda "")
-                    (todo actuator-todo-next-keyword))
+                    (todo "NEXT"))
                    ((org-agenda-span 'day))))
 
     (add-to-list 'org-agenda-custom-commands
                  '("vw" "Weekly View"
                    ((agenda "")
-                    (todo actuator-todo-waiting-keyword)
-                    (todo actuator-todo-project-keyword)
+                    (todo "WAITING")
+                    (todo "PROJECT")
                     (org-agenda-list-stuck-projects))
                    ((org-agenda-span 7)
                     (org-agenda-start-day "+0d")
@@ -963,7 +948,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
     (add-to-list 'org-agenda-custom-commands
                  '("vm" "Monthly View"
-                   ((todo actuator-todo-someday-keyword))))
+                   ((todo "SOMEDAY"))))
 
     (add-to-list 'org-agenda-custom-commands
                  '("A" "Candidate trees for archiving" tags "-NOARCHIVE"
@@ -973,7 +958,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (add-to-list 'org-agenda-custom-commands
                  '("p" "Daily Personal Mail"
                    ((agenda "")
-                    (todo actuator-todo-next-keyword))
+                    (todo "TODO"))
                    ((org-agenda-span 'day)
                     (org-agenda-remove-tags t)
                     (org-habit-preceding-days 7)
