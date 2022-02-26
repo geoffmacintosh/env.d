@@ -1058,23 +1058,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-refile-allow-creating-parent-nodes 'confirm)
   (csetq org-outline-path-complete-in-steps nil)
   (csetq org-refile-use-outline-path 'file)
-  ;;(csetq org-refile-targets '((org-agenda-files :maxlevel . 4)))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (defun actuator-rebuild-org-refile-cache ()
-    "Rebuilds the refile cache so things refile quickly.
-
-  Might be a touch mean to slower laptops, so not sure it should
-  run very often."
-    (require 'org-refile)
-    (eval-when-compile
-      (declare-function org-refile-cache-clear "org-refile")
-      (declare-function org-refile-get-targets "org-refile"))
-    (org-refile-cache-clear)
-    (org-refile-get-targets))
-
-  (add-hook 'midnight-hook #'actuator-rebuild-org-refile-cache)
 #+end_src
 
 #+begin_src emacs-lisp
