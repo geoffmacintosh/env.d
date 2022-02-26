@@ -1263,7 +1263,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
            (holiday-float 6 0 3 "Father's Day")
            (holiday-fixed 10 31 "Halloween")))
 
-  (defvar holiday-canada-holidays
+  (defvar holiday-canadian-holidays
     '((holiday-fixed 7 1       "Canada Day")
       (holiday-float 9 1 1     "Labour Day")
       (holiday-float 5 1 -1    "Victoria Day" 24)
@@ -1276,7 +1276,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     "General holidays for Canada.
   See the documentation for `calendar-holidays' for details.")
 
-  (csetq holiday-other-holidays (append holiday-canada-holidays
+  (csetq holiday-other-holidays (append holiday-canadian-holidays
                                         holiday-american-holidays))
 #+end_src
 * Frame init
