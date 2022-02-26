@@ -3038,7 +3038,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 * Compilation window
 [2021-07-28 Wed 11:09]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-notify-compilation-result (buffer msg)
     "Notify that the compilation is finished,
     close the *compilation* buffer if the compilation is successful,
