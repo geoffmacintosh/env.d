@@ -853,17 +853,17 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 [[elfeed:christiantietze.de#tag:christiantietze.de,2021-06-21:/posts/2021/06/emacs-trash-file-macos/][Trash File from Emacs with Put-Back Enabled on macOS]]
 
 #+begin_src emacs-lisp
-    (when (executable-find "trash")
-      (csetq delete-by-moving-to-trash t)
-      (csetq trash-directory "~/.Trash")
-      (defun system-move-file-to-trash (path)
-        "Moves file at PATH to the Trash according to `move-file-to-trash' convention.
+  (when (and (executable-find "trash") (is-mac-p))
+    (csetq delete-by-moving-to-trash t)
+    (csetq trash-directory "~/.Trash")
+    (defun system-move-file-to-trash (path)
+      "Moves file at PATH to the Trash according to `move-file-to-trash' convention.
 
   On macOS relies on the command-line utility 'trash' to be installed."
-        (shell-command (concat "trash -vF \"" path "\""
-                               "| sed -e 's/^/Trashed: /'")
-                       nil ;; Name of output buffer
-                       "*Trash Error Buffer*")))
+      (shell-command (concat "trash -vF \"" path "\""
+                             "| sed -e 's/^/Trashed: /'")
+                     nil ;; Name of output buffer
+                     "*Trash Error Buffer*")))
 #+end_src
 
 * Org
