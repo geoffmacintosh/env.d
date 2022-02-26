@@ -1585,7 +1585,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (with-eval-after-load 'org
     (org-clock-persistence-insinuate))
   (csetq org-clock-into-drawer "CLOCKING")
-  ;;(csetq org-clock-persist t)
+  (csetq org-clock-persist t)
   (csetq org-clock-out-remove-zero-time-clocks t)
   (csetq org-clock-mode-line-total 'auto)
 #+end_src
@@ -1930,9 +1930,8 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 * Ledger Mode
 #+begin_src emacs-lisp
-  (when (executable-find "ledger")
-    (csetq ledger-default-date-format "%Y-%m-%d")
-    (add-to-list 'package-selected-packages 'ledger-mode))
+  (csetq ledger-default-date-format "%Y-%m-%d")
+  (add-to-list 'package-selected-packages 'ledger-mode))
 #+end_src
 * Markdown Mode
 #+begin_src emacs-lisp
@@ -2184,11 +2183,7 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-download)
 
-  (defun actuator-enable-org-download ()
-    (require 'org-download)
-    (message "Enabled org-download"))
-
-  (run-with-idle-timer 1 nil #'actuator-enable-org-download)
+  (run-with-idle-timer 1 nil #'require 'org-download)
 
   (csetq org-download-method 'attach)
   (csetq org-download-annotate-function nil)
@@ -3079,7 +3074,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :PROPERTIES:
 :CREATED:  <2021-09-09 Thu 13:25>
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (eval-when-compile
    (declare-function org-expiry-insinuate "ext:org-expiry" (&optional arg))
    (declare-function org-expiry-archive-subtree "ext:org-expiry" nil))
@@ -3181,7 +3176,7 @@ I'm using a custom alert function so that I can use the system's notification sy
 
 * Org archive
 #+begin_src emacs-lisp
-  (csetq org-archive-mark-done actuator-todo-done-keyword)
+  (csetq org-archive-mark-done "DONE")
   (csetq org-archive-location "archive/%s_archive::")
 #+end_src
 
