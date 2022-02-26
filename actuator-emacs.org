@@ -3089,6 +3089,18 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (csetq org-expiry-inactive-timestamps t)
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun actuator-org-insert-heading-timestamp ()
+    "Insert a timestamp below a new heading.
+
+  Org counts an inactive timestamp on the start of a line as a
+  creation date."
+    (eval-when-compile (declare-function org-time-stamp-inactive "org"))
+    (save-excursion
+      (insert (format "\n:PROPERTIES:\n:CREATED: [%s] \n:END:" (format-time-string "%Y-%m-%d %a %H:%M")))))
+  (add-hook 'org-insert-heading-hook #'actuator-org-insert-heading-timestamp)
+#+end_src
+
 * Archive old stuff
 :PROPERTIES:
 :CREATED:  [2022-01-06 Thu 15:32]
