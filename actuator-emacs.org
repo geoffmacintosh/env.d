@@ -1931,7 +1931,7 @@ https://gist.github.com/spacebat/5500966
 * Ledger Mode
 #+begin_src emacs-lisp
   (csetq ledger-default-date-format "%Y-%m-%d")
-  (add-to-list 'package-selected-packages 'ledger-mode))
+  (add-to-list 'package-selected-packages 'ledger-mode)
 #+end_src
 * Markdown Mode
 #+begin_src emacs-lisp
@@ -2456,30 +2456,19 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (csetq eshell-destroy-buffer-when-process-dies t)
   (csetq eshell-banner-message "")
-#+end_src
-
-#+begin_src emacs-lisp
   (csetq eshell-history-size 10000)
   (csetq eshell-hist-ignoredups t)
-#+end_src
-
-#+begin_src emacs-lisp
   (csetq eshell-cmpl-cycle-completions nil)
   (csetq eshell-cmpl-ignore-case t)
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-eshell-smart-shell ()
-    "Set up Plan9/Smart shell in eshell."
-
-    (require 'em-smart)
-    (eval-when-compile
-      (declare-function eshell-smart-initialize "em-smart"))
-    (eshell-smart-initialize))
   (csetq eshell-where-to-jump 'begin)
   (csetq eshell-review-quick-commands nil)
   (csetq eshell-smart-space-goes-to-end t)
-  (add-hook 'eshell-mode-hook #'actuator-eshell-smart-shell)
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eshell
+    (require 'em-smart)
+    (eshell-smart-initialize))
 #+end_src
 
 - [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
@@ -2490,31 +2479,25 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
     (setq-local imenu-generic-expression
                 '(("Prompt" "^.*?[#❯]" 1))))
-  ;;(add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
+  (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
-  (defun actuator-eshell-autocomplete ()
-    "Enable tab autocompletion in eshell."
-
-    (define-key eshell-mode-map (kbd "TAB") #'actuator-eshell-autocomplete))
   (defun actuator-pcomplete-std-complete ()
-
     (interactive)
     (pcomplete-std-complete))
-  ;;(add-hook 'eshell-mode-hook #'actuator-eshell-autocomplete)
+
+(with-eval-after-load 'esh-mode
+   (define-key eshell-mode-map (kbd "<tab>") #'actuator-pcomplete-std-complete))
 #+end_src
 
-#+results:
-| actuator-fish-completion | actuator-eshell-autocomplete | actuator-eshell-imenu |
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'pcmpl-args)
   (with-eval-after-load 'eshell
     (require 'pcmpl-args nil t))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (is-mac-p)
     (add-to-list 'package-selected-packages 'pcmpl-homebrew)
     (with-eval-after-load 'eshell
@@ -2569,7 +2552,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-eshell-prompt ()
     "Custom prompt for eshell.
 
