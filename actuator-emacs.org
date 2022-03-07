@@ -36,6 +36,18 @@ Oh, I should probably note that I love pleasing the Emacs byte-compiler, but als
 
 There are three main Emacs files. This one, {{{input-file}}}, makes all the others. [[*Early init][Early init]] and [[*Init][init]] are housed inside this file, but they're purposefullly as minimal as possible, and they tangle out separately. The next few sections before them are the things that need to be on top. Everything else is supposed to be completely location-independent. Emphasis on /supposed/.
 
+** Windows stuff
+:PROPERTIES:
+:CREATED: [2022-03-03 Thu 08:55]
+:END:
+
+Right now I'm setting Emacs to be [[https://www.emacswiki.org/emacs/EmacsPortableApp][portable on Windows]]. This isn't necessary if Emacs is actually installed on Windows and probably is a bad idea.
+
+#+begin_src bat :tangle (if (eq system-type 'windows-nt) (expand-file-name "runemacs.bat" invocation-directory) "no")
+  set HOME=%~dp0..\..\emacshome
+  "%~dp0runemacs.exe" %*
+#+end_src
+
 ** Csetq
 The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things worse. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
 
