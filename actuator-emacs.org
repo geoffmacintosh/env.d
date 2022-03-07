@@ -2234,7 +2234,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
                                   :remove 'unread))
     (add-hook 'elfeed-new-entry-hook
               (elfeed-make-tagger :feed-title "MacSparky"
-                                  :entry-title "focused\\|Mac Power Users\\|jazz\\|automators\\|podcast"
+                                  :entry-title "focused\\|Mac Power Users\\|jazz\\|automators\\|podcast\\|Labs"
                                   :add '(junk debug3)
                                   :remove 'unread))
     (add-hook 'elfeed-new-entry-hook
