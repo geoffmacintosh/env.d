@@ -409,6 +409,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;;(run-with-idle-timer 1 nil #'global-so-long-mode 1) ; Fancy hooks to deal with big files.
   (csetq proced-auto-update-flag t)       ; Auto-update proced
   (csetq create-lockfiles nil)            ; Lockfiles are bad news
+  (csetq image-use-external-converter t)
   (remove-hook 'after-save-hook 'rmail-after-save-hook) ; I don't use rmail
  #+end_src
 
@@ -1551,6 +1552,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq dired-isearch-filenames 'dwim)
   (csetq dired-create-destination-dirs 'ask)
   (csetq dired-vc-rename-file t)
+  (csetq dired-kill-when-opening-new-dired-buffer t)
 
   (add-hook 'dired-mode-hook #'hl-line-mode)
 
@@ -3610,7 +3612,6 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 Might be a good idea to make sure that it doesn't error out if there's no git dir
 
 This is revision {{{revision}}}
-
 
 * Afterword
 
