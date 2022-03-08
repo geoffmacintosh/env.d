@@ -1,6 +1,6 @@
 #+title: Actuator Emacs
 #+startup: contents
-#+property: header-args :tangle (concat (file-name-base (buffer-file-name)) ".el") :comments link
+#+property: header-args :tangle (expand-file-name (concat (file-name-base (buffer-file-name)) ".el") user-emacs-directory) :comments link
 
 * Forward
 Install Emacs via your chosen system. It works with native-compile on both macOS and Linux for me.
@@ -177,13 +177,17 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 #+begin_src emacs-lisp
   (let ((gc-cons-threshold (* 5000 1024 1024))
-        (config (expand-file-name "actuator-emacs.org" actuator-directory)))
+        (org-file (expand-file-name "actuator-emacs.org" actuator-directory))
+        (el-file  (expand-file-name "actuator-emacs.el" user-emacs-directory)))
     (require 'package)
     (package-activate-all)
     (require 'ob-tangle)
 
-    (when (file-readable-p config)
-      (org-babel-load-file config t)))
+    ;;(buffer-file-name)
+
+    (org-babel-tangle-file org-file nil "emacs-lisp")
+    (byte-compile-file el-file)
+    (load (concat el-file "c")))
 #+end_src
 
 ** Footer
