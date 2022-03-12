@@ -111,11 +111,8 @@ I need a bunch of convenience functions to check the capabilities of the system 
 #+end_src
 
 #+begin_src emacs-lisp
-    (eval-when-compile
-      (defvar package-quickstart)
-      (defvar package-quickstart-file))
-    (when (file-exists-p package-quickstart-file)
-      (setq package-quickstart t))
+  (when (boundp 'package-quickstart-file)
+    (setq package-quickstart t))
 #+end_src
 
 I moved the custom-file to early init because when it was in the auto-tangled Org file some things ended up being saved in the init.el file and some in the custom-file, so there were weird errors occurring. This way there's only one location that I need to worry about.
