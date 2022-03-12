@@ -2233,7 +2233,7 @@ https://gist.github.com/spacebat/5500966
 * Elfeed
 #+begin_src emacs-lisp
   (when (not (is-win-p))
-    (add-to-list 'package-install-selected-packages 'elfeed))
+    (add-to-list 'package-selected-packages 'elfeed))
 #+end_src
 
 
