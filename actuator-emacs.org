@@ -1486,7 +1486,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (eval-when-compile
       (declare-function ibuffer-switch-to-saved-filter-groups "ibuf-ext" (name))
       (declare-function ibuffer-auto-mode "ibuf-ext" (&optional arg))
-      (declare-function ibuffer-do-sort-by-alphabetic "ibuf-ext"))
+      (declare-function ibuffer-do-sort-by-alphabetic "ibuf-ext" () t))
     (ibuffer-switch-to-saved-filter-groups "default")
     (ibuffer-auto-mode 1)
     (ibuffer-do-sort-by-alphabetic)
@@ -2027,7 +2027,7 @@ https://gist.github.com/spacebat/5500966
 
   (with-eval-after-load 'eldoc
     (eval-when-compile
-      (declare-function elisp-get-fnsym-args-string@docstring "elisp-mode"))
+      (declare-function elisp-get-fnsym-args-string@docstring "elisp-mode" (orig-fun sym &rest r) t))
     ;;(require 'elisp-mode)
     (define-advice elisp-get-fnsym-args-string (:around (orig-fun sym &rest r) docstring)
       "If SYM is a function, append its docstring."
@@ -3071,9 +3071,12 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (csetq completion-ignore-case t)
   (csetq read-file-name-completion-ignore-case t)
 
+  (eval-when-compile
+    (defvar icomplete-fido-mode-map))
+
   (with-eval-after-load 'fido-mode
     (define-key icomplete-fido-mode-map
-      (kbd "\C-j") #'actuator-minibuffer-try-complete-and-exit))
+                (kbd "\C-j") #'actuator-minibuffer-try-complete-and-exit))
 
   (defun actuator-minibuffer-try-complete-and-exit ()
     (interactive)
@@ -3184,7 +3187,7 @@ I'm using a custom alert function so that I can use the system's notification sy
    should be an integer number of minutes until the event occurs,
    the CURRENT-TIME which is discarded, and MESSAGE, which is the
    name of the TODO item that is upcoming."
-    (declare-function actuator-notify "emacs-config")
+    (declare-function actuator-notify "actuator-emacs" (title message))
     (actuator-notify (format "Appointment in %s minutes" minutes-until) message))
 #+end_src
 
@@ -3330,8 +3333,8 @@ I'm using a custom alert function so that I can use the system's notification sy
 #+begin_src emacs-lisp
   (eval-when-compile
     (defvar Info-mode-map)
-    (declare-function Info-backward-node "info" ())
-    (declare-function Info-forward-node "info" ()))
+    (declare-function Info-backward-node "info" nil)
+    (declare-function Info-forward-node "info" (&optional not-down not-up no-error)))
 
   (define-key Info-mode-map (kbd "<mouse-8>") #'Info-backward-node)
   (define-key Info-mode-map (kbd "<mouse-9>") #'Info-forward-node)
@@ -3502,13 +3505,13 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (csetq emms-player-mpd-music-directory (expand-file-name "~/Music/Music Files/"))
 
   (eval-when-compile
-    (declare-function emms-player-mpd-update-all "ext:emms-player-mpd" ())
-    (declare-function emms-cache-set-from-mpd-all "ext:emms-player-mpd" ())
-    (declare-function emms-player-mpd-connect "ext:emms-player-mpd" ())
-    (declare-function emms-mode-line-mode "ext:emms-mode-line" (arg))
-    (declare-function emms-playing-time-display-mode "ext:emms-playing-time" (arg))
-    (declare-function emms-smart-browse "ext:emms-browser" ())
-    (declare-function emms-all "ext:emms-setup" ())
+    (declare-function emms-player-mpd-update-all "ext:emms-player-mpd" nil)
+    (declare-function emms-cache-set-from-mpd-all "ext:emms-player-mpd" nil)
+    (declare-function emms-player-mpd-connect "ext:emms-player-mpd" nil)
+    (declare-function emms-mode-line-mode "ext:emms-mode-line" (&optional arg))
+    (declare-function emms-playing-time-display-mode "ext:emms-playing-time" (&optional arg))
+    (declare-function emms-smart-browse "ext:emms-browser" nil)
+    (declare-function emms-all "ext:emms-setup" nil)
     (defvar emms-info-functions)
     (defvar emms-player-list))
 
