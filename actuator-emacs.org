@@ -181,9 +181,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     (require 'package)
     (package-activate-all)
     (require 'ob-tangle)
-
-    ;;(buffer-file-name)
-
     (org-babel-tangle-file org-file nil "emacs-lisp")
     (byte-compile-file el-file)
     (load (concat el-file "c")))
@@ -340,10 +337,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 * Switches
-
-#+begin_src emacs-lisp
-  (csetq use-dialog-box nil)
-#+end_src
 
 #+begin_src emacs-lisp
   (define-key key-translation-map (kbd "<mouse-8>") (kbd "<XF86Back>"))
@@ -851,7 +844,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (csetq recentf-max-saved-items 1000)
     (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
                              "/var/folders/"
-                             user-emacs-directory))
+                             ,user-emacs-directory))
     (add-hook 'midnight-hook #'recentf-cleanup)
     (recentf-mode 1)
 #+end_src
@@ -1092,6 +1085,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
   (eval-when-compile
+    (defvar org-agenda-mode-map)
     (declare-function org-agenda-earlier "org-agenda" (ARG))
     (declare-function org-agenda-later   "org-agenda" (ARG)))
   (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
@@ -3063,6 +3057,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     (setq-local deactivate-mark nil)
     (throw 'exit nil))
 #+end_src
+
 - faces
    - highlight
    - icomplete-selected-match
@@ -3312,9 +3307,15 @@ I'm using a custom alert function so that I can use the system's notification sy
 :CREATED:  [2022-02-07 Mon 13:32]
 :END:
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (defvar Info-mode-map)
+    (declare-function Info-backward-node "info" ())
+    (declare-function Info-forward-node "info" ()))
+
   (define-key Info-mode-map (kbd "<mouse-8>") #'Info-backward-node)
   (define-key Info-mode-map (kbd "<mouse-9>") #'Info-forward-node)
 #+end_src
+
 * Package Init
 
 As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default. I add MELPA as a low-priority archive for now (Jan 2022).
@@ -3351,6 +3352,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (csetq uniquify-ignore-buffers-re "^\\*")
   (csetq uniquify-strip-common-suffix nil)
 #+end_src
+
 #+begin_src emacs-lisp
   (defun actuator-enable-abbrev-mode ()
     (abbrev-mode 1))
@@ -3385,7 +3387,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
           initials
           basic
           emacs22))
-
 #+end_src
 
 
@@ -3479,8 +3480,13 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (csetq emms-player-mpd-music-directory (expand-file-name "~/Music/Music Files/"))
 
   (eval-when-compile
-    (declare-function emms-player-mpd-update-all "ext:emms-player-mpd" nil)
-    (declare-function emms-cache-set-from-mpd-all "ext:emms-player-mpd" nil)
+    (declare-function emms-player-mpd-update-all "ext:emms-player-mpd" ())
+    (declare-function emms-cache-set-from-mpd-all "ext:emms-player-mpd" ())
+    (declare-function emms-player-mpd-connect "ext:emms-player-mpd" ())
+    (declare-function emms-mode-line-mode "ext:emms-mode-line" (arg))
+    (declare-function emms-playing-time-display-mode "ext:emms-playing-time" (arg))
+    (declare-function emms-smart-browse "ext:emms-browser" ())
+    (declare-function emms-all "ext:emms-setup" ())
     (defvar emms-info-functions)
     (defvar emms-player-list))
 
@@ -3600,15 +3606,12 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 - Refiled on [2022-03-06 Sun 17:04]
 :END:
 
-
 #+begin_src emacs-lisp
   (defvar org-export-global-macros)
 
     (with-eval-after-load 'ox
   (add-to-list 'org-export-global-macros '("revision" . "(eval (actuator-get-revision))")))
 #+end_src
-
-
 
 #+begin_src emacs-lisp
   (defun actuator-get-revision ()
@@ -3619,9 +3622,6 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
         (string-trim (shell-command-to-string "git rev-list --count HEAD"))
       "none"))
 #+end_src
-
-#+results:
-: actuator-get-revision
 
 Might be a good idea to make sure that it doesn't error out if there's no git dir
 
