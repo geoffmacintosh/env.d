@@ -1978,7 +1978,8 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 * Ripgrep
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'rg)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'rg))
 #+end_src
 * Nov.el
 #+begin_src emacs-lisp
@@ -2041,7 +2042,8 @@ https://gist.github.com/spacebat/5500966
 
 * Forge
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'forge)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'forge))
 #+end_src
 
 * Transient
@@ -2143,18 +2145,21 @@ https://gist.github.com/spacebat/5500966
 
 * Anki
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'anki-editor)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'anki-editor))
 #+end_src
 
 * Auctex
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'auctex)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'auctex))
   (csetq TeX-engine 'luatex)
   (csetq TeX-source-correlate-start-server t)
 #+end_src
 * Magit
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'magit)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'magit))
 
   (eval-when-compile
     (declare-function magit-status "magit-status")
@@ -2226,6 +2231,12 @@ https://gist.github.com/spacebat/5500966
   (csetq web-mode-css-indent-offset 2)
 #+end_src
 * Elfeed
+#+begin_src emacs-lisp
+  (when (not (is-win-p))
+    (add-to-list 'package-install-selected-packages 'elfeed))
+#+end_src
+
+
 #+begin_src emacs-lisp
   (csetq elfeed-search-filter "@1-week-ago +unread ")
   (csetq elfeed-enclosure-default-dir "~/Download/")
@@ -2453,12 +2464,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Org-elfeed
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'elfeed-org)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'elfeed-org))
 
   (with-eval-after-load 'elfeed
     (eval-when-compile
       (declare-function elfeed-org "elfeed-org"))
-      (elfeed-org))
+    (elfeed-org))
 
   (csetq rmh-elfeed-org-ignore-tag "disconnected")
   (csetq rmh-elfeed-org-auto-ignore-invalid-feeds nil)
@@ -2597,7 +2609,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Mu4e Alert
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'mu4e-alert)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'mu4e-alert))
 
   (defun actuator-set-up-mu4e-alert ()
     "Set up mu4e alerts if both mu4e and mu4e-alert are installed.
@@ -2710,7 +2723,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 * Sudoers
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'etc-sudoers-mode)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'etc-sudoers-mode))
 #+end_src
 
 * Auto-save
@@ -2954,8 +2968,15 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (defvar help-at-pt-display-when-idle)
+    (defvar help-at-pt-timer-delay))
+
   (defun actuator-echo-area-tooltips ()
-    "Show tooltips in the echo area automatically for current buffer."
+    "Show tooltips in the echo area automatically for current buffer.
+
+  You need to cancel the help-at-pt timer in order so reset the
+  delay to 0. That's what this does."
     (setq-local help-at-pt-display-when-idle t
                 help-at-pt-timer-delay 0)
     (help-at-pt-cancel-timer)
@@ -2988,7 +3009,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 [2021-07-29 Thu 13:03]
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'org-msg)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'org-msg))
+
   (csetq org-msg-default-alternatives '((new           . (text html))
                                         (reply-to-html . (text html))
                                         (reply-to-text . (text))))
@@ -2998,6 +3021,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (csetq org-msg-convert-citation t)
   (csetq mail-user-agent 'mu4e-user-agent)
   (csetq org-msg-signature "#+begin_signature\n-- \nGeoff MacIntosh.\n#+end_signature")
+
+  (eval-when-compile
+    (declare-function org-msg-mode "ext:org-msg" (&optional arg)))
 
   (when (package-installed-p 'org-msg)
     (run-with-idle-timer 1 nil #'org-msg-mode))
@@ -3033,13 +3059,11 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 * Fido mode
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-[2021-08-11 Wed 15:04]
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'fido-mode 1)
+  (when (not (package-installed-p 'counsel))
+    (run-with-idle-timer 1 nil #'fido-mode 1))
+
   (add-hook 'fido-mode-hook 'icomplete-vertical-mode)
   (csetq icomplete-scroll t)
   (csetq icomplete-show-matches-on-no-input t)
@@ -3148,8 +3172,6 @@ Appt can connect with org-mode to grab all the events for the day and issue aler
   (csetq appt-display-interval 5)
   (csetq appt-display-format 'window)
   (csetq appt-disp-window-function #'actuator-appt-notify)
-
-  (run-with-idle-timer 1 nil #'appt-activate 1)
 #+end_src
 
 I'm using a custom alert function so that I can use the system's notification system instead of only internal Emacs features. This way I can use it as either a wrapper or a complete replacement.
@@ -3173,11 +3195,12 @@ I'm using a custom alert function so that I can use the system's notification sy
    This (I believe) collects the appointments scheduled for the
    current day, so it is wise to run this at least daily to update
    the list."
+    (message "Refreshing appt")
     (org-agenda-to-appt t))
 
-  (with-eval-after-load 'midnight-mode
-    (eval-when-compile (defvar midnight-hook))
-    (add-to-list 'midnight-hook #'actuator-org-agenda-to-appt-refresh))
+  ;; (with-eval-after-load 'midnight-mode
+  ;;   (eval-when-compile (defvar midnight-hook))
+  ;;   (add-to-list 'midnight-hook #'actuator-org-agenda-to-appt-refresh))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3185,11 +3208,9 @@ I'm using a custom alert function so that I can use the system's notification sy
     "Runs `org-agenda-to-appt' whenever there is an idle period."
     (run-with-idle-timer 5 nil #'actuator-org-agenda-to-appt-refresh))
 
-  (run-at-time "90 minutes" t #'actuator-org-agenda-to-appt-timer)
-#+end_src
-
-#+begin_src emacs-lisp
+  (run-at-time "120 minute" t #'actuator-org-agenda-to-appt-timer)
   (advice-add #'actuator-org-agenda-to-appt-refresh :after #'org-agenda-to-appt)
+  (run-with-idle-timer 1 nil #'appt-activate 1)
 #+end_src
 
 * Org archive
@@ -3471,8 +3492,9 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 - Refiled on [2022-02-04 Fri 10:52]
 :END:
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'emms)
-  (add-to-list 'package-selected-packages 'org-emms)
+  (when (not (is-win-p))
+    (add-to-list 'package-selected-packages 'emms)
+    (add-to-list 'package-selected-packages 'org-emms))
 
   (csetq emms-player-list '(emms-player-mpd))
   (csetq emms-player-mpd-server-name "localhost")
@@ -3501,11 +3523,10 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (emms-mode-line-mode -1)
     (emms-playing-time-display-mode -1)
     (global-set-key (kbd "C-c m") #'emms-smart-browse)
-    (emms-player-mpd-update-all)
-    ;;(emms-cache-set-from-mpd-all)
-)
+    (emms-player-mpd-update-all))
 
-  (run-with-idle-timer 1 nil #'actuator-setup-emms)
+  (when (package-installed-p 'emms)
+    (run-with-idle-timer 1 nil #'actuator-setup-emms))
 #+end_src
 
 * Org path-independent link
