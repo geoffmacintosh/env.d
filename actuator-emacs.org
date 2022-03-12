@@ -93,7 +93,7 @@ I need a bunch of convenience functions to check the capabilities of the system 
 
 * Early init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/early-init.el :comments no :mkdirp yes
+:header-args: :tangle (expand-file-name "early-init.el" user-emacs-directory) :comments no :mkdirp yes
 :END:
 
 #+begin_src emacs-lisp
@@ -111,9 +111,11 @@ I need a bunch of convenience functions to check the capabilities of the system 
 #+end_src
 
 #+begin_src emacs-lisp
-  (eval-when-compile (defvar package-quickstart))
-  (when (file-exists-p package-quickstart-file)
-    (setq package-quickstart t))
+    (eval-when-compile
+      (defvar package-quickstart)
+      (defvar package-quickstart-file))
+    (when (file-exists-p package-quickstart-file)
+      (setq package-quickstart t))
 #+end_src
 
 I moved the custom-file to early init because when it was in the auto-tangled Org file some things ended up being saved in the init.el file and some in the custom-file, so there were weird errors occurring. This way there's only one location that I need to worry about.
@@ -150,7 +152,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 * Init
 :PROPERTIES:
-:header-args: :tangle ~/.config/emacs/init.el :comments no :mkdirp yes
+:header-args: :tangle (expand-file-name "init.el" user-emacs-directory) :comments no :mkdirp yes
 :END:
 ** Lexical Binding
 #+begin_src emacs-lisp
@@ -1125,7 +1127,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     (add-to-list 'org-global-properties
                '("Effort_ALL". "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00"))
     (require 'org-habit)
-    (require 'org-checklist)
+    (when (package-installed-p 'org-contrib)
+      (require 'org-checklist))
     (require 'org-crypt)
     (org-crypt-use-before-save-magic)
     (org-indent-mode 1)
@@ -1320,8 +1323,14 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
+  (when (fboundp 'scroll-bar-mode)
+    (when (or (is-linux-p) (is-mac-p))
+      (scroll-bar-mode -1)))
+#+end_src
+
+#+begin_src emacs-lisp
   (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-  (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+  ;;(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
   (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
   (when (and (is-terminal-p)
              (fboundp 'menu-bar-mode))
@@ -2201,7 +2210,8 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-download)
 
-  (run-with-idle-timer 1 nil #'require 'org-download)
+  (when (package-installed-p 'org-download)
+    (run-with-idle-timer 1 nil #'require 'org-download))
 
   (csetq org-download-method 'attach)
   (csetq org-download-annotate-function nil)
@@ -2484,6 +2494,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function eshell-smart-initialize "em-smart"))
+
   (with-eval-after-load 'eshell
     (require 'em-smart)
     (eshell-smart-initialize))
@@ -3250,7 +3263,7 @@ I'm using a custom alert function so that I can use the system's notification sy
 #+begin_src emacs-lisp
    (defun actuator-backup (path)
       "Neu"
-      (let* ((current-time (time-convert nil 'integer))
+      (let* ((_current-time (time-convert nil 'integer))
              (time-stamp (format-time-string "%FT%H%M%S%z"))
              (archive-name (string-trim path "^.*/" "/$"))
              (archive-path (expand-file-name archive-name actuator-backup-archive-dir)))
