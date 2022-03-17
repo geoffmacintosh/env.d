@@ -626,6 +626,14 @@ As per =/etc/security/faillock.conf=:
   function fish_greeting; end
   function fish_title; end
 
+  function dired
+      emacsclient -c -a emacs -e "(dired \"$argv\")" &
+  end
+
+  function mail
+      emacsclient -c -n -a emacs -e "(browse-url-mail \"$argv\")"
+  end
+
   abbr -a -- - prevd
   abbr -a -- = nextd
 
@@ -645,7 +653,6 @@ As per =/etc/security/faillock.conf=:
 #+end_src
 
 #+begin_src fish :tangle ~/.config/fish/fishfile
-   jethrokuan/z
    jorgebucaran/fish-bax
 #+end_src
 
