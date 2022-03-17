@@ -708,6 +708,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 * Diary
 #+begin_src emacs-lisp
+  (eval-when-compile (defvar org-directory))
   (csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
   (csetq org-agenda-insert-diary-strategy 'top-level)
@@ -736,6 +737,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (defun actuator-date-stamp ()
+
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
 
     (add-to-list 'org-capture-templates
@@ -1034,7 +1036,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
     (defun actuator-opened-buffer-files ()
-      "Return the list of files currently opened in emacs."
+      "Return the list of files currently opened in Emacs."
       (delq nil
             (mapcar (lambda (x)
                       (if (and (buffer-file-name x)
@@ -1044,7 +1046,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
                     (buffer-list))))
 
   (defun actuator-org-refile-candidates ()
-    "Collect all the org-mode files in the org-directory.
+    "Collect all the `org-mode' files in the org-directory.
 
   Currently it only collects files that start with a lowercase
   letter, which is probably the wrong way to go about it, but I
@@ -1480,7 +1482,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (defun actuator-ibuffer-setup ()
     "Set up ibuffer defaults that require running functions.
 
-  This should be run as in a hook that is called when ibuffer-mode is run."
+  This should be run as in a hook that is called when `ibuffer-mode' is run."
 
     (require 'ibuf-ext)
     (eval-when-compile
@@ -1968,13 +1970,9 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'lua-mode)
 #+end_src
-* Gitignore Mode
+* Git Modes
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'gitignore-mode)
-#+end_src
-* Gitconfig Mode
-#+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'gitconfig-mode)
+  (add-to-list 'package-selected-packages 'git-modes)
 #+end_src
 * Ripgrep
 #+begin_src emacs-lisp
@@ -2825,7 +2823,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (defun actuator-filter-timestamp (string backend _comm)
     "Remove <> around time-stamps.
-  I actually don't know what STRING is. BACKEND can be some "
+  I actually don't know what STRING is. BACKEND can be some version of html or latex."
     (pcase backend
       ((or `jekyll `html `md)
        (replace-regexp-in-string "&[lg]t;" "" string))
@@ -2906,7 +2904,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (defun actuator-filter-local-links (link backend _info)
-    "Filter to convert all the forms of /index.html to /."
+    "Filter to convert all the forms of /index.html to /.
+
+Takes LINK and BACKEND as args."
     (require 'ox)
     (eval-when-compile
       (declare-function org-export-derived-backend-p "ox"))
@@ -3143,7 +3143,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 #+begin_src emacs-lisp
   (defun actuator-skip-non-archivable-tasks ()
-    "Skip trees that are not available for archiving"
+    "Skip trees that are not available for archiving."
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
       ;; consider only tasks with done todo headings as archivable tasks
       (if (member (org-get-todo-state) org-done-keywords)
@@ -3208,7 +3208,7 @@ I'm using a custom alert function so that I can use the system's notification sy
 
 #+begin_src emacs-lisp
   (defun actuator-org-agenda-to-appt-timer ()
-    "Runs `org-agenda-to-appt' whenever there is an idle period."
+    "Run `org-agenda-to-appt' whenever there is an idle period."
     (run-with-idle-timer 5 nil #'actuator-org-agenda-to-appt-refresh))
 
   (run-at-time "120 minute" t #'actuator-org-agenda-to-appt-timer)
@@ -3572,8 +3572,8 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 #+begin_src emacs-lisp
   (defun xah-open-in-external-app (&optional @fname)
-    "Open the current file or dired marked files in external app.
-  When called in emacs lisp, if @fname is given, open that.
+    "Open the current file or Dired marked files in external app.
+  When called in Emacs Lisp, if @fname is given, open that.
   URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
   Version 2019-11-04 2021-02-16"
     (interactive)
