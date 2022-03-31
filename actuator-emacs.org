@@ -709,7 +709,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 * Diary
 #+begin_src emacs-lisp
   (eval-when-compile (defvar org-directory))
-  (csetq diary-file (expand-file-name "diary" org-directory))
+  ;;(csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
   (csetq org-agenda-insert-diary-strategy 'top-level)
   (csetq org-agenda-include-diary t)
@@ -1884,7 +1884,15 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 * Doc View
+
+In order to open epub files, doc-view needs mutool:
+
 #+begin_src emacs-lisp
+  (when (executable-find "mutool")
+    (csetq doc-view-pdfdraw-program "mutool"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
   (defvar actuator-doc-view-bookmark-push nil
@@ -1980,9 +1988,9 @@ https://gist.github.com/spacebat/5500966
     (add-to-list 'package-selected-packages 'rg))
 #+end_src
 * Nov.el
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'nov)
-  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . doc-view-mode))
   (csetq nov-text-width 75)
   (defun actuator-novel-setup ()
     "Set up some defaults for nov.el that make it nicer to read in."
@@ -3650,6 +3658,48 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 Might be a good idea to make sure that it doesn't error out if there's no git dir
 
 This is revision {{{revision}}}
+
+* Org-contacts
+#+begin_src emacs-lisp
+  (when (package-installed-p 'org-contrib)
+    (require 'org-contacts))
+  (csetq org-contacts-files '("contacts.org" "new-contacts.org" "sas-students.org"))
+#+end_src
+
+* AES
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'aes)
+  (when (package-installed-p 'aes)
+    (require 'aes)
+    (aes-enable-auto-decryption))
+
+  (csetq aes-enable-plaintext-password-storage t)
+#+end_src
+
+** Org ID
+https://helpdeskheadesk.net/2022-03-13/
+
+#+begin_src emacs-lisp
+  (setq org-id-method 'ts)
+  (setq org-attach-id-to-path-function-list
+    '(actuator-org-attach-id-ts-folder-format
+      org-attach-id-uuid-folder-format))
+#+end_src
+
+#+begin_src emacs-lisp
+  (csetq org-id-ts-format "%Y-%B-%d-%H%M-%S%6N")
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-org-attach-id-ts-folder-format (id)
+    "Translate an ID based on a timestamp to a folder-path.
+  Useful way of translation if ID is generated based on ISO8601
+  timestamp.  Splits the attachment folder hierarchy into
+  year-month, the rest."
+    (format "%s/%s"
+            (substring id 0 4)
+            (substring id 5)))
+#+end_src
 
 * Afterword
 
