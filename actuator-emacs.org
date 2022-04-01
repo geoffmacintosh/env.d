@@ -500,9 +500,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     (upcase-initials-region beginning end))
 
   (defun actuator-word-boundary-at-point-or-region (&optional callback)
-    "Return the boundary (beginning and end) of the word at point, or region, if any.
-  Forwards the points to CALLBACK as (CALLBACK p1 p2), if
-  present.
+    "Return the boundary of the word at point, or region, if any.
+  Forwards the points to CALLBACK as (CALLBACK p1 p2), if present.
 
   Entirely lifted form Christian Tietze, who modified it from Xah Lee.
   https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/
@@ -868,7 +867,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (csetq delete-by-moving-to-trash t)
     (csetq trash-directory "~/.Trash")
     (defun system-move-file-to-trash (path)
-      "Moves file at PATH to the Trash according to `move-file-to-trash' convention.
+      "Moves file at PATH to the Trash according to `move-file-to-trash'.
 
   On macOS relies on the command-line utility 'trash' to be installed."
       (shell-command (concat "trash -vF \"" path "\""
@@ -1685,7 +1684,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     "Show the entire buffer when in an org buffer.
 
   Sometimes it's better to show the entire buffer, for example when
-  trying to run ediff on an Org-mode file. That way context for the diff is shown."
+  trying to run ediff on an Org-mode file. That way context for the
+  diff is shown."
     (eval-when-compile
       (declare-function outline-show-all "outline"))
     (when (derived-mode-p 'org-mode)
@@ -2831,7 +2831,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (defun actuator-filter-timestamp (string backend _comm)
     "Remove <> around time-stamps.
-  I actually don't know what STRING is. BACKEND can be some version of html or latex."
+  I actually don't know what STRING is. BACKEND can be some version
+  of html or latex."
     (pcase backend
       ((or `jekyll `html `md)
        (replace-regexp-in-string "&[lg]t;" "" string))
@@ -3663,12 +3664,13 @@ This is revision {{{revision}}}
 #+begin_src emacs-lisp
   (when (package-installed-p 'org-contrib)
     (require 'org-contacts))
-  (csetq org-contacts-files '("contacts.org" "new-contacts.org" "sas-students.org"))
+  (csetq org-contacts-files '("contacts.org"))
 #+end_src
 
 * AES
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'aes)
+  (declare-function aes-enable-auto-decryption "ext:aes" nil)
   (when (package-installed-p 'aes)
     (require 'aes)
     (aes-enable-auto-decryption))
@@ -3676,12 +3678,12 @@ This is revision {{{revision}}}
   (csetq aes-enable-plaintext-password-storage t)
 #+end_src
 
-** Org ID
+* Org ID
 https://helpdeskheadesk.net/2022-03-13/
 
 #+begin_src emacs-lisp
-  (setq org-id-method 'ts)
-  (setq org-attach-id-to-path-function-list
+  (csetq org-id-method 'ts)
+  (csetq org-attach-id-to-path-function-list
     '(actuator-org-attach-id-ts-folder-format
       org-attach-id-uuid-folder-format))
 #+end_src
@@ -3694,7 +3696,7 @@ https://helpdeskheadesk.net/2022-03-13/
   (defun actuator-org-attach-id-ts-folder-format (id)
     "Translate an ID based on a timestamp to a folder-path.
   Useful way of translation if ID is generated based on ISO8601
-  timestamp.  Splits the attachment folder hierarchy into
+  timestamp. Splits the attachment folder hierarchy into
   year-month, the rest."
     (format "%s/%s"
             (substring id 0 4)
