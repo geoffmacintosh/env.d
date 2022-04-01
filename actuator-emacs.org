@@ -175,7 +175,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (let ((gc-cons-threshold (* 5000 1024 1024))
+  (let ((gc-cons-threshold (* 400 1024 1024))
         (org-file (expand-file-name "actuator-emacs.org" actuator-directory))
         (el-file  (expand-file-name "actuator-emacs.el" user-emacs-directory)))
     (require 'package)
