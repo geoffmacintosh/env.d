@@ -3083,24 +3083,10 @@ Takes LINK and BACKEND as args."
   (global-set-key (kbd "<S-s-right>") #'windmove-swap-states-right)
 #+end_src
 
-* Org-expiry
+* Insert heading timestamp
 :PROPERTIES:
-:CREATED:  <2021-09-09 Thu 13:25>
+:CREATED: [2022-04-03 Sun 09:40]
 :END:
-#+begin_src emacs-lisp :tangle no
-  (eval-when-compile
-   (declare-function org-expiry-insinuate "ext:org-expiry" (&optional arg))
-   (declare-function org-expiry-archive-subtree "ext:org-expiry" nil))
-
-  (defun actuator-org-expiry-setup ()
-    "Set up org-expiry to make creation stamps for headlines."
-    (require 'org-expiry)
-    (org-expiry-insinuate))
-  (run-with-idle-timer 1 nil #'actuator-org-expiry-setup)
-
-  (csetq org-expiry-handler-function #'org-expiry-archive-subtree)
-  (csetq org-expiry-inactive-timestamps t)
-#+end_src
 
 #+begin_src emacs-lisp
   (defun actuator-org-insert-heading-timestamp ()
