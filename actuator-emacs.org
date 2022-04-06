@@ -131,7 +131,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (when (file-exists-p "/Library/Tex/texbin")
     (add-to-list 'exec-path "/Library/Tex/texbin"))
 
-
   (when (file-exists-p "/usr/local/opt/ruby/libexec/gembin")
     (add-to-list 'exec-path "/usr/local/opt/ruby/libexec/gembin"))
   (when (file-exists-p "/usr/local/opt/ruby/bin")
@@ -360,13 +359,13 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (defalias 'yes-or-no-p 'y-or-n-p)       ; Never have to type "yes" anymore
   (global-set-key (kbd "M-o") #'other-window) ; M-o is otherwise unused
   (delete-selection-mode 1)                   ; Delete selection instead of be confusing
-  (run-with-idle-timer 1 nil #'midnight-mode t) ; Run stuff at a random morning cycle
+  (midnight-mode t) ; Run stuff at a random morning cycle
   (csetq sentence-end-double-space nil)         ; Single space FTW
   (set-language-environment "UTF-8")            ; This is all that's needed to ensure UTF-8
   (add-hook 'before-save-hook 'whitespace-cleanup) ; Remove trailing spaces and most blank lines at the end
   (csetq indent-tabs-mode nil)            ; Never insert tabs with tab key
   (csetq require-final-newline t)
-  (run-with-idle-timer 1 nil #'save-place-mode 1) ; Save the place the point lived in
+  (save-place-mode 1) ; Save the place the point lived in
   (csetq find-file-visit-truename nil) ; Don't resolve symlinks
   (csetq confirm-kill-emacs 'y-or-n-p) ; Ensures there is a confirmation
   (put 'narrow-to-region 'disabled nil) ; I don't use this though
@@ -389,8 +388,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (csetq initial-scratch-message "")      ; No scratch message
   (when (executable-find "mdfind")
     (csetq locate-command "mdfind"))
-  (run-with-idle-timer 1 nil #'show-paren-mode +1) ; Show paren-friends
-  (run-with-idle-timer 1 nil #'electric-pair-mode +1) ; Make closing parens
+  (show-paren-mode +1) ; Show paren-friends
+  (electric-pair-mode +1) ; Make closing parens
   (csetq blink-matching-paren nil)
   (csetq show-paren-delay 0)
   (csetq show-paren-style 'mixed)
@@ -606,7 +605,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
            search-ring
            shell-command-history))
 
-  (run-with-idle-timer 1 nil #'savehist-mode)
+  (savehist-mode)
 #+end_src
 
 Interprogram paste can cause [[https://github.com/syl20bnr/spacemacs/issues/9409][issues]] if it saves too much, setting it to an integer or nil limits it.
@@ -843,6 +842,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
                        (declare-function recentf-cleanup "recentf"))
     (global-set-key (kbd "C-x C-r") #'recentf-open-files)
     (csetq recentf-max-saved-items 1000)
+    (csetq recentf-auto-cleanup 'never)
     (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
                              "/var/folders/"
                              ,user-emacs-directory))
@@ -882,12 +882,14 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (add-function :after after-focus-change-function
-                #'org-save-all-org-buffers)
+  (run-with-idle-timer 60 nil #'actuator-add-advice-to-save-org)
+  (defun actuator-add-advice-to-save-org ()
+    (add-function :after after-focus-change-function
+                  #'org-save-all-org-buffers))
 #+end_src
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'require 'org-id)
+  (require 'org-id)
   (csetq org-id-locations-file (expand-file-name "org-id-locations.el" user-emacs-directory))
   (csetq org-id-track-globally t)
 #+end_src
@@ -1345,14 +1347,13 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       (declare-function server-running-p "server"))
     (unless (server-running-p) (server-start)))
 
-  (run-with-idle-timer 1 nil #'actuator-start-server-if-not-running)
+  (actuator-start-server-if-not-running)
 #+end_src
 
 * Actuator startup profile
 
 #+begin_src emacs-lisp
-  ;;(add-hook 'emacs-startup-hook #'actuator-startup-profile)
-  (run-with-idle-timer 5 nil #'actuator-startup-profile)
+  (run-with-idle-timer 3 nil #'actuator-startup-profile)
 
   (defun actuator-startup-profile ()
     "Display the startup time and garbage collections in the minibuffer."
@@ -1531,13 +1532,10 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
          (csetq image-dired-external-viewer "xdg-open")))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (eval-when-compile (defvar dired-mode-map))
-  ;;(defun actuator-attach-from-dired ()
+#+begin_src emacs-lisp
   (define-key dired-mode-map
                 (kbd "C-c C-x a")
                 #'org-attach-dired-to-subtree)
-  ;;(add-hook 'dired-mode-hook #'actuator-attach-from-dired)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1906,12 +1904,6 @@ In order to open epub files, doc-view needs mutool:
 #+end_src
 https://gist.github.com/spacebat/5500966
 
-* Sync stuff
-#+begin_src emacs-lisp
-  (csetq elfeed-db-directory   (expand-file-name "elfeed" user-emacs-directory))
-  (csetq abbrev-file-name      (expand-file-name "etc/abbrev.el" org-directory))
-#+end_src
-
 * Org Randomnote
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'org-randomnote)
@@ -1922,7 +1914,7 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (csetq epa-file-encrypt-to "geoff@mac.into.sh")
   (csetq auth-sources '(password-store))
-  (run-with-idle-timer 1 nil #'auth-source-pass-enable)
+  (auth-source-pass-enable)
   (csetq password-cache-expiry 600)
 #+end_src
 
@@ -2004,6 +1996,7 @@ https://gist.github.com/spacebat/5500966
 
   (csetq eldoc-echo-area-use-multiline-p t)
   (csetq eldoc-idle-delay 0)
+  (csetq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
 
   (with-eval-after-load 'eldoc
     (eval-when-compile
@@ -2187,7 +2180,8 @@ https://gist.github.com/spacebat/5500966
   (add-to-list 'package-selected-packages 'org-download)
 
   (when (package-installed-p 'org-download)
-    (run-with-idle-timer 1 nil #'require 'org-download))
+    (with-eval-after-load 'org
+      (require 'org-download)))
 
   (csetq org-download-method 'attach)
   (csetq org-download-annotate-function nil)
@@ -2221,6 +2215,8 @@ https://gist.github.com/spacebat/5500966
   (csetq elfeed-search-filter "@1-week-ago +unread ")
   (csetq elfeed-enclosure-default-dir "~/Download/")
   (csetq elfeed-search-title-max-width 120)
+  (csetq elfeed-db-directory   (expand-file-name "elfeed" user-emacs-directory))
+
   (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
     (eval-when-compile (defvar elfeed-search-mode-map))
@@ -2613,7 +2609,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
         (mu4e-alert-enable-notifications)
         (mu4e-alert-enable-mode-line-display))))
 
-  (run-with-idle-timer 1 nil #'actuator-set-up-mu4e-alert)
+  (actuator-set-up-mu4e-alert)
 #+end_src
 * Alert
 
@@ -2665,7 +2661,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (when (package-installed-p 'rainbow-mode)
     (eval-when-compile
       (declare-function rainbow-mode "rainbow-mode"))
-    (run-with-idle-timer 1 nil #'rainbow-mode))
+    (rainbow-mode))
 #+end_src
 * Modeline
 
@@ -2698,7 +2694,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (when (package-installed-p 'minions)
     (eval-when-compile
       (declare-function minions-mode "minions"))
-    (run-with-idle-timer 1 nil #'minions-mode))
+    (minions-mode))
 #+end_src
 * Sudoers
 
@@ -2752,7 +2748,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Winner
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'winner-mode)
+  (winner-mode)
   (csetq winner-boring-buffers-regexp "^\\*")
 #+end_src
 
@@ -2939,7 +2935,7 @@ Takes LINK and BACKEND as args."
 * Auto-insert
 [2021-06-16 Wed 20:23]
 #+begin_src emacs-lisp
-  (run-with-idle-timer 1 nil #'auto-insert-mode 1)
+  (auto-insert-mode 1)
 #+end_src
 
 * Show tooltips in modeline
@@ -3009,7 +3005,8 @@ Takes LINK and BACKEND as args."
     (declare-function org-msg-mode "ext:org-msg" (&optional arg)))
 
   (when (package-installed-p 'org-msg)
-    (run-with-idle-timer 1 nil #'org-msg-mode))
+    (with-eval-after-load 'mu4e
+      (org-msg-mode)))
 #+end_src
 
 * Compilation window
@@ -3045,7 +3042,7 @@ Takes LINK and BACKEND as args."
 
 #+begin_src emacs-lisp
   (when (not (package-installed-p 'counsel))
-    (run-with-idle-timer 1 nil #'fido-mode 1))
+    (fido-mode 1))
 
   (add-hook 'fido-mode-hook 'icomplete-vertical-mode)
   (csetq icomplete-scroll t)
@@ -3196,7 +3193,7 @@ I'm using a custom alert function so that I can use the system's notification sy
 
   (run-at-time "120 minute" t #'actuator-org-agenda-to-appt-timer)
   (advice-add #'actuator-org-agenda-to-appt-refresh :after #'org-agenda-to-appt)
-  (run-with-idle-timer 1 nil #'appt-activate 1)
+  (appt-activate 1)
 #+end_src
 
 * Org archive
@@ -3466,8 +3463,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (csetq type-break-mode-line-message-mode t)
     (csetq type-break-demo-boring-stats t)
     (csetq type-break-terse-messages t)
-
-    ;;(run-with-idle-timer 1 nil #'type-break-mode 1)
+    ;;(type-break-mode +1)
   #+end_src
 
 * Emms
@@ -3499,20 +3495,23 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (defvar emms-player-list))
 
   (defun actuator-setup-emms ()
-    "Test"
-    (require 'emms-setup)
-    (require 'emms-player-mpd)
-    (emms-all)
-    (add-to-list 'emms-info-functions 'emms-info-mpd)
-    (add-to-list 'emms-player-list 'emms-player-mpd)
-    (emms-player-mpd-connect)
-    (emms-mode-line-mode -1)
-    (emms-playing-time-display-mode -1)
-    (global-set-key (kbd "C-c m") #'emms-smart-browse)
-    (emms-player-mpd-update-all))
+    (interactive)
+    (if (package-installed-p 'emms)
+        (progn
+          (unless (featurep 'emms)
+            (require 'emms-setup)
+            (require 'emms-player-mpd)
+            (emms-all)
+            (add-to-list 'emms-info-functions 'emms-info-mpd)
+            (add-to-list 'emms-player-list 'emms-player-mpd)
+            (emms-player-mpd-connect)
+            (emms-mode-line-mode -1)
+            (emms-playing-time-display-mode -1)
+            (emms-player-mpd-update-all))
+          (emms-smart-browse))
+    (message "EMMS is not installed.")))
 
-  (when (package-installed-p 'emms)
-    (run-with-idle-timer 1 nil #'actuator-setup-emms))
+  (global-set-key (kbd "C-c m") #'actuator-setup-emms)
 #+end_src
 
 * Org path-independent link
