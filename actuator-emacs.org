@@ -1843,32 +1843,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   ;;(add-hook 'message-send-hook #'actuator-check-for-network-before-sending-message)
 #+end_src
 
-* Byte compile init
-
-#+begin_src emacs-lisp :tangle no
-  (defun actuator-byte-recompile-init ()
-    "Byte compiles the init files.
-
-  Will recompile if the files if they are already compiled, create
-  new compilations if they aren't, and native compile if that's an
-  option. Does not work well with early-init.el, but that's not a
-  file that should benefit from byte compilation that much anyway."
-
-    (interactive)
-    (let ((init  user-init-file))
-      (if (fboundp 'native-compile)
-          (progn
-            (native-compile init)
-            (when package-quickstart-file
-              (native-compile package-quickstart-file)))
-        (progn
-          (byte-recompile-file init nil 0)
-          (when package-quickstart-file
-            (byte-recompile-file package-quickstart-file nil 0))))))
-  (when (is-graphical-p)
-    (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init))
-#+end_src
-
 * ERC
 #+begin_src emacs-lisp
   (defun actuator-twitch-start-irc ()

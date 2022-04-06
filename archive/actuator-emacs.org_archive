@@ -1,0 +1,87 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/env.d/actuator-emacs.org
+
+
+* DONE Byte compile init
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-04-02 Sat 17:55
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (defun actuator-byte-recompile-init ()
+    "Byte compiles the init files.
+
+  Will recompile if the files if they are already compiled, create
+  new compilations if they aren't, and native compile if that's an
+  option. Does not work well with early-init.el, but that's not a
+  file that should benefit from byte compilation that much anyway."
+
+    (interactive)
+    (let ((init  user-init-file))
+      (if (fboundp 'native-compile)
+          (progn
+            (native-compile init)
+            (when package-quickstart-file
+              (native-compile package-quickstart-file)))
+        (progn
+          (byte-recompile-file init nil 0)
+          (when package-quickstart-file
+            (byte-recompile-file package-quickstart-file nil 0))))))
+  (when (is-graphical-p)
+    (add-hook 'kill-emacs-hook #'actuator-byte-recompile-init))
+#+end_src
+
+* DONE Profile Nonsense
+:PROPERTIES:
+:CREATED: [2022-04-01 Fri 19:16]
+:ARCHIVE_TIME: 2022-04-02 Sat 19:21
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:END:
+
+#+begin_src emacs-lisp
+  (run-with-idle-timer 5 nil #'actuator-insert-profile-garbage)
+
+  (defun actuator-insert-profile-garbage ()
+    (let ((time (format-time-string "%F %R"))
+          (mem (/ (memory-limit) 1024))
+          (done gcs-done)
+          (elapsed gc-elapsed)
+          (startup (float-time
+                        (time-subtract after-init-time before-init-time))))
+      (find-file "~/org/profile-garbage.org")
+      (point-max)
+      (insert (format "| %s | %s | %s | %s | %s | %s | %s |"
+                      time
+                      gc-cons-threshold
+                      gc-cons-percentage
+                      mem
+                      done
+                      elapsed
+                      startup)))
+      (save-buffer)
+      (find-file "~/env.d/actuator-emacs.org"))
+#+end_src
+
+* DONE Org-expiry
+:PROPERTIES:
+:CREATED:  <2021-09-09 Thu 13:25>
+:ARCHIVE_TIME: 2022-04-03 Sun 09:41
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:END:
+#+begin_src emacs-lisp :tangle no
+  (eval-when-compile
+   (declare-function org-expiry-insinuate "ext:org-expiry" (&optional arg))
+   (declare-function org-expiry-archive-subtree "ext:org-expiry" nil))
+
+  (defun actuator-org-expiry-setup ()
+    "Set up org-expiry to make creation stamps for headlines."
+    (require 'org-expiry)
+    (org-expiry-insinuate))
+  (run-with-idle-timer 1 nil #'actuator-org-expiry-setup)
+
+  (csetq org-expiry-handler-function #'org-expiry-archive-subtree)
+  (csetq org-expiry-inactive-timestamps t)
+#+end_src
