@@ -107,6 +107,20 @@ I need a bunch of convenience functions to check the capabilities of the system 
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar actuator-original-gc-cons-threshold gc-cons-threshold)
+  (defvar actuator-original-gc-cons-percentage gc-cons-percentage)
+
+  (setq gc-cons-threshold (* 128 1000 1000))
+  (setq gc-cons-percentage 0.5)
+#+end_src
+
+#+begin_src emacs-lisp :tangle (expand-file-name "init.el" user-emacs-directory) :comments no :mkdirp yes
+    (add-hook 'emacs-startup-hook #'(lambda ()
+       (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
+       (setq gc-cons-percentage actuator-original-gc-cons-percentage)))
+#+end_src
+
+#+begin_src emacs-lisp
   (setq load-prefer-newer t)
 #+end_src
 
@@ -174,15 +188,15 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (let ((gc-cons-threshold (* 400 1024 1024))
-        (org-file (expand-file-name "actuator-emacs.org" actuator-directory))
-        (el-file  (expand-file-name "actuator-emacs.el" user-emacs-directory)))
+  (let* ((file "actuator-emacs")
+         (org-file (expand-file-name (concat file ".org") actuator-directory))
+         (el-file  (expand-file-name file user-emacs-directory)))
     (require 'package)
     (package-activate-all)
     (require 'ob-tangle)
     (org-babel-tangle-file org-file nil "emacs-lisp")
-    (byte-compile-file el-file)
-    (load (concat el-file "c")))
+    (byte-compile-file (concat el-file ".el"))
+    (load el-file))
 #+end_src
 
 ** Footer
