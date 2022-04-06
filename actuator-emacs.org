@@ -121,10 +121,10 @@ I need a bunch of convenience functions to check the capabilities of the system 
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq load-prefer-newer t)
+  ;;(setq load-prefer-newer t)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (boundp 'package-quickstart-file)
     (setq package-quickstart t))
 #+end_src
@@ -191,8 +191,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (let* ((file "actuator-emacs")
          (org-file (expand-file-name (concat file ".org") actuator-directory))
          (el-file  (expand-file-name file user-emacs-directory)))
-    (require 'package)
-    (package-activate-all)
     (require 'ob-tangle)
     (org-babel-tangle-file org-file nil "emacs-lisp")
     (byte-compile-file (concat el-file ".el"))
@@ -359,6 +357,21 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
+  (csetq redisplay-skip-fontification-on-input t)
+  (csetq completions-detailed t)
+  (csetq completions-format 'one-column)
+  (csetq next-error-message-highlight 'keep)
+  (csetq fast-but-imprecise-scrolling t)
+  (csetq tab-first-completion 'word)
+  (csetq tab-always-indent 'complete)
+  (csetq save-place-abbreviate-file-names t)
+  (csetq dired-do-revert-buffer t)
+  (csetq abbrev-suggest t)
+  (csetq calc-make-windows-dedicated t)
+  (csetq image-dired-thumb-visible-marks t)
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq view-read-only t)           ; Open read-only files in view mode
   (global-unset-key (kbd "C-z"))     ; Disable suspend keybinding
   (csetq window-combination-resize t) ; Split windows so that it's proportional-ish
@@ -370,7 +383,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back) ; Mouse back and forward buttons
   (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
   (csetq jit-lock-defer-time 0)           ; Defer doing font lock if there's input pending
-  (defalias 'yes-or-no-p 'y-or-n-p)       ; Never have to type "yes" anymore
+  (csetq use-short-answers t)
   (global-set-key (kbd "M-o") #'other-window) ; M-o is otherwise unused
   (delete-selection-mode 1)                   ; Delete selection instead of be confusing
   (midnight-mode t) ; Run stuff at a random morning cycle
@@ -657,7 +670,12 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq auto-revert-check-vc-info nil)
 #+end_src
 
-* Minibuffer Resize
+* Minibuffer
+
+#+begin_src emacs-lisp
+  (csetq read-minibuffer-restore-windows nil)
+#+end_src
+
 #+begin_src emacs-lisp
   (defun actuator-minibuffer-normalize-face-height ()
     "Reset faces in the minibuffer to be the default height."
@@ -1348,6 +1366,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 * Server
 
 #+begin_src emacs-lisp
+  (csetq server-client-instructions nil)
+
   (defun actuator-start-server-if-not-running ()
     "If Emacs' server is not running, start it.
 
@@ -1405,7 +1425,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Basic-Keyboard-Macro.html][Basic Keyboard Macro - GNU Emacs Manual]] [2020-06-08 Mon]
 
 * Web
-** Set up browsing handlers                        :ignore:
+** Set up browsing handlers                                         :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
 #+begin_src emacs-lisp :tangle no
@@ -1418,7 +1438,7 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
   (csetq eww-history-limit 1000)
 #+end_src
 
-** Handle video urls                               :ignore:
+** Handle video urls                                                :ignore:
 I want video links to be opened in MPV. This helps my battery life as well as my personal life because I don't have to visit YouTube. This requires [[https://mpv.io][MPV]] to be installed, which is best installed via [[http://brew.sh][Brew]] on macOS. I've tried to use [[https://nixos.org/download.html][Nix]], but it doesn't work well.
 
 #+begin_src emacs-lisp
@@ -1428,7 +1448,7 @@ I want video links to be opened in MPV. This helps my battery life as well as my
     (call-process "mpv" nil 0 nil url))
 #+end_src
 
-** Simple HTML renderer                            :ignore:
+** Simple HTML renderer                                             :ignore:
 SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts and Nov.el books. Normally it wraps at the page width, but that can be adjusted.
 
 #+begin_src emacs-lisp
@@ -1439,7 +1459,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq shr-cookie-policy nil)
 #+end_src
 
-** Open links in background                        :ignore:
+** Open links in background                                         :ignore:
 
 #+begin_src emacs-lisp
   (csetq browse-url-secondary-browser-function 'eww)
@@ -2680,6 +2700,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 * Modeline
 
 #+begin_src emacs-lisp
+  (csetq mode-line-compact t)
   (setq-default mode-line-format
                 (list
                  " %e"
@@ -2758,6 +2779,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (csetq package-name-column-width 40)
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
+  (csetq package-quickstart t)
 #+end_src
 
 * Winner
@@ -3627,6 +3649,24 @@ https://helpdeskheadesk.net/2022-03-13/
     (format "%s/%s"
             (substring id 0 4)
             (substring id 5)))
+#+end_src
+
+* Context-menu
+:PROPERTIES:
+:CREATED: [2022-04-06 Wed 09:57]
+:END:
+
+#+begin_src emacs-lisp
+  (context-menu-mode +1)
+#+end_src
+
+* Help etc.
+:PROPERTIES:
+:CREATED: [2022-04-06 Wed 09:59]
+:END:
+#+begin_src emacs-lisp
+  (csetq help-enable-symbol-autoload t)
+  (csetq describe-bindings-outline t)
 #+end_src
 
 * Afterword
