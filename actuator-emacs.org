@@ -385,14 +385,14 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (csetq jit-lock-defer-time 0)           ; Defer doing font lock if there's input pending
   (csetq use-short-answers t)
   (global-set-key (kbd "M-o") #'other-window) ; M-o is otherwise unused
-  (delete-selection-mode 1)                   ; Delete selection instead of be confusing
+  (delete-selection-mode +1)                   ; Delete selection instead of be confusing
   (midnight-mode t) ; Run stuff at a random morning cycle
   (csetq sentence-end-double-space nil)         ; Single space FTW
   (set-language-environment "UTF-8")            ; This is all that's needed to ensure UTF-8
   (add-hook 'before-save-hook 'whitespace-cleanup) ; Remove trailing spaces and most blank lines at the end
   (csetq indent-tabs-mode nil)            ; Never insert tabs with tab key
   (csetq require-final-newline t)
-  (save-place-mode 1) ; Save the place the point lived in
+  (save-place-mode +1) ; Save the place the point lived in
   (csetq find-file-visit-truename nil) ; Don't resolve symlinks
   (csetq confirm-kill-emacs 'y-or-n-p) ; Ensures there is a confirmation
   (put 'narrow-to-region 'disabled nil) ; I don't use this though
@@ -401,7 +401,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
             #'executable-make-buffer-file-executable-if-script-p) ; CHMOD scripts on save. Doesn't work on tangle
   ;;(global-set-key (kbd "s-z") #'undo-only)
   ;;(global-set-key (kbd "s-Z") #'undo-redo)
-  ;;(csetq bookmark-save-flag 1)            ; Save every time
+  (csetq bookmark-save-flag 1)            ; Save every time
   (csetq bookmark-set-fringe-mark nil)    ; Those marks drive me mad
   (csetq frame-resize-pixelwise t)        ; Allow resize by pixels, not just columns or rows
   (csetq frame-inhibit-implied-resize t)  ; The frame isn't resized when the contents are
@@ -428,7 +428,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (csetq disabled-command-function 'ignore) ; Don't yell when doing stuff that's been disabled
   (csetq bidi-paragraph-direction 'left-to-right) ; This way is faster to process if you never use other paragraph directions
   (csetq bidi-inhibit-bpa t)
-  ;;(run-with-idle-timer 1 nil #'global-so-long-mode 1) ; Fancy hooks to deal with big files.
+  (global-so-long-mode +1) ; Fancy hooks to deal with big files.
   (csetq proced-auto-update-flag t)       ; Auto-update proced
   (csetq create-lockfiles nil)            ; Lockfiles are bad news
   (csetq image-use-external-converter t)
@@ -663,7 +663,7 @@ Unpropertizing the kill ring is [[https://emacs.stackexchange.com/questions/4187
 Autorevert via notify is supposed to be much lower power than polling. It should work by default, but on Arch you need to install inotify-tools or it does not work at all.
 
 #+begin_src emacs-lisp
-  (global-auto-revert-mode 1)
+  (global-auto-revert-mode +1)
   ;;(csetq auto-revert-avoid-polling t)
   (csetq global-auto-revert-non-file-buffers t)
   (csetq auto-revert-verbose t)
@@ -879,7 +879,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
                              "/var/folders/"
                              ,user-emacs-directory))
     (add-hook 'midnight-hook #'recentf-cleanup)
-    (recentf-mode 1)
+    (recentf-mode +1)
 #+end_src
 
 * Eliminate frame title
@@ -1157,7 +1157,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       (require 'org-checklist))
     (require 'org-crypt)
     (org-crypt-use-before-save-magic)
-    (org-indent-mode 1)
+    (org-indent-mode +1)
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((emacs-lisp . t)
                                    (calc      . t)
@@ -1190,7 +1190,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       (declare-function org-dblock-update "org")
       (declare-function org-table-map-tables "org-table"))
     (org-table-map-tables 'org-table-align 'quietly)
-    (org-dblock-update 1))
+    (org-dblock-update 'arg))
 
   (defun actuator-org-mode-setup ()
     "Set basic defaults in Org-mode that aren't variables."
@@ -1524,7 +1524,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
       (declare-function ibuffer-auto-mode "ibuf-ext" (&optional arg))
       (declare-function ibuffer-do-sort-by-alphabetic "ibuf-ext" () t))
     (ibuffer-switch-to-saved-filter-groups "default")
-    (ibuffer-auto-mode 1)
+    (ibuffer-auto-mode +1)
     (ibuffer-do-sort-by-alphabetic)
     (toggle-truncate-lines +1))
 
@@ -2099,8 +2099,8 @@ https://gist.github.com/spacebat/5500966
       (declare-function ivy-immediate-done "ivy")
       (declare-function ivy-alt-done "ivy")
       (declare-function ivy-next-line "ivy"))
-    (counsel-mode 1)
-    (ivy-mode 1)
+    (counsel-mode +1)
+    (ivy-mode +1)
     (define-key ivy-minibuffer-map (kbd "<C-return>") #'ivy-immediate-done)
     (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
     (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line))
@@ -2125,8 +2125,8 @@ https://gist.github.com/spacebat/5500966
       (eval-when-compile
         (declare-function ivy-prescient-mode "ivy-prescient")
         (declare-function prescient-persist-mode "prescient"))
-      (ivy-prescient-mode 1)
-      (prescient-persist-mode 1)))
+      (ivy-prescient-mode +1)
+      (prescient-persist-mode +1)))
   (csetq prescient-history-length 10000)
   (csetq prescient-aggressive-file-save t)
 #+end_src
@@ -2341,7 +2341,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
     (delete-other-windows)
     (elfeed)
     (elfeed-db-load)
-    (elfeed-search-update 1)
+    (elfeed-search-update 'arg)
     (elfeed-update))
 #+end_src
 
@@ -3078,7 +3078,7 @@ Takes LINK and BACKEND as args."
 
 #+begin_src emacs-lisp
   (when (not (package-installed-p 'counsel))
-    (fido-mode 1))
+    (fido-mode +1))
 
   (add-hook 'fido-mode-hook 'icomplete-vertical-mode)
   (csetq icomplete-scroll t)
@@ -3215,7 +3215,7 @@ I'm using a custom alert function so that I can use the system's notification sy
 
   (run-at-time "120 minute" t #'actuator-org-agenda-to-appt-timer)
   (advice-add #'actuator-org-agenda-to-appt-refresh :after #'org-agenda-to-appt)
-  (appt-activate 1)
+  (appt-activate +1)
 #+end_src
 
 * Org archive
@@ -3381,7 +3381,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 
 #+begin_src emacs-lisp
   (defun actuator-enable-abbrev-mode ()
-    (abbrev-mode 1))
+    (abbrev-mode +1))
 
   (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
   (add-hook 'prog-mode-hook #'actuator-enable-abbrev-mode)
@@ -3576,7 +3576,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
   (csetq desktop-save t)
   (unless (equal init-file-debug t)
     (message "Skipping desktop-save-mode for --debug-init")
-    (desktop-save-mode 1))
+    (desktop-save-mode +1))
 #+end_src
 
 * Git revision export macro
