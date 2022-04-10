@@ -137,6 +137,32 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
+
+  These variables need to be set every time a frame is created."
+    (when (fboundp 'scroll-bar-mode)
+      (when (or (eq system-type 'darwin) (eq system-type 'gnu/linux))
+        (scroll-bar-mode -1)))
+
+    (when (member "SF Mono" (font-family-list))
+      (set-frame-font "SF Mono-12" nil t)))
+
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+
+  (unless noninteractive
+    (add-hook 'after-init-hook #'actuator-frame-init))
+#+end_src
+
+#+begin_src emacs-lisp
+  (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+  (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
+  (unless (and (display-graphic-p)
+               (fboundp 'menu-bar-mode))
+    (menu-bar-mode -1))
+#+end_src
+
+#+begin_src emacs-lisp
   (when (file-exists-p "/opt/local/sbin")
     (add-to-list 'exec-path "/opt/local/bin"))
   (when (file-exists-p "/opt/local/bin")
@@ -1325,44 +1351,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq holiday-other-holidays (append holiday-canadian-holidays
                                         holiday-american-holidays))
 #+end_src
-* Frame init
-
-#+begin_src emacs-lisp
-  (defun actuator-frame-init (&optional _frame)
-    "Initialize per-frame variables.
-
-  These variables need to be set every time a frame is created."
-
-    ;; (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-    ;; (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    ;; (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-    ;; (when (and (is-terminal-p)
-    ;;            (fboundp 'menu-bar-mode))
-    ;;   (menu-bar-mode -1))
-    (when (member "SF Mono" (font-family-list))
-      (set-frame-font "SF Mono-12" nil t)))
-
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
-
-  (unless noninteractive
-    (add-hook 'after-init-hook #'actuator-frame-init))
-#+end_src
-
-#+begin_src emacs-lisp
-  (when (fboundp 'scroll-bar-mode)
-    (when (or (is-linux-p) (is-mac-p))
-      (scroll-bar-mode -1)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-  ;;(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
-  (when (and (is-terminal-p)
-             (fboundp 'menu-bar-mode))
-    (menu-bar-mode -1))
-#+end_src
-
 * Server
 
 #+begin_src emacs-lisp
