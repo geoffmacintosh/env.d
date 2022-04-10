@@ -768,13 +768,17 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 * Diary
 #+begin_src emacs-lisp
-  (eval-when-compile (defvar org-directory))
-  ;;(csetq diary-file (expand-file-name "diary" org-directory))
+  (defvar org-directory)
+  (csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
   (csetq org-agenda-insert-diary-strategy 'top-level)
   (csetq org-agenda-include-diary t)
 #+end_src
 
+#+begin_src emacs-lisp
+  (unless (file-exists-p diary-file)
+    (make-empty-file diary-file t))
+#+end_src
 * Capture Templates
 #+begin_src emacs-lisp
   (eval-when-compile
@@ -790,7 +794,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (add-to-list 'org-capture-templates
                  `("t" "Todo" entry
                    (file "inbox.org")
-                   "* %(org-expiry-insert-created)TODO %?"
+                   "* TODO %?"
                    :empty-lines 1)))
 #+end_src
 
@@ -803,7 +807,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (add-to-list 'org-capture-templates
                  `("j" "Journal" entry
                    (file+olp+datetree "journal.org.gpg")
-                   "* %(org-expiry-insert-created)%(actuator-date-stamp)\n%?"
+                   "* %(actuator-date-stamp)\n%?"
                    :empty-lines 1)))
 #+end_src
 
@@ -812,7 +816,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (add-to-list 'org-capture-templates
                  `("n" "Note" entry
                    (file "inbox.org")
-                   "* %(org-expiry-insert-created)Note for %U \n- %?"
+                   "* Note for %U \n- %?"
                    :empty-lines 1)))
 #+end_src
 
@@ -1053,7 +1057,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7)
   (csetq org-agenda-todo-list-sublevels t)
-  (csetq org-agenda-sticky nil)
+  (csetq org-agenda-sticky t)
   (csetq org-agenda-dim-blocked-tasks t)
   (csetq org-list-indent-offset 1)
   (defvar org-outline-regexp)
@@ -2133,13 +2137,14 @@ https://gist.github.com/spacebat/5500966
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
 
+    (when (package-installed-p 'org-cliplink)
     (add-to-list 'org-capture-templates
                  '("b" "Bookmark" entry
                    (file "bookmark.org")
-                   "* %(org-expiry-insert-created)%(org-cliplink-capture) %^g\n%?"
+                   "* %(org-cliplink-capture) %^g\n%?"
                    :prepend
                    :empty-lines 1
-                   :kill-buffer)))
+                   :kill-buffer))))
 #+end_src
 
 * Anki
@@ -3117,15 +3122,25 @@ Takes LINK and BACKEND as args."
 :END:
 
 #+begin_src emacs-lisp
+  (defvar actuator-org-created-property-name "CREATED"
+    "The Org-mode property that stores entry creation dates.")
+
   (defun actuator-org-insert-heading-timestamp ()
     "Insert a timestamp below a new heading.
 
-  Org counts an inactive timestamp on the start of a line as a
-  creation date."
-    (eval-when-compile (declare-function org-time-stamp-inactive "org"))
-    (save-excursion
-      (insert (format "\n:PROPERTIES:\n:CREATED: [%s] \n:END:" (format-time-string "%Y-%m-%d %a %H:%M")))))
-  (add-hook 'org-insert-heading-hook #'actuator-org-insert-heading-timestamp)
+    Org counts an inactive timestamp on the start of a line as a
+    creation date."
+    (interactive)
+    (let ((now (format-time-string "[%Y-%m-%d %a %H:%M]"))
+          (property actuator-org-created-property-name))
+      (unless (org-entry-get (point) property nil)
+        (org-set-property property now))))
+
+  (add-hook 'org-insert-heading-hook
+            #'actuator-org-insert-heading-timestamp)
+
+  (add-hook 'org-capture-prepare-finalize-hook
+            #'actuator-org-insert-heading-timestamp)
 #+end_src
 
 * Archive old stuff
@@ -3659,6 +3674,31 @@ https://helpdeskheadesk.net/2022-03-13/
 #+begin_src emacs-lisp
   (csetq help-enable-symbol-autoload t)
   (csetq describe-bindings-outline t)
+#+end_src
+
+* Bell
+:PROPERTIES:
+:CREATED: [2022-04-10 Sun 08:38]
+:END:
+
+#+begin_src emacs-lisp
+  (csetq visible-bell nil)
+  (csetq ring-bell-function 'ignore)
+#+end_src
+
+* Org links
+:PROPERTIES:
+:CREATED: [2022-04-10 Sun 08:50]
+:END:
+
+#+begin_src emacs-lisp
+  (setq org-link-parameters (delq (assoc "file+sys" org-link-parameters) org-link-parameters))
+  (setq org-link-parameters (delq (assoc "file+emacs" org-link-parameters) org-link-parameters))
+  (setq org-link-parameters (delq (assoc "rmail" org-link-parameters) org-link-parameters))
+  (setq org-link-parameters (delq (assoc "news" org-link-parameters) org-link-parameters))
+  (setq org-link-parameters (delq (assoc "bbdb" org-link-parameters) org-link-parameters))
+  (setq org-link-parameters (delq (assoc "w3m" org-link-parameters) org-link-parameters))
+  (setq org-link-parameters (delq (assoc "mhe" org-link-parameters) org-link-parameters))
 #+end_src
 
 * Afterword
