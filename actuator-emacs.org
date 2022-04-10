@@ -383,6 +383,10 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
+  (global-unset-key (kbd "<pinch>"))
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq redisplay-skip-fontification-on-input t)
   (csetq completions-detailed t)
   (csetq completions-format 'one-column)
