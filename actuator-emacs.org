@@ -1,6 +1,6 @@
 #+title: Actuator Emacs
 #+startup: contents
-#+property: header-args :tangle (expand-file-name (concat (file-name-base (buffer-file-name)) ".el") user-emacs-directory) :comments link
+#+property: header-args :tangle (expand-file-name "init.el" user-emacs-directory) :comments link
 
 * Forward
 Install Emacs via your chosen system. It works with native-compile on both macOS and Linux for me.
@@ -24,18 +24,6 @@ I'm calling this whole thing Actuator. It's a name I came up with because I need
 
 Oh, I should probably note that I love pleasing the Emacs byte-compiler, but also am not very good at it. So there's a lot of completely unneeded boilerplate that makes some parts of it happy, but also there will warnings all over the place.
 
-#+begin_src emacs-lisp :comments no
-  ;;; actuator-emacs.el --- Literate configuration -*- lexical-binding: t; -*-
-
-  ;;; Commentary:
-
-  ;; This is a tangled file, see actuator-emacs.org for information.
-
-  ;;; Code:
-#+end_src
-
-There are three main Emacs files. This one, {{{input-file}}}, makes all the others. [[*Early init][Early init]] and [[*Init][init]] are housed inside this file, but they're purposefullly as minimal as possible, and they tangle out separately. The next few sections before them are the things that need to be on top. Everything else is supposed to be completely location-independent. Emphasis on /supposed/.
-
 ** Windows stuff
 :PROPERTIES:
 :CREATED: [2022-03-03 Thu 08:55]
@@ -48,55 +36,12 @@ Right now I'm setting Emacs to be [[https://www.emacswiki.org/emacs/EmacsPortabl
   "%~dp0runemacs.exe" %*
 #+end_src
 
-** Csetq
-The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things worse. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
-
-#+begin_src emacs-lisp
-  (defmacro csetq (variable value)
-    "Macro to set the VALUE of VARIABLE, possibly a custom user option.
-
-  Should be a drop-in replacement for `setq', switching between the
-  two should only cause issues if the variable is supposed to be
-  set with customize."
-    `(funcall (or (get ',variable 'custom-set)
-                  (and (plist-member (symbol-plist ',variable)
-                                     'standard-value)
-                       'set-default)
-                  'set)
-              ',variable ,value))
-#+end_src
-
-** Functions to determine platforms
-I need a bunch of convenience functions to check the capabilities of the system and make different things happen in different situations.
-
-#+begin_src emacs-lisp
-  (defun is-mac-p ()
-    "Return non-nil if system is a Mac."
-    (eq system-type 'darwin))
-
-  (defun is-linux-p ()
-    "Return non-nil if system is Linux."
-    (eq system-type 'gnu/linux))
-
-  (defun is-win-p ()
-    "Return non-nil if system is Windows."
-    (eq system-type 'windows-nt))
-
-  (defun is-graphical-p ()
-    "Return non-nil if system has a graphical display."
-    (display-graphic-p))
-
-  (defun is-terminal-p ()
-    "Return non-nil if system does not have a graphical display."
-    (not (display-graphic-p)))
-#+end_src
-
 * Early init
 :PROPERTIES:
-:header-args: :tangle (expand-file-name "early-init.el" user-emacs-directory) :comments no :mkdirp yes
+:header-args: :tangle (expand-file-name "early-init.el" user-emacs-directory) :comments link :mkdirp yes
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
   ;;; early-init.el --- Pre-package.el settings -*- lexical-binding: t; -*-
 
   ;;; Commentary:
@@ -112,13 +57,10 @@ I need a bunch of convenience functions to check the capabilities of the system 
 
   (setq gc-cons-threshold (* 128 1000 1000))
   (setq gc-cons-percentage 0.5)
+  (setq load-prefer-newer t)
 #+end_src
 
-#+begin_src emacs-lisp :tangle (expand-file-name "init.el" user-emacs-directory) :comments no :mkdirp yes
-    (add-hook 'emacs-startup-hook #'(lambda ()
-       (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
-       (setq gc-cons-percentage actuator-original-gc-cons-percentage)))
-#+end_src
+[[*Reset garbage collection][Reset garbage collection]]
 
 I moved the custom-file to early init because when it was in the auto-tangled Org file some things ended up being saved in the init.el file and some in the custom-file, so there were weird errors occurring. This way there's only one location that I need to worry about.
 
@@ -172,17 +114,17 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     (add-to-list 'exec-path "/usr/local/sbin"))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
   (provide 'early-init)
   ;;; early-init.el ends here
 #+end_src
 
 * Init
 :PROPERTIES:
-:header-args: :tangle (expand-file-name "init.el" user-emacs-directory) :comments no :mkdirp yes
+:header-args: :tangle (expand-file-name "init.el" user-emacs-directory) :comments link :mkdirp yes
 :END:
 ** Lexical Binding
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
   ;;; init.el --- Load literate config -*- lexical-binding: t; -*-
 
   ;;; Commentary:
@@ -191,6 +133,52 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
   ;;; Code:
 #+end_src
+
+** Csetq
+The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things worse. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
+
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+    "Macro to set the VALUE of VARIABLE, possibly a custom user option.
+
+  Should be a drop-in replacement for `setq', switching between the
+  two should only cause issues if the variable is supposed to be
+  set with customize."
+    `(funcall (or (get ',variable 'custom-set)
+                  (and (plist-member (symbol-plist ',variable)
+                                     'standard-value)
+                       'set-default)
+                  'set)
+              ',variable ,value))
+#+end_src
+
+
+** Functions to determine platforms
+I need a bunch of convenience functions to check the capabilities of the system and make different things happen in different situations.
+
+#+begin_src emacs-lisp
+  (defun is-mac-p ()
+    "Return non-nil if system is a Mac."
+    (eq system-type 'darwin))
+
+  (defun is-linux-p ()
+    "Return non-nil if system is Linux."
+    (eq system-type 'gnu/linux))
+
+  (defun is-win-p ()
+    "Return non-nil if system is Windows."
+    (eq system-type 'windows-nt))
+
+  (defun is-graphical-p ()
+    "Return non-nil if system has a graphical display."
+    (display-graphic-p))
+
+  (defun is-terminal-p ()
+    "Return non-nil if system does not have a graphical display."
+    (not (display-graphic-p)))
+#+end_src
+
+
 
 ** Tangle
 :PROPERTIES:
@@ -202,16 +190,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     "Directory with actuator Org files.
   This is the directory where Emacs will try to tangle the config
   files from.")
-#+end_src
-
-#+begin_src emacs-lisp
-  (let* ((file "actuator-emacs")
-         (org-file (expand-file-name (concat file ".org") actuator-directory))
-         (el-file  (expand-file-name file user-emacs-directory)))
-    (require 'ob-tangle)
-    (org-babel-tangle-file org-file nil "emacs-lisp")
-    (byte-compile-file (concat el-file ".el"))
-    (load el-file))
 #+end_src
 
 ** Footer
@@ -401,8 +379,9 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (global-unset-key (kbd "<C-wheel-up>"))
   (csetq help-window-select t)            ; Select help window by default, so it's easy
                                           ; to kill
-  (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back) ; Mouse back and forward buttons
-  (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
+  (defvar help-mode-map)
+  ;;(define-key help-mode-map (kbd "<mouse-8>") #'help-go-back) ; Mouse back and forward buttons
+  ;;(define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
   (csetq jit-lock-defer-time 0)           ; Defer doing font lock if there's input pending
   (csetq use-short-answers t)
   (global-set-key (kbd "M-o") #'other-window) ; M-o is otherwise unused
@@ -759,7 +738,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 * Diary
 #+begin_src emacs-lisp
-  (defvar org-directory)
+  (defvar org-directory "~/org")
   (csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
   (csetq org-agenda-insert-diary-strategy 'top-level)
@@ -1553,7 +1532,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
          (csetq image-dired-external-viewer "xdg-open")))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (define-key dired-mode-map
                 (kbd "C-c C-x a")
                 #'org-attach-dired-to-subtree)
@@ -2751,7 +2730,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Spell check
 #+begin_src emacs-lisp
-  (csetq ispell-personal-dictionary (expand-file-name "etc/dictionary" org-directory))
+  (csetq ispell-personal-dictionary (expand-file-name "data/dictionary" org-directory))
   (csetq ispell-silently-savep t)
   (defun actuator-org-reveal-around ()
     "Reveals the area around the point in Org-mode files."
@@ -2803,6 +2782,16 @@ Further in the same link, he recommends against calling =package-activate-all= a
     (define-key flymake-mode-map (kbd "C-c ! d") #'flymake-show-buffer-diagnostics)
     (define-key flymake-mode-map (kbd "C-c ! n") #'flymake-goto-next-error)
     (define-key flymake-mode-map (kbd "C-c ! p") #'flymake-goto-prev-error))
+#+end_src
+
+* Reset garbage collection
+:PROPERTIES:
+:CREATED:  [2022-04-10 Sun 10:18]
+:END:
+#+begin_src emacs-lisp :tangle (expand-file-name "init.el" user-emacs-directory) :comments no :mkdirp yes
+    (add-hook 'emacs-startup-hook #'(lambda ()
+       (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
+       (setq gc-cons-percentage actuator-original-gc-cons-percentage)))
 #+end_src
 
 * Display buffer
@@ -3194,7 +3183,7 @@ I'm using a custom alert function so that I can use the system's notification sy
    should be an integer number of minutes until the event occurs,
    the CURRENT-TIME which is discarded, and MESSAGE, which is the
    name of the TODO item that is upcoming."
-    (declare-function actuator-notify "actuator-emacs" (title message))
+    (declare-function actuator-notify "init" (title message))
     (actuator-notify (format "Appointment in %s minutes" minutes-until) message))
 #+end_src
 
@@ -3385,6 +3374,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 #+end_src
 
 #+begin_src emacs-lisp
+  (csetq abbrev-file-name (expand-file-name "data/abbrev.el" org-directory))
   (defun actuator-enable-abbrev-mode ()
     (abbrev-mode +1))
 
@@ -3713,27 +3703,25 @@ https://helpdeskheadesk.net/2022-03-13/
 
   (defun actuator-regenerate-complete-init ()
     "Ask to completely rebuild init."
-      (let ((literate nil)
-            (init (expand-file-name "init.el" user-emacs-directory))
-            (early-init (expand-file-name "early-init.el" user-emacs-directory))
-            (quickstart package-quickstart-file))
-        (find-file (expand-file-name "actuator-emacs.el" user-emacs-directory)) ;;TODO
-        (org-babel-tangle-jump-to-org)
-        (setq literate (buffer-file-name))
-        (org-babel-tangle-file literate nil "emacs-lisp")
-        (when package-quickstart
-                  (package-quickstart-refresh))
-        (if (fboundp 'native-compile)
-            (progn
-              (native-compile init)
-              (native-compile early-init)
-              (when (file-exists-p quickstart)
-                (native-compile quickstart)))
-          (progn
-            (byte-compile-file init)
-            (byte-compile-file early-init)
-            (when (file-exists-p quickstart)
-              (byte-compile-file quickstart))))))
+    (interactive)
+    (let ((literate nil)
+          (init (expand-file-name "init.el" user-emacs-directory))
+          (early-init (expand-file-name "early-init.el" user-emacs-directory))
+          (quickstart package-quickstart-file))
+      (find-file init) ;;TODO
+      (org-babel-tangle-jump-to-org)
+      (setq literate (buffer-file-name))
+      (org-babel-tangle-file literate nil "emacs-lisp")
+      (when package-quickstart
+        (package-quickstart-refresh)
+        (byte-compile-file quickstart))
+      (byte-compile-file init)
+      (byte-compile-file early-init)
+      (when (fboundp 'native-compile)
+        (native-compile init)
+        (native-compile early-init)
+        (when (file-exists-p quickstart)
+          (native-compile quickstart)))))
 
   (add-hook 'kill-emacs-hook #'actuator-regenerate-complete-init)
 #+end_src
@@ -3741,6 +3729,6 @@ https://helpdeskheadesk.net/2022-03-13/
 * Afterword
 
 #+begin_src emacs-lisp :comments no
-  (provide 'actuator-emacs)
-  ;;; actuator-emacs.el ends here
+  (provide 'init)
+  ;;; init.el ends here
 #+end_src
