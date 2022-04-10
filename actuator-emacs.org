@@ -3699,6 +3699,45 @@ https://helpdeskheadesk.net/2022-03-13/
   (setq org-link-parameters (delq (assoc "mhe" org-link-parameters) org-link-parameters))
 #+end_src
 
+* Recompile on kill
+:PROPERTIES:
+:CREATED:  [2022-04-10 Sun 09:52]
+:END:
+
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
+    (declare-function org-babel-tangle-file "ob-tangle" (file &optional target-file lang-re))
+    (declare-function package-quickstart-refresh "package" nil))
+  (defvar package-quickstart)
+
+  (defun actuator-regenerate-complete-init ()
+    "Ask to completely rebuild init."
+      (let ((literate nil)
+            (init (expand-file-name "init.el" user-emacs-directory))
+            (early-init (expand-file-name "early-init.el" user-emacs-directory))
+            (quickstart package-quickstart-file))
+        (find-file (expand-file-name "actuator-emacs.el" user-emacs-directory)) ;;TODO
+        (org-babel-tangle-jump-to-org)
+        (setq literate (buffer-file-name))
+        (org-babel-tangle-file literate nil "emacs-lisp")
+        (when package-quickstart
+                  (package-quickstart-refresh))
+        (if (fboundp 'native-compile)
+            (progn
+              (native-compile init)
+              (native-compile early-init)
+              (when (file-exists-p quickstart)
+                (native-compile quickstart)))
+          (progn
+            (byte-compile-file init)
+            (byte-compile-file early-init)
+            (when (file-exists-p quickstart)
+              (byte-compile-file quickstart))))))
+
+  (add-hook 'kill-emacs-hook #'actuator-regenerate-complete-init)
+#+end_src
+
 * Afterword
 
 #+begin_src emacs-lisp :comments no
