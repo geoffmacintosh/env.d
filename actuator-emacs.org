@@ -120,15 +120,6 @@ I need a bunch of convenience functions to check the capabilities of the system 
        (setq gc-cons-percentage actuator-original-gc-cons-percentage)))
 #+end_src
 
-#+begin_src emacs-lisp
-  ;;(setq load-prefer-newer t)
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (when (boundp 'package-quickstart-file)
-    (setq package-quickstart t))
-#+end_src
-
 I moved the custom-file to early init because when it was in the auto-tangled Org file some things ended up being saved in the init.el file and some in the custom-file, so there were weird errors occurring. This way there's only one location that I need to worry about.
 
 #+begin_src emacs-lisp
@@ -2776,8 +2767,15 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (csetq package-name-column-width 40)
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
+#+end_src
+
+According to [[https://lists.gnu.org/archive/html/emacs-devel/2020-12/msg01162.html][Stephan Monnier]], we only need to set the =package-quickstart= variable to generate a quickstart file, not to load one if it exists.
+
+#+begin_src emacs-lisp
   (csetq package-quickstart t)
 #+end_src
+
+Further in the same link, he recommends against calling =package-activate-all= as it should be auto-called between early-init and init and may cause issues if called twice.
 
 * Winner
 #+begin_src emacs-lisp
