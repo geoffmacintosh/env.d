@@ -13,7 +13,6 @@ Then to actually install stuff evaluate the following source block. If it works 
   (org-babel-tangle nil (buffer-file-name))
   (load-file (expand-file-name "early-init.el" user-emacs-directory))
   (load-file (expand-file-name "init.el" user-emacs-directory))
-  (load-file (concat (file-name-base (buffer-file-name)) ".el"))
   (package-refresh-contents)
   (package-install-selected-packages)
   (package-quickstart-refresh)
@@ -380,8 +379,9 @@ I need a bunch of convenience functions to check the capabilities of the system 
   (csetq help-window-select t)            ; Select help window by default, so it's easy
                                           ; to kill
   (defvar help-mode-map)
-  ;;(define-key help-mode-map (kbd "<mouse-8>") #'help-go-back) ; Mouse back and forward buttons
-  ;;(define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward)
+  (with-eval-after-load 'help-mode
+    (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back) ; Mouse back and forward buttons
+    (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward))
   (csetq jit-lock-defer-time 0)           ; Defer doing font lock if there's input pending
   (csetq use-short-answers t)
   (global-set-key (kbd "M-o") #'other-window) ; M-o is otherwise unused
@@ -575,14 +575,14 @@ I need a bunch of convenience functions to check the capabilities of the system 
         (org-babel-tangle-jump-to-org)
       (error
        (call-interactively #'xref-find-definitions))))
-  (define-key prog-mode-map (kbd "M-.") #'actuator-jump-to-correct-location)
+  (global-set-key (kbd "M-.") #'actuator-jump-to-correct-location)
 #+end_src
 
 * Org-mode
 ** Agenda
 #+begin_src emacs-lisp
+  (defvar org-agenda-mode-map)
   (eval-when-compile
-    (defvar org-agenda-mode-map)
     (declare-function org-agenda-todo-yesterday "org-agenda" (&optional arg)))
 
   (with-eval-after-load 'org-agenda
@@ -751,8 +751,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 * Capture Templates
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (defvar org-capture-templates))
+  (defvar org-capture-templates)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -793,10 +792,19 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("s" "Shopping item" table-line
-                   (file+headline "shopping.org" "List")
-                   "|%^{Status|Unapproved|Approved|Purchased}|%^{Category}|%?|%^{Price}|%^{Location}|%u|"
-                   :prepend
+                 `("i" "Inventory" entry
+                   (file+headline "inventory.org" "Item")
+                   "* %^{Name}\n:PROPERTIES:\n:PURCHASED_DATE: %^u\n:END:\n%^{PRICE}p%^{HOME_LOCATION}p%^{PURCHASED_LOCATION}p%^{PROVIDES}p%?"
+                   :empty-lines 1
+                   :kill-buffer t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 '("s" "Shopping" entry
+                   (file+headline "shopping.org" "Unapproved")
+                   "* %^{Generic item}"
                    :empty-lines 1
                    :kill-buffer)))
 #+end_src
@@ -954,8 +962,9 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+ (defvar org-agenda-custom-commands)
   (with-eval-after-load 'org-agenda
-    (eval-when-compile (defvar org-agenda-custom-commands))
+
 
     (add-to-list 'org-agenda-custom-commands
                  '("u" "Unscheduled TODOs"
@@ -1123,8 +1132,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (eval-when-compile
     (defvar org-agenda-mode-map)
+  (eval-when-compile
     (declare-function org-agenda-earlier "org-agenda" (ARG))
     (declare-function org-agenda-later   "org-agenda" (ARG)))
   (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
@@ -1147,8 +1156,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (eval-when-compile
     (defvar org-default-properties)
+  (eval-when-compile
     (declare-function org-indent-mode "org-indent"))
 
   (with-eval-after-load 'org
@@ -1285,7 +1294,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq calendar-chinese-all-holidays-flag nil)
   (csetq calendar-hebrew-all-holidays-flag nil)
   (csetq calendar-christian-all-holidays-flag nil)
-  (csetq calendar-islamic-all-holidays-flag nil)
+  (csetq calendar-islamic-all-holidays-flag t)
   (csetq calendar-bahai-all-holidays-flag nil)
   (csetq holiday-bahai-holidays nil)
 #+end_src
@@ -1513,6 +1522,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
+      (defvar image-dired-thumbnail-mode-map)
   (csetq image-dired-thumb-size 100)
   (csetq image-dired-thumb-width 300)
   (csetq image-dired-thumb-height 300)
@@ -1521,7 +1531,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq image-dired-thumbs-per-row 4)
   (with-eval-after-load 'image-dired
     (eval-when-compile
-      (defvar image-dired-thumbnail-mode-map)
       (declare-function image-dired-thumbnail-display-external "image-dired"))
     (define-key image-dired-thumbnail-mode-map
       (kbd "<return>") #'image-dired-thumbnail-display-external))
@@ -1618,6 +1627,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 * Ediff
 #+begin_src emacs-lisp
+      (defvar ediff-buffer-A)
+      (defvar ediff-buffer-B)
+      (defvar ediff-buffer-C)
   (csetq ediff-window-setup-function 'ediff-setup-windows-plain)
   (csetq ediff-split-window-function 'split-window-horizontally)
   (csetq ediff-diff-options "-w") ;;-w ignores whitespace changes
@@ -1635,10 +1647,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
   (defun actuator-ediff-org-reveal-around-difference (&rest _)
     "Ensure that the relevant Org-mode diff is visible."
+
+
     (eval-when-compile
-      (defvar ediff-buffer-A)
-      (defvar ediff-buffer-B)
-      (defvar ediff-buffer-C)
       (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body) t))
     (require 'ediff)
 
@@ -1730,7 +1741,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   ;;(csetq mu4e-get-mail-command (concat (executable-find "mbsync") " --all"))
   (csetq mu4e-get-mail-command "mbsync --all")
   (csetq mu4e-mu-binary (executable-find "mu"))
-  ;;(csetq mu4e-mu-binary "mu")
   (add-hook 'message-mode-hook 'auto-fill-mode)
   (csetq message-cite-reply-position 'traditional)
 #+end_src
@@ -1788,7 +1798,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq message-kill-buffer-on-exit t)
   (csetq message-wide-reply-confirm-recipients t)
   (with-eval-after-load 'mm-bodies
-    (eval-when-compile (defvar mm-body-charset-encoding-alist))
+    (defvar mm-body-charset-encoding-alist)
     (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64)))
 
   (with-eval-after-load 'message
@@ -2052,6 +2062,7 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 
 #+begin_src emacs-lisp
+      (defvar ivy-minibuffer-map)
   (when (package-installed-p 'ivy)
     (eval-when-compile
       (declare-function ivy-switch-buffer "ivy"))
@@ -2059,7 +2070,7 @@ https://gist.github.com/spacebat/5500966
 
   (with-eval-after-load 'ivy
     (eval-when-compile
-      (defvar ivy-minibuffer-map)
+
       (declare-function counsel-mode "counsel")
       (declare-function ivy-mode "ivy")
       (declare-function ivy-immediate-done "ivy")
@@ -2100,10 +2111,10 @@ https://gist.github.com/spacebat/5500966
 * Cliplink
 
 #+begin_src emacs-lisp
+ (defvar org-capture-templates)
   (add-to-list 'package-selected-packages 'org-cliplink)
   (eval-when-compile
-    (declare-function org-cliplink "org-cliplink")
-    (defvar org-capture-templates))
+    (declare-function org-cliplink "org-cliplink"))
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
 
@@ -2213,6 +2224,7 @@ https://gist.github.com/spacebat/5500966
 
 
 #+begin_src emacs-lisp
+  (defvar elfeed-search-mode-map)
   (csetq elfeed-search-filter "@1-week-ago +unread ")
   (csetq elfeed-enclosure-default-dir "~/Download/")
   (csetq elfeed-search-title-max-width 120)
@@ -2220,7 +2232,7 @@ https://gist.github.com/spacebat/5500966
 
   (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
-    (eval-when-compile (defvar elfeed-search-mode-map))
+
     (define-key elfeed-search-mode-map (kbd "q") #'actuator-elfeed-save-db-and-bury)
     (define-key elfeed-search-mode-map (kbd "R") #'actuator-elfeed-mark-all-as-read))
 #+end_src
@@ -2347,8 +2359,8 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 Changing the colours of an entry is neat, but not that useful. I mostly have this set up in order to learn how to do it, and as a vague novelty.
 
 #+begin_src emacs-lisp
+  (defvar elfeed-search-face-alist)
   (with-eval-after-load 'elfeed
-    (eval-when-compile (defvar elfeed-search-face-alist))
     (add-to-list 'elfeed-search-face-alist
                  '(video actuator-elfeed-video-face))
     (add-to-list 'elfeed-search-face-alist
@@ -2379,6 +2391,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar elfeed-search-filter-active)
+  (defvar elfeed-search-filter-overflowing)
+  (defvar elfeed-search-entries)
   (csetq elfeed-search-header-function #'actuator-elfeed-search--header)
 
   (defun actuator-elfeed-search--header ()
@@ -2417,9 +2432,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defun actuator-elfeed-search--count-unread ()
     "Count the number of entries and feeds being currently displayed."
     (eval-when-compile
-      (defvar elfeed-search-filter-active)
-      (defvar elfeed-search-filter-overflowing)
-      (defvar elfeed-search-entries)
+
       (declare-function elfeed-tagged-p "elfeed-db")
       (declare-function elfeed-feed-url "elfeed-db" t t)
       (declare-function elfeed-entry-feed "elfeed-db"))
@@ -2623,8 +2636,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar org-show-notification-timeout)
   (eval-when-compile
-    (defvar org-show-notification-timeout)
     (declare-function notifications-notify "notifications" (&rest params))
     (declare-function notifications-get-capabilities "notifications" (&optional bus)))
 
@@ -2768,12 +2781,12 @@ Further in the same link, he recommends against calling =package-activate-all= a
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar flymake-mode-map)
   (csetq flymake-suppress-zero-counters t)
   (csetq flymake-no-changes-timeout 1)
   (csetq flymake-start-on-save-buffer t)
   (with-eval-after-load 'flymake
     (eval-when-compile
-      (defvar flymake-mode-map)
       (declare-function flymake-start "flymake")
       (declare-function flymake-show-buffer-diagnostics "flymake")
       (declare-function flymake-goto-next-error "flymake")
@@ -2819,6 +2832,7 @@ Further in the same link, he recommends against calling =package-activate-all= a
 * Org publish org
 
 #+begin_src emacs-lisp
+    (defvar org-export-filter-timestamp-functions)
   (defun actuator-filter-timestamp (string backend _comm)
     "Remove <> around time-stamps.
   I actually don't know what STRING is. BACKEND can be some version
@@ -2831,7 +2845,7 @@ Further in the same link, he recommends against calling =package-activate-all= a
 
   (with-eval-after-load 'ox
     (require 'ox-icalendar)
-    (eval-when-compile (defvar org-export-filter-timestamp-functions))
+
     (add-to-list 'org-export-filter-timestamp-functions
                  #'actuator-filter-timestamp))
 #+end_src
@@ -2850,9 +2864,9 @@ Further in the same link, he recommends against calling =package-activate-all= a
 #+end_src
 
 #+begin_src emacs-lisp
+(defvar org-publish-project-alist)
   (with-eval-after-load
    'ox-publish
-   (eval-when-compile (defvar org-publish-project-alist))
    (add-to-list
     'org-publish-project-alist
     `("org-content"
@@ -2902,10 +2916,11 @@ Further in the same link, he recommends against calling =package-activate-all= a
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar org-export-filter-link-functions)
   (defun actuator-filter-local-links (link backend _info)
     "Filter to convert all the forms of /index.html to /.
 
-Takes LINK and BACKEND as args."
+  Takes LINK and BACKEND as args."
     (require 'ox)
     (eval-when-compile
       (declare-function org-export-derived-backend-p "ox"))
@@ -2913,7 +2928,7 @@ Takes LINK and BACKEND as args."
         (replace-regexp-in-string "/index.html" "/" link)))
   (with-eval-after-load
       'ox
-    (eval-when-compile (defvar org-export-filter-link-functions))
+
     (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
 #+end_src
 
@@ -2967,9 +2982,8 @@ Takes LINK and BACKEND as args."
 #+end_src
 
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (defvar help-at-pt-display-when-idle)
-    (defvar help-at-pt-timer-delay))
+  (defvar help-at-pt-display-when-idle)
+  (defvar help-at-pt-timer-delay)
 
   (defun actuator-echo-area-tooltips ()
     "Show tooltips in the echo area automatically for current buffer.
@@ -3071,8 +3085,8 @@ Takes LINK and BACKEND as args."
   (csetq completion-ignore-case t)
   (csetq read-file-name-completion-ignore-case t)
 
-  (eval-when-compile
-    (defvar icomplete-fido-mode-map))
+
+  (defvar icomplete-fido-mode-map)
 
   (with-eval-after-load 'fido-mode
     (define-key icomplete-fido-mode-map
@@ -3196,10 +3210,6 @@ I'm using a custom alert function so that I can use the system's notification sy
    the list."
     (message "Refreshing appt")
     (org-agenda-to-appt t))
-
-  ;; (with-eval-after-load 'midnight-mode
-  ;;   (eval-when-compile (defvar midnight-hook))
-  ;;   (add-to-list 'midnight-hook #'actuator-org-agenda-to-appt-refresh))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3327,13 +3337,13 @@ I'm using a custom alert function so that I can use the system's notification sy
 :CREATED:  [2022-02-07 Mon 13:32]
 :END:
 #+begin_src emacs-lisp
+  (defvar Info-mode-map)
   (eval-when-compile
-    (defvar Info-mode-map)
     (declare-function Info-backward-node "info" nil)
     (declare-function Info-forward-node "info" (&optional not-down not-up no-error)))
-
-  (define-key Info-mode-map (kbd "<mouse-8>") #'Info-backward-node)
-  (define-key Info-mode-map (kbd "<mouse-9>") #'Info-forward-node)
+  (with-eval-after-load 'info
+    (define-key Info-mode-map (kbd "<mouse-8>") #'Info-backward-node)
+    (define-key Info-mode-map (kbd "<mouse-9>") #'Info-forward-node))
 #+end_src
 
 * Package Init
@@ -3460,9 +3470,9 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (declare-function emms-mode-line-mode "ext:emms-mode-line" (&optional arg))
     (declare-function emms-playing-time-display-mode "ext:emms-playing-time" (&optional arg))
     (declare-function emms-smart-browse "ext:emms-browser" nil)
-    (declare-function emms-all "ext:emms-setup" nil)
-    (defvar emms-info-functions)
-    (defvar emms-player-list))
+    (declare-function emms-all "ext:emms-setup" nil))
+  (defvar emms-info-functions)
+  (defvar emms-player-list)
 
   (defun actuator-setup-emms ()
     (interactive)
@@ -3724,6 +3734,96 @@ https://helpdeskheadesk.net/2022-03-13/
           (native-compile quickstart)))))
 
   (add-hook 'kill-emacs-hook #'actuator-regenerate-complete-init)
+#+end_src
+
+* Mastodon
+:PROPERTIES:
+:CREATED:  [2022-05-01 Sun 19:06]
+:END:
+
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'mastodon)
+  (csetq mastodon-active-user "mac_into_sh")
+  (csetq mastodon-instance-url "https://mastodon.social")
+#+end_src
+
+* Non-interactively upgrade all packages
+:PROPERTIES:
+:CREATED:  [2022-05-01 Sun 19:09]
+:END:
+
+https://emacs.stackexchange.com/questions/16398/noninteractively-upgrade-all-packages
+
+#+begin_src emacs-lisp
+  (defun package-upgrade-all ()
+    "Upgrade all packages automatically without showing *Packages* buffer."
+    (interactive)
+    (package-refresh-contents)
+    (let (upgrades)
+      (cl-flet ((get-version (name where)
+                  (let ((pkg (cadr (assq name where))))
+                    (when pkg
+                      (package-desc-version pkg)))))
+        (dolist (package (mapcar #'car package-alist))
+          (let ((in-archive (get-version package package-archive-contents)))
+            (when (and in-archive
+                       (version-list-< (get-version package package-alist)
+                                       in-archive))
+              (push (cadr (assq package package-archive-contents))
+                    upgrades)))))
+      (if upgrades
+          (when (yes-or-no-p
+                 (message "Upgrade %d package%s (%s)? "
+                          (length upgrades)
+                          (if (= (length upgrades) 1) "" "s")
+                          (mapconcat #'package-desc-full-name upgrades ", ")))
+            (save-window-excursion
+              (dolist (package-desc upgrades)
+                (let ((old-package (cadr (assq (package-desc-name package-desc)
+                                               package-alist))))
+                  (package-install package-desc)
+                  (package-delete  old-package)))))
+        (message "All packages are up to date"))))
+#+end_src
+
+* Rename current buffer
+:PROPERTIES:
+:CREATED:  [2022-05-01 Sun 19:17]
+:END:
+
+https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
+
+#+begin_src emacs-lisp
+  (defun rename-current-buffer-file ()
+    "Renames current buffer and file it is visiting."
+    (interactive)
+    (let* ((name (buffer-name))
+          (filename (buffer-file-name))
+          (basename (file-name-nondirectory filename)))
+      (if (not (and filename (file-exists-p filename)))
+          (error "Buffer '%s' is not visiting a file!" name)
+        (let ((new-name (read-file-name "New name: " (file-name-directory filename) basename nil basename)))
+          (if (get-buffer new-name)
+              (error "A buffer named '%s' already exists!" new-name)
+            (rename-file filename new-name 1)
+            (rename-buffer new-name)
+            (set-visited-file-name new-name)
+            (set-buffer-modified-p nil)
+            (message "File '%s' successfully renamed to '%s'"
+                     name (file-name-nondirectory new-name)))))))
+#+end_src
+
+* Elisp mode
+:PROPERTIES:
+:CREATED:  [2022-05-01 Sun 19:27]
+:END:
+
+#+begin_src emacs-lisp
+  (defun actuator-elisp-hook ()
+    (auto-fill-mode +1)
+    (flymake-mode +1))
+
+  (add-hook 'emacs-lisp-mode-hook #'actuator-elisp-hook)
 #+end_src
 
 * Afterword
