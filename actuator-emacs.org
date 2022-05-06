@@ -76,7 +76,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     (when (fboundp 'scroll-bar-mode)
       (when (or (eq system-type 'darwin) (eq system-type 'gnu/linux))
         (scroll-bar-mode -1)))
-
+    (when (fboundp 'fringe-mode)
+      (fringe-mode 12))
     (when (member "SF Mono" (font-family-list))
       (set-frame-font "SF Mono-12" nil t)))
 
@@ -879,16 +880,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (csetq calendar-date-style 'iso)
   (csetq calendar-offset -1)
-#+end_src
-
-* Fringe
-:PROPERTIES:
-:ID:       3659786E-6B2D-4AF8-8901-434068730FC7
-:END:
-
-#+begin_src emacs-lisp
-  (when (is-graphical-p)
-    (fringe-mode 12))
 #+end_src
 
 * Recentf
