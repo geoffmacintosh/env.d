@@ -1063,7 +1063,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-list-indent-offset 1)
   (defvar org-outline-regexp)
   (csetq org-use-speed-commands
-      (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**" 5))))
+         (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**" 5))))
   (csetq org-footnote-auto-adjust t)
   (csetq org-footnote-define-inline t)
   (csetq org-footnote-auto-label t)
@@ -1201,6 +1201,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar package-selected-packages)
   (add-to-list 'package-selected-packages 'org)
   (add-to-list 'package-selected-packages 'org-contrib)
   (csetq org-babel-default-header-args '((:mkdirp   . "yes")
@@ -1564,6 +1565,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
+  (defvar dired-mode-map)
   (define-key dired-mode-map
                 (kbd "C-c C-x a")
                 #'org-attach-dired-to-subtree)
@@ -1835,11 +1837,15 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq gnus-buttonized-mime-types '("multipart/signed"))
   (csetq mm-decrypt-option 'known)
 
+  (declare-function mml-secure-message-sign-pgpmime "mml-sec")
   (defun actuator-sign-message ()
+    (require 'mml-sec)
     (message "Signing message.")
     (mml-secure-message-sign-pgpmime))
 
+  (declare-function mml-secure-message-encrypt-pgpmime "mml-sec")
   (defun actuator-encrypt-message ()
+    (require 'mml-sec)
     (message "Encrypting message.")
     (mml-secure-message-encrypt-pgpmime))
 
@@ -3239,7 +3245,7 @@ I'm using a custom alert function so that I can use the system's notification sy
     "Run `org-agenda-to-appt' whenever there is an idle period."
     (run-with-idle-timer 5 nil #'actuator-org-agenda-to-appt-refresh))
 
-  (run-at-time "120 minute" t #'actuator-org-agenda-to-appt-timer)
+  (run-at-time "30 min" t #'actuator-org-agenda-to-appt-timer)
   (advice-add #'actuator-org-agenda-to-appt-refresh :after #'org-agenda-to-appt)
   (appt-activate +1)
 #+end_src
@@ -3555,6 +3561,8 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 #+end_src
 
 #+begin_src emacs-lisp
+  (declare-function dired-get-marked-files "dired" (&optional LOCALP ARG FILTER
+  DISTINGUISH-ONE-MARKED ERROR))
   (defun xah-open-in-external-app (&optional @fname)
     "Open the current file or Dired marked files in external app.
   When called in Emacs Lisp, if @fname is given, open that.
@@ -3582,11 +3590,13 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
           (mapc
            (lambda ($fpath)
              (shell-command
-              (concat "open " (shell-quote-argument $fpath))))  $file-list))
+              (concat "open " (shell-quote-argument $fpath))))
+           $file-list))
          ((string-equal system-type "gnu/linux")
           (mapc
            (lambda ($fpath) (let ((process-connection-type nil))
-                              (start-process "" nil "xdg-open" $fpath))) $file-list))))))
+                              (start-process "" nil "xdg-open" $fpath)))
+           $file-list))))))
 #+end_src
 * Desktop
 :PROPERTIES:
@@ -3684,7 +3694,8 @@ https://helpdeskheadesk.net/2022-03-13/
 :END:
 
 #+begin_src emacs-lisp
-  (context-menu-mode +1)
+  (when (fboundp 'context-menu-mode)
+    (context-menu-mode +1))
 #+end_src
 
 * Help etc.
@@ -3743,7 +3754,7 @@ https://helpdeskheadesk.net/2022-03-13/
       (find-file init) ;;TODO
       (org-babel-tangle-jump-to-org)
       (setq literate (buffer-file-name))
-      (org-babel-tangle-file literate nil "emacs-lisp")
+      (org-babel-tangle-file literate)
       (when package-quickstart
         (package-quickstart-refresh)
         (byte-compile-file quickstart))
@@ -3754,8 +3765,6 @@ https://helpdeskheadesk.net/2022-03-13/
         (native-compile early-init)
         (when (file-exists-p quickstart)
           (native-compile quickstart)))))
-
-  (add-hook 'kill-emacs-hook #'actuator-regenerate-complete-init)
 #+end_src
 
 * Mastodon
