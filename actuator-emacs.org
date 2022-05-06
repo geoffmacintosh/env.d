@@ -30,9 +30,9 @@ Oh, I should probably note that I love pleasing the Emacs byte-compiler, but als
 
 Right now I'm setting Emacs to be [[https://www.emacswiki.org/emacs/EmacsPortableApp][portable on Windows]]. This isn't necessary if Emacs is actually installed on Windows and probably is a bad idea.
 
-#+begin_src bat :tangle (if (eq system-type 'windows-nt) (expand-file-name "runemacs.bat" invocation-directory) "no")
-  set HOME=%~dp0..\..\emacshome
-  "%~dp0runemacs.exe" %*
+#+begin_src bat :tangle (if (eq system-type 'windows-nt) (expand-file-name "../emacs.bat" invocation-directory) "no")
+  set HOME=%~dp0emacshome
+  "%~dp0/emacs-27.2-x86_64/bin/runemacs.exe" %*
 #+end_src
 
 * Early init
