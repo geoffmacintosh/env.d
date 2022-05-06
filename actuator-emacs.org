@@ -1470,7 +1470,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (is-mac-p)
+  (when (executable-find "open")
     (csetq browse-url-browser-function 'browse-url-generic)
     (csetq browse-url-generic-program "open")
     (csetq browse-url-generic-args '("--background")))
