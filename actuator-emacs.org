@@ -1738,8 +1738,9 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 [[https://rakhim.org/fastmail-setup-with-emacs-mu4e-and-mbsync-on-macos/][Fastmail + mu4e]]
 
 #+begin_src emacs-lisp
-  (when (and (is-mac-p) (file-exists-p "/usr/local/bin/fish"))
-    (csetq shell-file-name "/usr/local/bin/fish"))
+  (let ((fish (executable-find "fish")))
+    (when fish
+      (csetq shell-file-name fish)))
 #+end_src
 
 #+begin_src emacs-lisp
