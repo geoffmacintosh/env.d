@@ -113,6 +113,17 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     (add-to-list 'exec-path "/usr/local/sbin"))
 #+end_src
 
+#+begin_src emacs-lisp
+  (defvar org-directory
+    (let ((home-org "~/org")
+          (portable-org (expand-file-name "org" user-emacs-directory)))
+      (if (file-exists-p home-org)
+          home-org
+        (progn
+          (make-directory portable-org)
+          portable-org))))
+#+end_src
+
 #+begin_src emacs-lisp :comments no
   (provide 'early-init)
   ;;; early-init.el ends here
@@ -177,15 +188,18 @@ I need a bunch of convenience functions to check the capabilities of the system 
     (not (display-graphic-p)))
 #+end_src
 
-
-
 ** Tangle
 :PROPERTIES:
 :CREATED:  [2022-01-10 Mon 14:14]
 :END:
 
 #+begin_src emacs-lisp
-  (defvar actuator-directory (expand-file-name "~/env.d/")
+
+  (defvar actuator-directory
+    (let ((dir "~/env.d"))
+      (if (file-exists-p dir)
+          dir
+      nil))
     "Directory with actuator Org files.
   This is the directory where Emacs will try to tangle the config
   files from.")
@@ -738,7 +752,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 * Diary
 #+begin_src emacs-lisp
-  (defvar org-directory "~/org")
   (csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
   (csetq org-agenda-insert-diary-strategy 'top-level)
@@ -922,24 +935,33 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 * Org
 #+begin_src emacs-lisp
+  ;; (defvar org-directory (when (file-exists-p
+  ;;                              (expand-file-name "~/org"))
+  ;;                         (expand-file-name "~/org")))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
   (run-with-idle-timer 60 t #'org-save-all-org-buffers)
 #+end_src
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 60 nil #'actuator-add-advice-to-save-org)
-  (defun actuator-add-advice-to-save-org ()
-    (add-function :after after-focus-change-function
-                  #'org-save-all-org-buffers))
+  ;;(run-with-idle-timer 60 nil #'actuator-add-advice-to-save-org)
+  ;;(defun actuator-add-advice-to-save-org ()
+  (declare-function org-save-all-org-buffers "org" nil)
+  (add-function :after after-focus-change-function
+                  #'org-save-all-org-buffers)
 #+end_src
 
 #+begin_src emacs-lisp
-  (require 'org-id)
+  (with-eval-after-load 'org
+    (require 'org-id))
   (csetq org-id-locations-file (expand-file-name "org-id-locations.el" user-emacs-directory))
   (csetq org-id-track-globally t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (define-key org-mode-map (kbd "C-c d") #'org-decrypt-entry)
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c d") #'org-decrypt-entry))
 #+end_src
 
 #+begin_src emacs-lisp
