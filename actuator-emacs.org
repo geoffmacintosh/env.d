@@ -1114,7 +1114,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
                     (buffer-list))))
 
   (defun actuator-org-refile-candidates ()
-    "Collect all the `org-mode' files in the org-directory.
+    "Collect all the `org-mode' files in the actuator-directory.
 
   Currently it only collects files that start with a lowercase
   letter, which is probably the wrong way to go about it, but I
