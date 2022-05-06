@@ -88,6 +88,12 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
+  (setq window-system-default-frame-alist
+          '((ns (ns-transparent-titlebar . t)
+                (ns-appearance           . 'light))))
+#+end_src
+
+#+begin_src emacs-lisp
   (when (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
   (when (fboundp 'tooltip-mode)    (tooltip-mode    -1))
   (unless (and (display-graphic-p)
@@ -3420,13 +3426,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   called automatically."
 
     (message ""))
-#+end_src
-
-#+begin_src emacs-lisp
-  (when (and (is-mac-p) (is-graphical-p))
-    (csetq default-frame-alist
-           '((ns-transparent-titlebar . t)
-             (ns-appearance           . 'light))))
 #+end_src
 
 #+begin_src emacs-lisp
