@@ -2797,10 +2797,16 @@ Further in the same link, he recommends against calling =package-activate-all= a
 :PROPERTIES:
 :CREATED:  [2022-04-10 Sun 10:18]
 :END:
-#+begin_src emacs-lisp :tangle (expand-file-name "init.el" user-emacs-directory) :comments no :mkdirp yes
-    (add-hook 'emacs-startup-hook #'(lambda ()
-       (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
-       (setq gc-cons-percentage actuator-original-gc-cons-percentage)))
+#+begin_src emacs-lisp
+  (defvar actuator-original-gc-cons-threshold)
+  (defvar actuator-original-gc-cons-percentage)
+
+  (defun actuator-restore-gc-cons ()
+    "Restore gc-cons-* to default after startup."
+    (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
+    (setq gc-cons-percentage actuator-original-gc-cons-percentage))
+
+  (add-hook 'emacs-startup-hook #'actuator-restore-gc-cons)
 #+end_src
 
 * Display buffer
