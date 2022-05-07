@@ -119,14 +119,15 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar org-directory
-    (let ((home-org "~/org")
-          (portable-org (expand-file-name "org" user-emacs-directory)))
+  (let ((home-org "~/org")
+        (portable-org (expand-file-name "org" user-emacs-directory)))
+    (defvar org-directory
       (if (file-exists-p home-org)
           home-org
         (progn
-          (make-directory portable-org)
-          portable-org))))
+          (unless (file-exists-p portable-org)
+            (make-directory portable-org)))
+        portable-org)))
 #+end_src
 
 #+begin_src emacs-lisp :comments no
