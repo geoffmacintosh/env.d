@@ -168,32 +168,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
               ',variable ,value))
 #+end_src
 
-
-** Functions to determine platforms
-I need a bunch of convenience functions to check the capabilities of the system and make different things happen in different situations.
-
-#+begin_src emacs-lisp
-  (defun is-mac-p ()
-    "Return non-nil if system is a Mac."
-    (eq system-type 'darwin))
-
-  (defun is-linux-p ()
-    "Return non-nil if system is Linux."
-    (eq system-type 'gnu/linux))
-
-  (defun is-win-p ()
-    "Return non-nil if system is Windows."
-    (eq system-type 'windows-nt))
-
-  (defun is-graphical-p ()
-    "Return non-nil if system has a graphical display."
-    (display-graphic-p))
-
-  (defun is-terminal-p ()
-    "Return non-nil if system does not have a graphical display."
-    (not (display-graphic-p)))
-#+end_src
-
 ** Tangle
 :PROPERTIES:
 :CREATED:  [2022-01-10 Mon 14:14]
@@ -1464,7 +1438,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (is-linux-p)
+  (when (executable-find "firefox")
     (csetq browse-url-browser-function 'browse-url-firefox))
 #+end_src
 
@@ -1599,11 +1573,14 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
   (csetq ls-lisp-use-localized-time-format nil)
 
-  (cond ((or (is-linux-p) (executable-find "gls"))
-         (when (executable-find "gls") (csetq insert-directory-program "gls"))
+  (cond ((or (eq system-type 'gnu-linux) (executable-find "gls"))
+         (when (executable-find "gls")
+           (csetq insert-directory-program "gls"))
          (csetq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso --dired"))
-        ((is-mac-p)
-         (csetq dired-listing-switches "-alhFo")))
+        ((eq system-type 'darwin)
+         (csetq dired-listing-switches "-alhFo"))
+        ((unless (executable-find "ls")
+           (csetq ls-lisp-use-insert-directory-program nil))))
 
   ;; a :: include files beginning with dots
   ;; A :: include files beginning with dots except . and ..
@@ -1806,7 +1783,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq smtpmail-smtp-service "587")
   (csetq smtpmail-servers-requiring-authorization "fastmail")
 
-  ;; (when (is-graphical-p)
+  ;; (when (display-graphic-p)
   ;;   (csetq smtpmail-smtp-user (auth-source-pass-get "user" "smtp.fastmail.com")))
 #+end_src
 
@@ -1989,7 +1966,7 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 * Ripgrep
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (when (executable-find "rg")
     (add-to-list 'package-selected-packages 'rg))
 #+end_src
 * Nov.el
@@ -2054,7 +2031,7 @@ https://gist.github.com/spacebat/5500966
 
 * Forge
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (unless (eq system-type 'windows-nt)
     (add-to-list 'package-selected-packages 'forge))
 #+end_src
 
@@ -2159,20 +2136,20 @@ https://gist.github.com/spacebat/5500966
 
 * Anki
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (unless (eq system-type 'windows-nt)
     (add-to-list 'package-selected-packages 'anki-editor))
 #+end_src
 
 * Auctex
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (when (executable-find "luatex")
     (add-to-list 'package-selected-packages 'auctex))
   (csetq TeX-engine 'luatex)
   (csetq TeX-source-correlate-start-server t)
 #+end_src
 * Magit
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (when (executable-find "git")
     (add-to-list 'package-selected-packages 'magit))
 
   (eval-when-compile
@@ -2247,7 +2224,7 @@ https://gist.github.com/spacebat/5500966
 #+end_src
 * Elfeed
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (unless (eq system-type 'windows-nt)
     (add-to-list 'package-selected-packages 'elfeed))
 #+end_src
 
@@ -2483,7 +2460,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Org-elfeed
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (unless (eq system-type 'windows-nt)
     (add-to-list 'package-selected-packages 'elfeed-org))
 
   (with-eval-after-load 'elfeed
@@ -2551,7 +2528,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
-  (when (is-mac-p)
+  (when (executable-find "brew")
     (add-to-list 'package-selected-packages 'pcmpl-homebrew)
     (with-eval-after-load 'eshell
       (require 'pcmpl-homebrew nil t)))
@@ -2628,7 +2605,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Mu4e Alert
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (when (fboundp 'mu4e)
     (add-to-list 'package-selected-packages 'mu4e-alert))
 
   (defun actuator-set-up-mu4e-alert ()
@@ -2645,9 +2622,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
         (declare-function mu4e-alert-set-default-style "mu4e-alert")
         (declare-function mu4e-alert-enable-notifications "mu4e-alert")
         (declare-function mu4e-alert-enable-mode-line-display "mu4e-alert")
-        (cond ((is-linux-p)
+        (cond (eq system-type 'gnu/linux)
                (mu4e-alert-set-default-style 'libnotify))
-              ((is-mac-p)
+              ((eq system-type 'darwin)
                (mu4e-alert-set-default-style 'osx-notifier)))
         (mu4e-alert-enable-notifications)
         (mu4e-alert-enable-mode-line-display))))
@@ -2658,9 +2635,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 #+begin_src emacs-lisp
   (add-to-list 'package-selected-packages 'alert)
-  (cond ((is-linux-p)
+  (cond ((eq system-type 'gnu/linux)
          (csetq alert-default-style 'libnotify))
-        ((is-mac-p)
+        ((eq system-type 'darwin)
          (csetq alert-default-style 'osx-notifier)))
 #+end_src
 
@@ -2679,7 +2656,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
             :body message
             :timeout (* org-show-notification-timeout 1000)
             :urgency 'low))
-          ((and (is-mac-p) (fboundp 'ns-do-applescript))
+          ((fboundp 'ns-do-applescript)
            (ns-do-applescript
             (format "display notification \"%s\" with title \"%s\""
                     (replace-regexp-in-string "\"" "#" message)
@@ -2743,7 +2720,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 * Sudoers
 
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (when (file-exists-p "/etc/sudoers")
     (add-to-list 'package-selected-packages 'etc-sudoers-mode))
 #+end_src
 
@@ -2841,7 +2818,7 @@ Further in the same link, he recommends against calling =package-activate-all= a
 [[https://emacs.stackexchange.com/questions/48472/how-to-make-m-x-ansi-term-behave-like-m-x-shell-opening-in-new-window/48481#48481][Switch-to-buffer-obey-display-actions]]
 
 #+begin_src emacs-lisp
-  (when (is-graphical-p)
+  (when (display-graphic-p)
     (csetq display-buffer-alist
            '(("\\*\\(Org Lint\\|Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Completions\\)\\*"
               (display-buffer-in-side-window)
@@ -3051,8 +3028,7 @@ Further in the same link, he recommends against calling =package-activate-all= a
 [2021-07-29 Thu 13:03]
 
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
-    (add-to-list 'package-selected-packages 'org-msg))
+  (add-to-list 'package-selected-packages 'org-msg)
 
   (csetq org-msg-default-alternatives '((new           . (text html))
                                         (reply-to-html . (text html))
@@ -3476,7 +3452,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 - Refiled on [2022-02-04 Fri 10:52]
 :END:
 #+begin_src emacs-lisp
-  (when (not (is-win-p))
+  (when (executable-find "mpd")
     (add-to-list 'package-selected-packages 'emms)
     (add-to-list 'package-selected-packages 'org-emms))
 
