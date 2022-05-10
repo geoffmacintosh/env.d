@@ -1389,7 +1389,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 ** Make Checklist
 #+begin_src emacs-lisp
   (fset 'actuator-make-checklist
-        (kmacro-lambda-form [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
+        (kmacro [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
   ;;(global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
 
@@ -1705,8 +1705,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
       (outline-show-all)))
 
   (add-hook 'ediff-prepare-buffer-hook #'actuator-org-mode-show-all)
-
-
 #+end_src
 
 [[https://www.reddit.com/r/emacs/comments/dxzi96/have_some_code_make_ediffing_folded_org_files/][Have some code: make ediffing folded org files better : emacs]]
