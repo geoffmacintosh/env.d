@@ -2608,21 +2608,19 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 * Mu4e Alert
 #+begin_src emacs-lisp
-  (when (fboundp 'mu4e)
-    (add-to-list 'package-selected-packages 'mu4e-alert))
-
-  (with-eval-after-load 'mu4e
-    (require 'mu4e-alert nil t)
-      (when (and (featurep 'mu4e-alert) (featurep 'mu4e))
-        (declare-function mu4e-alert-set-default-style "mu4e-alert")
-        (declare-function mu4e-alert-enable-notifications "mu4e-alert")
-        (declare-function mu4e-alert-enable-mode-line-display "mu4e-alert")
+  (when (executable-find "mu")
+    (add-to-list 'package-selected-packages 'mu4e-alert)
+    (with-eval-after-load 'mu4e
+      (when (package-installed-p 'mu4e-alert)
+        (declare-function mu4e-alert-set-default-style "ext:mu4e-alert")
+        (declare-function mu4e-alert-enable-notifications "ext:mu4e-alert")
+        (declare-function mu4e-alert-enable-mode-line-display "ext:mu4e-alert")
         (cond ((eq system-type 'gnu/linux)
                (mu4e-alert-set-default-style 'libnotify))
               ((eq system-type 'darwin)
                (mu4e-alert-set-default-style 'osx-notifier)))
         (mu4e-alert-enable-notifications)
-        (mu4e-alert-enable-mode-line-display)))
+        (mu4e-alert-enable-mode-line-display))))
 #+end_src
 * Alert
 
