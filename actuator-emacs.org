@@ -3494,74 +3494,77 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfile/][Karl Voit]]. I use "locate" as the link type because I like the way this looks. It works very well if you link to the exact file name. HTML export works no issue.
 
 #+begin_src emacs-lisp
-  (eval-when-compile
-    (declare-function s-trim "ext:s" (s)))
-
   (defun actuator-handle-locate-link (querystring)
-    (require 's)
-    (let ((queryresults (split-string
-                         (s-trim
-                          (shell-command-to-string
-                           (concat
-                            "locate \""
-                            querystring
-                            "\" "
-                            )))
-                         "\n" t)))
+    "Locate QUERYSTRING."
+    (let ((queryresults
+           (split-string
+            (trim-space-around
+             (shell-command-to-string
+              (concat "locate \"" querystring "\" " )))
+            "\n" t)))
       (cond
        ((= 0 (length queryresults))
-        (message "Sorry, no results found for query: %s" querystring))
+        (message "No results found for query: %s" querystring))
        ((= 1 (length queryresults))
-        (xah-open-in-external-app (car queryresults)))
+        (open-in-external-app (car queryresults)))
        (t
-        (message "Sorry, multiple results found for query: %s" querystring)))))
+        (message "Multiple results found for query: %s" querystring)))))
+
+  (defun trim-space-around (string)
+    "Trim spaces at the beginning and end of a STRING."
+    (let ((regex "\\`[ \n\t\r]*\\(\\(.\\|\n\\)*?\\)[ \n\t\r]*\\'"))
+      (string-match regex string)
+      (match-string 1 string)))
+
+    (declare-function org-link-set-parameters "ol" (type &rest parameters))
+    (with-eval-after-load 'org
+      (org-link-set-parameters
+       "locate"
+       :follow (lambda (filename) (actuator-handle-locate-link filename))
+       :help-echo "Opens the file located via \"locate\" with your default application"))
 #+end_src
 
 #+begin_src emacs-lisp
-  (org-link-set-parameters
-   "locate"
-   :follow (lambda (filename) (actuator-handle-locate-link filename))
-   :help-echo "Opens the file located via \"locate\" with your default application")
+  (declare-function dired-get-marked-files "dired"
+                     (&optional LOCALP ARG FILTER
+                     DISTINGUISH-ONE-MARKED ERROR))
+
+   (defun open-in-external-app (&optional file)
+     "Open the current file or dired marked files in external app.
+
+   The app is chosen from your OS's preference."
+     (interactive)
+     (let (do-it
+            (file-list
+             (cond
+              ((string-equal major-mode "dired-mode") (dired-get-marked-files))
+              ((not file) (list (buffer-file-name)))
+              (file (list file)))))
+
+       (setq do-it (if (<= (length file-list) 5)
+                      t
+                    (y-or-n-p "Open more than 5 files? ")))
+
+       (when do-it
+         (cond
+          ((eq system-type 'windows-nt)
+           (mapc (lambda (file-path)
+                   (w32-shell-execute "open"
+                                      (replace-regexp-in-string "/" "\\" file-path t t)))
+                 file-list))
+          ((eq system-type 'darwin)
+           (mapc (lambda (file-path)
+                   (shell-command (format "open \"%s\"" file-path)))
+                 file-list))
+          ((eq system-type 'gnu/linux)
+           (mapc (lambda (file-path)
+                   (let ((process-connection-type nil)) (start-process "" nil "xdg-open" file-path)))
+                 file-list))))))
 #+end_src
 
-#+begin_src emacs-lisp
-  (declare-function dired-get-marked-files "dired" (&optional LOCALP ARG FILTER
-  DISTINGUISH-ONE-MARKED ERROR))
-  (defun xah-open-in-external-app (&optional @fname)
-    "Open the current file or Dired marked files in external app.
-  When called in Emacs Lisp, if @fname is given, open that.
-  URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
-  Version 2019-11-04 2021-02-16"
-    (interactive)
-    (let* (
-           ($file-list
-            (if @fname
-                (progn (list @fname))
-              (if (string-equal major-mode "dired-mode")
-                  (dired-get-marked-files)
-                (list (buffer-file-name)))))
-           ($do-it-p (if (<= (length $file-list) 5)
-                         t
-                       (y-or-n-p "Open more than 5 files? "))))
-      (when $do-it-p
-        (cond
-         ((string-equal system-type "windows-nt")
-          (mapc
-           (lambda ($fpath)
-             (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name $fpath )) "'")))
-           $file-list))
-         ((string-equal system-type "darwin")
-          (mapc
-           (lambda ($fpath)
-             (shell-command
-              (concat "open " (shell-quote-argument $fpath))))
-           $file-list))
-         ((string-equal system-type "gnu/linux")
-          (mapc
-           (lambda ($fpath) (let ((process-connection-type nil))
-                              (start-process "" nil "xdg-open" $fpath)))
-           $file-list))))))
-#+end_src
+#+results:
+: open-in-external-app
+
 * Desktop
 :PROPERTIES:
 :CREATED:  [2022-02-21 Mon 10:46]
@@ -3712,26 +3715,19 @@ https://helpdeskheadesk.net/2022-03-13/
   (defvar package-quickstart)
 
   (defun actuator-regenerate-complete-init ()
-    "Ask to completely rebuild init."
+    "A stupid version of what I was doing."
     (interactive)
-    (let ((literate nil)
-          (init (expand-file-name "init.el" user-emacs-directory))
-          (early-init (expand-file-name "early-init.el" user-emacs-directory))
-          (quickstart package-quickstart-file))
-      (find-file init) ;;TODO
-      (org-babel-tangle-jump-to-org)
-      (setq literate (buffer-file-name))
-      (org-babel-tangle-file literate)
-      (when package-quickstart
-        (package-quickstart-refresh)
-        (byte-compile-file quickstart))
-      (byte-compile-file init)
-      (byte-compile-file early-init)
-      (when (fboundp 'native-compile)
+    (let ((init (expand-file-name "init.el" user-emacs-directory))
+          (early-init (expand-file-name "early-init.el" user-emacs-directory)))
+
+      (cond ((fboundp 'native-compile)
         (native-compile init)
-        (native-compile early-init)
-        (when (file-exists-p quickstart)
-          (native-compile quickstart)))))
+        (native-compile early-init))
+            (t
+             (byte-compile-file init)
+             (byte-compile-file early-init)))))
+
+  (add-hook 'kill-emacs-hook #'actuator-regenerate-complete-init)
 #+end_src
 
 * Mastodon
