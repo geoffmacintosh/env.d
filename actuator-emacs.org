@@ -3218,7 +3218,7 @@ I'm using a custom alert function so that I can use the system's notification sy
     "Run `org-agenda-to-appt' whenever there is an idle period."
     (run-with-idle-timer 5 nil #'actuator-org-agenda-to-appt-refresh))
 
-  (run-at-time "30 min" t #'actuator-org-agenda-to-appt-timer)
+  (run-at-time t (* 30 60) #'actuator-org-agenda-to-appt-timer)
   (advice-add #'actuator-org-agenda-to-appt-refresh :after #'org-agenda-to-appt)
   (appt-activate +1)
 #+end_src
