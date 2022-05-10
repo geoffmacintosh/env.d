@@ -3583,7 +3583,6 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
   (csetq desktop-base-lock-name "desktop-lock")
   (csetq desktop-save t)
   (unless (equal init-file-debug t)
-    (message "Skipping desktop-save-mode for --debug-init")
     (desktop-save-mode +1))
 #+end_src
 
