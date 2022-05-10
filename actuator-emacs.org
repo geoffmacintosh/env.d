@@ -3531,6 +3531,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
   (declare-function dired-get-marked-files "dired"
                      (&optional LOCALP ARG FILTER
                      DISTINGUISH-ONE-MARKED ERROR))
+  (declare-function w32-shell-execute "w32fns.c")
 
    (defun open-in-external-app (&optional file)
      "Open the current file or dired marked files in external app.
