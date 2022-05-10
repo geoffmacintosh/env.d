@@ -15,7 +15,6 @@ Then to actually install stuff evaluate the following source block. If it works 
   (load-file (expand-file-name "init.el" user-emacs-directory))
   (package-refresh-contents)
   (package-install-selected-packages)
-  (package-quickstart-refresh)
   (kill-emacs)
 #+end_src
 
