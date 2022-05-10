@@ -1123,17 +1123,19 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (when (package-installed-p 'org-contrib)
     (eval-when-compile
       (declare-function ox-extras-activate "ox-extra"))
-    (require 'ox-extra)
-    (ox-extras-activate '(ignore-headlines)))
+    (with-eval-after-load 'ox
+      (require 'ox-extra)
+      (ox-extras-activate '(ignore-headlines))))
 #+end_src
 
 #+begin_src emacs-lisp
-    (defvar org-agenda-mode-map)
+  (defvar org-agenda-mode-map)
   (eval-when-compile
     (declare-function org-agenda-earlier "org-agenda" (ARG))
     (declare-function org-agenda-later   "org-agenda" (ARG)))
-  (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
-  (define-key org-agenda-mode-map (kbd "<mouse-9>") #'org-agenda-later)
+  (with-eval-after-load 'org
+    (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
+    (define-key org-agenda-mode-map (kbd "<mouse-9>") #'org-agenda-later))
 #+end_src
 
 #+begin_src emacs-lisp
