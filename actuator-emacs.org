@@ -573,11 +573,11 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 * Org-mode
 ** Agenda
 #+begin_src emacs-lisp
-  (defvar org-agenda-mode-map)
   (eval-when-compile
     (declare-function org-agenda-todo-yesterday "org-agenda" (&optional arg)))
 
   (with-eval-after-load 'org-agenda
+    (defvar org-agenda-mode-map)
     (define-key org-agenda-mode-map (kbd "T") #'org-agenda-todo-yesterday))
 #+end_src
 * Savehist
@@ -959,8 +959,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+begin_src emacs-lisp
  (defvar org-agenda-custom-commands)
   (with-eval-after-load 'org-agenda
-
-
     (add-to-list 'org-agenda-custom-commands
                  '("u" "Unscheduled TODOs"
                    ((todo ""
@@ -1128,11 +1126,12 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar org-agenda-mode-map)
+
   (eval-when-compile
     (declare-function org-agenda-earlier "org-agenda" (ARG))
     (declare-function org-agenda-later   "org-agenda" (ARG)))
-  (with-eval-after-load 'org
+  (with-eval-after-load 'org-agenda
+    (defvar org-agenda-mode-map)
     (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
     (define-key org-agenda-mode-map (kbd "<mouse-9>") #'org-agenda-later))
 #+end_src
@@ -3613,12 +3612,13 @@ This is revision {{{revision}}}
 * Org-contacts
 #+begin_src emacs-lisp
   (when (package-installed-p 'org-contrib)
-    (require 'org-contacts))
+    (with-eval-after-load 'org
+    (require 'org-contacts)))
   (csetq org-contacts-files '("contacts.org"))
 #+end_src
 
 * AES
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'aes)
   (declare-function aes-enable-auto-decryption "ext:aes" nil)
   (when (package-installed-p 'aes)
@@ -3688,13 +3688,15 @@ https://helpdeskheadesk.net/2022-03-13/
 :END:
 
 #+begin_src emacs-lisp
-  (setq org-link-parameters (delq (assoc "file+sys" org-link-parameters) org-link-parameters))
-  (setq org-link-parameters (delq (assoc "file+emacs" org-link-parameters) org-link-parameters))
-  (setq org-link-parameters (delq (assoc "rmail" org-link-parameters) org-link-parameters))
-  (setq org-link-parameters (delq (assoc "news" org-link-parameters) org-link-parameters))
-  (setq org-link-parameters (delq (assoc "bbdb" org-link-parameters) org-link-parameters))
-  (setq org-link-parameters (delq (assoc "w3m" org-link-parameters) org-link-parameters))
-  (setq org-link-parameters (delq (assoc "mhe" org-link-parameters) org-link-parameters))
+  (defvar org-link-parameters)
+  (with-eval-after-load 'org
+    (setq org-link-parameters (delq (assoc "file+sys" org-link-parameters) org-link-parameters))
+    (setq org-link-parameters (delq (assoc "file+emacs" org-link-parameters) org-link-parameters))
+    (setq org-link-parameters (delq (assoc "rmail" org-link-parameters) org-link-parameters))
+    (setq org-link-parameters (delq (assoc "news" org-link-parameters) org-link-parameters))
+    (setq org-link-parameters (delq (assoc "bbdb" org-link-parameters) org-link-parameters))
+    (setq org-link-parameters (delq (assoc "w3m" org-link-parameters) org-link-parameters))
+    (setq org-link-parameters (delq (assoc "mhe" org-link-parameters) org-link-parameters)))
 #+end_src
 
 * Recompile on kill
