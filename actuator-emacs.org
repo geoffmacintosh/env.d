@@ -74,8 +74,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
   These variables need to be set every time a frame is created."
     (when (fboundp 'scroll-bar-mode)
-      (when (or (eq system-type 'darwin) (eq system-type 'gnu/linux))
-        (scroll-bar-mode -1)))
+      (scroll-bar-mode -1))
     (when (fboundp 'fringe-mode)
       (fringe-mode 12))
     (when (member "SF Mono" (font-family-list))
@@ -919,11 +918,12 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  ;;(run-with-idle-timer 60 nil #'actuator-add-advice-to-save-org)
-  ;;(defun actuator-add-advice-to-save-org ()
   (declare-function org-save-all-org-buffers "org" nil)
   (add-function :after after-focus-change-function
-                  #'org-save-all-org-buffers)
+                #'actuator-org-save-all-org-buffers)
+  (defun actuator-org-save-all-org-buffers ()
+    (when (fboundp 'org)
+      (org-save-all-org-buffers)))
 #+end_src
 
 #+begin_src emacs-lisp
