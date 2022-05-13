@@ -1262,7 +1262,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (fboundp 'counsel-org-tag)
+  (when (package-installed-p 'counsel)
     (defalias 'org-set-tags-command 'counsel-org-tag))
 #+end_src
 
