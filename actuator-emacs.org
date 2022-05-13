@@ -3245,12 +3245,12 @@ I'm using a custom alert function so that I can use the system's notification sy
 
 * Org archive
 #+begin_src emacs-lisp
-  (csetq org-archive-mark-done "DONE")
-  (csetq org-archive-location "archive/%s_archive::")
+  (csetq org-archive-mark-done "ARCHIVED")
+  ;;(csetq org-archive-location "archive/%s_archive::")
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-agenda-text-search-extra-files (file-expand-wildcards (expand-file-name "archive/*.org_archive" org-directory)))
+  (csetq org-agenda-text-search-extra-files (file-expand-wildcards (expand-file-name "*.org_archive" org-directory)))
 #+end_src
 
 * Automate org-mode backup
