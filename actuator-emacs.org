@@ -97,23 +97,31 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (when (file-exists-p "/opt/local/sbin")
-    (add-to-list 'exec-path "/opt/local/bin"))
-  (when (file-exists-p "/opt/local/bin")
-    (add-to-list 'exec-path "/opt/local/bin"))
+#+begin_src emacs-lisp
+  (when (member "/usr/local/Homebrew/Library/Homebrew/shims/shared"
+                exec-path)
+    (setq exec-path '()))
+#+end_src
 
-  (when (file-exists-p "/Library/Tex/texbin")
-    (add-to-list 'exec-path "/Library/Tex/texbin"))
+#+begin_src emacs-lisp
+  (defvar actuator-path `(,exec-directory
+                          "/usr/local/opt/ruby/libexec/gembin"
+                          "/usr/local/opt/ruby/bin"
+                          "/Library/Tex/texbin"
+                          "/usr/sbin"
+                          "/usr/bin"
+                          "/sbin"
+                          "/bin"
+                          "/usr/local/bin"
+                          "/usr/local/sbin"
+                          "/opt/local/bin"
+                          "/opt/local/sbin"))
 
-  (when (file-exists-p "/usr/local/opt/ruby/libexec/gembin")
-    (add-to-list 'exec-path "/usr/local/opt/ruby/libexec/gembin"))
-  (when (file-exists-p "/usr/local/opt/ruby/bin")
-    (add-to-list 'exec-path "/usr/local/opt/ruby/bin"))
-  (when (file-exists-p "/usr/local/bin")
-    (add-to-list 'exec-path "/usr/local/bin"))
-  (when (file-exists-p "/usr/local/sbin")
-    (add-to-list 'exec-path "/usr/local/sbin"))
+  (defun actuator-add-to-path (path)
+    (when (file-exists-p path)
+      (add-to-list 'exec-path path)))
+
+  (mapc 'actuator-add-to-path actuator-path)
 #+end_src
 
 #+begin_src emacs-lisp
