@@ -3803,6 +3803,17 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
   (add-hook 'emacs-lisp-mode-hook #'actuator-elisp-hook)
 #+end_src
 
+* Add emacs source SRC
+:PROPERTIES:
+:CREATED:  [2022-05-10 Tue 15:28]
+:END:
+#+begin_src emacs-lisp
+  (defvar find-function-C-source-directory)
+  (let ((emacs-source "~/Source/emacs/src/"))
+    (when (file-exists-p emacs-source)
+      (csetq find-function-C-source-directory emacs-source)))
+#+end_src
+
 * Afterword
 
 #+begin_src emacs-lisp :comments no
