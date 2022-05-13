@@ -1924,8 +1924,20 @@ In order to open epub files, doc-view needs mutool:
 https://gist.github.com/spacebat/5500966
 
 * Org Randomnote
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'org-randomnote)
+#+end_src
+
+* org-open-at-point-global
+:PROPERTIES:
+:CREATED:  [2022-05-05 Thu 11:02]
+:END:
+:LOGBOOK:
+- Refiled on [2022-05-11 Wed 20:18]
+:END:
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c o") #'org-open-at-point-global)
 #+end_src
 
 * Auth Source / EPA / EPG
