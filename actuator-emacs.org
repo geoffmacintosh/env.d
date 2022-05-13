@@ -3730,19 +3730,19 @@ https://helpdeskheadesk.net/2022-03-13/
 #+begin_src emacs-lisp
   (eval-when-compile
     (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
-    (declare-function org-babel-tangle-file "ob-tangle" (file &optional target-file lang-re))
+    (declare-function org-babel-tangle-file "ob-tangle"
+                      (file &optional target-file lang-re))
     (declare-function package-quickstart-refresh "package" nil))
   (defvar package-quickstart)
 
   (defun actuator-regenerate-complete-init ()
     "A stupid version of what I was doing."
     (interactive)
-    (let ((init (expand-file-name "init.el" user-emacs-directory))
+    (let ((init       (expand-file-name "init.el" user-emacs-directory))
           (early-init (expand-file-name "early-init.el" user-emacs-directory)))
-
       (cond ((fboundp 'native-compile)
-        (native-compile init)
-        (native-compile early-init))
+             (native-compile init)
+             (native-compile early-init))
             (t
              (byte-compile-file init)
              (byte-compile-file early-init)))))
