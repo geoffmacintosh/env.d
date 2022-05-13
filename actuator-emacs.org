@@ -1712,8 +1712,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 [[https://rakhim.org/fastmail-setup-with-emacs-mu4e-and-mbsync-on-macos/][Fastmail + mu4e]]
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 5 nil #'require '
-mu4e)
+  (when (executable-find "mu")
+    (require 'mu4e nil t))
 #+end_src
 
 #+begin_src emacs-lisp
