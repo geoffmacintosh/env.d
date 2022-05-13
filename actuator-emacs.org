@@ -3446,11 +3446,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (defun track-mouse (_e)))
 #+end_src
 
-#+begin_src emacs-lisp: :tangle no
-  (unless noninteractive
-    (add-hook 'kill-emacs-hook #'package-quickstart-refresh))
-#+end_src
-
 * Type break
 :PROPERTIES:
 :CREATED:  [2022-02-10 Thu 11:17]
