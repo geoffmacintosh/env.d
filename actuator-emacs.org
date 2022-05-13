@@ -2664,7 +2664,12 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
           ((fboundp 'ns-do-applescript)
            (ns-do-applescript
             (format "display notification \"%s\" with title \"%s\""
-                    (replace-regexp-in-string "\"" "#" message)
+                    (replace-regexp-in-string
+                     "[0-9][0-9]:[0-9][0-9] [[:upper:]]* " ""
+                     (replace-regexp-in-string
+                      "[[:space:]][[:space:]]+:[[:alpha:]]+:"
+                      ""
+                      (replace-regexp-in-string "\"" "#" message)))
                     (replace-regexp-in-string "\"" "#" title))))
           (t
            (error "No notification system available"))))
