@@ -2637,7 +2637,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 * Alert
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'alert)
+  (defvar alert-default-style)
+  (unless (eq system-type 'windows-nt)
+    (add-to-list 'package-selected-packages 'alert))
   (cond ((eq system-type 'gnu/linux)
          (csetq alert-default-style 'libnotify))
         ((eq system-type 'darwin)
