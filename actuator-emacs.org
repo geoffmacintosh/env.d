@@ -1059,7 +1059,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 ** Project
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'project)
+  (defvar package-selected-packages)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'project))
 #+end_src
 
 ** Eldoc
@@ -1067,7 +1069,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 [[https://www.reddit.com/r/emacs/comments/c1zl0s/weekly_tipstricketc_thread/ergullj/?context=1][Improve eldoc's documentation]]
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'eldoc)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'eldoc))
 
   (csetq eldoc-echo-area-use-multiline-p t)
   (csetq eldoc-idle-delay 0)
@@ -1295,7 +1298,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 ** Minions
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'minions)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'minions))
 
   (when (package-installed-p 'minions)
     (eval-when-compile
@@ -1482,7 +1486,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :CREATED:  [2022-04-10 Sun 09:52]
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (eval-when-compile
     (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
     (declare-function org-babel-tangle-file "ob-tangle"
@@ -1647,48 +1651,57 @@ Further in the same link, he recommends against calling =package-activate-all= a
 
 ** Fish Mode
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'fish-mode)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'fish-mode))
 #+end_src
 ** Ledger Mode
 #+begin_src emacs-lisp
   (csetq ledger-default-date-format "%Y-%m-%d")
-  (add-to-list 'package-selected-packages 'ledger-mode)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'ledger-mode))
 #+end_src
 ** YAML Mode
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'yaml-mode)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'yaml-mode))
 #+end_src
 ** TOML Mode
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'toml-mode)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'toml-mode))
 #+end_src
 ** Markdown Mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'markdown-mode)
 #+end_src
 
 ** Lua Mode
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'lua-mode)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'lua-mode))
 #+end_src
 ** Git Modes
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'git-modes)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'git-modes))
 #+end_src
 ** Ripgrep
 #+begin_src emacs-lisp
-  (when (executable-find "rg")
-    (add-to-list 'package-selected-packages 'rg))
+  (with-eval-after-load 'package
+   (when (executable-find "rg")
+    (add-to-list 'package-selected-packages 'rg)))
 #+end_src
 ** Forge
 #+begin_src emacs-lisp
-  (unless (eq system-type 'windows-nt)
-    (add-to-list 'package-selected-packages 'forge))
+  (with-eval-after-load 'package
+    (unless (eq system-type 'windows-nt)
+      (add-to-list 'package-selected-packages 'forge)))
 #+end_src
 
 ** Nov.el
 #+begin_src emacs-lisp :tangle no
-  (add-to-list 'package-selected-packages 'nov)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'nov))
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . doc-view-mode))
   (csetq nov-text-width 75)
   (defun actuator-novel-setup ()
@@ -1703,9 +1716,10 @@ Further in the same link, he recommends against calling =package-activate-all= a
 ** Ivy
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'counsel)
-  (add-to-list 'package-selected-packages 'ivy)
-  (add-to-list 'package-selected-packages 'swiper)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'counsel)
+    (add-to-list 'package-selected-packages 'ivy)
+    (add-to-list 'package-selected-packages 'swiper))
 
   (csetq counsel-find-file-ignore-regexp "\\`\\.")
 
@@ -1760,8 +1774,9 @@ Further in the same link, he recommends against calling =package-activate-all= a
 
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'prescient)
-  (add-to-list 'package-selected-packages 'ivy-prescient)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'prescient)
+    (add-to-list 'package-selected-packages 'ivy-prescient))
 
   (with-eval-after-load 'ivy
     (when (package-installed-p 'ivy-prescient)
@@ -1776,13 +1791,15 @@ Further in the same link, he recommends against calling =package-activate-all= a
 
 ** Transient
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'transient)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'transient))
 #+end_src
 
 ** Magit
 #+begin_src emacs-lisp
-  (when (executable-find "git")
-    (add-to-list 'package-selected-packages 'magit))
+  (with-eval-after-load 'package
+      (when (executable-find "git")
+        (add-to-list 'package-selected-packages 'magit)))
 
   (eval-when-compile
     (declare-function magit-status "magit-status")
@@ -1825,7 +1842,7 @@ Further in the same link, he recommends against calling =package-activate-all= a
 #+end_src
 
 ** Auctex
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (executable-find "luatex")
     (add-to-list 'package-selected-packages 'auctex))
   (csetq TeX-engine 'luatex)
@@ -1833,7 +1850,7 @@ Further in the same link, he recommends against calling =package-activate-all= a
 #+end_src
 ** Web Mode
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'web-mode)
 
   (when (package-installed-p 'web-mode)
@@ -1849,14 +1866,16 @@ Further in the same link, he recommends against calling =package-activate-all= a
 #+end_src
 ** Anki
 #+begin_src emacs-lisp
-  (unless (eq system-type 'windows-nt)
-    (add-to-list 'package-selected-packages 'anki-editor))
+  (with-eval-after-load 'package
+    (unless (eq system-type 'windows-nt)
+      (add-to-list 'package-selected-packages 'anki-editor)))
 #+end_src
 
 ** Elfeed
 #+begin_src emacs-lisp
-  (unless (eq system-type 'windows-nt)
-    (add-to-list 'package-selected-packages 'elfeed))
+  (with-eval-after-load 'package
+    (unless (eq system-type 'windows-nt)
+      (add-to-list 'package-selected-packages 'elfeed)))
 #+end_src
 
 
@@ -2091,9 +2110,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 ** Org-elfeed
 #+begin_src emacs-lisp
-  (unless (eq system-type 'windows-nt)
-    (add-to-list 'package-selected-packages 'elfeed-org))
-
+  (with-eval-after-load 'package
+    (unless (eq system-type 'windows-nt)
+      (add-to-list 'package-selected-packages 'elfeed-org)))
   (with-eval-after-load 'elfeed
     (eval-when-compile
       (declare-function elfeed-org "elfeed-org"))
@@ -2106,12 +2125,14 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
 ** Systemd
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'systemd)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'systemd))
 #+end_src
 
 ** Rainbow
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'rainbow-mode)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'rainbow-mode))
   (when (package-installed-p 'rainbow-mode)
     (eval-when-compile
       (declare-function rainbow-mode "rainbow-mode"))
@@ -2120,8 +2141,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 ** Sudoers
 
 #+begin_src emacs-lisp
-  (when (file-exists-p "/etc/sudoers")
-    (add-to-list 'package-selected-packages 'etc-sudoers-mode))
+  (with-eval-after-load 'package
+    (when (file-exists-p "/etc/sudoers")
+      (add-to-list 'package-selected-packages 'etc-sudoers-mode)))
 #+end_src
 
 * PIM
@@ -2547,9 +2569,9 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar package-selected-packages)
-  (add-to-list 'package-selected-packages 'org)
-  (add-to-list 'package-selected-packages 'org-contrib)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'org)
+    (add-to-list 'package-selected-packages 'org-contrib))
   (csetq org-babel-default-header-args '((:mkdirp   . "yes")
                                          (:comments . "link")
                                          (:session  . "none")
@@ -2755,7 +2777,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 ** Org Randomnote
 #+begin_src emacs-lisp :tangle no
-  (add-to-list 'package-selected-packages 'org-randomnote)
+  (with-eval-after-load 'package
+   (add-to-list 'package-selected-packages 'org-randomnote))
 #+end_src
 
 ** org-open-at-point-global
@@ -2773,7 +2796,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 ** Org Link Minor Mode
 
 #+begin_src emacs-lisp :tangle no
-  (add-to-list 'package-selected-packages 'org-link-minor-mode)
+  (with-eval-after-load 'package
+   (add-to-list 'package-selected-packages 'org-link-minor-mode))
   (eval-when-compile
     (declare-function org-link-minor-mode ))
   (when (package-installed-p 'org-link-minor-mode)
@@ -2782,33 +2806,36 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 ** HTMLize
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'htmlize)
+  (with-eval-after-load 'package
+   (add-to-list 'package-selected-packages 'htmlize))
 #+end_src
 
 ** Cliplink
 
 #+begin_src emacs-lisp
- (defvar org-capture-templates)
-  (add-to-list 'package-selected-packages 'org-cliplink)
+  (defvar org-capture-templates)
+  (with-eval-after-load 'package
+   (add-to-list 'package-selected-packages 'org-cliplink))
   (eval-when-compile
     (declare-function org-cliplink "org-cliplink"))
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
 
     (when (package-installed-p 'org-cliplink)
-    (add-to-list 'org-capture-templates
-                 '("b" "Bookmark" entry
-                   (file "bookmark.org")
-                   "* %(org-cliplink-capture) %^g\n%?"
-                   :prepend
-                   :empty-lines 1
-                   :kill-buffer))))
+      (add-to-list 'org-capture-templates
+                   '("b" "Bookmark" entry
+                     (file "bookmark.org")
+                     "* %(org-cliplink-capture) %^g\n%?"
+                     :prepend
+                     :empty-lines 1
+                     :kill-buffer))))
 #+end_src
 
 ** Org download
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'org-download)
+  (with-eval-after-load 'package
+   (add-to-list 'package-selected-packages 'org-download))
 
   (when (package-installed-p 'org-download)
     (with-eval-after-load 'org
@@ -2823,7 +2850,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 [2021-07-29 Thu 13:03]
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'org-msg)
+  (with-eval-after-load 'package
+   (add-to-list 'package-selected-packages 'org-msg))
 
   (csetq org-msg-default-alternatives '((new           . (text html))
                                         (reply-to-html . (text html))
@@ -3006,7 +3034,6 @@ I'm using a custom alert function so that I can use the system's notification sy
    should be an integer number of minutes until the event occurs,
    the CURRENT-TIME which is discarded, and MESSAGE, which is the
    name of the TODO item that is upcoming."
-    (declare-function actuator-notify "init" (title message))
     (actuator-notify (format "Appointment in %s minutes" minutes-until) message))
 #+end_src
 
@@ -3463,8 +3490,9 @@ https://helpdeskheadesk.net/2022-03-13/
 
 *** Mu4e Alert
 #+begin_src emacs-lisp
-  (when (executable-find "mu")
-    (add-to-list 'package-selected-packages 'mu4e-alert)
+  (with-eval-after-load 'package
+    (when (executable-find "mu")
+      (add-to-list 'package-selected-packages 'mu4e-alert))
     (with-eval-after-load 'mu4e
       (when (package-installed-p 'mu4e-alert)
         (declare-function mu4e-alert-set-default-style "ext:mu4e-alert")
@@ -3481,8 +3509,9 @@ https://helpdeskheadesk.net/2022-03-13/
 
 #+begin_src emacs-lisp
   (defvar alert-default-style)
-  (unless (eq system-type 'windows-nt)
-    (add-to-list 'package-selected-packages 'alert))
+  (with-eval-after-load 'package
+    (unless (eq system-type 'windows-nt)
+      (add-to-list 'package-selected-packages 'alert)))
   (cond ((eq system-type 'gnu/linux)
          (csetq alert-default-style 'libnotify))
         ((eq system-type 'darwin)
@@ -3576,7 +3605,8 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 :END:
 
 #+begin_src emacs-lisp
-  (add-to-list 'package-selected-packages 'mastodon)
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'mastodon))
   (csetq mastodon-active-user "mac_into_sh")
   (csetq mastodon-instance-url "https://mastodon.social")
 #+end_src
@@ -3783,8 +3813,9 @@ https://gist.github.com/spacebat/5500966
 :END:
 #+begin_src emacs-lisp
   (when (executable-find "mpd")
-    (add-to-list 'package-selected-packages 'emms)
-    (add-to-list 'package-selected-packages 'org-emms))
+    (with-eval-after-load 'package
+      (add-to-list 'package-selected-packages 'emms)
+      (add-to-list 'package-selected-packages 'org-emms)))
 
   (csetq emms-player-list '(emms-player-mpd))
   (csetq emms-player-mpd-server-name "localhost")
@@ -3817,7 +3848,7 @@ https://gist.github.com/spacebat/5500966
             (emms-playing-time-display-mode -1)
             (emms-player-mpd-update-all))
           (emms-smart-browse))
-    (message "EMMS is not installed.")))
+      (message "EMMS is not installed.")))
 
   (global-set-key (kbd "C-c m") #'actuator-setup-emms)
 #+end_src
