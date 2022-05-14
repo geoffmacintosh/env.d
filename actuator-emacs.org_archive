@@ -1,0 +1,36 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/g/env.d/actuator-emacs.org
+
+
+* DONE Type break
+:PROPERTIES:
+:CREATED:  [2022-02-10 Thu 11:17]
+:ARCHIVE_TIME: 2022-05-13 Fri 20:22
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+  #+begin_src emacs-lisp
+    (csetq type-break-query-mode t)
+    (csetq type-break-mode-line-message-mode t)
+    (csetq type-break-demo-boring-stats t)
+    (csetq type-break-terse-messages t)
+    ;;(type-break-mode +1)
+  #+end_src
+
+* DONE AES
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-05-13 Fri 20:22
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+#+begin_src emacs-lisp :tangle no
+  (add-to-list 'package-selected-packages 'aes)
+  (declare-function aes-enable-auto-decryption "ext:aes" nil)
+  (when (package-installed-p 'aes)
+    (require 'aes)
+    (aes-enable-auto-decryption))
+
+  (csetq aes-enable-plaintext-password-storage t)
+#+end_src
