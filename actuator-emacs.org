@@ -104,18 +104,19 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar actuator-path `(,exec-directory
+  (defvar actuator-path `("/usr/local/sbin"
+                          "/usr/local/bin"
+                          "/opt/local/sbin"
+                          "/opt/local/bin"
+                          "/bin"
+                          "/sbin"
+                          "/usr/bin"
+                          "/usr/sbin"
                           "/usr/local/opt/ruby/libexec/gembin"
                           "/usr/local/opt/ruby/bin"
                           "/Library/Tex/texbin"
-                          "/usr/sbin"
-                          "/usr/bin"
-                          "/sbin"
-                          "/bin"
-                          "/usr/local/bin"
-                          "/usr/local/sbin"
-                          "/opt/local/bin"
-                          "/opt/local/sbin"))
+                          ,exec-directory))
+  (nreverse actuator-path)
 
   (defun actuator-add-to-path (path)
     (when (file-exists-p path)
@@ -1378,34 +1379,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
             #'actuator-org-insert-heading-timestamp)
 #+end_src
 
-** Archive old stuff
-:PROPERTIES:
-:CREATED:  [2022-01-06 Thu 15:32]
-:END:
-
-Stolen from http://doc.norang.ca/org-mode.html#Archiving
-
-#+begin_src emacs-lisp
-  (defun actuator-skip-non-archivable-tasks ()
-    "Skip trees that are not available for archiving."
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      ;; consider only tasks with done todo headings as archivable tasks
-      (if (member (org-get-todo-state) org-done-keywords)
-          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-                 (daynr (string-to-number (format-time-string "%d" (current-time))))
-                 (a-month-ago (* 60 60 24 (+ daynr 1)))
-                 (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
-                 (this-month (format-time-string "%Y-%m-" (current-time)))
-                 (subtree-is-current (save-excursion
-                                       (forward-line 1)
-                                       (and (< (point) subtree-end)
-                                            (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
-            (if subtree-is-current
-                next-headline ;; has a date in this month or last month, so skip it
-              nil)) ;; available to archive
-        (or next-headline (point-max)))))
-#+end_src
-
 ** Info
 :PROPERTIES:
 :CREATED:  [2022-02-07 Mon 13:32]
@@ -2150,6 +2123,37 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
+
+** Archive old stuff
+:PROPERTIES:
+:CREATED:  [2022-01-06 Thu 15:32]
+:END:
+:LOGBOOK:
+- Refiled on [2022-05-14 Sat 10:28]
+:END:
+
+Stolen from http://doc.norang.ca/org-mode.html#Archiving
+
+#+begin_src emacs-lisp
+  (defun actuator-skip-non-archivable-tasks ()
+    "Skip trees that are not available for archiving."
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      ;; consider only tasks with done todo headings as archivable tasks
+      (if (member (org-get-todo-state) org-done-keywords)
+          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                 (daynr (string-to-number (format-time-string "%d" (current-time))))
+                 (a-month-ago (* 60 60 24 (+ daynr 1)))
+                 (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+                 (this-month (format-time-string "%Y-%m-" (current-time)))
+                 (subtree-is-current (save-excursion
+                                       (forward-line 1)
+                                       (and (< (point) subtree-end)
+                                            (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
+            (if subtree-is-current
+                next-headline ;; has a date in this month or last month, so skip it
+              nil)) ;; available to archive
+        (or next-headline (point-max)))))
+#+end_src
 
 ** Org-mode
 *** Agenda
@@ -3150,7 +3154,7 @@ I'm using a custom alert function so that I can use the system's notification sy
                                      path))))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun actuator-minutes-since-last-vc ()
     (let* ((current-time (time-convert nil 'integer))
            (last-vc-time (time-convert
@@ -3174,7 +3178,8 @@ I'm using a custom alert function so that I can use the system's notification sy
   (defun actuator-backup-org-dir-on-save ()
     "Testing"
     (when (string-equal default-directory (file-name-as-directory (expand-file-name org-directory)))
-      (actuator-backup-org)))
+      (actuator-backup-org)
+      (message (format "Backing up %s" (file-name-as-directory (expand-file-name org-directory))))))
 
   (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save)
 #+end_src
