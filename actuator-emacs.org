@@ -341,7 +341,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
-
 ** Switches
 
 #+begin_src emacs-lisp
@@ -674,7 +673,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
   (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-normalize-face-height)
 #+end_src
-** Hippie Expand
+** Hippie expand
 
 #+begin_src emacs-lisp
   (csetq dabbrev-case-distinction t)
@@ -1517,6 +1516,7 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
 #+begin_src emacs-lisp
   (defun actuator-elisp-hook ()
     (auto-fill-mode +1)
+    (display-fill-column-indicator-mode +1)
     (flymake-mode +1))
 
   (add-hook 'emacs-lisp-mode-hook #'actuator-elisp-hook)
@@ -1547,7 +1547,7 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
   (csetq vc-make-backup-files t)
 #+end_src
 
-** Startup echo area
+** Startup echo
 
 #+begin_src emacs-lisp
   (defun display-startup-echo-area-message ()
@@ -1621,7 +1621,6 @@ Further in the same link, he recommends against calling =package-activate-all= a
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:11]
 :END:
-
 ** Fish Mode
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
@@ -2123,7 +2122,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
-
 ** Archive old stuff
 :PROPERTIES:
 :CREATED:  [2022-01-06 Thu 15:32]
@@ -2155,8 +2153,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
         (or next-headline (point-max)))))
 #+end_src
 
-** Org-mode
-*** Agenda
+** Agenda
 #+begin_src emacs-lisp
   (eval-when-compile
     (declare-function org-agenda-todo-yesterday "org-agenda" (&optional arg)))
@@ -3048,8 +3045,8 @@ I'm using a custom alert function so that I can use the system's notification sy
    This (I believe) collects the appointments scheduled for the
    current day, so it is wise to run this at least daily to update
    the list."
-    (message "Refreshing appt")
-    (org-agenda-to-appt t))
+    (let ((inhibit-message t))
+      (org-agenda-to-appt t)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3082,104 +3079,73 @@ I'm using a custom alert function so that I can use the system's notification sy
 
 ** Automate org-mode backup
 
+Git doesn't work super great for stuff like personal Org files. I want backups and historical records of all my screwups, but I don't want to work for it. This system uses Borg to back up my ELPA diretory every time I am about to upgrade or change packages and the Org directory on any save. That's too much, but whatever, it's not a big deal. I have to prune the backups to make things not get too absurd, but it's all good.
+
+First thing is to set up some variables incase I need to change things. Not really sure if this means that the system will be portable to other backup systems, but it might be?
+
 #+begin_src emacs-lisp
-  (defvar actuator-last-backup 0
-    "The time when `actuator-backup-org' was last run.
-   This is not a variable you'll want to set by hand it's just a way
-   of tracking when things were last run. I think it uses UNIX
-   epoch.")
-
-  (defvar actuator-time-between-backups (* 15 60)
-    "Amount of time in seconds that should elapse between backups.")
-
   (defvar actuator-backup-command
-    "borg create --compression zstd,3 --exclude \"**.DS_Store\" --exclude \"**#*#\"")
+    (concat "borg create "
+            "--compression zstd,3 "
+            "--exclude \"**.DS_Store\" "
+            "--exclude \"**#*#\"")
+    "The shell command used to create additional backups with flags.
+  In my case, I want to have a little compression and exclude a
+  few things.")
 
-  (defvar actuator-backup-create-command "borg init --encryption=none")
+  (defvar actuator-backup-create-command "borg init -e=none"
+    "The shell command used to create a new backup repo if needed.")
 
-  (defvar actuator-backup-dir (directory-file-name "~/Backup/"))
+  (defvar actuator-backup-dir "~/Backup/"
+    "Location for the backup directories to be stored. Must exist.")
+#+end_src
+
+Because ELPA doesn't really work on saving or files in the usual way, I'm using a wrapper function to make sure things get backed up before they're changed. Not really the best situation but oh well.
+
+#+begin_src emacs-lisp
+  (defun actuator-backup-elpa ()
+    "Wrapper function to backup ELPA directory before making a change."
+    (actuator-backup package-user-dir))
+  (add-hook 'package-menu-mode-hook #'actuator-backup-elpa)
 #+end_src
 
 #+begin_src emacs-lisp
-   (defun actuator-backup-elpa ()
-      (actuator-backup package-user-dir)
-      (message "Backing up ELPA directory."))
+  (defun actuator-backup (path)
+    "Backup PATH to `actuator-backup-dir' using `borg'.
+  If the backup archive hasn't been created, this will initialize
+  it first and then make a backup. Should be fast enough to not be an
+  issue to run every save."
+    (let* ((time-stamp (format-time-string "%FT%H%M%S%z"))
+           (backup-name (string-trim path "^.*/" "/$"))
+           (backup-path
+            (expand-file-name backup-name actuator-backup-dir)))
 
-    (add-hook 'package-menu-mode-hook #'actuator-backup-elpa)
-#+end_src
+      (unless (file-exists-p backup-path)
+        (call-process-shell-command
+         (concat actuator-backup-create-command " "
+                 backup-path)
+         nil nil nil)
+        (message (format "Creating backup directory: %s"
+                         backup-path)))
 
-#+begin_src emacs-lisp
-  (defun actuator-backup-org ()
-    "Backs up `org-directory' with borg."
-    (actuator-backup org-directory))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defvar actuator-clean-backup-command "borg prune --keep-last=10 --keep-daily=7 --keep-weekly=4 --keep-yearly=1")
-
-  (defvar actuator-compact-backup-command "borg compact")
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-clean-backups ()
-    "Test"
-    (call-process-shell-command
-     (concat
-      actuator-clean-backup-command
-      " "
-      (expand-file-name "org" actuator-backup-dir)
-      " && "
-      actuator-compact-backup-command
-      " "
-      (expand-file-name "org" actuator-backup-dir))))
-#+end_src
-
-#+begin_src emacs-lisp
-   (defun actuator-backup (path)
-      "Neu"
-      (let* ((time-stamp (format-time-string "%FT%H%M%S%z"))
-             (backup-name (string-trim path "^.*/" "/$"))
-             (backup-path (expand-file-name backup-name actuator-backup-dir)))
-        (unless (file-exists-p backup-path)
-          (call-process-shell-command
-           (concat actuator-backup-create-command " " backup-path) nil nil nil))
-
-        (call-process-shell-command (concat
-                                     actuator-backup-command
-                                     " "
-                                     backup-path
-                                     "::"
-                                     time-stamp
-                                     " "
-                                     path))))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (defun actuator-minutes-since-last-vc ()
-    (let* ((current-time (time-convert nil 'integer))
-           (last-vc-time (time-convert
-                          (string-to-number
-                           (with-temp-buffer
-                             (vc-git-command t nil nil "log" "-1" "--format=%at")
-                             (substring (buffer-string) 0 -1)))
-                          'integer))
-           (time-since-last-vc (- current-time last-vc-time))
-           (minutes-since-last-vc (/ time-since-last-vc 60)))
-      minutes-since-last-vc))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  (defun actuator-backup-org ()
-    (when (< 15 (actuator-minutes-since-last-vc))
-      (shell-command (format "git add --all; git commit --message \"%s\"" "Autocommit"))))
+      (call-process-shell-command (concat
+                                   actuator-backup-command " "
+                                   backup-path "::"
+                                   time-stamp " "
+                                   path)
+                                  nil nil nil)
+      (message (format "Backing up: %s" path))))
 #+end_src
 
 #+begin_src emacs-lisp
   (defun actuator-backup-org-dir-on-save ()
-    "Testing"
-    (when (string-equal default-directory (file-name-as-directory (expand-file-name org-directory)))
-      (actuator-backup-org)
-      (message (format "Backing up %s" (file-name-as-directory (expand-file-name org-directory))))))
+    "Backs up the org directory.
+  Can be added to a global `after-save-hook' because it checks before
+  backing up."
+    (when (string-equal default-directory
+                        (file-name-as-directory
+                         (expand-file-name org-directory)))
+      (actuator-backup org-directory)))
 
   (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save)
 #+end_src
@@ -3291,7 +3257,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 Might be a good idea to make sure that it doesn't error out if there's no git dir
 
-This is revision {{{revision}}}
+This is revision {{{revision}}}.
 
 ** Org-contacts
 #+begin_src emacs-lisp
