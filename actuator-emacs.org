@@ -730,7 +730,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
                              "/var/folders/"
                              ,user-emacs-directory))
     (add-hook 'midnight-hook #'recentf-cleanup)
-    (recentf-mode +1)
+(let ((inhibit-message t))
+    (recentf-mode +1))
 #+end_src
 
 ** Eliminate frame title
@@ -1051,7 +1052,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Auth Source / EPA / EPG
 
 #+begin_src emacs-lisp
-  (csetq epa-file-encrypt-to "geoff@mac.into.sh")
+  ;(csetq epa-file-encrypt-to '("geoff@mac.into.sh"))
+  (csetq epa-file-select-keys nil)
   (csetq auth-sources '(password-store))
   (auth-source-pass-enable)
   (csetq password-cache-expiry 600)
@@ -2186,6 +2188,10 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (defvar org-capture-templates)
 #+end_src
 
+#+begin_src emacs-lisp: tangle no
+  (add-hook 'org-capture-before-finalize-hook #'actuator-org-insert-heading-timestamp)
+#+end_src
+
 #+begin_src emacs-lisp
   (csetq org-capture-use-agenda-date t)
 #+end_src
@@ -2193,7 +2199,19 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("t" "Todo" entry
+                 `("l" "Log" entry
+                   (file+olp+datetree "log.org")
+                   "* %?"
+                   :empty-lines 1
+                   :clock-in t
+                   :clock-resume t
+                   :kill-buffer t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("t" "TODO" entry
                    (file "inbox.org")
                    "* TODO %?"
                    :empty-lines 1)))
@@ -2215,18 +2233,9 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("n" "Note" entry
-                   (file "inbox.org")
-                   "* Note for %U \n- %?"
-                   :empty-lines 1)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("i" "Inventory" entry
-                   (file+headline "inventory.org" "Item")
-                   "* %^{Name}\n:PROPERTIES:\n:PURCHASED_DATE: %^u\n:END:\n%^{PRICE}p%^{HOME_LOCATION}p%^{PURCHASED_LOCATION}p%^{PROVIDES}p%?"
+                 `("w" "Work" entry
+                   (file+headline "sas.org" "Tasks")
+                   "* TODO %?"
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
@@ -2234,30 +2243,40 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("s" "Shopping" entry
-                   (file+headline "shopping.org" "Unapproved")
-                   "* %^{Generic item}"
+                 `("n" "Note" entry
+                   (file "inbox.org")
+                   "* TODO Note for %U \n- %?"
+                   :empty-lines 1)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 '("s" "Inventory" entry
+                   (file+headline "inventory.org" "Unapproved")
+                   "* %^{Specific item}%^{Purchased_Date|N/A}p%^{Price}p%^{Home_Location}p%^{Purchased_Location}p%^{Provides}p\n%?"
                    :empty-lines 1
-                   :kill-buffer)))
-#+end_src
-
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 '("b" "Book" table-line
-                   (file+headline "books.org" "Read list")
-                   "|%u|%^{Title}|%^{Author}|%^{Series} %^{Number}|%^{Year}|%^{Rating|Bad|Good|Great}|"
-                   )))
+                   :kill-buffer t)))
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("m" "Media" entry
-                   (file+headline "media.org" "Media")
-                   "|%u|%^{Title}|%^{Series} %^{Number}|%^{Year}|%^{Rating|Bad|Good|Great}|"
-                 )))
+                 `("b" "Book" entry
+                   (file+headline "books.org" "Unread")
+                   "* %^{Title}%^{Author}p%^{Year}p%^{Series}p\n%?"
+                   :empty-lines 1
+                   :kill-buffer t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("b" "Book" entry
+                   (file+headline "books.org" "Unwatched")
+                   "* %^{Title}p%^{Year}p%^{Series}p\n%?"
+                   :empty-lines 1
+                   :kill-buffer t)))
 #+end_src
 ** Calendar
 
@@ -3074,7 +3093,9 @@ I'm using a custom alert function so that I can use the system's notification sy
 #+end_src
 
 #+begin_src emacs-lisp
-  (csetq org-agenda-text-search-extra-files (file-expand-wildcards (expand-file-name "*.org_archive" org-directory)))
+  (csetq org-agenda-text-search-extra-files
+         (directory-files
+          org-directory t "^[^.#].*\\.\\(org$\\|org_archive$\\)"))
 #+end_src
 
 ** Automate org-mode backup
@@ -3112,8 +3133,8 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
 #+begin_src emacs-lisp
   (defun actuator-backup (path)
     "Backup PATH to `actuator-backup-dir' using `borg'.
-  If the backup archive hasn't been created, this will initialize
-  it first and then make a backup. Should be fast enough to not be an
+  If the backup repo hasn't been created, this will initialize it
+  first and then make a backup. Should be fast enough to not be an
   issue to run every save."
     (let* ((time-stamp (format-time-string "%FT%H%M%S%z"))
            (backup-name (string-trim path "^.*/" "/$"))
