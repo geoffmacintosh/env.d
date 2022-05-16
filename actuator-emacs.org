@@ -1458,7 +1458,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :CREATED:  [2022-04-10 Sun 09:52]
 :END:
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (eval-when-compile
     (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
     (declare-function org-babel-tangle-file "ob-tangle"
@@ -2199,6 +2199,19 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                  `("l" "Log" entry
                    (file+olp+datetree "log.org")
                    "* %?"
+                   :empty-lines 1
+                   :clock-in t
+                   :clock-resume t
+                   :kill-buffer t)))
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("m" "Impromtu current task" entry
+                   (file "inbox.org")
+                   "* TODO %? %^G"
                    :empty-lines 1
                    :clock-in t
                    :clock-resume t
