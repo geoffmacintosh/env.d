@@ -1926,6 +1926,20 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 #+begin_src conf
   include /etc/sway/config.d/*
 #+end_src
+* Syncthing
+:PROPERTIES:
+:CREATED:  [2022-02-22 Tue 11:39]
+:ID:       FDD3C8B5-55C3-4013-89AC-2A904D97D1CD
+:END:
+:LOGBOOK:
+- Refiled on [2022-05-16 Mon 13:29]
+:END:
+#+begin_src conf :tangle .stignore
+  (?d).DS_Store
+  #*
+  .git
+#+end_src
+
 * Systemd-bootd
 :PROPERTIES:
 :CREATED:  [2021-12-22 Wed 15:23]
