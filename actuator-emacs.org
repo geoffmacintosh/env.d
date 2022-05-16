@@ -3328,6 +3328,37 @@ https://helpdeskheadesk.net/2022-03-13/
     (setq org-link-parameters (delq (assoc "mhe" org-link-parameters) org-link-parameters)))
 #+end_src
 
+** Add feed item
+:PROPERTIES:
+:CREATED:  [2022-05-16 Mon 14:11]
+:END:
+This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] package.
+
+#+begin_src emacs-lisp
+  (add-to-list 'package-selected-packages 'feed-discovery)
+
+  (with-eval-after-load 'org-capture
+    (when (package-installed-p 'feed-discovery)
+    (add-to-list 'org-capture-templates
+                 '("f" "Feed" entry
+                   (file+headlines "feed.org" "Feeds")
+                   "* [[%(actuator-get-feed)][%^{Title}]] %^g
+  (yank)\n%?"
+                   :prepend
+                   :empty-lines 1
+                   :kill-buffer))))
+
+  (declare-function feed-discovery-discover-feeds
+                    "ext:feed-discovery" (url))
+
+  (defun actuator-get-feed ()
+    "Get RSS/Atom feed from url in clipboard."
+    (car (feed-discovery-discover-feeds
+     (with-temp-buffer
+            (yank)
+            (buffer-substring-no-properties (point-min) (point-max))))))
+#+end_src
+
 * Apps
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:29]
