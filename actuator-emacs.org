@@ -101,22 +101,20 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (when (member "/usr/local/Homebrew/Library/Homebrew/shims/shared"
                 exec-path)
     (setq exec-path '()))
-#+end_src
 
-#+begin_src emacs-lisp
-  (defvar actuator-path `("/usr/local/sbin"
-                          "/usr/local/bin"
-                          "/opt/local/sbin"
-                          "/opt/local/bin"
-                          "/bin"
-                          "/sbin"
-                          "/usr/bin"
-                          "/usr/sbin"
-                          "/usr/local/opt/ruby/libexec/gembin"
-                          "/usr/local/opt/ruby/bin"
-                          "/Library/Tex/texbin"
-                          ,exec-directory))
-  (nreverse actuator-path)
+  (defvar actuator-path (reverse
+                       `("/usr/local/sbin"
+                         "/usr/local/bin"
+                         "/opt/local/sbin"
+                         "/opt/local/bin"
+                         "/bin"
+                         "/sbin"
+                         "/usr/bin"
+                         "/usr/sbin"
+                         "/usr/local/opt/ruby/libexec/gembin"
+                         "/usr/local/opt/ruby/bin"
+                         "/Library/Tex/texbin"
+                         ,exec-directory)))
 
   (defun actuator-add-to-path (path)
     (when (file-exists-p path)
