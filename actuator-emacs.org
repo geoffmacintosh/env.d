@@ -3132,20 +3132,23 @@ Git doesn't work super great for stuff like personal Org files. I want backups a
 First thing is to set up some variables incase I need to change things. Not really sure if this means that the system will be portable to other backup systems, but it might be?
 
 #+begin_src emacs-lisp
-  (defvar actuator-backup-command
-    (concat "borg create "
-            "--compression zstd,3 "
-            "--exclude \"**.DS_Store\" "
-            "--exclude \"**#*#\"")
-    "The shell command used to create additional backups with flags.
-  In my case, I want to have a little compression and exclude a
-  few things.")
+    (defvar actuator-org-backup-timestamp 0
+      "Last time a backup was performed.")
 
-  (defvar actuator-backup-create-command "borg init -e=none"
-    "The shell command used to create a new backup repo if needed.")
+    (defvar actuator-backup-command
+      (concat "borg create "
+              "--compression zstd,3 "
+              "--exclude \"**.DS_Store\" "
+              "--exclude \"**#*#\"")
+      "The shell command used to create additional backups with flags.
+    In my case, I want to have a little compression and exclude a
+    few things.")
 
-  (defvar actuator-backup-dir "~/Backup/"
-    "Location for the backup directories to be stored. Must exist.")
+    (defvar actuator-backup-create-command "borg init -e=none"
+      "The shell command used to create a new backup repo if needed.")
+
+    (defvar actuator-backup-dir "~/Backup/"
+      "Location for the backup directories to be stored. Must exist.")
 #+end_src
 
 Because ELPA doesn't really work on saving or files in the usual way, I'm using a wrapper function to make sure things get backed up before they're changed. Not really the best situation but oh well.
@@ -3190,12 +3193,18 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
     "Backs up the org directory.
   Can be added to a global `after-save-hook' because it checks before
   backing up."
-    (when (string-equal default-directory
-                        (file-name-as-directory
-                         (expand-file-name org-directory)))
-      (actuator-backup org-directory)))
+    (when (and (string-equal default-directory
+                             (file-name-as-directory
+                              (expand-file-name org-directory)))
+               (time-less-p
+                (time-add actuator-org-backup-timestamp (* 15 60)) nil))
+      (actuator-backup org-directory)
+      (setq actuator-org-backup-timestamp (current-time))))
 
   (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save)
+
+  (add-to-list 'savehist-additional-variables
+               'actuator-org-backup-timestamp)
 #+end_src
 
 ** Org path-independent link
