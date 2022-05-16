@@ -34,3 +34,36 @@ Archived entries from file /Users/g/env.d/actuator-emacs.org
 
   (csetq aes-enable-plaintext-password-storage t)
 #+end_src
+
+* DONE Git revision export macro
+:PROPERTIES:
+:CREATED:  [2022-02-23 Wed 11:05]
+:ARCHIVE_TIME: 2022-05-16 Mon 09:45
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_OLPATH: PIM
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+:LOGBOOK:
+- Refiled on [2022-03-06 Sun 17:04]
+:END:
+
+#+begin_src emacs-lisp
+  (defvar org-export-global-macros)
+
+    (with-eval-after-load 'ox
+  (add-to-list 'org-export-global-macros '("revision" . "(eval (actuator-get-revision))")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-get-revision ()
+    "Test"
+    (if (string-equal (ignore-errors
+                        (vc-responsible-backend (buffer-file-name) nil))
+                      "Git")
+        (string-trim (shell-command-to-string "git rev-list --count HEAD"))
+      "none"))
+#+end_src
+
+Might be a good idea to make sure that it doesn't error out if there's no git dir
+
+This is revision {{{revision}}}.

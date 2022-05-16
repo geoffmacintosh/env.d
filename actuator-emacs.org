@@ -1453,7 +1453,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (csetq ring-bell-function 'ignore)
 #+end_src
 
-** Recompile on kill
+** Recompile init
 :PROPERTIES:
 :CREATED:  [2022-04-10 Sun 09:52]
 :END:
@@ -2183,10 +2183,6 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 ** Capture Templates
 #+begin_src emacs-lisp
   (defvar org-capture-templates)
-#+end_src
-
-#+begin_src emacs-lisp: tangle no
-  (add-hook 'org-capture-before-finalize-hook #'actuator-org-insert-heading-timestamp)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3260,35 +3256,6 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 #+results:
 : open-in-external-app
-
-** Git revision export macro
-:PROPERTIES:
-:CREATED:  [2022-02-23 Wed 11:05]
-:END:
-:LOGBOOK:
-- Refiled on [2022-03-06 Sun 17:04]
-:END:
-
-#+begin_src emacs-lisp
-  (defvar org-export-global-macros)
-
-    (with-eval-after-load 'ox
-  (add-to-list 'org-export-global-macros '("revision" . "(eval (actuator-get-revision))")))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-get-revision ()
-    "Test"
-    (if (string-equal (ignore-errors
-                        (vc-responsible-backend (buffer-file-name) nil))
-                      "Git")
-        (string-trim (shell-command-to-string "git rev-list --count HEAD"))
-      "none"))
-#+end_src
-
-Might be a good idea to make sure that it doesn't error out if there's no git dir
-
-This is revision {{{revision}}}.
 
 ** Org-contacts
 #+begin_src emacs-lisp
