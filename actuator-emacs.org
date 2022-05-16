@@ -2205,7 +2205,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("m" "Impromtu current task" entry
+                 `("p" "Impromtu current task" entry
                    (file "inbox.org")
                    "* TODO %? %^G"
                    :empty-lines 1
@@ -2278,9 +2278,9 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("b" "Book" entry
-                   (file+headline "books.org" "Unwatched")
-                   "* %^{Title}p%^{Year}p%^{Series}p\n%?"
+                 `("m" "Movie" entry
+                   (file+headline "movies.org" "Unwatched")
+                   "* %^{Title}%^{Year}p%^{Series}p\n%?"
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
