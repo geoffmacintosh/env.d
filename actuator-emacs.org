@@ -3035,6 +3035,27 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
         (buffer-substring start end))))
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun diary-daylight ()
+     "Insert the current amount of daylight for org-agenda."
+       (with-temp-buffer
+         (insert (diary-sunrise-sunset))
+         (goto-char (point-min))
+         (while (re-search-forward "^.*(" nil t)
+           (replace-match "" nil nil))
+         (goto-char (point-min))
+         (while (re-search-forward " .*)$" nil t)
+           (replace-match "" nil nil))
+         (goto-char (point-min))
+         (while (re-search-forward ":" nil t)
+           (replace-match " hours "))
+         (goto-char (point-min))
+         (insert "Daylight lasts for ")
+         (goto-char (point-max))
+         (insert " minutes")
+         (buffer-substring (point-min) (point-max))))
+#+end_src
+
 ** Appt - Appointment Notifications
 :PROPERTIES:
 :CREATED:  [2022-01-06 Thu 15:15]
