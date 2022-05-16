@@ -3890,6 +3890,6 @@ https://gist.github.com/spacebat/5500966
 :CREATED:  [2022-05-15 Sun 20:45]
 :END:
 Local Variables:
-eval: (add-hook 'org-babel-post-tangle-hook #'actuator-regen-init)
-eval: (add-hook 'org-babel-pre-tangle-hook #'widen)
+eval: (add-hook 'org-babel-post-tangle-hook #'actuator-regen-init nil t)
+eval: (add-hook 'org-babel-pre-tangle-hook #'widen nil t)
 End:
