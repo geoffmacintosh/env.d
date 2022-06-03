@@ -339,6 +339,29 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
+** C-m
+:PROPERTIES:
+:CREATED:  [2022-05-25 Wed 18:34]
+:END:
+:LOGBOOK:
+- Refiled on [2022-05-27 Fri 15:37]
+:END:
+#+begin_src emacs-lisp
+  (define-key input-decode-map [?\C-m] [C-m])
+#+end_src
+
+** Elide
+:PROPERTIES:
+:CREATED:  [2022-05-26 Thu 16:26]
+:END:
+:LOGBOOK:
+- Refiled on [2022-05-27 Fri 15:29]
+:END:
+
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'elide-head-mode)
+#+end_src
+
 ** Switches
 
 #+begin_src emacs-lisp
@@ -616,6 +639,7 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
            register-alist
            savehist-minibuffer-history-variables
            search-ring
+           timer-list
            shell-command-history))
 
   (savehist-mode)
@@ -676,7 +700,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (csetq dabbrev-case-distinction t)
   (csetq dabbrev-case-fold-search t)
-  (csetq dabbrev-case-replace t)
+  (csetq dabbrev-case-replace nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -700,7 +724,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
            try-expand-list
            try-expand-list-all-buffers
            try-expand-whole-kill
-           try-expand-line-all-buffers))
+           try-expand-line-all-buffers
+           xtr-try-expand-by-dict
+           xtr-try-add-expansion))
+
   (global-set-key (kbd "<M-SPC>") #'hippie-expand)
 #+end_src
 
@@ -713,6 +740,52 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (interactive)
     (hippie-expand 0))
   (global-set-key (kbd "M-S-SPC") #'actuator-hippie-unexpand)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun xtr-try-add-expansion (old)
+    "Add a new global abbrev."
+    (he-init-string (he-dabbrev-beg) (point))
+    (or (inverse-add-global-abbrev 1)
+        (he-reset-string)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function he-init-string "hippie-exp" (beg end))
+    (declare-function he-lisp-symbol-beg "hippie-exp" ())
+    (declare-function he-string-member "hippie-exp"
+                      (str lst &optional trans-case))
+    (declare-function he-reset-string "hippie-exp" ())
+    (declare-function he-substitute-string "hippie-exp"
+                      (str &optional trans-case))
+    (declare-function ispell-lookup-words "ispell"
+                      (word &optional lookup-dict)))
+  (defvar he-search-string)
+  (defvar he-tried-table)
+  (defvar he-expand-list)
+
+  (defun xtr-try-expand-by-dict (old)
+    "Attempt to expand a word by using the dictionary.
+  Needs OLD due to `hippie-expand'."
+    (unless (bound-and-true-p ispell-minor-mode)
+      (ispell-minor-mode 1))
+
+    (unless old
+      (he-init-string (he-lisp-symbol-beg) (point))
+      (if (not (he-string-member he-search-string he-tried-table))
+          (setq he-tried-table (cons he-search-string he-tried-table)))
+      (setq he-expand-list
+            (and (not (equal he-search-string ""))
+                 (ispell-lookup-words
+                  (concat (buffer-substring-no-properties
+                           (he-lisp-symbol-beg) (point))
+                          "*")))))
+    (if (null he-expand-list)
+        (if old (he-reset-string))
+      (he-substitute-string (car he-expand-list))
+      (setq he-expand-list (cdr he-expand-list))
+      t))
 #+end_src
 
 ** Recentf
@@ -3127,28 +3200,29 @@ I'm using a custom alert function so that I can use the system's notification sy
 
 ** Automate org-mode backup
 
-Git doesn't work super great for stuff like personal Org files. I want backups and historical records of all my screwups, but I don't want to work for it. This system uses Borg to back up my ELPA diretory every time I am about to upgrade or change packages and the Org directory on any save. That's too much, but whatever, it's not a big deal. I have to prune the backups to make things not get too absurd, but it's all good.
+Git doesn't work super great for stuff like personal Org files. I want backups and historical records of all my screwups, but I don't want to work for it. This system uses Borg to back up my ELPA diretory every time I am about to upgrade or change packages and the Org directory every 15 minutes. I have to prune the backups to make things not get too absurd, but it's all good.
 
 First thing is to set up some variables incase I need to change things. Not really sure if this means that the system will be portable to other backup systems, but it might be?
 
 #+begin_src emacs-lisp
-    (defvar actuator-org-backup-timestamp 0
-      "Last time a backup was performed.")
+  (defvar actuator-org-backup-timestamp 0
+    "Last time a backup was performed.")
 
-    (defvar actuator-backup-command
-      (concat "borg create "
-              "--compression zstd,3 "
-              "--exclude \"**.DS_Store\" "
-              "--exclude \"**#*#\"")
-      "The shell command used to create additional backups with flags.
-    In my case, I want to have a little compression and exclude a
-    few things.")
+  (defvar actuator-backup-command
+    (concat "borg create "
+            "--compression zstd,3 "
+            "--exclude \"**.DS_Store\" "
+            "--exclude \"**#*#\"")
+    "The shell command used to create additional backups with flags.
+  In my case, I want to have a little compression and exclude a
+  few things.")
 
-    (defvar actuator-backup-create-command "borg init -e=none"
-      "The shell command used to create a new backup repo if needed.")
+  (defvar actuator-backup-create-command "borg init -e=none"
+    "The shell command used to create a new backup repo if needed.")
 
-    (defvar actuator-backup-dir "~/Backup/"
-      "Location for the backup directories to be stored. Must exist.")
+  (defvar actuator-backup-dir "~/Backup/"
+    "Location for the backup directories to be stored. Must exist. Needs
+  a trailing slash and don't not do it.")
 #+end_src
 
 Because ELPA doesn't really work on saving or files in the usual way, I'm using a wrapper function to make sure things get backed up before they're changed. Not really the best situation but oh well.
