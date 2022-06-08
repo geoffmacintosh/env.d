@@ -339,6 +339,26 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
+** Sort on save
+:PROPERTIES:
+:CREATED:  [2022-06-04 Sat 10:54]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 15:14]
+:END:
+#+begin_src emacs-lisp
+  (defun xtr-org-sort-top-level-buffer ()
+    "Do the thing correctly."
+    (interactive)
+    (when (eq major-mode 'org-mode))
+      (goto-char (point-min))
+      (org-sort-entries nil ?t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-hook 'before-save-hook #'xtr-org-sort-top-level-buffer nil t)
+#+end_src
+
 ** C-m
 :PROPERTIES:
 :CREATED:  [2022-05-25 Wed 18:34]
