@@ -168,6 +168,11 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
               ',variable ,value))
 #+end_src
 
+#+begin_src emacs-lisp
+  (unless (fboundp 'package-installed-p)
+    (require 'package))
+#+end_src
+
 ** Tangle
 :PROPERTIES:
 :CREATED:  [2022-01-10 Mon 14:14]
@@ -377,9 +382,11 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 :LOGBOOK:
 - Refiled on [2022-05-27 Fri 15:29]
 :END:
+I am hiding this when not bound because I have weird errors where on Windows it says that ~elide-head-mode~ isn't a function.
 
 #+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook #'elide-head-mode)
+  (when (fboundp 'elide-head-mode)
+    (add-hook 'prog-mode-hook #'elide-head-mode))
 #+end_src
 
 ** Switches
@@ -913,8 +920,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 *** Make Checklist
 #+begin_src emacs-lisp
+  (with-eval-after-load 'kmacro
   (fset 'actuator-make-checklist
-        (kmacro [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d"))
+        (kmacro [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d")))
   ;;(global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
 
@@ -2239,6 +2247,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function outline-next-heading "outline" ())
+    (declare-function org-get-todo-state "org" ())
+    (declare-function org-end-of-subtree "org"
+                      (&optional invisible-ok to-heading)))
+  (defvar org-done-keywords)
+
   (defun actuator-skip-non-archivable-tasks ()
     "Skip trees that are not available for archiving."
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -3204,8 +3219,10 @@ I'm using a custom alert function so that I can use the system's notification sy
    This (I believe) collects the appointments scheduled for the
    current day, so it is wise to run this at least daily to update
    the list."
-    (let ((inhibit-message t))
-      (org-agenda-to-appt t)))
+    (when (file-exists-p diary-file)
+      (let ((inhibit-message t))
+        (org-agenda-to-appt t))))
+
 #+end_src
 
 #+begin_src emacs-lisp
