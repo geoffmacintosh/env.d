@@ -1730,6 +1730,16 @@ Further in the same link, he recommends against calling =package-activate-all= a
     (defun track-mouse (_e)))
 #+end_src
 
+** TEST Long-running timers
+:PROPERTIES:
+:CREATED:  [2022-06-07 Tue 22:33]
+:END:
+#+begin_src emacs-lisp
+  ;;(run-at-time "1 week" nil #'xtr-notify)
+
+  (defun xtr-notify ()
+    (dired-create-empty-file "~/Desktop/LONGRUN"))
+#+end_src
 * Modes
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:11]
