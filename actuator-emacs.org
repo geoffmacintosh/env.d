@@ -418,6 +418,9 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
   (csetq help-window-select t)            ; Select help window by default, so it's easy
                                           ; to kill
   (defvar help-mode-map)
+  (eval-when-compile
+    (declare-function help-go-back "help-mode" ())
+    (declare-function help-go-forward "help-mode" ()))
   (with-eval-after-load 'help-mode
     (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back) ; Mouse back and forward buttons
     (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward))
@@ -763,8 +766,12 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun xtr-try-add-expansion (old)
-    "Add a new global abbrev."
+  (eval-when-compile
+    (declare-function he-init-string "hippie-exp" (beg end))
+    (declare-function he-dabbrev-beg "hippie-exp" ())
+    (declare-function he-reset-string "hippie-exp" ()))
+  (defun xtr-try-add-expansion (_old)
+    "Add a new global abbrev, `OLD' is required by hippies."
     (he-init-string (he-dabbrev-beg) (point))
     (or (inverse-add-global-abbrev 1)
         (he-reset-string)))
@@ -1239,6 +1246,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 ** Spell check
 #+begin_src emacs-lisp
+  (defvar org-directory)
   (csetq ispell-personal-dictionary (expand-file-name "data/dictionary" org-directory))
   (csetq ispell-silently-savep t)
   (defun actuator-org-reveal-around ()
@@ -1450,6 +1458,11 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function org-entry-get "org"
+                      (pom property &optional inherit literal-nil))
+    (declare-function org-set-property "org" (property value)))
+
   (defvar actuator-org-created-property-name "CREATED"
     "The Org-mode property that stores entry creation dates.")
 
@@ -2114,6 +2127,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defvar elfeed-search-filter-active)
   (defvar elfeed-search-filter-overflowing)
   (defvar elfeed-search-entries)
+  (defvar elfeed-search-header-function)
   (csetq elfeed-search-header-function #'actuator-elfeed-search--header)
 
   (defun actuator-elfeed-search--header ()
@@ -2270,6 +2284,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar diary-file)
   (unless (file-exists-p diary-file)
     (make-empty-file diary-file t))
 #+end_src
@@ -2446,11 +2461,16 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar org-mode-map)
   (with-eval-after-load 'org
     (define-key org-mode-map (kbd "C-c d") #'org-decrypt-entry))
 #+end_src
 
 #+begin_src emacs-lisp
+  (eval-when-compile
+    (declare-function org-clock-out "org-clock"
+                      (&optional
+                       switch-to-state fail-quietly at-time)))
   (global-set-key (kbd "C-c C-x C-o") #'org-clock-out)
 #+end_src
 
@@ -2632,14 +2652,13 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+begin_src emacs-lisp
   (when (package-installed-p 'org-contrib)
     (eval-when-compile
-      (declare-function ox-extras-activate "ox-extra"))
+      (declare-function ox-extras-activate "ext:ox-extra"))
     (with-eval-after-load 'ox
       (require 'ox-extra)
       (ox-extras-activate '(ignore-headlines))))
 #+end_src
 
 #+begin_src emacs-lisp
-
   (eval-when-compile
     (declare-function org-agenda-earlier "org-agenda" (ARG))
     (declare-function org-agenda-later   "org-agenda" (ARG)))
@@ -2665,7 +2684,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-    (defvar org-default-properties)
+  (defvar org-default-properties)
+  (defvar org-global-properties)
   (eval-when-compile
     (declare-function org-indent-mode "org-indent"))
 
@@ -3283,6 +3303,7 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar org-directory)
   (defun actuator-backup-org-dir-on-save ()
     "Backs up the org directory.
   Can be added to a global `after-save-hook' because it checks before
