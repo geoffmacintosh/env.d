@@ -410,7 +410,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
   (csetq tab-always-indent 'complete)
   (csetq save-place-abbreviate-file-names t)
   (csetq dired-do-revert-buffer t)
-  (csetq abbrev-suggest t)
+  (csetq abbrev-suggest nil)
   (csetq calc-make-windows-dedicated t)
   (csetq image-dired-thumb-visible-marks t)
 #+end_src
