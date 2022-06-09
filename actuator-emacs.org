@@ -1419,7 +1419,17 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (when (not (package-installed-p 'counsel))
-    (fido-mode +1))
+    (fido-mode +1)
+    (icomplete-vertical-mode +1)
+
+      (defun xtr-recentf-completing-read ()
+      (interactive)
+      (let ((file (completing-read "Choose recent file: " recentf-list nil
+                                   t)))
+        (when file
+          (find-file file))))
+
+      (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read))
 
   (add-hook 'fido-mode-hook 'icomplete-vertical-mode)
   (csetq icomplete-scroll t)
@@ -4032,10 +4042,6 @@ https://gist.github.com/spacebat/5500966
   (provide 'init)
   ;;; init.el ends here
 #+end_src
-
-
-
-# -*-
 
 * Local variables
 :PROPERTIES:
