@@ -1,5 +1,69 @@
 #+title: Config
 
+* usermod for games
+:PROPERTIES:
+:CREATED:  [2022-05-27 Fri 19:03]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 21:05]
+:END:
+The wine executable used by proton can automatically set the niceness of a process; consider adding yourself to the games group to make this work by issuing: usermod -a -G games
+
+#+begin_src shell :eval never
+  sudo usermod -a -G games g
+#+end_src
+
+* Paru
+:PROPERTIES:
+:CREATED:  [2022-05-28 Sat 09:50]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 19:35]
+:END:
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.config/paru/paru.conf" "no")
+  #
+  # $PARU_CONF
+  # /etc/paru.conf
+  # ~/.config/paru/paru.conf
+  #
+  # See the paru.conf(5) manpage for options
+
+  #
+  # GENERAL OPTIONS
+  #
+  [options]
+  PgpFetch
+  Devel
+  Provides
+  DevelSuffixes = -git -cvs -svn -bzr -darcs -always -hg -fossil
+  #AurOnly
+  #BottomUp
+  #RemoveMake
+  #SudoLoop
+  #UseAsk
+  #SaveChanges
+  #CombinedUpgrade
+  CleanAfter
+  BatchInstall
+  #UpgradeMenu
+  #NewsOnUpgrade
+
+  #LocalRepo
+  #Chroot
+  #Sign
+  #SignDb
+  #KeepRepoCache
+
+  #
+  # Binary OPTIONS
+  #
+  #[bin]
+  #FileManager = vifm
+  #MFlags = --skippgpcheck
+  #Sudo = doas
+#+end_src
+
 * Application list
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:10]
