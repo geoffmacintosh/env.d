@@ -208,11 +208,29 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
   (defun actuator-minibuffer-setup ()
     "Remap minibuffer faces to ensure uniformity.
 
-  I really don't like it when the minibuffer has different font
-  sizes. Currently I have to remap everything manually, but that's
-  probably okay."
-         (set (make-local-variable 'face-remapping-alist)
-            '((org-document-title :height 1.0))))
+    I really don't like it when the minibuffer has different font
+    sizes. Currently I have to remap everything manually, but that's
+    probably okay."
+    (set (make-local-variable 'face-remapping-alist)
+         '((org-document-title :height 1.0))))
+
+  ;; flymake error
+  ;; flymake warning
+  ;; flymake note
+  ;; todo not due yet
+  ;; todo past due
+
+  (defvar xtr-highlight)
+
+  (defvar xtr-red)
+
+  (defvar xtr-white)
+  (defvar xtr-black)
+
+  (defvar xtr-gray-mid)
+  (defvar xtr-gray-light)
+  (defvar xtr-gray-dark)
+  (defvar xtr-gray-xlight)
 
   (let ((blue  "#29BEEA")
         (white "#FFFFFF")
@@ -223,7 +241,7 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
         (lgrey "#bdc4cc")
 
         (highlight-dim "#B1F8FF")
-        (code-background "#FFFFFF")
+        (code-background "#F5F6F8")
 
         (xgrey "#F5F6F8")
         ;;(xbord "#EDF0F4")
@@ -233,7 +251,9 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
      'user
      `(fixed-pitch ((t (:family "SF Mono" :weight light))))
      `(variable-pitch ((t (:family "Helvetica" :weight light))))
-     `(default ((t (:background ,white :foreground ,dark :weight light))))
+     `(default ((t (:background ,white
+                                :foreground ,dark
+                                :weight light))))
      `(cursor ((t (:background ,blue))))
      `(fringe ((t (:background ,white))))
      `(region ((t (:background ,highlight-dim))))
@@ -254,9 +274,9 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
      `(message-header-name ((t (:weight light
                                         :foreground ,lgrey))))
      `(message-header-subject ((t :weight normal
-                                         :foreground ,dark)))
+                                  :foreground ,dark)))
      `(message-header-to ((t :weight normal
-                                         :foreground ,dark)))
+                             :foreground ,dark)))
      `(message-header-other ((t (:weight normal
                                          :foreground ,dark))))
 
@@ -269,11 +289,15 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
                                          :foreground ,dark))))
      `(org-ellipsis ((t (:foreground ,lgrey))))
      `(org-block ((t (:background ,code-background :extend t))))
-     `(org-block-begin-line ((t :inherit org-block)))
+     `(org-block-begin-line ((t :inherit org-block
+                                :weight bold
+                                :box (:line-width 7
+                                                   :color ,code-background))))
+     `(org-block-end-line ((t :inherit org-block)))
      `(link ((t :foreground ,dark
                 :underline t)))
      `(org-document-title ((t :foreground ,dark
-                               :height 220)))
+                              :height 220)))
      `(org-level-1 ((t :weight bold)))
      `(org-done ((t :foreground ,lgrey
                     :weight bold)))
@@ -284,8 +308,17 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 
      `(org-date ((t :foreground ,dark
                     :underline t)))
+     `(org-agenda-date ((t :foreground ,dark
+                           :height 180)))
+     `(org-agenda-date-today ((t :foreground ,dark
+                                 :weight bold
+                                 :slant normal
+                                 :height 180)))
+     `(org-time-grid ((t :foreground ,grey )))
+     `(org-tag)
 
      `(pulse-highlight-start-face ((t :background ,red)))
+
 
      ;; `(dired-filename ((t :foreground red)))
      ;; `(dired-header ((t :foreground red)))
@@ -305,7 +338,9 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 
      `(elfeed-search-unread-count-face ((t :foreground ,white)))
 
-     `(ivy-current-match ((t (:background ,grey :foreground ,white :extend t))))
+     `(ivy-current-match ((t (:background ,grey
+                                          :foreground ,white
+                                          :extend t))))
      `(minibuffer-prompt ((t (:inherit default))))
      `(isearch ((t (:background ,lgrey))))
      ;; `(show-paren-match ((t (:background ,lgrey))))
@@ -314,6 +349,8 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
      ;; `(magit-section-heading ((t (:background ,lgrey))))
      ;; `(magit-section-highlight ((t (:background ,lgrey))))
 
+     `(elfeed-search-tag-face ((t (:foreground ,grey))))
+     `(elfeed-search-feed-face ((t (:foreground ,grey))))
      `(mode-line ((t (:box (:line-width 7
                                         :color ,grey)
                            ;;:underline nil
@@ -323,14 +360,16 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
                            ;;:inherit variable-pitch
                            :height 110))))
      `(mode-line-inactive ((t (:inherit mode-line
-                               :foreground ,lgrey
-                               :background ,xgrey
-                               :box (:line-width 7 :color, xgrey)))))
+                                        :foreground ,lgrey
+                                        :background ,xgrey
+                                        :box
+                                        (:line-width 7
+                                                     :color, xgrey)))))
 
      `(mode-line-highlight ((t (:box (:line-width 7
-                                      :color ,grey)
-                                :background ,grey
-                                :foreground ,white))))
+                                                  :color ,grey)
+                                     :background ,grey
+                                     :foreground ,white))))
      `(eshell-prompt ((t :foreground ,dark
                          :weight bold)))
 
@@ -339,6 +378,8 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 
   ;;(provide-theme 'actuator)
 #+end_src
+
+#+results:
 
 * Emacs
 :PROPERTIES:
