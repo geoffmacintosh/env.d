@@ -1418,20 +1418,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Fido mode
 
 #+begin_src emacs-lisp
-  (when (not (package-installed-p 'counsel))
-    (fido-mode +1)
-    (icomplete-vertical-mode +1)
+  (defvar recentf-list)
+  (defvar icomplete-fido-mode-map)
 
-      (defun xtr-recentf-completing-read ()
-      (interactive)
-      (let ((file (completing-read "Choose recent file: " recentf-list nil
-                                   t)))
-        (when file
-          (find-file file))))
-
-      (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read))
-
-  (add-hook 'fido-mode-hook 'icomplete-vertical-mode)
   (csetq icomplete-scroll t)
   (csetq icomplete-show-matches-on-no-input t)
   (csetq read-buffer-completion-ignore-case t)
@@ -1439,17 +1428,29 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq read-file-name-completion-ignore-case t)
 
 
-  (defvar icomplete-fido-mode-map)
+  (defun xtr-recentf-completing-read ()
+    "Interactive completion on recentf files."
+      (interactive)
+      (let ((file (completing-read
+                   "Choose recent file: " recentf-list nil t)))
+        (when file
+          (find-file file))))
 
-  (with-eval-after-load 'fido-mode
-    (define-key icomplete-fido-mode-map
-                (kbd "\C-j") #'actuator-minibuffer-try-complete-and-exit))
-
-  (defun actuator-minibuffer-try-complete-and-exit ()
+  (defun xtr-minibuffer-try-complete-and-exit ()
+    "Exit minibuffer with what is entered, avoiding completion."
     (interactive)
     (minibuffer-force-complete)
     (setq-local deactivate-mark nil)
     (throw 'exit nil))
+
+  (when (not (package-installed-p 'counsel))
+    (fido-mode +1)
+    (icomplete-vertical-mode +1)
+      (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read))
+
+  (with-eval-after-load 'fido-mode
+    (define-key icomplete-fido-mode-map
+                (kbd "\C-j") #'xtr-minibuffer-try-complete-and-exit))
 #+end_src
 
 - faces
