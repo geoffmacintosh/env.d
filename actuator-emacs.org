@@ -1898,7 +1898,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
 
 ** Ivy
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'counsel)
     (add-to-list 'package-selected-packages 'ivy)
@@ -1924,7 +1924,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
     (global-set-key (kbd "M-y")     #'counsel-yank-pop))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
       (defvar ivy-minibuffer-map)
   (when (package-installed-p 'ivy)
     (eval-when-compile
@@ -1956,7 +1956,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
 #+end_src
 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'prescient)
     (add-to-list 'package-selected-packages 'ivy-prescient))
