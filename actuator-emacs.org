@@ -1490,21 +1490,22 @@ Autorevert via notify is supposed to be much lower power than polling. It should
         (when file
           (find-file file))))
 
-  (defun xtr-minibuffer-try-complete-and-exit ()
-    "Exit minibuffer with what is entered, avoiding completion."
-    (interactive)
-    (minibuffer-force-complete)
-    (setq-local deactivate-mark nil)
-    (throw 'exit nil))
+  ;; (defun xtr-minibuffer-try-complete-and-exit ()
+  ;;   "Exit minibuffer with what is entered, avoiding completion."
+  ;;   (interactive)
+  ;;   (minibuffer-force-complete)
+  ;;   (setq-local deactivate-mark nil)
+  ;;   (throw 'exit nil))
 
-  (when (not (package-installed-p 'counsel))
+  (unless (ignore-error (eq counsel-mode t))
     (fido-mode +1)
     (icomplete-vertical-mode +1)
+    (define-key icomplete-fido-mode-map (kbd "C-<return>") #'icomplete-fido-exit)
       (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read))
 
-  (with-eval-after-load 'fido-mode
-    (define-key icomplete-fido-mode-map
-                (kbd "\C-j") #'xtr-minibuffer-try-complete-and-exit))
+  ;; (with-eval-after-load 'fido-mode
+  ;;   (define-key icomplete-fido-mode-map
+  ;;               (kbd "\C-j") #'xtr-minibuffer-try-complete-and-exit))
 #+end_src
 
 - faces
@@ -1782,19 +1783,18 @@ Further in the same link, he recommends against calling =package-activate-all= a
           partial-completion
           substring
           initials
-          basic
-          emacs22))
+          basic))
 #+end_src
 
 ** Term mouse
-
 #+begin_src emacs-lisp
-  (unless 'window-system
-    (require 'mouse)
-    (require 'xt-mouse)
-    (xterm-mouse-mode t)
-    (defun track-mouse (_e)))
+  (unless (display-graphic-p)
+    (if (executable-find "gpm")
+        (gpm-mouse-mode +1)
+      (xterm-mouse-mode +1)))
 #+end_src
+
+This will only check the display on starting Emacs. If I need to check later (for example if I start graphically and then open a term emacsclient) this will not check. For that I need to add an after-make-frame-functions hook.
 
 ** TEST Long-running timers
 :PROPERTIES:
