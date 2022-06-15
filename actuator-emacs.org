@@ -2001,10 +2001,10 @@ This will only check the display on starting Emacs. If I need to check later (fo
   (csetq magit-no-confirm '(stage-all-changes
                             unstage-all-changes))
   (csetq magit-status-initial-section nil)
-  (csetq magit-repository-directories
-         `((,org-directory      . 0)
-           (,actuator-directory . 0)
-           ("~/Projects"        . 1)))
+  ;; (csetq magit-repository-directories
+  ;;        `((,org-directory      . 0)
+  ;;          (,actuator-directory . 0)
+  ;;          ("~/Projects"        . 1)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2334,6 +2334,26 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
+** Prettify symbols
+:PROPERTIES:
+:CREATED:  [2022-06-13 Mon 17:55]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-13 Mon 18:48]
+:END:
+#+begin_src emacs-lisp
+  (csetq prettify-symbols-unprettify-at-point 'right-edge)
+
+  (defun xtr-prettify-org-symbols ()
+    "Prettifies all Org buffers."
+    (add-to-list 'prettify-symbols-alist '("#+title: " . ""))
+    (add-to-list 'prettify-symbols-alist '("#+begin_src" . ""))
+    (add-to-list 'prettify-symbols-alist '("#+end_src" . ""))
+    (prettify-symbols-mode +1))
+
+  (add-hook 'org-mode-hook #'xtr-prettify-org-symbols)
+#+end_src
+
 ** Archive old stuff
 :PROPERTIES:
 :CREATED:  [2022-01-06 Thu 15:32]
@@ -2413,6 +2433,14 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
+                 '("t" "TODO"))
+    (add-to-list 'org-capture-templates
+                 '("m" "Media")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
                  `("l" "Log" entry
                    (file+olp+datetree "log.org")
                    "* %?"
@@ -2426,7 +2454,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("p" "Impromtu current task" entry
+                 `("tp" "Impromtu current task" entry
                    (file "inbox.org")
                    "* TODO %? %^G"
                    :empty-lines 1
@@ -2438,7 +2466,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("t" "TODO" entry
+                 `("tt" "TODO" entry
                    (file "inbox.org")
                    "* TODO %?"
                    :empty-lines 1)))
@@ -2460,7 +2488,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("w" "Work" entry
+                 `("tw" "Work" entry
                    (file+headline "sas.org" "Tasks")
                    "* TODO %?"
                    :empty-lines 1
@@ -2470,7 +2498,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("n" "Note" entry
+                 `("tn" "Note" entry
                    (file "inbox.org")
                    "* TODO Note for %U \n- %?"
                    :empty-lines 1)))
@@ -2489,7 +2517,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("b" "Book" entry
+                 `("mb" "Book" entry
                    (file+headline "books.org" "Unread")
                    "* %^{Title}%^{Author}p%^{Year}p%^{Series}p\n%?"
                    :empty-lines 1
@@ -2499,7 +2527,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("m" "Movie" entry
+                 `("mm" "Movie" entry
                    (file+headline "movies.org" "Unwatched")
                    "* %^{Title}%^{Year}p%^{Series}p\n%?"
                    :empty-lines 1
@@ -2667,6 +2695,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+  (csetq org-fold-catch-invisible-edits 'smart)
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
@@ -2731,7 +2760,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
                     (buffer-list))))
 
   (defun actuator-org-refile-candidates ()
-    "Collect all the `org-mode' files in the actuator-directory.
+    "Collect all the `org-mode' files in the `actuator-directory'.
 
   Currently it only collects files that start with a lowercase
   letter, which is probably the wrong way to go about it, but I
@@ -2740,8 +2769,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   other weird files that might temporarily get caught by the
   refiler that I don't want. This would be an easy fix, but I'm not
   doing it."
-
-     (directory-files actuator-directory t "^[a-z].*\\.org$"))
+     (when (ignore-errors (file-exists-p actuator-directory))
+         (directory-files actuator-directory t "^[a-z].*\\.org$")))
 
   (csetq org-refile-targets '((org-agenda-files               :maxlevel . 9)
                               (actuator-opened-buffer-files   :maxlevel . 9)
@@ -2854,8 +2883,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     (electric-indent-local-mode -1)
     (visual-line-mode)
     (add-hook 'before-save-hook
-              'actuator-update-all-dynamic-blocks nil
-              'make-it-local))
+              #'actuator-update-all-dynamic-blocks nil
+              'local))
 
   (add-hook 'org-mode-hook #'actuator-org-mode-setup)
 
@@ -2896,7 +2925,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-clone-delete-id t)
   ;;(csetq org-tags-column -60)
   (csetq org-catch-invisible-edits 'show-and-error)
-  (csetq org-insert-heading-respect-content t)
+  (csetq org-insert-heading-respect-content nil)
   (csetq org-ctrl-k-protect-subtree t)
   (csetq org-M-RET-may-split-line '((default . nil)))
   (csetq org-special-ctrl-k t)
@@ -2907,7 +2936,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-modules nil)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (package-installed-p 'counsel)
     (defalias 'org-set-tags-command 'counsel-org-tag))
 #+end_src
@@ -3807,6 +3836,43 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
           (t
            (error "No notification system available"))))
 #+end_src
+*** Attachment reminder
+:PROPERTIES:
+:CREATED:  [2022-05-27 Fri 15:14]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-13 Mon 17:32]
+- State "NEXT"       from "TODO"       [2022-06-13 Mon 17:02]
+- State "NEXT"       from "TODO"       [2022-06-13 Mon 16:39]
+- Refiled on [2022-06-08 Wed 21:08]
+:END:
+#+begin_src emacs-lisp
+  ;; thunderbird attachment reminder
+  ;; "attach\\|\Wfiles?\W\\|\Wphoto\\|\Where\s-+is\\|\Where\s-+are\\|\Where\s-+it\s-+is\\|enclose\\|\Wdraft\\|\Wversion"
+
+  (defvar xtr-message-attachment-regexp "\\([Ww]e send\\|[Ii]
+  send\\|attach\\)")
+
+  (defun xtr-message-check-attachment ()
+    "Check if there is an attachment in the message if I claim it."
+    (eval-when-compile
+      (declare-function message-goto-body "message" (&optional interactive))
+      (declare-function message-y-or-n-p "message" (question show &rest text)))
+    (save-excursion
+      (message-goto-body)
+      (when (search-forward-regexp xtr-message-attachment-regexp nil t nil)
+        (message-goto-body)
+        (unless (or (search-forward "<#part" nil t nil)
+                    (message-y-or-n-p
+                     "No attachment. Send the message ?" nil nil))
+          (error "No message sent")))))
+
+  (add-hook 'message-send-hook 'xtr-message-check-attachment)
+#+end_src
+
+#+results:
+| xtr-message-check-attachment |
+
 ** Web
 *** Set up browsing handlers                                       :ignore:
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
