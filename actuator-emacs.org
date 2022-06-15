@@ -283,6 +283,8 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
      `(font-lock-warning-face ((t (:foreground ,red))))
      `(font-lock-comment-face ((t (:weight thin))))
      `(font-lock-comment-delimiter-face ((t (:weight thin))))
+     `(org-agenda-done ((t (:inherit org-headline-done
+                                     :weight normal))))
 
      `(org-drawer ((t (:foreground ,lgrey))))
      `(org-special-keyword ((t (:inherit org-drawer
@@ -292,7 +294,7 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
      `(org-block-begin-line ((t :inherit org-block
                                 :weight bold
                                 :box (:line-width 7
-                                                   :color ,code-background))))
+                                                  :color ,code-background))))
      `(org-block-end-line ((t :inherit org-block)))
      `(link ((t :foreground ,dark
                 :underline t)))
