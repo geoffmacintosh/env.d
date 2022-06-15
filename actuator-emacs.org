@@ -888,17 +888,20 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Recentf
 
 #+begin_src emacs-lisp
-    (eval-when-compile
-      (declare-function recentf-open-files "recentf")
-                       (declare-function recentf-cleanup "recentf"))
-    (global-set-key (kbd "C-x C-r") #'recentf-open-files)
-    (csetq recentf-max-saved-items 1000)
-    (csetq recentf-auto-cleanup 'never)
-    (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
-                             "/var/folders/"
-                             ,user-emacs-directory))
-    (add-hook 'midnight-hook #'recentf-cleanup)
-(let ((inhibit-message t))
+  (eval-when-compile
+    (declare-function recentf-open-files "recentf")
+    (declare-function recentf-cleanup "recentf"))
+
+  (global-set-key (kbd "C-x C-r") #'recentf-open-files)
+
+  (csetq recentf-filename-handlers '(abbreviate-file-name))
+  (csetq recentf-max-saved-items 1000)
+  (csetq recentf-auto-cleanup 'never)
+  (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
+                           "/var/folders/"
+                           ,user-emacs-directory))
+  (add-hook 'midnight-hook #'recentf-cleanup)
+  (let ((inhibit-message t))
     (recentf-mode +1))
 #+end_src
 
