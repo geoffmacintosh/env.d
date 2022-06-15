@@ -529,6 +529,25 @@ I am hiding this when not bound because I have weird errors where on Windows it 
  #+end_src
 
 ** Drop-in functions
+*** Auto-create missing directories                                 :emacs:
+:PROPERTIES:
+:CREATED:  [2022-06-12 Sun 16:38]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-13 Mon 18:46]
+:END:
+
+#+begin_src emacs-lisp
+  (defun xtr-auto-create-missing-dirs ()
+    (let ((target-dir (file-name-directory buffer-file-name)))
+      (unless (file-exists-p target-dir)
+        (make-directory target-dir t))))
+
+  (add-to-list 'find-file-not-found-functions #'xtr-auto-create-missing-dirs)
+#+end_src
+
+[[https://emacsredux.com/blog/2022/06/12/auto-create-missing-directories][Auto-create Missing Directories]]
+
 *** Unfill paragraph
 
 #+begin_src emacs-lisp
