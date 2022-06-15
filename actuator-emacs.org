@@ -445,6 +445,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 
 #+begin_src emacs-lisp
   (csetq redisplay-skip-fontification-on-input t)
+  (csetq switch-to-buffer-obey-display-actions t)
   (csetq completions-detailed t)
   (csetq completions-format 'one-column)
   (csetq next-error-message-highlight 'keep)
