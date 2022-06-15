@@ -939,21 +939,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (csetq server-client-instructions nil)
-
-  (defun actuator-start-server-if-not-running ()
-    "If Emacs' server is not running, start it.
-
-  This allows Emacs client to function. This does not check to see
-  if the current Emacs instance is running the server, only that at
-  least one server is running. I don't want to run multiple
-  servers, so that's fine."
-
-    (require 'server)
     (eval-when-compile
       (declare-function server-running-p "server"))
-    (unless (server-running-p) (server-start)))
-
-  (actuator-start-server-if-not-running)
+  (require 'server)
+  (unless (server-running-p) (server-start))
 #+end_src
 
 ** Actuator startup profile
@@ -1492,7 +1481,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq read-buffer-completion-ignore-case t)
   (csetq completion-ignore-case t)
   (csetq read-file-name-completion-ignore-case t)
-
 
   (defun xtr-recentf-completing-read ()
     "Interactive completion on recentf files."
