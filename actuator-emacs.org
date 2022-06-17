@@ -157,8 +157,13 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 #+end_src
 
 #+begin_src emacs-lisp
-  (unless (fboundp 'package-installed-p)
+  (unless (and (fboundp 'package-installed-p) noninteractive)
     (require 'package))
+
+  (when noninteractive
+    (defun package-installed-p (_package)
+      nil)
+    (defvar package-selected-packages nil))
 #+end_src
 
 ** Tangle
