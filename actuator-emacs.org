@@ -81,8 +81,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
-  (unless noninteractive
-    (add-hook 'after-init-hook #'actuator-frame-init))
+  ;; (unless noninteractive
+  ;;   (add-hook 'after-init-hook #'actuator-frame-init))
 #+end_src
 
 #+begin_src emacs-lisp
