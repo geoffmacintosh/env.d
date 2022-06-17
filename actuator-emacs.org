@@ -1312,7 +1312,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Spell check
 #+begin_src emacs-lisp
   (defvar org-directory)
-  (csetq ispell-personal-dictionary (expand-file-name "data/dictionary" org-directory))
+
+  (when (ignore-errors (file-exists-p org-directory))
+    (csetq ispell-personal-dictionary (expand-file-name "data/dictionary" org-directory)))
   (csetq ispell-silently-savep t)
   (defun actuator-org-reveal-around ()
     "Reveals the area around the point in Org-mode files."
@@ -1360,12 +1362,13 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (defvar actuator-original-gc-cons-threshold)
   (defvar actuator-original-gc-cons-percentage)
 
-  (defun actuator-restore-gc-cons ()
-    "Restore gc-cons-* to default after startup."
-    (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
-    (setq gc-cons-percentage actuator-original-gc-cons-percentage))
+  (when (boundp 'actuator-original-gc-cons-threshold)
+    (defun actuator-restore-gc-cons ()
+      "Restore gc-cons-* to default after startup."
+      (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
+      (setq gc-cons-percentage actuator-original-gc-cons-percentage))
 
-  (add-hook 'emacs-startup-hook #'actuator-restore-gc-cons)
+    (add-hook 'emacs-startup-hook #'actuator-restore-gc-cons))
 #+end_src
 
 ** Display buffer
@@ -1467,7 +1470,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'minions))
 
-  (when (package-installed-p 'minions)
+  (when (and (package-installed-p 'minions) (display-graphic-p))
     (eval-when-compile
       (declare-function minions-mode "minions"))
     (minions-mode))
@@ -1744,7 +1747,8 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
 ** Abbrev
 
 #+begin_src emacs-lisp
-  (csetq abbrev-file-name (expand-file-name "data/abbrev.el" org-directory))
+  (when (ignore-errors (file-exists-p org-directory))
+    (csetq abbrev-file-name (expand-file-name "data/abbrev.el" org-directory)))
   (defun actuator-enable-abbrev-mode ()
     (abbrev-mode +1))
 
@@ -2306,7 +2310,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (csetq rmh-elfeed-org-ignore-tag "disconnected")
   (csetq rmh-elfeed-org-auto-ignore-invalid-feeds nil)
-  (csetq rmh-elfeed-org-files `(,(expand-file-name "feed.org" org-directory)))
+  (when (ignore-errors (file-exists-p org-directory))
+    (csetq rmh-elfeed-org-files `(,(expand-file-name "feed.org" org-directory))))
 #+end_src
 
 ** Systemd
@@ -2319,7 +2324,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'rainbow-mode))
-  (when (package-installed-p 'rainbow-mode)
+  (when (and (package-installed-p 'rainbow-mode) (display-graphic-p))
     (eval-when-compile
       (declare-function rainbow-mode "rainbow-mode"))
     (rainbow-mode))
@@ -2349,11 +2354,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defun xtr-prettify-org-symbols ()
     "Prettifies all Org buffers."
     (add-to-list 'prettify-symbols-alist '("#+title: " . ""))
-    (add-to-list 'prettify-symbols-alist '("#+begin_src" . ""))
-    (add-to-list 'prettify-symbols-alist '("#+end_src" . ""))
-    (prettify-symbols-mode +1))
+    ;;(add-to-list 'prettify-symbols-alist '("#+begin_src" . ""))
+    ;;(add-to-list 'prettify-symbols-alist '("#+end_src" . "")
+    )
+  (prettify-symbols-mode +1))
 
-  (add-hook 'org-mode-hook #'xtr-prettify-org-symbols)
+  (when (display-graphic-p)
+    (add-hook 'org-mode-hook #'xtr-prettify-org-symbols))
 #+end_src
 
 ** Archive old stuff
