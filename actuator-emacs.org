@@ -1440,7 +1440,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 ** Registers
 [2021-07-18 Sun 21:27]
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (set-register ?i (cons 'file (expand-file-name "inbox.org" org-directory)))
 #+end_src
 
