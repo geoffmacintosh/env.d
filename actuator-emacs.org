@@ -195,12 +195,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
   files from.")
 #+end_src
 
-** Footer
-#+begin_src emacs-lisp
-  (provide 'init)
-  ;;; init.el ends here
-#+end_src
-
 * Theme
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:29]
@@ -1475,6 +1469,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
       (declare-function minions-mode "minions"))
     (minions-mode))
 #+end_src
+
 ** Fido mode
 
 #+begin_src emacs-lisp
@@ -2403,10 +2398,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defun xtr-prettify-org-symbols ()
     "Prettifies all Org buffers."
     (add-to-list 'prettify-symbols-alist '("#+title: " . ""))
-    ;;(add-to-list 'prettify-symbols-alist '("#+begin_src" . ""))
-    ;;(add-to-list 'prettify-symbols-alist '("#+end_src" . "")
-    )
-  (prettify-symbols-mode +1))
+    (prettify-symbols-mode +1))
 
   (when (display-graphic-p)
     (add-hook 'org-mode-hook #'xtr-prettify-org-symbols))
