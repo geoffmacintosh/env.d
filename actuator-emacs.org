@@ -2341,6 +2341,55 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
+** Export ics
+:PROPERTIES:
+:CREATED:  [2022-06-15 Wed 13:01]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-15 Wed 15:49]
+:END:
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (add-to-list 'org-agenda-custom-commands
+                 `("X" "Diary to iCal" agenda ""
+                   ((org-agenda-files '("diary.org"))
+                    (org-agenda-span 37)
+                    (org-agenda-start-day "-7d"))
+                   ("/tmp/calendar.ics"))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun xtr-export-ics ()
+    ""
+    (org-batch-store-agenda-views)
+
+    (with-current-buffer (find-file-noselect "/tmp/calendar.ics")
+      (goto-char (point-min))
+      (while (re-search-forward "OrgMode" nil t)
+        (replace-match "Geoff"))
+      (goto-char (point-min))
+      (while (re-search-forward org-ts-regexp nil t)
+        (replace-match ""))
+      (goto-char (point-min))
+      (while (re-search-forward "DESCRIPTION:–" nil t)
+        (replace-match "DESCRIPTION:"))
+      (goto-char (point-min))
+      (while (re-search-forward "VTODO" nil t)
+        (replace-match "VEVENT"))
+      (save-buffer)))
+#+end_src
+
+#+begin_src shell :tangle no
+  emacs -batch -l ~/.config/emacs/init.el -eval "(xtr-export-ics)"
+#+end_src
+
+
+#+begin_src shell :tangle no
+  curl --user "USERNAME:PASSWORD" -T "/tmp/calendar.ics" "https://myfiles.fastmail.com/share/"
+#+end_src
+
+#+results:
 ** Prettify symbols
 :PROPERTIES:
 :CREATED:  [2022-06-13 Mon 17:55]
@@ -2640,67 +2689,68 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
- (defvar org-agenda-custom-commands)
-  (with-eval-after-load 'org-agenda
-    (add-to-list 'org-agenda-custom-commands
-                 '("u" "Unscheduled TODOs"
-                   ((todo ""
-                          ((org-agenda-overriding-header "\nUnscheduled TODOs")
-                           (org-agenda-skip-function
-                            '(org-agenda-skip-entry-if
-                              'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
-                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+  (defvar org-agenda-custom-commands)
+   (with-eval-after-load 'org-agenda
+     (add-to-list 'org-agenda-custom-commands
+                  '("u" "Unscheduled TODOs"
+                    ((todo ""
+                           ((org-agenda-overriding-header "\nUnscheduled TODOs")
+                            (org-agenda-skip-function
+                             '(org-agenda-skip-entry-if
+                               'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                            (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("b" "Purchase List" tags "+buy"
-                   ((org-overriding-columns-format "%20ITEM %PRICE")
-                    (org-agenda-view-columns-initially t))))
+     (add-to-list 'org-agenda-custom-commands
+                  '("b" "Purchase List" tags "+buy"
+                    ((org-overriding-columns-format "%20ITEM %PRICE")
+                     (org-agenda-view-columns-initially t))))
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("v" . "Recurring Views"))
+     (add-to-list 'org-agenda-custom-commands
+                  '("v" . "Recurring Views"))
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("vd" "Daily View"
-                   ((agenda "")
-                    (todo "NEXT"))
-                   ((org-agenda-span 'day))))
+     (add-to-list 'org-agenda-custom-commands
+                  '("vd" "Daily View"
+                    ((agenda "")
+                     (todo "NEXT"))
+                    ((org-agenda-span 'day))))
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("vw" "Weekly View"
-                   ((agenda "")
-                    (todo "WAITING")
-                    (todo "PROJECT")
-                    (org-agenda-list-stuck-projects))
-                   ((org-agenda-span 7)
-                    (org-agenda-start-day "+0d")
-                    (org-agenda-start-on-weekday nil)
-                    (org-agenda-start-with-log-mode nil)
-                    (org-agenda-start-with-clockreport-mode nil)
-                    (org-agenda-use-time-grid nil)
-                    (org-habit-show-habits nil))))
+     (add-to-list 'org-agenda-custom-commands
+                  '("vw" "Weekly View"
+                    ((agenda "")
+                     (todo "WAITING")
+                     (todo "PROJECT")
+                     (org-agenda-list-stuck-projects))
+                    ((org-agenda-span 7)
+                     (org-agenda-start-day "+0d")
+                     (org-agenda-start-on-weekday nil)
+                     (org-agenda-start-with-log-mode nil)
+                     (org-agenda-start-with-clockreport-mode nil)
+                     (org-agenda-use-time-grid nil)
+                     (org-habit-show-habits nil))))
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("vm" "Monthly View"
-                   ((todo "SOMEDAY"))))
+     (add-to-list 'org-agenda-custom-commands
+                  '("vm" "Monthly View"
+                    ((todo "SOMEDAY"))))
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("A" "Candidate trees for archiving" tags "-NOARCHIVE"
-                   ((org-agenda-overriding-header "Candidate tasks for archiving")
-                    (org-agenda-skip-function 'actuator-skip-non-archivable-tasks))))
+     (add-to-list 'org-agenda-custom-commands
+                  '("A" "Candidate trees for archiving" tags "-NOARCHIVE"
+                    ((org-agenda-overriding-header "Candidate tasks for archiving")
+                     (org-agenda-skip-function 'actuator-skip-non-archivable-tasks))))
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("p" "Daily Personal Mail"
-                   ((agenda "")
-                    (todo "TODO"))
-                   ((org-agenda-span 'day)
-                    (org-agenda-remove-tags t)
-                    (org-habit-preceding-days 7)
-                    (org-habit-following-days 3)
-                    (org-agenda-block-separator nil)
-                    (org-agenda-show-current-time-in-grid nil)
-                    (org-agenda-start-with-log-mode nil)
-                    (org-agenda-start-with-clockreport-mode nil))
-                   ("~/agenda.html"))))
+     ;; (add-to-list 'org-agenda-custom-commands
+     ;;              '("p" "Daily Personal Mail"
+     ;;                ((agenda "")
+     ;;                 (todo "TODO"))
+     ;;                ((org-agenda-span 'day)
+     ;;                 (org-agenda-remove-tags t)
+     ;;                 (org-habit-preceding-days 7)
+     ;;                 (org-habit-following-days 3)
+     ;;                 (org-agenda-block-separator nil)
+     ;;                 (org-agenda-show-current-time-in-grid nil)
+     ;;                 (org-agenda-start-with-log-mode nil)
+     ;;                 (org-agenda-start-with-clockreport-mode nil))
+     ;;                ("~/agenda.html")))
+)
 #+end_src
 
 #+begin_src emacs-lisp
