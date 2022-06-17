@@ -123,18 +123,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (mapc 'actuator-add-to-path actuator-path)
 #+end_src
 
-#+begin_src emacs-lisp
-  (let ((home-org "~/org")
-        (portable-org (expand-file-name "org" user-emacs-directory)))
-    (defvar org-directory
-      (if (file-exists-p home-org)
-          home-org
-        (progn
-          (unless (file-exists-p portable-org)
-            (make-directory portable-org)))
-        portable-org)))
-#+end_src
-
 * Init
 :PROPERTIES:
 :header-args: :tangle (expand-file-name "init.el" user-emacs-directory) :comments link :mkdirp yes
@@ -178,8 +166,20 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 :CREATED:  [2022-01-10 Mon 14:14]
 :END:
 
-#+begin_src emacs-lisp
+ #+begin_src emacs-lisp
+  (let ((home-org "~/org")
+        (portable-org (expand-file-name "org" user-emacs-directory)))
+    (defvar org-directory
+      (if (file-exists-p home-org)
+          home-org
+        (progn
+          (unless (file-exists-p portable-org)
+            (make-directory portable-org)))
+        portable-org)))
+#+end_src
 
+
+#+begin_src emacs-lisp
   (defvar actuator-directory
     (let ((dir "~/env.d"))
       (if (file-exists-p dir)
