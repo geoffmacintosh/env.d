@@ -296,10 +296,7 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
                                          :foreground ,dark))))
      `(org-ellipsis ((t (:foreground ,lgrey))))
      `(org-block ((t (:background ,code-background :extend t))))
-     `(org-block-begin-line ((t :inherit org-block
-                                :weight bold
-                                :box (:line-width 7
-                                                  :color ,code-background))))
+     `(org-block-begin-line ((t :inherit org-block)))
      `(org-block-end-line ((t :inherit org-block)))
      `(link ((t :foreground ,dark
                 :underline t)))
