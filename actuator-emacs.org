@@ -383,26 +383,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
-** Sort on save
-:PROPERTIES:
-:CREATED:  [2022-06-04 Sat 10:54]
-:END:
-:LOGBOOK:
-- Refiled on [2022-06-08 Wed 15:14]
-:END:
-#+begin_src emacs-lisp
-  (defun xtr-org-sort-top-level-buffer ()
-    "Do the thing correctly."
-    (interactive)
-    (when (eq major-mode 'org-mode))
-      (goto-char (point-min))
-      (org-sort-entries nil ?t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (add-hook 'before-save-hook #'xtr-org-sort-top-level-buffer nil t)
-#+end_src
-
 ** C-m
 :PROPERTIES:
 :CREATED:  [2022-05-25 Wed 18:34]
@@ -535,6 +515,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 
 #+begin_src emacs-lisp
   (defun xtr-auto-create-missing-dirs ()
+    "Automatically create a missing dir in a path."
     (let ((target-dir (file-name-directory buffer-file-name)))
       (unless (file-exists-p target-dir)
         (make-directory target-dir t))))
@@ -894,8 +875,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq recentf-max-saved-items 1000)
   (csetq recentf-auto-cleanup 'never)
   (csetq recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
-                           "/var/folders/"
-                           ,user-emacs-directory))
+                           "/var/folders/"))
   (add-hook 'midnight-hook #'recentf-cleanup)
   (let ((inhibit-message t))
     (recentf-mode +1))
@@ -922,7 +902,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
       (csetq trash-directory "~/.Trash")))
 
   (defun system-move-file-to-trash (path)
-    "Moves file at PATH to the Trash according to `move-file-to-trash'.
+    "Move file at PATH to the Trash according to `move-file-to-trash'.
 
     On macOS relies on the command-line utility 'trash' to be installed."
     (shell-command (concat "trash -vF \"" path "\""
@@ -1356,11 +1336,12 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (defvar actuator-original-gc-cons-threshold)
   (defvar actuator-original-gc-cons-percentage)
 
-  (when (boundp 'actuator-original-gc-cons-threshold)
-    (defun actuator-restore-gc-cons ()
-      "Restore gc-cons-* to default after startup."
-      (setq gc-cons-threshold  actuator-original-gc-cons-threshold)
-      (setq gc-cons-percentage actuator-original-gc-cons-percentage))
+  (defun actuator-restore-gc-cons ()
+    "Restore gc-cons-* to default after startup."
+    (when (boundp 'actuator-original-gc-cons-threshold)
+      (csetq gc-cons-threshold  actuator-original-gc-cons-threshold))
+    (when (boundp 'actuator-original-gc-cons-percentage)
+      (csetq gc-cons-percentage actuator-original-gc-cons-percentage))
 
     (add-hook 'emacs-startup-hook #'actuator-restore-gc-cons))
 #+end_src
@@ -1421,14 +1402,26 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Pulse line
 
 #+begin_src emacs-lisp
+  (defvar pulse-delay)
+
   (defun pulse-line (&rest _)
     "Interactive function to pulse the current line."
     (interactive)
     (require 'pulse)
     (pulse-momentary-highlight-one-line (point)))
-  (defadvice other-window (after other-window-pulse activate) (pulse-line))
-  (defadvice delete-window (after delete-window-pulse activate) (pulse-line))
-  (defadvice recenter-top-bottom (after recenter-top-bottom-pulse activate) (pulse-line))
+  (defadvice other-window (after other-window-pulse activate)
+    "Doc."
+    (pulse-line))
+  (defadvice delete-window
+      (after delete-window-pulse activate)
+    "Doc."
+    (pulse-line))
+  (defadvice recenter-top-bottom
+      (after recenter-top-bottom-pulse activate)
+    "Doc."
+    (pulse-line))
+
+
   (csetq pulse-delay .07)
 #+end_src
 
@@ -1475,6 +1468,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (defvar recentf-list)
   (defvar icomplete-fido-mode-map)
+  (eval-when-compile
+    (declare-function icomplete-fido-exit "icomplete" (force)))
 
   (csetq icomplete-scroll t)
   (csetq icomplete-show-matches-on-no-input t)
@@ -1490,22 +1485,11 @@ Autorevert via notify is supposed to be much lower power than polling. It should
         (when file
           (find-file file))))
 
-  ;; (defun xtr-minibuffer-try-complete-and-exit ()
-  ;;   "Exit minibuffer with what is entered, avoiding completion."
-  ;;   (interactive)
-  ;;   (minibuffer-force-complete)
-  ;;   (setq-local deactivate-mark nil)
-  ;;   (throw 'exit nil))
-
   (unless (ignore-error (eq counsel-mode t))
     (fido-mode +1)
     (icomplete-vertical-mode +1)
     (define-key icomplete-fido-mode-map (kbd "C-<return>") #'icomplete-fido-exit)
       (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read))
-
-  ;; (with-eval-after-load 'fido-mode
-  ;;   (define-key icomplete-fido-mode-map
-  ;;               (kbd "\C-j") #'xtr-minibuffer-try-complete-and-exit))
 #+end_src
 
 - faces
@@ -1695,6 +1679,7 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
 
 #+begin_src emacs-lisp
   (defun actuator-elisp-hook ()
+    "Set mode-specific setting for Emacs Lisp."
     (auto-fill-mode +1)
     (display-fill-column-indicator-mode +1)
     (flymake-mode +1))
@@ -1745,6 +1730,7 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
   (when (ignore-errors (file-exists-p org-directory))
     (csetq abbrev-file-name (expand-file-name "data/abbrev.el" org-directory)))
   (defun actuator-enable-abbrev-mode ()
+    "Wrapper to ensure abbrev mode is turned on, not toggled."
     (abbrev-mode +1))
 
   (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
@@ -1797,16 +1783,6 @@ Further in the same link, he recommends against calling =package-activate-all= a
 
 This will only check the display on starting Emacs. If I need to check later (for example if I start graphically and then open a term emacsclient) this will not check. For that I need to add an after-make-frame-functions hook.
 
-** TEST Long-running timers
-:PROPERTIES:
-:CREATED:  [2022-06-07 Tue 22:33]
-:END:
-#+begin_src emacs-lisp
-  ;;(run-at-time "1 week" nil #'xtr-notify)
-
-  (defun xtr-notify ()
-    (dired-create-empty-file "~/Desktop/LONGRUN"))
-#+end_src
 * Modes
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:11]
@@ -2230,7 +2206,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
     :group 'actuator-elfeed)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defvar elfeed-search-filter-active)
   (defvar elfeed-search-filter-overflowing)
   (defvar elfeed-search-entries)
@@ -2336,55 +2312,6 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
-** Export ics
-:PROPERTIES:
-:CREATED:  [2022-06-15 Wed 13:01]
-:END:
-:LOGBOOK:
-- Refiled on [2022-06-15 Wed 15:49]
-:END:
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-agenda
-    (add-to-list 'org-agenda-custom-commands
-                 `("X" "Diary to iCal" agenda ""
-                   ((org-agenda-files '("diary.org"))
-                    (org-agenda-span 37)
-                    (org-agenda-start-day "-7d"))
-                   ("/tmp/calendar.ics"))))
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun xtr-export-ics ()
-    ""
-    (org-batch-store-agenda-views)
-
-    (with-current-buffer (find-file-noselect "/tmp/calendar.ics")
-      (goto-char (point-min))
-      (while (re-search-forward "OrgMode" nil t)
-        (replace-match "Geoff"))
-      (goto-char (point-min))
-      (while (re-search-forward org-ts-regexp nil t)
-        (replace-match ""))
-      (goto-char (point-min))
-      (while (re-search-forward "DESCRIPTION:–" nil t)
-        (replace-match "DESCRIPTION:"))
-      (goto-char (point-min))
-      (while (re-search-forward "VTODO" nil t)
-        (replace-match "VEVENT"))
-      (save-buffer)))
-#+end_src
-
-#+begin_src shell :tangle no
-  emacs -batch -l ~/.config/emacs/init.el -eval "(xtr-export-ics)"
-#+end_src
-
-
-#+begin_src shell :tangle no
-  curl --user "USERNAME:PASSWORD" -T "/tmp/calendar.ics" "https://myfiles.fastmail.com/share/"
-#+end_src
-
-#+results:
 ** Prettify symbols
 :PROPERTIES:
 :CREATED:  [2022-06-13 Mon 17:55]
@@ -2583,16 +2510,69 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
+** Export ics
+:PROPERTIES:
+:CREATED:  [2022-06-15 Wed 13:01]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-15 Wed 15:49]
+:END:
+
+#+begin_src emacs-lisp
+  (defvar org-agenda-custom-commands)
+
+  (with-eval-after-load 'org-agenda
+    (add-to-list 'org-agenda-custom-commands
+                 `("X" "Diary to iCal" agenda ""
+                   ((org-agenda-files '("diary.org"))
+                    (org-agenda-span 37)
+                    (org-agenda-start-day "-7d"))
+                   ("/tmp/calendar.ics"))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun xtr-export-ics ()
+    "Make minor adjustments to my exported calendar.
+
+This is not the best way to do it, but it works and that makes me happy."
+    (org-batch-store-agenda-views)
+
+    (with-current-buffer (find-file-noselect "/tmp/calendar.ics")
+      (goto-char (point-min))
+      (while (re-search-forward "OrgMode" nil t)
+        (replace-match "Geoff"))
+      (goto-char (point-min))
+      (while (re-search-forward org-ts-regexp nil t)
+        (replace-match ""))
+      (goto-char (point-min))
+      (while (re-search-forward "DESCRIPTION:–" nil t)
+        (replace-match "DESCRIPTION:"))
+      (goto-char (point-min))
+      (while (re-search-forward "VTODO" nil t)
+        (replace-match "VEVENT"))
+      (save-buffer)))
+#+end_src
+
+#+begin_src shell :tangle no
+  emacs -batch -l ~/.config/emacs/init.el -eval "(xtr-export-ics)"
+#+end_src
+
+
+#+begin_src shell :tangle no
+  curl --user "USERNAME:PASSWORD" -T "/tmp/calendar.ics" "https://myfiles.fastmail.com/share/"
+#+end_src
+
+#+results:
 ** Calendar
 
 #+begin_src emacs-lisp
   (defun actuator-set-location (location)
-
+    "Set the current LOCATION for Emacs."
     (cond ((string-equal (downcase location) "calgary")
            (csetq calendar-latitude [51 02 north])
            (csetq calendar-longitude [114 03 west])
            (csetq calendar-location-name "Calgary"))
-          ((string-equal (downcase location)"st. john's")
+          ((string-equal (downcase location) "st. john's")
            (csetq calendar-latitude [47 28 north])
            (csetq calendar-longitude [52 47 west])
            (csetq calendar-location-name "St. John's"))
@@ -2637,10 +2617,14 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 #+begin_src emacs-lisp
   (declare-function org-save-all-org-buffers "org" nil)
+
   (add-function :after after-focus-change-function
                 #'actuator-org-save-all-org-buffers)
+
   (defun actuator-org-save-all-org-buffers ()
-    (when (fboundp 'org)
+    "Wrapper to check for function before running it."
+
+    (when (fboundp 'org-save-all-org-buffers)
       (org-save-all-org-buffers)))
 #+end_src
 
@@ -3312,6 +3296,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
   (defun diary-sunrise ()
+    "Display sunrise at the correct time in `org-agenda'."
     (eval-when-compile
       (declare-function diary-sunrise-sunset "solar"))
     (let ((dss (diary-sunrise-sunset)))
@@ -3325,6 +3310,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
         (buffer-substring (point-min) (match-beginning 0)))))
 
   (defun diary-sunset ()
+    "Display sunset at the correct time in `org-agenda'."
     (let ((dss (diary-sunrise-sunset))
           start end)
       (with-temp-buffer
@@ -3344,7 +3330,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
   (defun diary-daylight ()
-     "Insert the current amount of daylight for org-agenda."
+     "Insert the current amount of daylight for `org-agenda'."
        (with-temp-buffer
          (insert (diary-sunrise-sunset))
          (goto-char (point-min))
@@ -3457,8 +3443,8 @@ First thing is to set up some variables incase I need to change things. Not real
     "The shell command used to create a new backup repo if needed.")
 
   (defvar actuator-backup-dir "~/Backup/"
-    "Location for the backup directories to be stored. Must exist. Needs
-  a trailing slash and don't not do it.")
+    "Location for the backup directories to be stored.
+  Must exist. Needs a trailing slash.")
 #+end_src
 
 Because ELPA doesn't really work on saving or files in the usual way, I'm using a wrapper function to make sure things get backed up before they're changed. Not really the best situation but oh well.
@@ -3788,18 +3774,25 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
   (csetq mm-decrypt-option 'known)
 
   (declare-function mml-secure-message-sign-pgpmime "mml-sec")
+
   (defun actuator-sign-message ()
+    "Sign email message with GPG key."
     (require 'mml-sec)
     (message "Signing message.")
     (mml-secure-message-sign-pgpmime))
 
   (declare-function mml-secure-message-encrypt-pgpmime "mml-sec")
+
   (defun actuator-encrypt-message ()
+    "Encrypt email message with GPG key."
     (require 'mml-sec)
     (message "Encrypting message.")
     (mml-secure-message-encrypt-pgpmime))
 
   (defun actuator-sign-or-encrypt-message ()
+    "Ask to encrypt, sign or skip and send message.
+
+  Should be added to `message-send-hook'."
     (let ((answer (read-answer "Encrypt or sign message?"
                                '(("encrypt" ?e "Encrypt message.")
                                  ("sign"    ?s "Sign message.")
@@ -3815,14 +3808,15 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 
 #+begin_src emacs-lisp
   (defun actuator-check-for-network-before-sending-message ()
+    "Check if network is up before sending a message."
     (if
-      (condition-case nil
-          (delete-process
-           (make-network-process
-            :name "check-internet-before-email"
-            :host "fastmail.com"
-            :service 80))
-        (error t))
+        (condition-case nil
+            (delete-process
+             (make-network-process
+              :name "check-internet-before-email"
+              :host "fastmail.com"
+              :service 80))
+          (error t))
         (csetq smtpmail-queue-mail t)
       (csetq smtpmail-queue-mail nil)))
 
@@ -4212,6 +4206,7 @@ https://gist.github.com/spacebat/5500966
   (defvar emms-player-list)
 
   (defun actuator-setup-emms ()
+    "Wrapper because `emms' isn't always available."
     (interactive)
     (if (package-installed-p 'emms)
         (progn

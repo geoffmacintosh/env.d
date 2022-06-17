@@ -67,3 +67,27 @@ Archived entries from file /Users/g/env.d/actuator-emacs.org
 Might be a good idea to make sure that it doesn't error out if there's no git dir
 
 This is revision {{{revision}}}.
+
+* DONE Sort on save
+:PROPERTIES:
+:CREATED:  [2022-06-04 Sat 10:54]
+:ARCHIVE_TIME: 2022-06-16 Thu 19:27
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_OLPATH: Emacs
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 15:14]
+:END:
+#+begin_src emacs-lisp
+  (defun xtr-org-sort-top-level-buffer ()
+    "Do the thing correctly."
+    (interactive)
+    (when (eq major-mode 'org-mode))
+      (goto-char (point-min))
+      (org-sort-entries nil ?t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-hook 'before-save-hook #'xtr-org-sort-top-level-buffer nil t)
+#+end_src
