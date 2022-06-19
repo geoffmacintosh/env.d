@@ -2952,7 +2952,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-log-done 'time)
   (csetq org-log-into-drawer t)
   (csetq org-log-reschedule 'time)
-  (csetq org-log-refile 'time)
+  (csetq org-log-refile nil)
   (csetq org-log-redeadline 'time)
   (csetq org-closed-keep-when-no-todo t)
   (csetq org-enforce-todo-dependencies t)
