@@ -8,8 +8,8 @@ Install Emacs via your chosen system. It works with native-compile on both macOS
 Then to actually install stuff evaluate the following source block. If it works (untested currently) it should install a bunch of packages and kill Emacs when it's done. Then you should be good to go!
 
 #+begin_src emacs-lisp :tangle no
-  (require 'ob-tangle)
   (require 'package)
+  (require 'ob-tangle)
   (org-babel-tangle nil (buffer-file-name))
   (load-file (expand-file-name "early-init.el" user-emacs-directory))
   (load-file (expand-file-name "init.el" user-emacs-directory))
@@ -54,8 +54,9 @@ Right now I'm setting Emacs to be [[https://www.emacswiki.org/emacs/EmacsPortabl
   (defvar actuator-original-gc-cons-percentage gc-cons-percentage)
 
   (setq gc-cons-threshold (* 128 1000 1000))
-  (setq gc-cons-percentage 0.5)
+  (setq gc-cons-percentage 2)
   (setq load-prefer-newer t)
+  (setq frame-inhibit-implied-resize t)
 #+end_src
 
 [[*Reset garbage collection][Reset garbage collection]]
@@ -1341,9 +1342,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (when (boundp 'actuator-original-gc-cons-threshold)
       (csetq gc-cons-threshold  actuator-original-gc-cons-threshold))
     (when (boundp 'actuator-original-gc-cons-percentage)
-      (csetq gc-cons-percentage actuator-original-gc-cons-percentage))
+      (csetq gc-cons-percentage actuator-original-gc-cons-percentage)))
 
-    (add-hook 'emacs-startup-hook #'actuator-restore-gc-cons))
+    (add-hook 'emacs-startup-hook #'actuator-restore-gc-cons)
 #+end_src
 
 ** Display buffer
