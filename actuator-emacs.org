@@ -82,8 +82,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
-  ;; (unless noninteractive
-  ;;   (add-hook 'after-init-hook #'actuator-frame-init))
+  (unless noninteractive
+    (add-hook 'after-init-hook #'actuator-frame-init))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -949,14 +949,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 - ~C-x C-k b~ Bind the most recent macro to a keybinding (for the session only).
 - ~M-x insert-kbd-macro~ Insert the most recent macro into the buffer as lisp. That’s how you save it.
 - ~C-x C-k 0-9~ and ~C-x C-k A-Z~ are reserved for keyboard macros
-
-*** Make Checklist
-#+begin_src emacs-lisp
-  (with-eval-after-load 'kmacro
-  (fset 'actuator-make-checklist
-        (kmacro [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d")))
-  ;;(global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
-#+end_src
 
 *** References
 - [[http://ergoemacs.org/emacs/emacs_macro_example.html][Emacs: Keyboard Macro ]][2020-06-08 Mon]
