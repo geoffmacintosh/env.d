@@ -91,3 +91,17 @@ This is revision {{{revision}}}.
 #+begin_src emacs-lisp
   (add-hook 'before-save-hook #'xtr-org-sort-top-level-buffer nil t)
 #+end_src
+
+* DONE Make Checklist
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-06-19 Sun 15:57
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_OLPATH: Emacs/Keyboard Macros
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+#+begin_src emacs-lisp
+  (with-eval-after-load 'kmacro
+  (fset 'actuator-make-checklist
+        (kmacro [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d")))
+  ;;(global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
+#+end_src
