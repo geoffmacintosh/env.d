@@ -3547,7 +3547,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
   (declare-function dired-get-marked-files "dired"
                      (&optional LOCALP ARG FILTER
                      DISTINGUISH-ONE-MARKED ERROR))
-  (declare-function w32-shell-execute "w32fns.c")
+  (declare-function w32-shell-execute "w32fns.c" t t)
 
    (defun open-in-external-app (&optional file)
      "Open the current file or dired marked files in external app.
@@ -3903,7 +3903,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
     "Check if there is an attachment in the message if I claim it."
     (eval-when-compile
       (declare-function message-goto-body "message" (&optional interactive))
-      (declare-function message-y-or-n-p "message" (question show &rest text)))
+      (declare-function message-y-or-n-p "message" t t))
     (save-excursion
       (message-goto-body)
       (when (search-forward-regexp xtr-message-attachment-regexp nil t nil)
