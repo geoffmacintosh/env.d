@@ -2520,42 +2520,51 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                    ((org-agenda-files '("diary.org"))
                     (org-agenda-span 37)
                     (org-agenda-start-day "-7d"))
-                   ("/tmp/calendar.ics"))))
+                   ("~/.cache/calendar.ics"))))
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun xtr-export-ics ()
-    "Make minor adjustments to my exported calendar.
+    (defvar xtr-calendar-file "~/.cache/calendar.ics")
 
-This is not the best way to do it, but it works and that makes me happy."
-    (org-batch-store-agenda-views)
+    (defun xtr-export-ics ()
+      "Make minor adjustments to my exported calendar.
 
-    (with-current-buffer (find-file-noselect "/tmp/calendar.ics")
-      (goto-char (point-min))
-      (while (re-search-forward "OrgMode" nil t)
-        (replace-match "Geoff"))
-      (goto-char (point-min))
-      (while (re-search-forward org-ts-regexp nil t)
-        (replace-match ""))
-      (goto-char (point-min))
-      (while (re-search-forward "DESCRIPTION:–" nil t)
-        (replace-match "DESCRIPTION:"))
-      (goto-char (point-min))
-      (while (re-search-forward "VTODO" nil t)
-        (replace-match "VEVENT"))
-      (save-buffer)))
+    This is not the best way to do it, but it works and makes me happy."
+      (org-batch-store-agenda-views)
+
+      (with-current-buffer (find-file-noselect xtr-calendar-file)
+        (goto-char (point-min))
+        (while (re-search-forward "OrgMode" nil t)
+          (replace-match "Geoff"))
+        (goto-char (point-min))
+        (while (re-search-forward org-ts-regexp nil t)
+          (replace-match ""))
+        (goto-char (point-min))
+        (while (re-search-forward "DESCRIPTION:–" nil t)
+          (replace-match "DESCRIPTION:"))
+        (goto-char (point-min))
+        (while (re-search-forward "VTODO" nil t)
+          (replace-match "VEVENT"))
+        (save-buffer))
+
+      (start-process "Upload ICS" nil "curl" "--user"
+               (format "%s:%s"
+                       (auth-source-pass-get "user"
+                                             "webdav.fastmail.fm")
+                       (auth-source-pass-get 'secret
+                                             "webdav.fastmail.fm"))
+               "-T"
+               (expand-file-name xtr-calendar-file)
+               (format "%s/share/"
+                       (auth-source-pass-get "url"
+                                             "webdav.fastmail.fm"))))
+  (advice-add #'org-agenda-quit :after #'xtr-export-ics)
 #+end_src
 
 #+begin_src shell :tangle no
   emacs -batch -l ~/.config/emacs/init.el -eval "(xtr-export-ics)"
 #+end_src
 
-
-#+begin_src shell :tangle no
-  curl --user "USERNAME:PASSWORD" -T "/tmp/calendar.ics" "https://myfiles.fastmail.com/share/"
-#+end_src
-
-#+results:
 ** Calendar
 
 #+begin_src emacs-lisp
