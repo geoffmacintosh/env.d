@@ -249,8 +249,8 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 
     (custom-theme-set-faces
      'user
-     `(fixed-pitch ((t (:family "SF Mono" :weight light))))
-     `(variable-pitch ((t (:family "Helvetica" :weight light))))
+     ;;`(fixed-pitch ((t (:family "SF Mono" :weight light))))
+     ;;`(variable-pitch ((t (:family "Helvetica" :weight light))))
      `(default ((t (:background ,white
                                 :foreground ,dark
                                 :weight light))))
