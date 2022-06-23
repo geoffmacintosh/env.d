@@ -161,10 +161,10 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
   (unless (and (fboundp 'package-installed-p) noninteractive)
     (require 'package))
 
-  (when noninteractive
-    (defun package-installed-p (_package)
-      nil)
-    (defvar package-selected-packages nil))
+  ;; (when noninteractive
+  ;;   (defun package-installed-p (_package)
+  ;;     nil)
+  ;;   (defvar package-selected-packages nil))
 #+end_src
 
 ** Tangle
