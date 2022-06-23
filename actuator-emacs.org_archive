@@ -105,3 +105,102 @@ This is revision {{{revision}}}.
         (kmacro [?\C-a ?- ?  ?\[ ?  ?\] ?  ?\C-n] 0 "%d")))
   ;;(global-set-key (kbd "C-x C-k 1") #'actuator-make-checklist)
 #+end_src
+
+* DONE Ivy
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-06-23 Thu 13:46
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_OLPATH: Modes
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'counsel)
+    (add-to-list 'package-selected-packages 'ivy)
+    (add-to-list 'package-selected-packages 'swiper))
+
+  (csetq counsel-find-file-ignore-regexp "\\`\\.")
+
+  (when (package-installed-p 'counsel)
+    (eval-when-compile
+      (declare-function counsel-buffer-or-recentf "counsel")
+      (declare-function counsel-find-file "counsel")
+      (declare-function counsel-M-x "counsel")
+      (declare-function counsel-describe-function "counsel")
+      (declare-function counsel-describe-variable "counsel")
+      (declare-function counsel-search "counsel")
+      (declare-function counsel-yank-pop "counsel"))
+    (global-set-key (kbd "C-x C-r") #'counsel-buffer-or-recentf)
+    (global-set-key (kbd "C-x C-f") #'counsel-find-file)
+    (global-set-key (kbd "M-x")     #'counsel-M-x)
+    (global-set-key (kbd "C-h f")   #'counsel-describe-function)
+    (global-set-key (kbd "C-h v")   #'counsel-describe-variable)
+    (global-set-key (kbd "C-c s")   #'counsel-search)
+    (global-set-key (kbd "M-y")     #'counsel-yank-pop))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+      (defvar ivy-minibuffer-map)
+  (when (package-installed-p 'ivy)
+    (eval-when-compile
+      (declare-function ivy-switch-buffer "ivy"))
+    (global-set-key (kbd "C-x b") #'ivy-switch-buffer))
+
+  (with-eval-after-load 'ivy
+    (eval-when-compile
+
+      (declare-function counsel-mode "counsel")
+      (declare-function ivy-mode "ivy")
+      (declare-function ivy-immediate-done "ivy")
+      (declare-function ivy-alt-done "ivy")
+      (declare-function ivy-next-line "ivy"))
+    (counsel-mode +1)
+    (ivy-mode +1)
+    (define-key ivy-minibuffer-map (kbd "<C-return>") #'ivy-immediate-done)
+    (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
+    (define-key ivy-minibuffer-map (kbd "M-y") #'ivy-next-line))
+
+  (csetq ivy-use-ignore-default 'always)
+  (csetq ivy-ignore-buffers '("*elfeed-log*"
+                              "*straight-process*"
+                              "*Completions*"
+                              "*Compile-Log*"))
+  (csetq ivy-use-virtual-buffers nil)
+  (csetq ivy-count-format "(%d/%d) ")
+  (csetq ivy-extra-directories nil)
+#+end_src
+
+
+#+begin_src emacs-lisp :tangle no
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'prescient)
+    (add-to-list 'package-selected-packages 'ivy-prescient))
+
+  (with-eval-after-load 'ivy
+    (when (package-installed-p 'ivy-prescient)
+      (eval-when-compile
+        (declare-function ivy-prescient-mode "ivy-prescient")
+        (declare-function prescient-persist-mode "prescient"))
+      (ivy-prescient-mode +1)
+      (prescient-persist-mode +1)))
+  (csetq prescient-history-length 10000)
+  (csetq prescient-aggressive-file-save t)
+#+end_src
+
+* DONE Org Link Minor Mode
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-06-23 Thu 13:51
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_OLPATH: PIM
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (with-eval-after-load 'package
+   (add-to-list 'package-selected-packages 'org-link-minor-mode))
+  (eval-when-compile
+    (declare-function org-link-minor-mode ))
+  (when (package-installed-p 'org-link-minor-mode)
+    (add-hook 'emacs-lisp-mode-hook #'org-link-minor-mode))
+#+end_src
