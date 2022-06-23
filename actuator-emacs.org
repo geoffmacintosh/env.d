@@ -2959,13 +2959,18 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-special-ctrl-a/e t)
   (csetq org-blank-before-new-entry '((heading         . t)
                                       (plain-list-item . nil)))
-  (csetq org-use-property-inheritance t)
-  (csetq org-modules nil)
-#+end_src
+  (customize-set-variable 'org-use-property-inheritance t)
 
-#+begin_src emacs-lisp :tangle no
-  (when (package-installed-p 'counsel)
-    (defalias 'org-set-tags-command 'counsel-org-tag))
+  (defvar org-modules)
+
+  (with-eval-after-load 'org
+    (delete 'ol-doi org-modules)
+    (delete 'ol-w3m org-modules)
+    (delete 'ol-bibtex org-modules)
+    (delete 'ol-irc org-modules)
+    (delete 'ol-mhe org-modules)
+    (delete 'ol-rmail org-modules)
+    (delete 'ol-gnus org-modules))
 #+end_src
 
 #+begin_src emacs-lisp
