@@ -1450,9 +1450,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'minions))
 
-  (when (and (package-installed-p 'minions) (display-graphic-p))
+  (when (and (locate-library "minions") (display-graphic-p))
     (eval-when-compile
-      (declare-function minions-mode "minions"))
+      (declare-function minions-mode "ext:minions"))
     (minions-mode))
 #+end_src
 
@@ -1795,10 +1795,10 @@ This will only check the display on starting Emacs. If I need to check later (fo
     (add-to-list 'package-selected-packages 'slime)
     (add-to-list 'package-selected-packages 'hippie-expand-slime)
     (csetq inferior-lisp-program "sbcl")
-    (when (package-installed-p "slime")
+    (when (locate-library "slime")
       (require 'slime)
       (add-to-list 'load-path (expand-file-name "contrib" slime-path)))
-    (when (package-installed-p "hippie-expand-slime")
+    (when (locate-library "hippie-expand-slime")
       (add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)))
 #+end_src
 
@@ -2006,7 +2006,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
 #+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'web-mode)
 
-  (when (package-installed-p 'web-mode)
+  (when (locate-library "web-mode")
     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
     (add-to-list 'auto-mode-alist '("\\.jsx?\\'"  . web-mode))
@@ -2288,7 +2288,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'rainbow-mode))
-  (when (and (package-installed-p 'rainbow-mode) (display-graphic-p))
+  (when (and (locate-library "rainbow-mode") (display-graphic-p))
     (eval-when-compile
       (declare-function rainbow-mode "rainbow-mode"))
     (rainbow-mode))
@@ -2820,7 +2820,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (when (package-installed-p 'org-contrib)
+  (when (locate-library "org-contrib")
+    (require 'org-checklist)
     (eval-when-compile
       (declare-function ox-extras-activate "ext:ox-extra"))
     (with-eval-after-load 'ox
@@ -2865,8 +2866,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     (add-to-list 'org-global-properties
                '("Effort_ALL". "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00"))
     (require 'org-habit)
-    (when (package-installed-p 'org-contrib)
-      (require 'org-checklist))
     (require 'org-crypt)
     (org-crypt-use-before-save-magic)
     (org-indent-mode +1)
@@ -3131,7 +3130,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (global-set-key (kbd "C-x p i") #'org-cliplink)
   (with-eval-after-load 'org-capture
 
-    (when (package-installed-p 'org-cliplink)
+    (when (locate-library "org-cliplink")
       (add-to-list 'org-capture-templates
                    '("b" "Bookmark" entry
                      (file "bookmark.org")
@@ -3147,7 +3146,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (with-eval-after-load 'package
    (add-to-list 'package-selected-packages 'org-download))
 
-  (when (package-installed-p 'org-download)
+  (when (locate-library "org-download")
     (with-eval-after-load 'org
       (require 'org-download)))
 
@@ -3176,7 +3175,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (eval-when-compile
     (declare-function org-msg-mode "ext:org-msg" (&optional arg)))
 
-  (when (package-installed-p 'org-msg)
+  (when (locate-library "org-msg")
     (with-eval-after-load 'mu4e
       (org-msg-mode)))
 #+end_src
@@ -3579,7 +3578,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 ** Org-contacts
 #+begin_src emacs-lisp
-  (when (package-installed-p 'org-contrib)
+  (when (locate-library "org-contrib")
     (with-eval-after-load 'org
     (require 'org-contacts)))
   (csetq org-contacts-files '("contacts.org"))
@@ -3637,7 +3636,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
   (add-to-list 'package-selected-packages 'feed-discovery)
 
   (with-eval-after-load 'org-capture
-    (when (package-installed-p 'feed-discovery)
+    (when (locate-library "feed-discovery")
     (add-to-list 'org-capture-templates
                  '("f" "Feed" entry
                    (file+headlines "feed.org" "Feeds")
@@ -3822,7 +3821,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
     (when (executable-find "mu")
       (add-to-list 'package-selected-packages 'mu4e-alert))
     (with-eval-after-load 'mu4e
-      (when (package-installed-p 'mu4e-alert)
+      (when (locate-library "mu4e-alert")
         (declare-function mu4e-alert-set-default-style "ext:mu4e-alert")
         (declare-function mu4e-alert-enable-notifications "ext:mu4e-alert")
         (declare-function mu4e-alert-enable-mode-line-display "ext:mu4e-alert")
@@ -4201,7 +4200,7 @@ https://gist.github.com/spacebat/5500966
   (defun actuator-setup-emms ()
     "Wrapper because `emms' isn't always available."
     (interactive)
-    (if (package-installed-p 'emms)
+    (if (locate-library "emms")
         (progn
           (unless (featurep 'emms)
             (require 'emms-setup)
