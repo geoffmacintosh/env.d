@@ -2372,6 +2372,18 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
+                 `("w" "Work TODO" entry
+                   (file "inbox.org")
+                   "* TODO %? %^g"
+                   :empty-lines 1
+                   :clock-in t
+                   :clock-resume t
+                   :kill-buffer t)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
                  `("t" "Future TODO" entry
                    (file "inbox.org")
                    "* TODO %? %^G%^{Effort}p"
@@ -2454,7 +2466,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("d" "Drug" entry
+                 `("sd" "Drug" entry
                    (file+olp+datetree "logbook.org")
                    "* %^{Drug} at %<%R> :drug: %^{Dose}p\n"
                    :empty-lines 1
@@ -3093,7 +3105,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
     (when (locate-library "org-cliplink")
       (add-to-list 'org-capture-templates
-                   '("b" "Bookmark" entry
+                   '("sb" "Bookmark" entry
                      (file "bookmark.org")
                      "* %(org-cliplink-capture) %^g\n%?"
                      :prepend
@@ -3599,7 +3611,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
   (with-eval-after-load 'org-capture
     (when (locate-library "feed-discovery")
     (add-to-list 'org-capture-templates
-                 '("f" "Feed" entry
+                 '("sf" "Feed" entry
                    (file+headlines "feed.org" "Feeds")
                    "* [[%(actuator-get-feed)][%^{Title}]] %^g
   (yank)\n%?"
