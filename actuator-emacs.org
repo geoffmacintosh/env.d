@@ -2235,7 +2235,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (add-to-list 'package-selected-packages 'etc-sudoers-mode)))
 #+end_src
 
-* PIM
+* Org
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
@@ -2337,20 +2337,18 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("t" "TODO"))
+                 '("m" "Media"))
     (add-to-list 'org-capture-templates
-                 '("m" "Media")))
+                 '("s" "Extra")))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("l" "Log" entry
-                   (file+olp+datetree "log.org")
+                 `("sl" "Log" entry
+                   (file+olp+datetree "logbook.org")
                    "* %?"
                    :empty-lines 1
-                   :clock-in t
-                   :clock-resume t
                    :kill-buffer t)))
 #+end_src
 
@@ -2358,7 +2356,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("tp" "Impromtu current task" entry
+                 `("c" "Current TODO" entry
                    (file "inbox.org")
                    "* TODO %? %^G"
                    :empty-lines 1
@@ -2370,31 +2368,32 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("tt" "TODO" entry
+                 `("t" "Future TODO" entry
                    (file "inbox.org")
-                   "* TODO %?"
+                   "* TODO %? %^G%^{Effort}p"
                    :empty-lines 1)))
 #+end_src
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (defun actuator-date-stamp ()
-
+(defun actuator-date-stamp ()
+  "Pleasant time string."
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
 
-    (add-to-list 'org-capture-templates
-                 `("j" "Journal" entry
-                   (file+olp+datetree "journal.org.gpg")
-                   "* %(actuator-date-stamp)\n%?"
-                   :empty-lines 1)))
-#+end_src
-
-#+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("tw" "Work" entry
+                 `("sj" "Journal" entry
+                   (file+olp+datetree "journal.org.gpg")
+                   "* %(actuator-date-stamp)\n%?"
+                   :empty-lines 1
+                   :kill-buffer t)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("w" "Work" entry
                    (file+headline "sas.org" "Tasks")
-                   "* TODO %?"
+                   "* TODO %? %^G"
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
@@ -2402,16 +2401,26 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("tn" "Note" entry
+                 `("sn" "Note" entry
                    (file "inbox.org")
-                   "* TODO Note for %U \n- %?"
+                   "* %?"
                    :empty-lines 1)))
 #+end_src
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 '("s" "Inventory" entry
+                 '("sc" "Changelog" entry
+                   (file+olp+datetree "changelog.org")
+                   "* %?\n %a"
+                   :empty-lines 1
+                   :kill-buffer: 1)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 '("ss" "Inventory" entry
                    (file+headline "inventory.org" "Unapproved")
                    "* %^{Specific item}%^{Purchased_Date|N/A}p%^{Price}p%^{Home_Location}p%^{Purchased_Location}p%^{Provides}p\n%?"
                    :empty-lines 1
@@ -2437,6 +2446,17 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("d" "Drug" entry
+                   (file+olp+datetree "logbook.org")
+                   "* %^{Drug} at %<%R> :drug: %^{Dose}p\n"
+                   :empty-lines 1
+                   :kill-buffer t)))
+#+end_src
+
 ** Export ics
 :PROPERTIES:
 :CREATED:  [2022-06-15 Wed 13:01]
