@@ -1194,6 +1194,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (csetq password-cache-expiry 600)
 #+end_src
 
+#+begin_src emacs-lisp
+  (require 'password-store)
+#+end_src
+
 ** Project
 #+begin_src emacs-lisp
   (defvar package-selected-packages)
