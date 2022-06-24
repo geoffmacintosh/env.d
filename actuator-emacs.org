@@ -3140,7 +3140,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 ** Org publish org
 
 #+begin_src emacs-lisp
-    (defvar org-export-filter-timestamp-functions)
+  (defvar org-export-filter-timestamp-functions)
+
   (defun actuator-filter-timestamp (string backend _comm)
     "Remove <> around time-stamps.
   I actually don't know what STRING is. BACKEND can be some version
@@ -3153,7 +3154,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
   (with-eval-after-load 'ox
     (require 'ox-icalendar)
-
     (add-to-list 'org-export-filter-timestamp-functions
                  #'actuator-filter-timestamp))
 #+end_src
@@ -3993,6 +3993,7 @@ In order to open epub files, doc-view needs mutool:
 
   (csetq doc-view-resolution 150)
 #+end_src
+
 https://gist.github.com/spacebat/5500966
 
 ** Eshell
