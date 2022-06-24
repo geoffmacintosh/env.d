@@ -2764,7 +2764,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
          (directory-files actuator-directory t "^[a-z].*\\.org$")))
 
   (csetq org-refile-targets '((org-agenda-files               :maxlevel . 9)
-                              (actuator-opened-buffer-files   :maxlevel . 9)
+                              ;;(actuator-opened-buffer-files   :maxlevel . 9)
                               (actuator-org-refile-candidates :maxlevel . 9)))
 #+end_src
 
