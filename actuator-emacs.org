@@ -3182,7 +3182,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       :base-extension "org"
       ;;:html-link-home "/"
       ;;:html-link-up nil
-      :publishing-directory "~/Desktop/html/"
+      :publishing-directory "~/.cache/org-publish/"
       :publishing-function org-html-publish-to-html
       :with-author t
       :with-creator nil
