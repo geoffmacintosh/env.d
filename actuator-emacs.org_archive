@@ -204,3 +204,19 @@ This is revision {{{revision}}}.
   (when (package-installed-p 'org-link-minor-mode)
     (add-hook 'emacs-lisp-mode-hook #'org-link-minor-mode))
 #+end_src
+
+* DONE Mastodon
+:PROPERTIES:
+:CREATED:  [2022-05-01 Sun 19:06]
+:ARCHIVE_TIME: 2022-06-23 Thu 21:09
+:ARCHIVE_FILE: ~/env.d/actuator-emacs.org
+:ARCHIVE_OLPATH: Apps
+:ARCHIVE_CATEGORY: actuator-emacs
+:END:
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'mastodon))
+  (csetq mastodon-active-user "mac_into_sh")
+  (csetq mastodon-instance-url "https://mastodon.social")
+#+end_src

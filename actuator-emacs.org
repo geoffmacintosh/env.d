@@ -3920,18 +3920,6 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
     (csetq browse-url-generic-args '("--background")))
 #+end_src
 
-** Mastodon
-:PROPERTIES:
-:CREATED:  [2022-05-01 Sun 19:06]
-:END:
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'package
-    (add-to-list 'package-selected-packages 'mastodon))
-  (csetq mastodon-active-user "mac_into_sh")
-  (csetq mastodon-instance-url "https://mastodon.social")
-#+end_src
-
 ** ERC
 #+begin_src emacs-lisp
   (defun actuator-twitch-start-irc ()
