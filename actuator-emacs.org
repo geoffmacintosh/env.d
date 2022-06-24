@@ -1469,30 +1469,34 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (eval-when-compile
     (declare-function icomplete-fido-exit "icomplete" (force)))
 
-  (csetq icomplete-scroll t)
-  (csetq icomplete-show-matches-on-no-input t)
-  (csetq read-buffer-completion-ignore-case t)
-  (csetq completion-ignore-case t)
-  (csetq read-file-name-completion-ignore-case t)
+  (customize-set-variable 'icomplete-scroll t)
+  (customize-set-variable 'icomplete-show-matches-on-no-input t)
+  (customize-set-variable 'read-buffer-completion-ignore-case t)
+  (customize-set-variable 'completion-ignore-case t)
+  (customize-set-variable 'read-file-name-completion-ignore-case t)
 
   (defun xtr-recentf-completing-read ()
     "Interactive completion on recentf files."
-      (interactive)
-      (let ((file (completing-read
-                   "Choose recent file: " recentf-list nil t)))
-        (when file
-          (find-file file))))
+    (interactive)
+    (let ((file (completing-read
+                 "Choose recent file: " recentf-list nil t)))
+      (when file
+        (find-file file))))
 
-  (unless (ignore-error (eq counsel-mode t))
-    (fido-mode +1)
-    (icomplete-vertical-mode +1)
-    (define-key icomplete-fido-mode-map (kbd "C-<return>") #'icomplete-fido-exit)
-      (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read))
+  (defun xtr-kill-whole-line ()
+    "Kill the whole line, regardless of point location."
+    (interactive)
+    (move-beginning-of-line nil)
+    (kill-line))
+
+  (fido-mode +1)
+  (icomplete-vertical-mode +1)
+  (define-key icomplete-fido-mode-map (kbd "C-<return>")
+              #'icomplete-fido-exit)
+  (define-key icomplete-fido-mode-map (kbd "M-k")
+              #'xtr-kill-whole-line)
+  (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read)
 #+end_src
-
-- faces
-   - highlight
-   - icomplete-selected-match
 
 ** Windmove
 #+begin_src emacs-lisp
