@@ -139,6 +139,16 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;;; Code:
 #+end_src
 
+** Non-interactive
+:PROPERTIES:
+:CREATED:  [2022-06-24 Fri 11:23]
+:END:
+#+begin_src emacs-lisp
+  (when noninteractive
+    (setq gc-cons-percentage 1)
+     (defvar package-selected-packages nil))
+#+end_src
+
 ** Csetq
 The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things worse. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
 
@@ -160,11 +170,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 #+begin_src emacs-lisp
   (unless (and (fboundp 'package-installed-p) noninteractive)
     (require 'package))
-
-  ;; (when noninteractive
-  ;;   (defun package-installed-p (_package)
-  ;;     nil)
-  ;;   (defvar package-selected-packages nil))
 #+end_src
 
 ** Tangle
