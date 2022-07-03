@@ -166,7 +166,7 @@ The wine executable used by proton can automatically set the niceness of a proce
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
-#+begin_src conf :tangle (if *linux* "/sudo::/etc/modprobe.d/default.conf" "no") :comments no
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/modprobe.d/default.conf" "no") :comments no
   options snd_hda_intel index=1
 #+end_src
 * Automatic login
