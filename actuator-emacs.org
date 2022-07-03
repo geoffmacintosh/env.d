@@ -2329,7 +2329,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (unless (file-exists-p diary-file)
     (make-empty-file diary-file t))
 #+end_src
-** Capture Templates
+** Capture Templates                                              :noexport:
 #+begin_src emacs-lisp
   (defvar org-capture-templates)
 #+end_src
@@ -2481,7 +2481,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 - Refiled on [2022-06-15 Wed 15:49]
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defvar org-agenda-custom-commands)
 
   (with-eval-after-load 'org-agenda
@@ -2493,7 +2493,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                    ("~/.cache/calendar.ics"))))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
     (defvar xtr-calendar-file "~/.cache/calendar.ics")
 
     (defun xtr-export-ics ()
@@ -2515,7 +2515,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
         (goto-char (point-min))
         (while (re-search-forward "VTODO" nil t)
           (replace-match "VEVENT"))
-        (save-buffer))
+        (save-buffer)
+        (kill-buffer))
 
       (start-process "Upload ICS" nil "curl" "--user"
                (format "%s:%s"
@@ -2528,12 +2529,77 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                (format "%s/share/"
                        (auth-source-pass-get "url"
                                              "webdav.fastmail.fm"))))
-  (advice-add #'org-agenda-quit :after #'xtr-export-ics)
+  ;;(advice-add #'org-agenda-quit :after #'xtr-export-ics)
 #+end_src
 
 #+begin_src shell :tangle no
   emacs -batch -l ~/.config/emacs/init.el -eval "(xtr-export-ics)"
 #+end_src
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'icalendar-export-sexp-enumerate-all t)
+  (customize-set-variable 'org-icalendar-include-bbdb-anniversaries t)
+  (customize-set-variable 'org-icalendar-include-sexps t)
+  (customize-set-variable 'org-icalendar-include-body nil)
+
+  (eval-when-compile
+    (declare-function org-icalendar-combine-agenda-files "ox-icalendar"
+                      (&optional async)))
+
+  (defun xtr-create-and-upload-ical ()
+    "Generate an icalendar file and upload it to my server."
+    (message "Creating ical file...")
+    (let ((inhibit-message t))
+      (org-icalendar-combine-agenda-files))
+    (let ((inhibit-message t))
+      (xtr-upload-ical))
+    (message "Creating ical file... Done. Uploading file in background."))
+
+  (defvar org-icalendar-combined-agenda-file)
+
+  (defun xtr-upload-ical ()
+    "Upload ical file to WebDAV."
+    (start-process "Upload .ics to webDAV" nil "curl" "--user"
+                   (format "%s:%s"
+                           (auth-source-pass-get "user"
+                                                 "webdav.fastmail.fm")
+                           (auth-source-pass-get 'secret
+                                                 "webdav.fastmail.fm"))
+                   "-T"
+                   (expand-file-name org-icalendar-combined-agenda-file)
+                   (format "%s/share/"
+                           (auth-source-pass-get "url"
+                                                 "webdav.fastmail.fm"))))
+
+  (advice-add #'org-agenda-quit :after #'xtr-create-and-upload-ical)
+#+end_src
+
+** Secure upload details                                             :crypt:
+:PROPERTIES:
+:CREATED:  [2022-06-30 Thu 15:42]
+:ID:       2022-June-30-1552-17494218
+:END:
+
+-----BEGIN PGP MESSAGE-----
+
+hQIMA5qpMGzNkOQvAQ/9FoNNQHN4oxSU3JikBrjk48cfrTL8VHnFhflERpaaMWjV
+rhz3+ra98yhZSLH+9VcMFnrf+fr/NlecgxylvhEMvGATU3x9hXzW8CgT4afRkwuF
+mLeUsKfw4rDWCZWjOseQhaRxf2CzWOP+1uQJprQesIBPV4OUmHZpIWSgAr9M6TDy
+Eqy3HJT0zQ4nQZEQDsjZqnQ1uWjvlXxQIulyHnGDeAXuTLVo6o1Dq1esMh7FJF2U
+yUFkKiIENZ7KzIi4vX3y5ySYlpQx14FbbP/d2hPsfLHeyctEkzhN3iageCs+Osr5
+kaTIxmdrS0xYNd4OZjYnvbBrbanTRI1Rq/SR93XJSafpWlIwFFCbAuouFtJH5z+2
+0E3tfHmoXa7JG1qG93PIQBQ34jn2rNYC71kHf7HLrjtFGCmfPmhDErsN+lUz2l43
+cFFomoJ6Ab3LbpGbipXK2om9EqOV6AToTXJvrXsU3aq7umzQrcwJFtJie4iRB9Dz
+FmezRN/eqPSUzflirNlbSo9fmpRMbQGGH+j+h9gOGxhfwenw5QYUdFWlLIhru7yN
+9G3RgB5600T8hzDtlrIXhaH+keOzu0dU86VRrJCzC+H+VYkMZw2JDqsRric3o410
+Yc9KNCcHVi37X3pk7g1rDUtvGA62isEdd0mQIRZFmdP2aPd6Nki8G3WWlzLSWcHS
+wBgBNVfb9aljoPqKopcg6+xrDUx0UJOAMeiwSPrFpQbENYcRTDL7RAr2xRmzuxM1
+aXJRodW1xE6nLyJGvInWHxFiKdT840QRQTzB3S/CZHuufln/uRnSGh0HZxuRLKKx
+aojw2T5TS4mvdy34O84lJlkR5tJXbvq3idSnDCOsPbotvsihkrSOtcdtoKEDCm9/
+Kodc0xVmmtbdSqCh2yqFk9xBqiNFaVGHd3j0vVavpiAV1IIrnWWgjpHsCqKOhoKE
+6CwWDfBb1ktqAFNx/pbA5txoJRxbHewhvSA=
+=llbL
+-----END PGP MESSAGE-----
 
 ** Calendar
 
@@ -2638,67 +2704,82 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
 #+begin_src emacs-lisp
   (defvar org-agenda-custom-commands)
-   (with-eval-after-load 'org-agenda
-     (add-to-list 'org-agenda-custom-commands
-                  '("u" "Unscheduled TODOs"
-                    ((todo ""
-                           ((org-agenda-overriding-header "\nUnscheduled TODOs")
-                            (org-agenda-skip-function
-                             '(org-agenda-skip-entry-if
-                               'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
-                            (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+  (with-eval-after-load 'org-agenda
+    (add-to-list 'org-agenda-custom-commands
+                 '("u" "Unscheduled TODOs"
+                   ((todo ""
+                          ((org-agenda-overriding-header "\nUnscheduled TODOs")
+                           (org-agenda-skip-function
+                            '(org-agenda-skip-entry-if
+                              'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
 
-     (add-to-list 'org-agenda-custom-commands
-                  '("b" "Purchase List" tags "+buy"
-                    ((org-overriding-columns-format "%20ITEM %PRICE")
-                     (org-agenda-view-columns-initially t))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("b" "Purchase List" tags "+buy"
+                   ((org-overriding-columns-format "%20ITEM %PRICE")
+                    (org-agenda-view-columns-initially t))))
 
-     (add-to-list 'org-agenda-custom-commands
-                  '("v" . "Recurring Views"))
+    (add-to-list 'org-agenda-custom-commands
+                 '("v" . "Recurring Views"))
 
-     (add-to-list 'org-agenda-custom-commands
-                  '("vd" "Daily View"
-                    ((agenda "")
-                     (todo "NEXT"))
-                    ((org-agenda-span 'day))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("vd" "Daily View"
+                   ((agenda "")
+                    (todo "NEXT"))
+                   ((org-agenda-span 'day))))
 
-     (add-to-list 'org-agenda-custom-commands
-                  '("vw" "Weekly View"
-                    ((agenda "")
-                     (todo "WAITING")
-                     (todo "PROJECT")
-                     (org-agenda-list-stuck-projects))
-                    ((org-agenda-span 7)
-                     (org-agenda-start-day "+0d")
-                     (org-agenda-start-on-weekday nil)
-                     (org-agenda-start-with-log-mode nil)
-                     (org-agenda-start-with-clockreport-mode nil)
-                     (org-agenda-use-time-grid nil)
-                     (org-habit-show-habits nil))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("vw" "Weekly View"
+                   ((agenda "")
+                    (todo "WAITING")
+                    (todo "PROJECT")
+                    (org-agenda-list-stuck-projects))
+                   ((org-agenda-span 7)
+                    (org-agenda-start-day "+0d")
+                    (org-agenda-start-on-weekday nil)
+                    (org-agenda-start-with-log-mode nil)
+                    (org-agenda-start-with-clockreport-mode nil)
+                    (org-agenda-use-time-grid nil)
+                    (org-habit-show-habits nil))))
 
-     (add-to-list 'org-agenda-custom-commands
-                  '("vm" "Monthly View"
-                    ((todo "SOMEDAY"))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("vm" "Monthly View"
+                   ((todo "SOMEDAY"))))
 
-     (add-to-list 'org-agenda-custom-commands
-                  '("A" "Candidate trees for archiving" tags "-NOARCHIVE"
-                    ((org-agenda-overriding-header "Candidate tasks for archiving")
-                     (org-agenda-skip-function 'actuator-skip-non-archivable-tasks))))
+    (add-to-list 'org-agenda-custom-commands
+                 '("A" "Candidate trees for archiving" tags "-NOARCHIVE"
+                   ((org-agenda-overriding-header "Candidate tasks for archiving")
+                    (org-agenda-skip-function 'actuator-skip-non-archivable-tasks))))
 
-     ;; (add-to-list 'org-agenda-custom-commands
-     ;;              '("p" "Daily Personal Mail"
-     ;;                ((agenda "")
-     ;;                 (todo "TODO"))
-     ;;                ((org-agenda-span 'day)
-     ;;                 (org-agenda-remove-tags t)
-     ;;                 (org-habit-preceding-days 7)
-     ;;                 (org-habit-following-days 3)
-     ;;                 (org-agenda-block-separator nil)
-     ;;                 (org-agenda-show-current-time-in-grid nil)
-     ;;                 (org-agenda-start-with-log-mode nil)
-     ;;                 (org-agenda-start-with-clockreport-mode nil))
-     ;;                ("~/agenda.html")))
-)
+    ;;(setq org-agenda-custom-commands nil)
+    (add-to-list 'org-agenda-custom-commands
+                 '("vc" "Weekly Calendar"
+                   ((agenda ""))
+                   ((org-agenda-use-time-grid nil)
+                    (org-agenda-start-day "sun")
+                    (org-agenda-start-on-weekday 1)
+                    (org-habit-show-habits nil)
+                    (org-agenda-remove-tags t)
+                    (org-agenda-files '("~/org/diary.org"))
+                    (org-agenda-skip-function '(org-agenda-skip-entry-if
+                              'scheduled 'deadline 'todo '("TODO ""WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                    (org-agenda-span 7))))
+
+
+    ;; (add-to-list 'org-agenda-custom-commands
+    ;;              '("p" "Daily Personal Mail"
+    ;;                ((agenda "")
+    ;;                 (todo "TODO"))
+    ;;                ((org-agenda-span 'day)
+    ;;                 (org-agenda-remove-tags t)
+    ;;                 (org-habit-preceding-days 7)
+    ;;                 (org-habit-following-days 3)
+    ;;                 (org-agenda-block-separator nil)
+    ;;                 (org-agenda-show-current-time-in-grid nil)
+    ;;                 (org-agenda-start-with-log-mode nil)
+    ;;                 (org-agenda-start-with-clockreport-mode nil))
+    ;;                ("~/agenda.html")))
+    )
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3152,7 +3233,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     (with-eval-after-load 'mu4e
       (org-msg-mode)))
 #+end_src
-
 ** Org publish org
 
 #+begin_src emacs-lisp
@@ -3210,7 +3290,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       :html-viewport nil
       :recursive nil
       :with-toc nil
-      :section-numbers nil
       :with-broken-links mark
       :html-doctype "html5"
       :html-html5-fancy t
@@ -3229,14 +3308,28 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-export-org ()
-    "Build org html."
-    (interactive)
-    (require 'ox-publish)
-    (eval-when-compile
-      (declare-function org-publish "ox-publish"))
-    (org-publish "org" nil t))
-  (global-set-key (kbd "C-c p") #'actuator-export-org)
+  (with-eval-after-load
+      'ox-publish
+    (add-to-list 'org-publish-project-alist
+                 `("actuator-to-org"
+                   :base-directory ,actuator-directory
+                   :base-extension "org"
+                   :publishing-directory "~/.cache/org-publish-actuator"
+                   :publishing-function org-org-publish-to-org
+                   :with-author nil
+                   :with-creator nil
+                   :with-date t
+                   :with-title t
+                   :section-numbers t
+                   :with-drawers nil
+                   :with-toc t
+                   :exclude-tags "noexport"
+                   :with-tasks nil
+                   :with-todo-keywords nil
+                   :with-properties nil
+                   :with-planning nil
+                   :with-inlinetasks nil
+                   )))
 #+end_src
 
 #+begin_src emacs-lisp
