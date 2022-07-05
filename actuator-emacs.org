@@ -2574,6 +2574,16 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (advice-add #'org-agenda-quit :after #'xtr-create-and-upload-ical)
 #+end_src
 
+#+begin_src emacs-lisp
+  (csetq org-icalendar-use-scheduled '(event-if-not-todo))
+  (csetq org-icalendar-use-deadline '(event-if-not-todo todo-due))
+  (csetq org-icalendar-include-todo nil)
+  (csetq org-icalendar-include-sexps t)
+  (csetq org-icalendar-store-UID t)
+  (csetq org-icalendar-exclude-tags '("habit" "noexport" "weather"))
+  ;;(csetq org-icalendar-combined-agenda-file "~/Desktop/org.ics")
+#+end_src
+
 ** Secure upload details                                             :crypt:
 :PROPERTIES:
 :CREATED:  [2022-06-30 Thu 15:42]
@@ -2792,7 +2802,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7)
   (csetq org-agenda-todo-list-sublevels t)
-  (csetq org-agenda-sticky t)
+  ;;(csetq org-agenda-sticky t)
   (csetq org-agenda-dim-blocked-tasks t)
   (csetq org-list-indent-offset 1)
   (defvar org-outline-regexp)
@@ -3135,18 +3145,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
                             ("Australia/Sydney" "Sydney")
                             ("America/Edmonton" "Calgary")
                             ("America/St_Johns" "St. John's")))
-#+end_src
-
-** Org iCalendar
-
-#+begin_src emacs-lisp
-  (csetq org-icalendar-use-scheduled '(event-if-not-todo))
-  (csetq org-icalendar-use-deadline '(event-if-not-todo todo-due))
-  (csetq org-icalendar-include-todo nil)
-  (csetq org-icalendar-include-sexps t)
-  (csetq org-icalendar-store-UID t)
-  (csetq org-icalendar-exclude-tags '("habit" "noexport" "weather"))
-  (csetq org-icalendar-combined-agenda-file "~/Desktop/org.ics")
 #+end_src
 
 ** Org Randomnote
