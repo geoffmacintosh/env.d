@@ -511,7 +511,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
  #+end_src
 
 ** Drop-in functions
-*** Auto-create missing directories                                 :emacs:
+*** Auto-create missing directories
 :PROPERTIES:
 :CREATED:  [2022-06-12 Sun 16:38]
 :END:
@@ -770,6 +770,19 @@ Autorevert via notify is supposed to be much lower power than polling. It should
          '((org-document-title :height 1.0))))
 
   (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-normalize-face-height)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun xtr-minibuffer-setup ()
+    ""
+    (setq gc-cons-percentage 0.5))
+
+  (defun xtr-minibuffer-exit ()
+    "Thing."
+    (setq gc-cons-percentage actuator-original-gc-cons-percentage))
+
+  (add-hook 'minibuffer-setup-hook #'xtr-minibuffer-setup -90)
+  (add-hook 'minibuffer-exit-hook #'xtr-minibuffer-exit 90)
 #+end_src
 ** Hippie expand
 
@@ -1477,6 +1490,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (customize-set-variable 'icomplete-show-matches-on-no-input t)
   (customize-set-variable 'read-buffer-completion-ignore-case t)
   (customize-set-variable 'completion-ignore-case t)
+  (customize-set-variable
+   'completion-pcm-complete-word-inserts-delimiters t)
+  (customize-set-variable 'read-answer-short t)
   (customize-set-variable 'read-file-name-completion-ignore-case t)
 
   (defun xtr-recentf-completing-read ()
@@ -1879,7 +1895,6 @@ This will only check the display on starting Emacs. If I need to check later (fo
   (add-hook 'nov-mode-hook 'actuator-novel-setup)
 #+end_src
 
-
 ** Transient
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
@@ -2239,6 +2254,15 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (add-to-list 'package-selected-packages 'etc-sudoers-mode)))
 #+end_src
 
+** Kmacro
+:PROPERTIES:
+:CREATED:  [2022-07-13 Wed 13:26]
+:END:
+#+begin_src emacs-lisp
+  (require 'kmacro)
+  (defalias 'kmacro-insert-macro 'insert-kbd-macro)
+  (define-key kmacro-keymap (kbd "I") #'kmacro-insert-macro)
+#+end_src
 * Org
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
@@ -2309,6 +2333,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
     (defvar org-agenda-mode-map)
     (define-key org-agenda-mode-map (kbd "T") #'org-agenda-todo-yesterday))
 #+end_src
+
 ** Open org-links in new window or not
 #+begin_src emacs-lisp
   (csetq org-link-frame-setup '((vm . vm-visit-folder-other-frame)
@@ -2538,7 +2563,6 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 #+begin_src emacs-lisp
   (customize-set-variable 'icalendar-export-sexp-enumerate-all t)
-  (customize-set-variable 'org-icalendar-include-bbdb-anniversaries t)
   (customize-set-variable 'org-icalendar-include-sexps t)
   (customize-set-variable 'org-icalendar-include-body nil)
 
@@ -2581,7 +2605,25 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (csetq org-icalendar-include-sexps t)
   (csetq org-icalendar-store-UID t)
   (csetq org-icalendar-exclude-tags '("habit" "noexport" "weather"))
-  ;;(csetq org-icalendar-combined-agenda-file "~/Desktop/org.ics")
+#+end_src
+
+** BBDB
+:PROPERTIES:
+:CREATED:  [2022-07-11 Mon 12:57]
+:END:
+
+#+begin_src emacs-lisp
+  (add-to-list 'package-install-selected-packages 'bbdb)
+  (add-to-list 'package-install-selected-packages 'bbdb-vcard)
+#+end_src
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'bbdb-image-path
+                          (expand-file-name "data/bbdb-vcard/"
+                                            org-directory))
+  (customize-set-variable 'bbdb-image 'fl-name)
+  (customize-set-variable 'org-icalendar-include-bbdb-anniversaries t)
+  (customize-set-variable 'bbdb-file (expand-file-name "data/bbdb.el" org-directory))
 #+end_src
 
 ** Secure upload details                                             :crypt:
@@ -2699,9 +2741,14 @@ Kodc0xVmmtbdSqCh2yqFk9xBqiNFaVGHd3j0vVavpiAV1IIrnWWgjpHsCqKOhoKE
 
 The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJECT" to match projects. The escaped quotes are needed.
 
+#+begin_src emacs-lisp :tangle no
+    (csetq org-stuck-projects
+           '("+TODO=\"PROJECT\"" ("TODO") nil ""))
+#+end_src
+
 #+begin_src emacs-lisp
     (csetq org-stuck-projects
-           '("+TODO=\"PROJECT\"" ("TODO" "NEXT") nil ""))
+           '("+project/-SOMEDAY-DONE" ("TODO") nil ""))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2714,14 +2761,20 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
 #+begin_src emacs-lisp
   (defvar org-agenda-custom-commands)
+
+  (eval-when-compile
+    (declare-function org-agenda-skip-entry-if "org-agenda"
+                      (&rest conditions)))
+
   (with-eval-after-load 'org-agenda
     (add-to-list 'org-agenda-custom-commands
                  '("u" "Unscheduled TODOs"
                    ((todo ""
-                          ((org-agenda-overriding-header "\nUnscheduled TODOs")
+                          ((org-agenda-overriding-header
+                            "\nUnscheduled TODOs")
                            (org-agenda-skip-function
                             '(org-agenda-skip-entry-if
-                              'timestamp 'todo '("WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                              'timestamp 'todo '("WAITING" SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                            (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
 
     (add-to-list 'org-agenda-custom-commands
@@ -2735,8 +2788,15 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (add-to-list 'org-agenda-custom-commands
                  '("vd" "Daily View"
                    ((agenda "")
-                    (todo "NEXT"))
+                    (todo ""
+                          ((org-agenda-skip-function #'xtr-org-agenda-priority-a)
+                           (org-agenda-overriding-header "Today's Priority #A
+              tasks: "))))
                    ((org-agenda-span 'day))))
+
+    (defun xtr-org-agenda-priority-a ()
+      "Show Priority A items."
+      (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]"))
 
     (add-to-list 'org-agenda-custom-commands
                  '("vw" "Weekly View"
@@ -2772,7 +2832,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                     (org-agenda-remove-tags t)
                     (org-agenda-files '("~/org/diary.org"))
                     (org-agenda-skip-function '(org-agenda-skip-entry-if
-                              'scheduled 'deadline 'todo '("TODO ""WAITING" "NEXT" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                                                'scheduled 'deadline 'todo '("TODO ""WAITING" SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                     (org-agenda-span 7))))
 
 
@@ -2797,7 +2857,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
-         '((sequence "TODO(t)" "NEXT(n!)" "WAITING(w@)" "SOMEDAY(s!)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
+         '((sequence "TODO(t)" "WAITING(w@)" "SOMEDAY(s!)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
   (csetq org-agenda-window-setup 'current-window)
   (csetq org-agenda-restore-windows-after-quit t)
   (csetq org-agenda-span 7)
@@ -3685,7 +3745,7 @@ https://helpdeskheadesk.net/2022-03-13/
     (setq org-link-parameters (delq (assoc "file+emacs" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "rmail" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "news" org-link-parameters) org-link-parameters))
-    (setq org-link-parameters (delq (assoc "bbdb" org-link-parameters) org-link-parameters))
+    ;;(setq org-link-parameters (delq (assoc "bbdb" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "w3m" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "mhe" org-link-parameters) org-link-parameters)))
 #+end_src
@@ -3975,7 +4035,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 | xtr-message-check-attachment |
 
 ** Web
-*** Set up browsing handlers                                       :ignore:
+*** Set up browsing handlers
 Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as a web browser much, but I do use a lot of links in Org-mode documents. If something isn't set here, it opens the URL in the default manner, which in my case is Safari ([[https://developer.apple.com/safari/technology-preview/][Technology Preview]]).
 
 #+begin_src emacs-lisp :tangle no
@@ -3988,7 +4048,7 @@ Customizing the browse-url handlers is remarkably powerful. I don't use Emacs as
   (csetq eww-history-limit 1000)
 #+end_src
 
-*** Handle video urls                                              :ignore:
+*** Handle video urls
 I want video links to be opened in MPV. This helps my battery life as well as my personal life because I don't have to visit YouTube. This requires [[https://mpv.io][MPV]] to be installed, which is best installed via [[http://brew.sh][Brew]] on macOS. I've tried to use [[https://nixos.org/download.html][Nix]], but it doesn't work well.
 
 #+begin_src emacs-lisp
@@ -3998,7 +4058,7 @@ I want video links to be opened in MPV. This helps my battery life as well as my
     (call-process "mpv" nil 0 nil url))
 #+end_src
 
-*** Simple HTML renderer                                           :ignore:
+*** Simple HTML renderer
 SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts and Nov.el books. Normally it wraps at the page width, but that can be adjusted.
 
 #+begin_src emacs-lisp
@@ -4009,7 +4069,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
   (csetq shr-cookie-policy nil)
 #+end_src
 
-*** Open links in background                                       :ignore:
+*** Open links in background
 
 #+begin_src emacs-lisp
   (csetq browse-url-secondary-browser-function 'eww)
@@ -4113,10 +4173,12 @@ https://gist.github.com/spacebat/5500966
 #+begin_src emacs-lisp
   (eval-when-compile
     (declare-function eshell-smart-initialize "em-smart"))
+  (defvar eshell-modules-list)
 
   (with-eval-after-load 'eshell
     (require 'em-smart)
-    (eshell-smart-initialize))
+    (eshell-smart-initialize)
+    (add-to-list 'eshell-modules-list 'eshell-elecslash))
 #+end_src
 
 - [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
