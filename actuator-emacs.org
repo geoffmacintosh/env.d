@@ -2774,7 +2774,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                             "\nUnscheduled TODOs")
                            (org-agenda-skip-function
                             '(org-agenda-skip-entry-if
-                              'timestamp 'todo '("WAITING" SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                            (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
 
     (add-to-list 'org-agenda-custom-commands
@@ -2832,7 +2832,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                     (org-agenda-remove-tags t)
                     (org-agenda-files '("~/org/diary.org"))
                     (org-agenda-skip-function '(org-agenda-skip-entry-if
-                                                'scheduled 'deadline 'todo '("TODO ""WAITING" SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+                                                'scheduled 'deadline 'todo '("TODO ""WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                     (org-agenda-span 7))))
 
 
