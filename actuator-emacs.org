@@ -178,15 +178,10 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 :END:
 
  #+begin_src emacs-lisp
-  (let ((home-org "~/org")
-        (portable-org (expand-file-name "org" user-emacs-directory)))
-    (defvar org-directory
-      (if (file-exists-p home-org)
-          home-org
-        (progn
-          (unless (file-exists-p portable-org)
-            (make-directory portable-org)))
-        portable-org)))
+   (defvar org-directory)
+   (customize-set-variable 'org-directory (expand-file-name "org" "~"))
+   (unless (file-exists-p org-directory)
+     (make-directory org-directory))
 #+end_src
 
 
