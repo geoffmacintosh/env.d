@@ -2513,6 +2513,16 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                    ("~/.cache/calendar.ics"))))
 #+end_src
 
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("w" "Work" entry
+                   (file+olp+datetree "work-journal.org")
+                   "* TODO %?"
+                   :empty-lines 1
+                   :clock-in t)))
+#+end_src
+
 #+begin_src emacs-lisp :tangle no
     (defvar xtr-calendar-file "~/.cache/calendar.ics")
 
@@ -2845,6 +2855,20 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     ;;                 (org-agenda-start-with-clockreport-mode nil))
     ;;                ("~/agenda.html")))
     )
+#+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (add-to-list 'org-agenda-custom-commands
+                 '("w" "Work"
+                   ((agenda "")
+                    (todo "TODO")
+                    (todo "WAITING"))
+                   ((org-agenda-files '("~/org/work-journal.org"))
+                    (org-agenda-span 6)
+                    (org-agenda-start-on-weekday 1)
+                    (org-agenda-start-day "mon")
+                    (org-agenda-use-time-grid nil)))))
 #+end_src
 
 #+begin_src emacs-lisp
