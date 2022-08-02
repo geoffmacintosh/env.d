@@ -3253,6 +3253,21 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-clock-persist t)
   (csetq org-clock-out-remove-zero-time-clocks t)
   (csetq org-clock-mode-line-total 'auto)
+  ;;(customize-set-variable 'org-clock-rounding-minutes 5)
+#+end_src
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'org-clock-history-length 35)
+
+  (declare-function org-clock-in "org-clock" (&arg))
+
+  (defun xtr-org-clock-list ()
+    "Bring up `org-clock-in' menu."
+    (interactive)
+    (require 'org-clock)
+    (funcall #'org-clock-in '(4)))
+
+  (global-set-key (kbd "C-c b") #'xtr-org-clock-list)
 #+end_src
 
 ** World Time
