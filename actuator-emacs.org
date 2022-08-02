@@ -4048,8 +4048,10 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 #+begin_src emacs-lisp
   (defvar org-show-notification-timeout)
   (eval-when-compile
-    (declare-function notifications-notify "notifications" (&rest params))
-    (declare-function notifications-get-capabilities "notifications" (&optional bus)))
+    (declare-function notifications-notify "notifications"
+                      (&rest params))
+    (declare-function notifications-get-capabilities "notifications"
+                      (&optional bus)))
 
   (defun actuator-notify (title message)
     "Send a system notification based on capabilities.
@@ -4070,6 +4072,11 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
                       ""
                       (replace-regexp-in-string "\"" "#" message)))
                     (replace-regexp-in-string "\"" "#" title))))
+          ((fboundp 'w32notification-notify)
+           (w32notification-notify
+            :title title
+            :body message
+            :level 'info))
           (t
            (error "No notification system available"))))
 #+end_src
