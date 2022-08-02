@@ -2931,7 +2931,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                       (org-agenda-start-on-weekday 1)
                       (org-agenda-start-day "-1d")
                       (org-agenda-skip-function '(org-agenda-skip-entry-if
-                                                   'scheduled))
+                                                   'regexp "\\.\\+[0-9][d,m,y]>"))
                       (org-agenda-use-time-grid nil)))))
   #+end_src
 
