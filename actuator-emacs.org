@@ -1218,15 +1218,14 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Auth Source / EPA / EPG
 
 #+begin_src emacs-lisp
-  ;(csetq epa-file-encrypt-to '("geoff@mac.into.sh"))
-  (csetq epa-file-select-keys nil)
-  (csetq auth-sources '(password-store))
-  (auth-source-pass-enable)
-  (csetq password-cache-expiry 600)
-#+end_src
+  (customize-set-variable 'epa-file-encrypt-to '("geoff@mac.into.sh"))
+  (customize-set-variable 'epa-file-select-keys nil)
+  (customize-set-variable 'auth-sources '(password-store))
+  (customize-set-variable 'password-cache-expiry 600)
 
-#+begin_src emacs-lisp
-  (require 'password-store)
+  (when (file-exists-p "~/.password-store")
+    (require 'password-store)
+    (auth-source-pass-enable))
 #+end_src
 
 ** Project
