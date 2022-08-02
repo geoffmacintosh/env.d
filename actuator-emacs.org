@@ -76,8 +76,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 #+begin_src emacs-lisp
   (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (when (fboundp 'tooltip-mode)  (tooltip-mode  -1))
-  (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  ;;(when (fboundp 'tooltip-mode)  (tooltip-mode  -1))
+  ;;(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 #+end_src
 
 #+begin_src emacs-lisp
