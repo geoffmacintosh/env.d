@@ -4095,8 +4095,8 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
                       ""
                       (replace-regexp-in-string "\"" "#" message)))
                     (replace-regexp-in-string "\"" "#" title))))
-          ((fboundp 'w32notification-notify)
-           (w32notification-notify
+          ((fboundp 'w32-notification-notify)
+           (w32-notification-notify
             :title title
             :body message
             :level 'info))
