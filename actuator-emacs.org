@@ -1800,6 +1800,48 @@ Further in the same link, he recommends against calling =package-activate-all= a
 
 This will only check the display on starting Emacs. If I need to check later (for example if I start graphically and then open a term emacsclient) this will not check. For that I need to add an after-make-frame-functions hook.
 
+** Kill buffer
+:PROPERTIES:
+:CREATED:  [2022-07-27 Wed 17:00]
+:END:
+#+begin_src emacs-lisp
+  (defun xtr-kill-buffer (orig-func &optional buffer-or-name)
+    "Kill buffer with optional diff function.
+  Takes ORIG-FUNC as it's advice, and can be optionally given a
+  BUFFER-OR-NAME."
+    (catch 'quit
+      (save-window-excursion
+        (with-current-buffer buffer-or-name
+          (let (done (buf (current-buffer)))
+            (when (and buffer-file-name (buffer-modified-p))
+              (while (not done)
+                (let ((response (read-char-choice
+                                 (format "Save file %s? (y, n, d, q) "
+                                         (buffer-file-name buf))
+                                 '(?y ?n ?d ?q))))
+                  (setq done (cond
+                              ((eq response ?q) (throw 'quit nil))
+                              ((eq response ?y) (save-buffer) t)
+                              ((eq response ?n) (set-buffer-modified-p nil) t)
+                              ((eq response ?d) (diff-buffer-with-file) nil))))))
+            (apply orig-func (list (current-buffer))))))))
+
+  (advice-add 'kill-buffer :around #'xtr-kill-buffer)
+#+end_src
+
+https://in.comum.org/smart-way-to-close-files.html
+
+https://emacs.stackexchange.com/questions/3245/kill-buffer-prompt-with-option-to-diff-the-changes/3363#3363
+
+** Auto-save
+:PROPERTIES:
+:CREATED:  [2022-07-27 Wed 17:06]
+:END:
+
+#+begin_src emacs-lisp
+  (auto-save-visited-mode +1)
+#+end_src
+
 * Modes
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:11]
@@ -2707,10 +2749,6 @@ fsep9QhQeVgdrQ7kE4MmPLCs5RGcPVJDdAIW3vBmFPdKVRl6C+p/cuZbYJlo76TW
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
-  (run-with-idle-timer 60 t #'org-save-all-org-buffers)
-#+end_src
-
-#+begin_src emacs-lisp
   (declare-function org-save-all-org-buffers "org" nil)
 
   (add-function :after after-focus-change-function
