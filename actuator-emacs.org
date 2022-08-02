@@ -69,40 +69,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar xtr-font-mono
-    (cond
-     ((member "Fira Mono" (font-family-list))
-      "Fira Mono-12")
-     ((member "SF Mono" (font-family-list))
-      "SF Mono-12"))
-  "Monospaced font that for sure exists on the system.")
-#+end_src
-
-#+begin_src emacs-lisp
-    (defvar xtr-font-variable
-      (when (member "SF Pro" (font-family-list))
-        "SF Pro-12")
-    "Variable-pitch font that for sure exists on the system.")
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-frame-init (&optional _frame)
-    "Initialize per-frame variables.
-
-  These variables need to be set every time a frame is created."
-    (when (fboundp 'scroll-bar-mode)
-      (scroll-bar-mode -1))
-    (when (fboundp 'fringe-mode)
-      (fringe-mode 12))
-    (set-frame-font xtr-font-mono))
-
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
-
-  (unless noninteractive
-    (add-hook 'after-init-hook #'actuator-frame-init))
-#+end_src
-
-#+begin_src emacs-lisp
   (setq window-system-default-frame-alist
           '((ns (ns-transparent-titlebar . t)
                 (ns-appearance           . 'light))))
@@ -183,9 +149,49 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
               ',variable ,value))
 #+end_src
 
+
+
 #+begin_src emacs-lisp
   (unless (and (fboundp 'package-installed-p) noninteractive)
     (require 'package))
+#+end_src
+
+** Fonts
+:PROPERTIES:
+:CREATED:  [2022-08-02 Tue 14:23]
+:END:
+#+begin_src emacs-lisp
+  (defvar xtr-font-mono
+    (cond
+     ((member "Fira Mono" (font-family-list))
+      "Fira Mono")
+     ((member "SF Mono" (font-family-list))
+      "SF Mono"))
+  "Monospaced font that for sure exists on the system.")
+#+end_src
+
+#+begin_src emacs-lisp
+    (defvar xtr-font-variable
+      (when (member "SF Pro" (font-family-list))
+        "SF Pro")
+    "Variable-pitch font that for sure exists on the system.")
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
+
+  These variables need to be set every time a frame is created."
+    (when (fboundp 'scroll-bar-mode)
+      (scroll-bar-mode -1))
+    (when (fboundp 'fringe-mode)
+      (fringe-mode 12))
+    (set-frame-font xtr-font-mono))
+
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+
+  (unless noninteractive
+    (add-hook 'after-init-hook #'actuator-frame-init))
 #+end_src
 
 ** Tangle
@@ -199,7 +205,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
    (unless (file-exists-p org-directory)
      (make-directory org-directory))
 #+end_src
-
 
 #+begin_src emacs-lisp
   (defvar actuator-directory
