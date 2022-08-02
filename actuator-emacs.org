@@ -69,6 +69,23 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
+  (defvar xtr-font-mono
+    (cond
+     ((member "Fira Mono" (font-family-list))
+      "Fira Mono-12")
+     ((member "SF Mono" (font-family-list))
+      "SF Mono-12"))
+  "Monospaced font that for sure exists on the system.")
+#+end_src
+
+#+begin_src emacs-lisp
+    (defvar xtr-font-variable
+      (when (member "SF Pro" (font-family-list))
+        "SF Pro-12")
+    "Variable-pitch font that for sure exists on the system.")
+#+end_src
+
+#+begin_src emacs-lisp
   (defun actuator-frame-init (&optional _frame)
     "Initialize per-frame variables.
 
@@ -77,8 +94,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
       (scroll-bar-mode -1))
     (when (fboundp 'fringe-mode)
       (fringe-mode 12))
-    (when (member "SF Mono" (font-family-list))
-      (set-frame-font "SF Mono-12" nil t)))
+    (set-frame-font xtr-font-mono))
 
   (add-hook 'after-make-frame-functions 'actuator-frame-init)
 
@@ -249,8 +265,8 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 
     (custom-theme-set-faces
      'user
-     ;;`(fixed-pitch ((t (:family "SF Mono" :weight light))))
-     ;;`(variable-pitch ((t (:family "Helvetica" :weight light))))
+     ;;`(fixed-pitch ((t (:family ,xtr-font-mono :weight light))))
+     ;;`(variable-pitch ((t (:family ,xtr-font-variable :weight light))))
      `(default ((t (:background ,white
                                 :foreground ,dark
                                 :weight light))))
@@ -314,7 +330,9 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
                                  :slant normal
                                  :height 180)))
      `(org-time-grid ((t :foreground ,grey )))
-     `(org-tag)
+     ;;`(org-tag)
+     `(org-table ((t :foreground ,dark
+                     :family ,xtr-font-mono)))
 
      `(pulse-highlight-start-face ((t :background ,red)))
 
@@ -3778,7 +3796,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 ** Org-contacts
 #+begin_src emacs-lisp
-  (when (locate-library "org-contrib")
+  (when (locate-library "org-contacts")
     (with-eval-after-load 'org
     (require 'org-contacts)))
   (csetq org-contacts-files '("contacts.org"))
@@ -4068,7 +4086,8 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
                     (replace-regexp-in-string
                      "[0-9][0-9]:[0-9][0-9] [[:upper:]]* " ""
                      (replace-regexp-in-string
-                      "[[:space:]][[:space:]]+:[[:alpha:]]+:"
+
+                    "[[:space:]][[:space:]]+:[[:alpha:]]+:"
                       ""
                       (replace-regexp-in-string "\"" "#" message)))
                     (replace-regexp-in-string "\"" "#" title))))
