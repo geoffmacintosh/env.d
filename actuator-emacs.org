@@ -3775,7 +3775,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 ** Org-contacts
 #+begin_src emacs-lisp
-  (when (locate-library "org-contrib")
+  (when (locate-library "org-contact")
     (with-eval-after-load 'org
     (require 'org-contacts)))
   (csetq org-contacts-files '("contacts.org"))
