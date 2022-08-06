@@ -69,24 +69,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-frame-init (&optional _frame)
-    "Initialize per-frame variables.
-
-  These variables need to be set every time a frame is created."
-    (when (fboundp 'scroll-bar-mode)
-      (scroll-bar-mode -1))
-    (when (fboundp 'fringe-mode)
-      (fringe-mode 12))
-    (when (member "SF Mono" (font-family-list))
-      (set-frame-font "SF Mono-12" nil t)))
-
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
-
-  (unless noninteractive
-    (add-hook 'after-init-hook #'actuator-frame-init))
-#+end_src
-
-#+begin_src emacs-lisp
   (setq window-system-default-frame-alist
           '((ns (ns-transparent-titlebar . t)
                 (ns-appearance           . 'light))))
@@ -94,8 +76,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
 #+begin_src emacs-lisp
   (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (when (fboundp 'tooltip-mode)  (tooltip-mode  -1))
-  (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  ;;(when (fboundp 'tooltip-mode)  (tooltip-mode  -1))
+  ;;(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -167,9 +149,49 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
               ',variable ,value))
 #+end_src
 
+
+
 #+begin_src emacs-lisp
   (unless (and (fboundp 'package-installed-p) noninteractive)
     (require 'package))
+#+end_src
+
+** Fonts
+:PROPERTIES:
+:CREATED:  [2022-08-02 Tue 14:23]
+:END:
+#+begin_src emacs-lisp
+  (defvar xtr-font-mono
+    (cond
+     ((member "Fira Mono" (font-family-list))
+      "Fira Mono")
+     ((member "SF Mono" (font-family-list))
+      "SF Mono"))
+  "Monospaced font that for sure exists on the system.")
+#+end_src
+
+#+begin_src emacs-lisp
+    (defvar xtr-font-variable
+      (when (member "SF Pro" (font-family-list))
+        "SF Pro")
+    "Variable-pitch font that for sure exists on the system.")
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun actuator-frame-init (&optional _frame)
+    "Initialize per-frame variables.
+
+  These variables need to be set every time a frame is created."
+    (when (fboundp 'scroll-bar-mode)
+      (scroll-bar-mode -1))
+    (when (fboundp 'fringe-mode)
+      (fringe-mode 12))
+    (set-frame-font xtr-font-mono))
+
+  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+
+  (unless noninteractive
+    (add-hook 'after-init-hook #'actuator-frame-init))
 #+end_src
 
 ** Tangle
@@ -183,7 +205,6 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
    (unless (file-exists-p org-directory)
      (make-directory org-directory))
 #+end_src
-
 
 #+begin_src emacs-lisp
   (defvar actuator-directory
@@ -249,8 +270,8 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
 
     (custom-theme-set-faces
      'user
-     ;;`(fixed-pitch ((t (:family "SF Mono" :weight light))))
-     ;;`(variable-pitch ((t (:family "Helvetica" :weight light))))
+     ;;`(fixed-pitch ((t (:family ,xtr-font-mono :weight light))))
+     ;;`(variable-pitch ((t (:family ,xtr-font-variable :weight light))))
      `(default ((t (:background ,white
                                 :foreground ,dark
                                 :weight light))))
@@ -314,7 +335,9 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
                                  :slant normal
                                  :height 180)))
      `(org-time-grid ((t :foreground ,grey )))
-     `(org-tag)
+     ;;`(org-tag)
+     `(org-table ((t :foreground ,dark
+                     :family ,xtr-font-mono)))
 
      `(pulse-highlight-start-face ((t :background ,red)))
 
@@ -1195,15 +1218,14 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Auth Source / EPA / EPG
 
 #+begin_src emacs-lisp
-  ;(csetq epa-file-encrypt-to '("geoff@mac.into.sh"))
-  (csetq epa-file-select-keys nil)
-  (csetq auth-sources '(password-store))
-  (auth-source-pass-enable)
-  (csetq password-cache-expiry 600)
-#+end_src
+  (customize-set-variable 'epa-file-encrypt-to '("geoff@mac.into.sh"))
+  (customize-set-variable 'epa-file-select-keys nil)
+  (customize-set-variable 'auth-sources '(password-store))
+  (customize-set-variable 'password-cache-expiry 600)
 
-#+begin_src emacs-lisp
-  (require 'password-store)
+  (when (file-exists-p "~/.password-store")
+    (require 'password-store)
+    (auth-source-pass-enable))
 #+end_src
 
 ** Project
@@ -2896,18 +2918,20 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
   #+begin_src emacs-lisp
-  (with-eval-after-load 'org-agenda
-    (add-to-list 'org-agenda-custom-commands
-                 '("w" "Work"
-                   ((agenda "" )
-                    (todo "TODO")
-                    (tags "+ongoing")
-                    (todo "WAITING"))
-                   ((org-agenda-files '("~/org/work-journal.org"))
-                    (org-agenda-span 8)
-                    (org-agenda-start-on-weekday 1)
-                    (org-agenda-start-day "-1d")
-                    (org-agenda-use-time-grid nil)))))
+    (with-eval-after-load 'org-agenda
+      (add-to-list 'org-agenda-custom-commands
+                   '("w" "Work"
+                     ((agenda "" )
+                      (todo "TODO")
+                      (tags "+ongoing")
+                      (todo "WAITING"))
+                     ((org-agenda-files '("~/org/work-journal.org"))
+                      (org-agenda-span 8)
+                      (org-agenda-start-on-weekday 1)
+                      (org-agenda-start-day "-1d")
+                      (org-agenda-skip-function '(org-agenda-skip-entry-if
+                                                   'regexp "\\.\\+[0-9][d,m,y]>"))
+                      (org-agenda-use-time-grid nil)))))
   #+end_src
 
 #+begin_src emacs-lisp
@@ -3587,6 +3611,7 @@ I'm using a custom alert function so that I can use the system's notification sy
   (run-at-time t (* 30 60) #'actuator-org-agenda-to-appt-timer)
   (advice-add #'actuator-org-agenda-to-appt-refresh :after #'org-agenda-to-appt)
   (appt-activate +1)
+  (require 'notifications)
 #+end_src
 
 ** Org timer
@@ -3775,7 +3800,11 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 ** Org-contacts
 #+begin_src emacs-lisp
+<<<<<<< HEAD
   (when (locate-library "org-contact")
+=======
+  (when (locate-library "org-contacts")
+>>>>>>> 67ce2ab086c0d46c06c351f8c7f9dea0e61e1f02
     (with-eval-after-load 'org
     (require 'org-contacts)))
   (csetq org-contacts-files '("contacts.org"))
@@ -4045,8 +4074,10 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 #+begin_src emacs-lisp
   (defvar org-show-notification-timeout)
   (eval-when-compile
-    (declare-function notifications-notify "notifications" (&rest params))
-    (declare-function notifications-get-capabilities "notifications" (&optional bus)))
+    (declare-function notifications-notify "notifications"
+                      (&rest params))
+    (declare-function notifications-get-capabilities "notifications"
+                      (&optional bus)))
 
   (defun actuator-notify (title message)
     "Send a system notification based on capabilities.
@@ -4063,10 +4094,16 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
                     (replace-regexp-in-string
                      "[0-9][0-9]:[0-9][0-9] [[:upper:]]* " ""
                      (replace-regexp-in-string
-                      "[[:space:]][[:space:]]+:[[:alpha:]]+:"
+
+                    "[[:space:]][[:space:]]+:[[:alpha:]]+:"
                       ""
                       (replace-regexp-in-string "\"" "#" message)))
                     (replace-regexp-in-string "\"" "#" title))))
+          ((fboundp 'w32-notification-notify)
+           (w32-notification-notify
+            :title title
+            :body message
+            :level 'info))
           (t
            (error "No notification system available"))))
 #+end_src
