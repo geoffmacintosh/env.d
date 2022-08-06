@@ -2082,15 +2082,15 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 #+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/loader.conf" "no")
   default frog.conf
   timeout 0
-  console-mode auto
+  console-mode max
   #console-mode keep
 #+end_src
 
 #+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/frog.conf" "no")
   title Arch Gamer Linux
-  linux /vmlinuz-linux515-tkg-bmq
+  linux /vmlinuz-linux518-tkg-bmq
   initrd /amd-ucode.img
-  initrd /initramfs-linux515-tkg-bmq.img
+  initrd /initramfs-linux518-tkg-bmq.img
   options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet loglevel=3 rd.systemd.show_status=auto rd.udev.log_level=3 modprobe.blacklist=iTC0_wdtl acpi_enforce_resources=lax amdgpu.ppfeaturemask=0xffffffff nmi_watchdog=0 modprobe.blacklist=pcspkr
 #+end_src
 
@@ -2110,6 +2110,19 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
   initrd /initramfs-linux-fallback.img
   options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw
 #+end_src
+
+#+begin_src systemd :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/pacman.d/hooks/100-systemd-boot.hook")
+  [Trigger]
+  Type = Package
+  Operation = Upgrade
+  Target = systemd
+
+  [Action]
+  Description = Gracefully upgrading systemd-boot...
+  When = PostTransaction
+  Exec = /usr/bin/systemctl restart systemd-boot-update.service
+#+end_src
+
 * TKG
 :PROPERTIES:
 :header-args: :tangle ~/.config/frogminer/linux-tkg.cfg
