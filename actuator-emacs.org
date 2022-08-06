@@ -3800,11 +3800,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
 
 ** Org-contacts
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-  (when (locate-library "org-contact")
-=======
   (when (locate-library "org-contacts")
->>>>>>> 67ce2ab086c0d46c06c351f8c7f9dea0e61e1f02
     (with-eval-after-load 'org
     (require 'org-contacts)))
   (csetq org-contacts-files '("contacts.org"))
