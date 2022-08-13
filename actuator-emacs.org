@@ -1672,9 +1672,16 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (defun actuator-regen-init ()
     "A stupid version of what I was doing."
     (interactive)
+    ;;(org-with-wide-buffer)
+
     (let ((init       (expand-file-name "init.el" user-emacs-directory))
-          (early-init (expand-file-name "early-init.el" user-emacs-directory)))
-      (cond ((fboundp 'native-compile)
+          (early-init (expand-file-name "early-init.el"
+                                        user-emacs-directory))
+          (org        (expand-file-name "actuator-emacs.org"
+                                        actuator-directory)))
+      (when (file-exists-p org)
+        (org-babel-tangle-file org))
+      (cond ((native-comp-available-p)
              (native-compile init)
              (native-compile early-init)
              (message "Native compiled init"))
