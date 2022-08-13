@@ -3289,7 +3289,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-attach-store-link-p t)
   (csetq org-attach-expert nil)
   (csetq org-attach-dir-relative t)
-  (csetq org-attach-preferred-new-method 'id)
+  (csetq org-attach-preferred-new-method 'ask)
   (csetq org-attach-method 'mv)
   (csetq org-attach-auto-tag "attach")
   (csetq org-attach-archive-delete 'query)
@@ -3834,31 +3834,6 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
     (with-eval-after-load 'org
     (require 'org-contacts)))
   (csetq org-contacts-files '("contacts.org"))
-#+end_src
-
-** Org ID
-https://helpdeskheadesk.net/2022-03-13/
-
-#+begin_src emacs-lisp
-  (csetq org-id-method 'ts)
-  (csetq org-attach-id-to-path-function-list
-    '(actuator-org-attach-id-ts-folder-format
-      org-attach-id-uuid-folder-format))
-#+end_src
-
-#+begin_src emacs-lisp
-  (csetq org-id-ts-format "%Y-%B-%d-%H%M-%S%6N")
-#+end_src
-
-#+begin_src emacs-lisp
-  (defun actuator-org-attach-id-ts-folder-format (id)
-    "Translate an ID based on a timestamp to a folder-path.
-  Useful way of translation if ID is generated based on ISO8601
-  timestamp. Splits the attachment folder hierarchy into
-  year-month, the rest."
-    (format "%s/%s"
-            (substring id 0 4)
-            (substring id 5)))
 #+end_src
 
 ** Org links
