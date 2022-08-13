@@ -941,7 +941,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (defun system-move-file-to-trash (path)
     "Move file at PATH to the Trash according to `move-file-to-trash'.
 
-    On macOS relies on the command-line utility 'trash' to be installed."
+    On macOS relies on the command-line utility `trash' to be installed."
     (shell-command (concat "trash -vF \"" path "\""
                            "| sed -e 's/^/Trashed: /'")
                    nil ;; Name of output buffer
