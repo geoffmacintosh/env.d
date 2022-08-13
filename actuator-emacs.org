@@ -2928,20 +2928,37 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
   #+begin_src emacs-lisp
     (with-eval-after-load 'org-agenda
-      (add-to-list 'org-agenda-custom-commands
-                   '("w" "Work"
-                     ((agenda "" )
-                      (todo "TODO")
-                      (tags "+ongoing")
-                      (todo "WAITING"))
-                     ((org-agenda-files '("~/org/work-journal.org"))
-                      (org-agenda-span 8)
-                      (org-agenda-start-on-weekday 1)
-                      (org-agenda-start-day "-1d")
-                      (org-agenda-skip-function '(org-agenda-skip-entry-if
-                                                   'regexp "\\.\\+[0-9][d,m,y]>"))
-                      (org-agenda-use-time-grid nil)))))
+        (add-to-list 'org-agenda-custom-commands
+                     '("w" "Work"
+                       ((agenda ""
+                                ((org-agenda-start-on-weekday 1)
+                                 (org-agenda-span 'week)
+                                 (org-agenda-overriding-header "Agenda")
+                                 ))
+                        (todo "TODO"
+                              ((org-agenda-overriding-header
+                                "Next tasks")))
+                        (tags "+ongoing"
+                              ((org-agenda-overriding-header
+                                "Ongoing tasks")))
+                        (todo "WAITING"
+                              ((org-agenda-overriding-header
+                                "Waiting tasks"))))
+                       ((org-agenda-files '("work-journal.org"))
+                        (org-agenda-use-time-grid nil)))))
   #+end_src
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (add-to-list 'org-agenda-custom-commands
+                 '("p" "Performance Review"
+                   ((tags "-review+TODO=\"DONE\"+CLOSED>=\"<-6m>\""
+                          ((org-agenda-overriding-header "Tasks finished in last six months")))
+                    (tags "+review"
+                          ((org-agenda-overriding-header "Performance review"))))
+                   ((org-agenda-files '("work-journal.org"))
+                    (org-agenda-use-time-grid nil)))))
+#+end_src
 
 #+begin_src emacs-lisp
   (csetq org-fold-catch-invisible-edits 'smart)
