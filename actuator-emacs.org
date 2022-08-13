@@ -1826,7 +1826,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
 :PROPERTIES:
 :CREATED:  [2022-07-27 Wed 17:00]
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun xtr-kill-buffer (orig-func &optional buffer-or-name)
     "Kill buffer with optional diff function.
   Takes ORIG-FUNC as it's advice, and can be optionally given a
@@ -2584,6 +2584,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                    (file+olp+datetree "work-journal.org")
                    "* TODO %?"
                    :empty-lines 1
+                   :tree-type month
                    :clock-in t)))
 #+end_src
 
@@ -2664,7 +2665,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                            (auth-source-pass-get "url"
                                                  "webdav.fastmail.fm"))))
 
-  (advice-add #'org-agenda-quit :after #'xtr-create-and-upload-ical)
+  (when (eq system-type 'darwin)
+    (advice-add #'org-agenda-quit :after #'xtr-create-and-upload-ical))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3278,7 +3280,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (csetq org-clock-persist t)
   (csetq org-clock-out-remove-zero-time-clocks t)
   (csetq org-clock-mode-line-total 'auto)
-  ;;(customize-set-variable 'org-clock-rounding-minutes 5)
+  (customize-set-variable 'org-clock-rounding-minutes 5)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3667,7 +3669,10 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
   (defun actuator-backup-elpa ()
     "Wrapper function to backup ELPA directory before making a change."
     (actuator-backup package-user-dir))
-  (add-hook 'package-menu-mode-hook #'actuator-backup-elpa)
+
+
+  (when (executable-find "borg")
+    (add-hook 'package-menu-mode-hook #'actuator-backup-elpa))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3712,7 +3717,8 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
       (actuator-backup org-directory)
       (setq actuator-org-backup-timestamp (current-time))))
 
-  (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save)
+  (when (executable-find "borg")
+    (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save))
 
   (add-to-list 'savehist-additional-variables
                'actuator-org-backup-timestamp)
