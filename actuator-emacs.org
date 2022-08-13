@@ -3883,6 +3883,21 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
             (yank)
             (buffer-substring-no-properties (point-min) (point-max))))))
 #+end_src
+** Tags
+:PROPERTIES:
+:CREATED:  [2022-08-13 Sat 10:15]
+:END:
+#+begin_src emacs-lisp
+  (customize-set-variable 'org-tags-sort-function 'org-string-collate-lessp)
+#+end_src
+
+** Org ID
+:PROPERTIES:
+:CREATED:  [2022-08-13 Sat 11:08]
+:END:
+#+begin_src emacs-lisp
+  (customize-set-variable 'org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+#+end_src
 
 * Apps
 :PROPERTIES:
