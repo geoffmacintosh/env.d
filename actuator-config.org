@@ -1,136 +1,5 @@
 #+title: Config
 
-* Ediff binary                                                        :emacs:
-:PROPERTIES:
-:CREATED:  [2022-01-25 Tue 12:47]
-:ID:       B61A484C-87BF-40E8-B9BE-4165C365D084
-:END:
-:LOGBOOK:
-- State "NEXT"       from "TODO"       [2022-06-13 Mon 17:14]
-- Refiled on [2022-01-25 Tue 17:28]
-- Refiled on [2022-01-25 Tue 16:57]
-:END:
-https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-ediff-directories-from-command-line
-
-#+begin_src shell :shebang #!/bin/sh :tangle ~/.local/bin/ediff
-  EMACS=$(which emacsclient)
-
-  if [ $# -lt 2 ] ; then
-      echo "Usage:: " `basename $0` " [ -d ]  item1  item2"
-      exit 1
-  fi
-
-  dir="no"
-  if [ "$1" = "-d" ]; then
-      dir="yes"
-      item1="$2"
-      item2="$3"
-  else
-      if [ -d "$1" -a -d "$2" ]; then
-          dir="yes"
-      fi
-      item1="$1"
-      item2="$2"
-  fi
-
-  if [ "$dir" = "no" ]; then
-
-      # Check that files do exist
-      if [ ! -f "$item1" ] ; then
-          printf "File %s not found.\n" "$item1"
-          exit 2
-      fi
-      if [ ! -f "$item2" ] ; then
-          printf "File %s not found.\n" "$item2"
-          exit 2
-      fi
-
-      # Check whether files are identical or not
-      diffdata=`diff "$item1" "$item2"`
-      if [ "_" = "_$diffdata" ] ; then
-          printf "%s and %s are identical.\n" "$item1" "$item2"
-          exit 3
-      fi
-
-  fi
-
-  diff_fn="ediff-files"
-  if [ "$dir" = "yes" ]; then
-      diff_fn="ediff-directories"
-      opt="\"\""
-  fi
-
-  # Run Emacs with ediff-files function
-  printf "Comparing files %s and %s . . .  " "$item1" "$item2"
-  $EMACS -q -c -eval "($diff_fn \"$item1\" \"$item2\" $opt)" && echo done.
-
-  exit 0
-#+end_src
-
-* usermod for games
-:PROPERTIES:
-:CREATED:  [2022-05-27 Fri 19:03]
-:END:
-:LOGBOOK:
-- Refiled on [2022-06-08 Wed 21:05]
-:END:
-The wine executable used by proton can automatically set the niceness of a process; consider adding yourself to the games group to make this work by issuing: usermod -a -G games
-
-#+begin_src shell :eval never
-  sudo usermod -a -G games g
-#+end_src
-
-* Paru
-:PROPERTIES:
-:CREATED:  [2022-05-28 Sat 09:50]
-:END:
-:LOGBOOK:
-- Refiled on [2022-06-08 Wed 19:35]
-:END:
-
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.config/paru/paru.conf" "no")
-  #
-  # $PARU_CONF
-  # /etc/paru.conf
-  # ~/.config/paru/paru.conf
-  #
-  # See the paru.conf(5) manpage for options
-
-  #
-  # GENERAL OPTIONS
-  #
-  [options]
-  PgpFetch
-  Devel
-  Provides
-  DevelSuffixes = -git -cvs -svn -bzr -darcs -always -hg -fossil
-  #AurOnly
-  #BottomUp
-  #RemoveMake
-  #SudoLoop
-  #UseAsk
-  #SaveChanges
-  #CombinedUpgrade
-  CleanAfter
-  BatchInstall
-  #UpgradeMenu
-  #NewsOnUpgrade
-
-  #LocalRepo
-  #Chroot
-  #Sign
-  #SignDb
-  #KeepRepoCache
-
-  #
-  # Binary OPTIONS
-  #
-  #[bin]
-  #FileManager = vifm
-  #MFlags = --skippgpcheck
-  #Sudo = doas
-#+end_src
-
 * Application list
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:10]
@@ -703,6 +572,73 @@ The wine executable used by proton can automatically set the niceness of a proce
 #+end_src
 
 https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
+* Ediff binary                                                        :emacs:
+:PROPERTIES:
+:CREATED:  [2022-01-25 Tue 12:47]
+:ID:       B61A484C-87BF-40E8-B9BE-4165C365D084
+:END:
+:LOGBOOK:
+- State "NEXT"       from "TODO"       [2022-06-13 Mon 17:14]
+- Refiled on [2022-01-25 Tue 17:28]
+- Refiled on [2022-01-25 Tue 16:57]
+:END:
+https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-ediff-directories-from-command-line
+
+#+begin_src shell :shebang #!/bin/sh :tangle ~/.local/bin/ediff
+  EMACS=$(which emacsclient)
+
+  if [ $# -lt 2 ] ; then
+      echo "Usage:: " `basename $0` " [ -d ]  item1  item2"
+      exit 1
+  fi
+
+  dir="no"
+  if [ "$1" = "-d" ]; then
+      dir="yes"
+      item1="$2"
+      item2="$3"
+  else
+      if [ -d "$1" -a -d "$2" ]; then
+          dir="yes"
+      fi
+      item1="$1"
+      item2="$2"
+  fi
+
+  if [ "$dir" = "no" ]; then
+
+      # Check that files do exist
+      if [ ! -f "$item1" ] ; then
+          printf "File %s not found.\n" "$item1"
+          exit 2
+      fi
+      if [ ! -f "$item2" ] ; then
+          printf "File %s not found.\n" "$item2"
+          exit 2
+      fi
+
+      # Check whether files are identical or not
+      diffdata=`diff "$item1" "$item2"`
+      if [ "_" = "_$diffdata" ] ; then
+          printf "%s and %s are identical.\n" "$item1" "$item2"
+          exit 3
+      fi
+
+  fi
+
+  diff_fn="ediff-files"
+  if [ "$dir" = "yes" ]; then
+      diff_fn="ediff-directories"
+      opt="\"\""
+  fi
+
+  # Run Emacs with ediff-files function
+  printf "Comparing files %s and %s . . .  " "$item1" "$item2"
+  $EMACS -q -c -eval "($diff_fn \"$item1\" \"$item2\" $opt)" && echo done.
+
+  exit 0
+#+end_src
+
 * Fail lock
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
@@ -1559,6 +1495,20 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
    WHEEL_RIGHT ignore
    WHEEL_LEFT  ignore
  #+end_src
+* Nautilus
+:PROPERTIES:
+:CREATED:  [2022-08-13 Sat 14:49]
+:ID:       BC84C185-DF86-48B6-8B9D-4849A94A2EC2
+:END:
+#+begin_src conf :tangle ~/.local/share/applications/nautilus.desktop
+  [Desktop Entry]
+  Name=Nautilus
+  Type=Application
+  Exec=nautilus --new-window
+  Terminal=False
+  Icon=org.gnome.Nautilus
+  Comment=File manager
+#+end_src
 * NCMPCPP
 :PROPERTIES:
 :header-args: :tangle ~/.config/ncmpcpp/config
@@ -1717,6 +1667,57 @@ Install pacman-contrib.
   #SigLevel = Optional TrustAll
   #Server = file:///home/custompkgs
 #+end_src
+* Paru
+:PROPERTIES:
+:CREATED:  [2022-05-28 Sat 09:50]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 19:35]
+:END:
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.config/paru/paru.conf" "no")
+  #
+  # $PARU_CONF
+  # /etc/paru.conf
+  # ~/.config/paru/paru.conf
+  #
+  # See the paru.conf(5) manpage for options
+
+  #
+  # GENERAL OPTIONS
+  #
+  [options]
+  PgpFetch
+  Devel
+  Provides
+  DevelSuffixes = -git -cvs -svn -bzr -darcs -always -hg -fossil
+  #AurOnly
+  #BottomUp
+  #RemoveMake
+  #SudoLoop
+  #UseAsk
+  #SaveChanges
+  #CombinedUpgrade
+  CleanAfter
+  BatchInstall
+  #UpgradeMenu
+  #NewsOnUpgrade
+
+  #LocalRepo
+  #Chroot
+  #Sign
+  #SignDb
+  #KeepRepoCache
+
+  #
+  # Binary OPTIONS
+  #
+  #[bin]
+  #FileManager = vifm
+  #MFlags = --skippgpcheck
+  #Sudo = doas
+#+end_src
+
 * Power button
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
@@ -2522,6 +2523,19 @@ Apply all config fragments without confirmation.
 #+begin_src conf
   _config_fragments_no_confirm="false"
 #+end_src
+* usermod for games
+:PROPERTIES:
+:CREATED:  [2022-05-27 Fri 19:03]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 21:05]
+:END:
+The wine executable used by proton can automatically set the niceness of a process; consider adding yourself to the games group to make this work by issuing: usermod -a -G games
+
+#+begin_src shell :eval never
+  sudo usermod -a -G games g
+#+end_src
+
 * VConsole caps-control remap
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:14]
@@ -2616,6 +2630,19 @@ Apply all config fragments without confirmation.
 [[https://man.archlinux.org/man/vconsole.conf.5][VConsole]]
 [[https://wiki.archlinux.org/index.php/Linux_console/Keyboard_configuration#Loadkeys][Loadkeys]]
 [[https://askubuntu.com/questions/982863/change-caps-lock-to-control-in-virtual-console-on-ubuntu-17][Change caps lock to control in virtual console on ubuntu 17]]
+* Vial
+:PROPERTIES:
+:CREATED:  [2022-08-13 Sat 14:54]
+:ID:       11513D6F-8899-41C5-993E-9ACBF597167B
+:END:
+#+begin_src conf :tangle ~/.local/share/application/vial.desktop
+  [Desktop Entry]
+  Name=Vial
+  Exec=Vial
+  Terminal=False
+  Comment=Configure keyboard
+  Icon=Vial
+#+end_src
 * Waybar
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:15]
