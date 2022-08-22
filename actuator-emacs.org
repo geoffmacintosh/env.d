@@ -335,9 +335,18 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
                                  :slant normal
                                  :height 180)))
      `(org-time-grid ((t :foreground ,grey )))
-     ;;`(org-tag)
+     `(org-scheduled-today ((t :foreground ,dark )))
+     `(org-scheduled-previously ((t :foreground ,dark )))
+     `(org-scheduled ((t :foreground ,dark )))
+     `(org-imminent-deadline ((t :foreground ,red)))
      `(org-table ((t :foreground ,dark
                      :family ,xtr-font-mono)))
+     `(org-habit-overdue-face ((t :background ,lgrey)))
+     `(org-habit-clear-face ((t :background ,white)))
+     `(org-habit-clear-future-face ((t :background ,white)))
+     `(org-habit-alert-future-face ((t :background ,grey)))
+     `(org-habit-overdue-future-face ((t :background ,xgrey)))
+
 
      `(pulse-highlight-start-face ((t :background ,red)))
 
@@ -2409,16 +2418,16 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 ** Diary
 #+begin_src emacs-lisp
-  (csetq diary-file (expand-file-name "diary" org-directory))
   (csetq calendar-date-style 'iso)
   (csetq org-agenda-insert-diary-strategy 'top-level)
   (csetq org-agenda-include-diary t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar diary-file)
-  (unless (file-exists-p diary-file)
-    (make-empty-file diary-file t))
+  (with-eval-after-load 'appt
+    (defvar diary-file)
+    (unless (file-exists-p diary-file)
+      (make-empty-file diary-file t)))
 #+end_src
 ** Capture Templates                                              :noexport:
 #+begin_src emacs-lisp
@@ -2685,17 +2694,25 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (csetq org-icalendar-exclude-tags '("habit" "noexport" "weather"))
 #+end_src
 
+#+begin_src emacs-lisp
+  (customize-set-variable
+   'org-icalendar-combined-agenda-file
+   (format "~/.cache/%s.ics"
+           (auth-source-pass-get "filename" "webdav.fastmail.fm")))
+  (customize-set-variable 'org-icalendar-combined-name "Geoff")
+#+end_src
+
 ** BBDB
 :PROPERTIES:
 :CREATED:  [2022-07-11 Mon 12:57]
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-to-list 'package-selected-packages 'bbdb)
   (add-to-list 'package-selected-packages 'bbdb-vcard)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (customize-set-variable 'bbdb-image-path
                           (expand-file-name "data/bbdb-vcard/"
                                             org-directory))
@@ -2703,33 +2720,6 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (customize-set-variable 'org-icalendar-include-bbdb-anniversaries t)
   (customize-set-variable 'bbdb-file (expand-file-name "data/bbdb.el" org-directory))
 #+end_src
-
-** Secure upload details                                             :crypt:
-:PROPERTIES:
-:CREATED:  [2022-06-30 Thu 15:42]
-:ID:       2022-June-30-1552-17494218
-:END:
-
------BEGIN PGP MESSAGE-----
-
-hQIMA5qpMGzNkOQvAQ//dEyg5pWyw97wwusE6i6/enhi5J+UXkYix5ZQqNHkXZDp
-aDssc6mO7ySBGaTsvi7elhhboOujewViWPJqvuHRVDhyBupvhDfxBB9gFEiub5zx
-MrBP89G3KTdBgAph2bNn5/IUaSQL4Spi0Ej4s0erEUimA7V9F/oOLxBMY5T+dFdw
-CEuOi0oQ/hwqWltCAuFYCzmG2dQbVVEs57r/rlknMehLa09/PLuZGFolDrPEMB4a
-1pt9nMDunZFRIdHlRCaZ7B3sDS5t4YA4gGvu6y6t64YSzzCmR3Nz/v9W92WTCTh2
-SIdcd9ftiUvStxNROWmhmaTHoQjLgoeRWX1SUsCTzDFDdzmEH1NC/Ihl/netjH4x
-mxCDWZIG8nVfuZL9m5tpTsbpDscDTmUIezJvLlwBONRd7ExSBDFpoIbjR1FIppfp
-I9bH+UoXVs9atYj48puMvYdSGYnwoIjl5bqXPobuQfWLYhe/g1FQr9+ZOg++qrpO
-Zq+R/XlSTQZG5lL48mKcsqvK9QJoNanjW80lfJpmfj2gQYHpne5TrMaB8GR6NWZA
-55eUlq2FHwYgxRaFyVYS2hq6oGyk4gwaN6egepJsPxTeuwQq3sjziRbKwZeLR3Rq
-BPhpA2ryH1NaOp4y0vo3grkBabibSM2I8VjQxlYfXI7my0quqzNDCs/sgJv1BUXS
-wBoBd4c0ZfMK6c3ZOoxURvfKg8j6gImM60ePJpC0D8Ar6+0hTueI0wmpBCGLZESJ
-ggyTP4zxlgQCuerUprBxyUiJWAkwlWvQwOprZpdgDCYgxswHlsYJR4kojlkMqrmh
-0DBXD7FTEHgaLucU6ccT4ovDrmuciOFrKPs6uepXKj4LJerJL6CUdzuBJYl6MhrG
-fsep9QhQeVgdrQ7kE4MmPLCs5RGcPVJDdAIW3vBmFPdKVRl6C+p/cuZbYJlo76TW
-2DMu4YhJAG9xyJ6jffDa6nrBb7ssJ6IBed1OKQ==
-=8P82
------END PGP MESSAGE-----
 
 ** Calendar
 
@@ -2961,8 +2951,30 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+  (with-eval-after-load 'org-agenda
+    (defvar org-agenda-files)
+
+    (let ((list '("diary.org"
+                  "error.org"
+                  "quests.org"
+                  "kb.org"
+                  "hardware.org"
+                  "cyclic.org"
+                  "inbox.org"
+                  "work-journal.org")))
+      (mapc (lambda (x)
+              (when (file-exists-p (expand-file-name x org-directory))
+                (add-to-list 'org-agenda-files x)))
+            list))
+
+    (when (and
+           (file-exists-p (expand-file-name "contacts.org" org-directory))
+           (locate-library "org-contacts"))
+      (add-to-list 'org-agenda-files "contacts.org")))
+#+end_src
+
+#+begin_src emacs-lisp
   (csetq org-fold-catch-invisible-edits 'smart)
-  (csetq org-agenda-files (expand-file-name "agenda" org-directory))
   (csetq org-use-fast-todo-selection 'expert)
   (csetq org-todo-keywords
          '((sequence "TODO(t)" "WAITING(w@)" "SOMEDAY(s!)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
@@ -3596,6 +3608,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 Appt can connect with org-mode to grab all the events for the day and issue alerts.
 
 #+begin_src emacs-lisp
+  (require 'appt)
   (csetq appt-display-mode-line nil)
   (csetq appt-message-warning-time 15)
   (csetq appt-display-interval 5)
@@ -3623,10 +3636,8 @@ I'm using a custom alert function so that I can use the system's notification sy
    This (I believe) collects the appointments scheduled for the
    current day, so it is wise to run this at least daily to update
    the list."
-    (when (file-exists-p diary-file)
-      (let ((inhibit-message t))
-        (org-agenda-to-appt t))))
-
+    (let ((inhibit-message t))
+      (org-agenda-to-appt t)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3848,7 +3859,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
     (setq org-link-parameters (delq (assoc "file+emacs" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "rmail" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "news" org-link-parameters) org-link-parameters))
-    ;;(setq org-link-parameters (delq (assoc "bbdb" org-link-parameters) org-link-parameters))
+    (setq org-link-parameters (delq (assoc "bbdb" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "w3m" org-link-parameters) org-link-parameters))
     (setq org-link-parameters (delq (assoc "mhe" org-link-parameters) org-link-parameters)))
 #+end_src
