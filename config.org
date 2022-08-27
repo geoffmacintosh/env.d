@@ -1699,14 +1699,14 @@ Install pacman-contrib.
   #AurOnly
   #BottomUp
   #RemoveMake
-  #SudoLoop
+  SudoLoop
   #UseAsk
   #SaveChanges
   #CombinedUpgrade
   CleanAfter
   BatchInstall
   #UpgradeMenu
-  #NewsOnUpgrade
+  NewsOnUpgrade
 
   #LocalRepo
   #Chroot
@@ -1722,7 +1722,6 @@ Install pacman-contrib.
   #MFlags = --skippgpcheck
   #Sudo = doas
 #+end_src
-
 * Power button
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]

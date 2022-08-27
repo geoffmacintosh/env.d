@@ -1089,13 +1089,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
          (csetq image-dired-external-viewer "xdg-open")))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-  (defvar dired-mode-map)
-  (define-key dired-mode-map
-                (kbd "C-c C-x a")
-                #'org-attach-dired-to-subtree)
-#+end_src
-
 #+begin_src emacs-lisp
   (csetq dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
 
@@ -2958,6 +2951,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                   "error.org"
                   "quests.org"
                   "kb.org"
+                  "home.org"
+                  "software.org"
+                  "logbook.org"
+                  "media.org"
                   "hardware.org"
                   "cyclic.org"
                   "inbox.org"
@@ -3002,6 +2999,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (csetq org-crypt-key "geoff@mac.into.sh")
   (csetq org-agenda-window-setup 'current-window)
   (csetq org-habit-show-habits-only-for-today t)
+  (customize-set-variable 'org-habit-show-all-today t)
   (csetq org-capture-bookmark t)
   (csetq org-hide-macro-markers t)
   (csetq org-reverse-note-order t)
@@ -3127,100 +3125,101 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'package
-    (add-to-list 'package-selected-packages 'org)
-    (add-to-list 'package-selected-packages 'org-contrib))
-  (csetq org-babel-default-header-args '((:mkdirp   . "yes")
-                                         (:comments . "link")
-                                         (:session  . "none")
-                                         (:results  . "replace")
-                                         (:exports  . "code")
-                                         (:cache    . "no")
-                                         (:noweb    . "no")
-                                         (:hlines   . "no")
-                                         (:tangle   . "no")))
+    (with-eval-after-load 'package
+      (add-to-list 'package-selected-packages 'org)
+      (add-to-list 'package-selected-packages 'org-contrib))
+    (csetq org-babel-default-header-args '((:mkdirp   . "yes")
+                                           (:comments . "link")
+                                           (:session  . "none")
+                                           (:results  . "replace")
+                                           (:exports  . "code")
+                                           (:cache    . "no")
+                                           (:noweb    . "no")
+                                           (:hlines   . "no")
+                                           (:tangle   . "no")))
 
-  (defun actuator-update-all-dynamic-blocks ()
-    "Update all dynamic blocks in an Org-mode document.
+    (defun actuator-update-all-dynamic-blocks ()
+      "Update all dynamic blocks in an Org-mode document.
 
-    Should only be called when in Org-mode, but also it shouldn't
-    cause an error if not."
+      Should only be called when in Org-mode, but also it shouldn't
+      cause an error if not."
 
-    (require 'org)
-    (require 'org-table)
+      (require 'org)
+      (require 'org-table)
+      (eval-when-compile
+        (declare-function org-dblock-update "org")
+        (declare-function org-table-map-tables "org-table"))
+      (org-table-map-tables 'org-table-align 'quietly)
+      (org-dblock-update 'arg))
+
+    (defun actuator-org-mode-setup ()
+      "Set basic defaults in Org-mode that aren't variables."
+
+      (electric-indent-local-mode -1)
+      (visual-line-mode)
+      ;; (add-hook 'before-save-hook
+      ;;           #'actuator-update-all-dynamic-blocks nil
+      ;;           'local)
+  )
+
+    (add-hook 'org-mode-hook #'actuator-org-mode-setup)
+
+    (global-set-key (kbd "C-c c") #'org-capture)
+    (global-set-key (kbd "C-c a") #'org-agenda)
     (eval-when-compile
-      (declare-function org-dblock-update "org")
-      (declare-function org-table-map-tables "org-table"))
-    (org-table-map-tables 'org-table-align 'quietly)
-    (org-dblock-update 'arg))
+      (declare-function org-store-link "ol"))
+    (global-set-key (kbd "C-c l") #'org-store-link)
 
-  (defun actuator-org-mode-setup ()
-    "Set basic defaults in Org-mode that aren't variables."
+    (csetq org-startup-folded 'content)
+    (csetq org-ellipsis " →")
+    (csetq org-startup-align-all-tables t)
+    (csetq org-startup-shrink-all-tables t)
+    (csetq org-startup-with-inline-images t)
+    (csetq org-startup-indented t)
+    (csetq org-hide-leading-stars t)
+    (csetq org-pretty-entities-include-sub-superscripts t)
+    (csetq org-hide-emphasis-markers t)
+    (csetq org-image-actual-width 300)
+    (csetq org-fontify-done-headline t)
+    (csetq org-structure-template-alist
+           '(("e" . "src emacs-lisp")
+             ("s" . "src shell")
+             ("c" . "src conf")
+             ("C" . "comment")
+             ("h" . "export html")
+             ("q" . "quote")
+             ("v" . "verse")))
+    (csetq org-log-done 'time)
+    (csetq org-log-into-drawer t)
+    (csetq org-log-reschedule 'time)
+    (csetq org-log-refile nil)
+    (csetq org-log-redeadline 'time)
+    (csetq org-closed-keep-when-no-todo t)
+    (csetq org-enforce-todo-dependencies t)
+    (csetq org-enforce-todo-checkbox-dependencies nil)
+    (csetq org-complete-tags-always-offer-all-agenda-tags t)
+    (csetq org-clone-delete-id t)
+    ;;(csetq org-tags-column -60)
+    (csetq org-catch-invisible-edits 'show-and-error)
+    (csetq org-insert-heading-respect-content nil)
+    (csetq org-ctrl-k-protect-subtree t)
+    (csetq org-M-RET-may-split-line '((default . nil)))
+    (csetq org-special-ctrl-k t)
+    (csetq org-special-ctrl-a/e t)
+    (csetq org-blank-before-new-entry '((heading         . t)
+                                        (plain-list-item . nil)))
+    (customize-set-variable 'org-use-property-inheritance t)
 
-    (electric-indent-local-mode -1)
-    (visual-line-mode)
-    (add-hook 'before-save-hook
-              #'actuator-update-all-dynamic-blocks nil
-              'local))
+    (defvar org-modules)
 
-  (add-hook 'org-mode-hook #'actuator-org-mode-setup)
-
-  (global-set-key (kbd "C-c c") #'org-capture)
-  (global-set-key (kbd "C-c a") #'org-agenda)
-  (eval-when-compile
-    (declare-function org-store-link "ol"))
-  (global-set-key (kbd "C-c l") #'org-store-link)
-
-  (csetq org-startup-folded 'content)
-  (csetq org-ellipsis " →")
-  (csetq org-startup-align-all-tables t)
-  (csetq org-startup-shrink-all-tables t)
-  (csetq org-startup-with-inline-images t)
-  (csetq org-startup-indented t)
-  (csetq org-hide-leading-stars t)
-  (csetq org-pretty-entities-include-sub-superscripts t)
-  (csetq org-hide-emphasis-markers t)
-  (csetq org-image-actual-width 300)
-  (csetq org-fontify-done-headline t)
-  (csetq org-structure-template-alist
-         '(("e" . "src emacs-lisp")
-           ("s" . "src shell")
-           ("c" . "src conf")
-           ("C" . "comment")
-           ("h" . "export html")
-           ("q" . "quote")
-           ("v" . "verse")))
-  (csetq org-log-done 'time)
-  (csetq org-log-into-drawer t)
-  (csetq org-log-reschedule 'time)
-  (csetq org-log-refile nil)
-  (csetq org-log-redeadline 'time)
-  (csetq org-closed-keep-when-no-todo t)
-  (csetq org-enforce-todo-dependencies t)
-  (csetq org-enforce-todo-checkbox-dependencies nil)
-  (csetq org-complete-tags-always-offer-all-agenda-tags t)
-  (csetq org-clone-delete-id t)
-  ;;(csetq org-tags-column -60)
-  (csetq org-catch-invisible-edits 'show-and-error)
-  (csetq org-insert-heading-respect-content nil)
-  (csetq org-ctrl-k-protect-subtree t)
-  (csetq org-M-RET-may-split-line '((default . nil)))
-  (csetq org-special-ctrl-k t)
-  (csetq org-special-ctrl-a/e t)
-  (csetq org-blank-before-new-entry '((heading         . t)
-                                      (plain-list-item . nil)))
-  (customize-set-variable 'org-use-property-inheritance t)
-
-  (defvar org-modules)
-
-  (with-eval-after-load 'org
-    (delete 'ol-doi org-modules)
-    (delete 'ol-w3m org-modules)
-    (delete 'ol-bibtex org-modules)
-    (delete 'ol-irc org-modules)
-    (delete 'ol-mhe org-modules)
-    (delete 'ol-rmail org-modules)
-    (delete 'ol-gnus org-modules))
+    (with-eval-after-load 'org
+      (delete 'ol-doi org-modules)
+      (delete 'ol-w3m org-modules)
+      (delete 'ol-bibtex org-modules)
+      (delete 'ol-irc org-modules)
+      (delete 'ol-mhe org-modules)
+      (delete 'ol-rmail org-modules)
+      (delete 'ol-gnus org-modules))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -4476,12 +4475,3 @@ https://gist.github.com/spacebat/5500966
   (provide 'init)
   ;;; init.el ends here
 #+end_src
-
-* Local variables
-:PROPERTIES:
-:CREATED:  [2022-05-15 Sun 20:45]
-:END:
-Local Variables:
-eval: (add-hook 'org-babel-post-tangle-hook #'actuator-regen-init nil t)
-eval: (add-hook 'org-babel-pre-tangle-hook #'widen nil t)
-End:

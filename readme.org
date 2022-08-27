@@ -10,4 +10,4 @@ Good question. I have no justification.
 :PROPERTIES:
 :CREATED:  [2022-02-22 Tue 15:50]
 :END:
-Check out the [[file:actuator-emacs.org][Emacs section]] or the [[file:actuator-config.org][non-Emacs section]]. Nothing is quite as finished as I'd like, and that will always be true.
+Check out the [[file:init.org][Emacs section]] or the [[file:config.org][non-Emacs section]]. Nothing is quite as finished as I'd like, and that will always be true.
