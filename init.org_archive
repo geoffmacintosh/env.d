@@ -251,3 +251,27 @@ https://helpdeskheadesk.net/2022-03-13/
             (substring id 0 4)
             (substring id 5)))
 #+end_src
+
+* DONE Csetq
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:01
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Init
+:ARCHIVE_CATEGORY: init
+:END:
+The macro ~csetq~ probably has limited actual purpose. It provides the same interfaces as ~setq~ so if you don't use it it's a simple switch. It might make things better in some situations and should never make things worse. It's stolen from Lele Gaifax on the [[https://lists.gnu.org/archive/html/help-gnu-emacs/2015-12/msg00097.html][Emacs mailing list]].
+
+#+begin_src emacs-lisp
+  (defmacro csetq (variable value)
+    "Macro to set the VALUE of VARIABLE, possibly a custom user option.
+
+  Should be a drop-in replacement for `setq', switching between the
+  two should only cause issues if the variable is supposed to be
+  set with customize."
+    `(funcall (or (get ',variable 'custom-set)
+                  (and (plist-member (symbol-plist ',variable)
+                                     'standard-value)
+                       'set-default)
+                  'set)
+              ',variable ,value))
+#+end_src
