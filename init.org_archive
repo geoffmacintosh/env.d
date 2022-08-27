@@ -275,3 +275,311 @@ The macro ~csetq~ probably has limited actual purpose. It provides the same inte
                   'set)
               ',variable ,value))
 #+end_src
+
+* DONE Eshell Imenu
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:14
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Apps
+:ARCHIVE_CATEGORY: init
+:END:
+- [[http://xenodium.com/imenu-on-emacs-eshell/][imenu on Emacs eshell]] [2020-05-12 Tue]
+
+#+begin_src emacs-lisp :tangle no
+  (defun actuator-eshell-imenu ()
+    "Set up eshell-imenu integration"
+
+    (setq-local imenu-generic-expression
+                '(("Prompt" "^.*?[#❯]" 1))))
+  (add-hook 'eshell-mode-hook #'actuator-eshell-imenu)
+#+end_src
+
+* DONE Eshell additional completions
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:14
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Apps
+:ARCHIVE_CATEGORY: init
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (defun actuator-pcomplete-std-complete ()
+    (interactive)
+    (pcomplete-std-complete))
+
+(with-eval-after-load 'esh-mode
+   (define-key eshell-mode-map (kbd "<tab>") #'actuator-pcomplete-std-complete))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (add-to-list 'package-selected-packages 'pcmpl-args)
+  (with-eval-after-load 'eshell
+    (require 'pcmpl-args nil t))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (when (executable-find "brew")
+    (add-to-list 'package-selected-packages 'pcmpl-homebrew)
+    (with-eval-after-load 'eshell
+      (require 'pcmpl-homebrew nil t)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (add-to-list 'package-selected-packages 'fish-completion)
+
+  (customize-set-variable 'fish-completion-fallback-on-bash-p t)
+
+  (defun actuator-set-up-eshell-fish-completion ()
+    "arst"
+    (when (executable-find "fish")
+      (require 'fish-completion nil t)
+      (fish-completion-mode)))
+
+  ;;(add-hook 'eshell-mode-hook #'actuator-set-up-eshell-fish-completion)
+#+end_src
+
+* DONE Eshell history refs
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:14
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Apps
+:ARCHIVE_CATEGORY: init
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (add-hook 'eshell-expand-input-functions
+            #'eshell-expand-history-references)
+#+end_src
+
+* DONE Registers
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:15
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Emacs
+:ARCHIVE_CATEGORY: init
+:END:
+[2021-07-18 Sun 21:27]
+#+begin_src emacs-lisp :tangle no
+  (set-register ?i (cons 'file (expand-file-name "inbox.org" org-directory)))
+#+end_src
+
+* DONE Kill buffer
+:PROPERTIES:
+:CREATED:  [2022-07-27 Wed 17:00]
+:ARCHIVE_TIME: 2022-08-27 Sat 16:32
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Emacs
+:ARCHIVE_CATEGORY: init
+:END:
+#+begin_src emacs-lisp :tangle no
+  (defun xtr-kill-this-buffer ()
+    (interactive)
+    (catch 'quit
+      (save-window-excursion
+        (let (done)
+          (when (and buffer-file-name (buffer-modified-p))
+            (while (not done)
+              (let ((response (read-char-choice
+                               (format "Save file %s? (y, n, d, q) " (buffer-file-name))
+                               '(?y ?n ?d ?q))))
+                (setq done (cond
+                            ((eq response ?q) (throw 'quit nil))
+                            ((eq response ?y) (save-buffer) t)
+                            ((eq response ?n) (set-buffer-modified-p nil) t)
+                            ((eq response ?d) (diff-buffer-with-file) nil))))))
+          (kill-buffer (current-buffer))))))
+  (global-set-key [remap kill-buffer] 'xtr-kill-this-buffer)
+#+end_src
+
+https://in.comum.org/smart-way-to-close-files.html
+
+https://emacs.stackexchange.com/questions/3245/kill-buffer-prompt-with-option-to-diff-the-changes/3363#3363
+
+* DONE Web Mode
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:34
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Modes
+:ARCHIVE_CATEGORY: init
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (add-to-list 'package-selected-packages 'web-mode)
+
+  (when (locate-library "web-mode")
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsx?\\'"  . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tsx?\\'"  . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.json\\'"  . web-mode)))
+
+  (customize-set-variable 'web-mode-markup-indent-offset 2)
+  (customize-set-variable 'web-mode-code-indent-offset 2)
+  (customize-set-variable 'web-mode-css-indent-offset 2)
+#+end_src
+
+* DONE Alternate elfeed search filter header
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:35
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Modes/Elfeed
+:ARCHIVE_CATEGORY: init
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (defvar elfeed-search-filter-active)
+  (defvar elfeed-search-filter-overflowing)
+  (defvar elfeed-search-entries)
+  (defvar elfeed-search-header-function)
+  (customize-set-variable 'elfeed-search-header-function #'actuator-elfeed-search--header)
+
+  (defun actuator-elfeed-search--header ()
+    "Computes the string to be used as the Elfeed header.
+
+  This version doesn't show 0/0:0 items because I have no idea what
+  those numbers are supposed to represent."
+    (eval-when-compile
+      (defvar elfeed-search-filter-active)
+      (defvar elfeed-search-filter)
+      (declare-function elfeed-queue-count-active "elfeed")
+      (declare-function elfeed-queue-count-total "elfeed")
+      (declare-function elfeed-search--intro-header "elfeed-search")
+      (declare-function elfeed-db-last-update "elfeed-db"))
+    (cond
+     ((zerop (elfeed-db-last-update))
+      (elfeed-search--intro-header))
+     ((> (elfeed-queue-count-total) 0)
+      (let ((total (elfeed-queue-count-total))
+            (in-process (elfeed-queue-count-active)))
+        (format "%d jobs pending, %d active..."
+                (- total in-process) in-process)))
+     ((let* ((db-time (seconds-to-time (elfeed-db-last-update)))
+             (update (format-time-string "%Y-%m-%d %H:%M" db-time))
+             (unread (actuator-elfeed-search--count-unread)))
+        (format "Updated %s %s%s"
+                (propertize update 'face 'elfeed-search-last-update-face)
+                (propertize unread 'face 'elfeed-search-unread-count-face)
+                (cond
+                 (elfeed-search-filter-active "")
+                 ((string-match-p "[^ ]" elfeed-search-filter)
+                  (concat ", " (propertize elfeed-search-filter
+                                           'face 'elfeed-search-filter-face)))
+                 ("")))))))
+
+  (defun actuator-elfeed-search--count-unread ()
+    "Count the number of entries and feeds being currently displayed."
+    (eval-when-compile
+
+      (declare-function elfeed-tagged-p "elfeed-db")
+      (declare-function elfeed-feed-url "elfeed-db" t t)
+      (declare-function elfeed-entry-feed "elfeed-db"))
+    (if (and elfeed-search-filter-active elfeed-search-filter-overflowing)
+        "?/?:?"
+      (cl-loop with feeds = (make-hash-table :test 'equal)
+               for entry in elfeed-search-entries
+               for feed = (elfeed-entry-feed entry)
+               for url = (elfeed-feed-url feed)
+               count entry into entry-count
+               count (elfeed-tagged-p 'unread entry) into unread-count
+               do (puthash url t feeds)
+               finally
+               (cl-return
+                (format "%d unread %d total %d feeds"
+                        unread-count entry-count
+                        (hash-table-count feeds))))))
+#+end_src
+
+* DONE Export calendar weird
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:36
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Org
+:ARCHIVE_CATEGORY: init
+:END:
+
+#+begin_src emacs-lisp :tangle no
+    (defvar xtr-calendar-file "~/.cache/calendar.ics")
+
+    (defun xtr-export-ics ()
+      "Make minor adjustments to my exported calendar.
+
+    This is not the best way to do it, but it works and makes me happy."
+      (org-batch-store-agenda-views)
+
+      (with-current-buffer (find-file-noselect xtr-calendar-file)
+        (goto-char (point-min))
+        (while (re-search-forward "OrgMode" nil t)
+          (replace-match "Geoff"))
+        (goto-char (point-min))
+        (while (re-search-forward org-ts-regexp nil t)
+          (replace-match ""))
+        (goto-char (point-min))
+        (while (re-search-forward "DESCRIPTION:–" nil t)
+          (replace-match "DESCRIPTION:"))
+        (goto-char (point-min))
+        (while (re-search-forward "VTODO" nil t)
+          (replace-match "VEVENT"))
+        (save-buffer)
+        (kill-buffer))
+
+      (start-process "Upload ICS" nil "curl" "--user"
+               (format "%s:%s"
+                       (auth-source-pass-get "user"
+                                             "webdav.fastmail.fm")
+                       (auth-source-pass-get 'secret
+                                             "webdav.fastmail.fm"))
+               "-T"
+               (expand-file-name xtr-calendar-file)
+               (format "%s/share/"
+                       (auth-source-pass-get "url"
+                                             "webdav.fastmail.fm"))))
+  ;;(advice-add #'org-agenda-quit :after #'xtr-export-ics)
+#+end_src
+
+#+begin_src shell :tangle no
+  emacs -batch -l ~/.config/emacs/init.el -eval "(xtr-export-ics)"
+#+end_src
+
+* DONE BBDB
+:PROPERTIES:
+:CREATED:  [2022-07-11 Mon 12:57]
+:ARCHIVE_TIME: 2022-08-27 Sat 16:36
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Org
+:ARCHIVE_CATEGORY: init
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (add-to-list 'package-selected-packages 'bbdb)
+  (add-to-list 'package-selected-packages 'bbdb-vcard)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (customize-set-variable 'bbdb-image-path
+                          (expand-file-name "data/bbdb-vcard/"
+                                            org-directory))
+  (customize-set-variable 'bbdb-image 'fl-name)
+  (customize-set-variable 'org-icalendar-include-bbdb-anniversaries t)
+  (customize-set-variable 'bbdb-file (expand-file-name "data/bbdb.el" org-directory))
+#+end_src
+
+* DONE Save all org buffers
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-08-27 Sat 16:37
+:ARCHIVE_FILE: ~/env.d/init.org
+:ARCHIVE_OLPATH: Org
+:ARCHIVE_CATEGORY: init
+:END:
+
+#+begin_src emacs-lisp :tangle no
+  (declare-function org-save-all-org-buffers "org" nil)
+
+  (add-function :after after-focus-change-function
+                #'actuator-org-save-all-org-buffers)
+
+  (defun actuator-org-save-all-org-buffers ()
+    "Wrapper to check for function before running it."
+
+    (when (fboundp 'org-save-all-org-buffers)
+      (org-save-all-org-buffers)))
+#+end_src
