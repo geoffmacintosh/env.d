@@ -378,7 +378,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (define-key input-decode-map [?\C-m] [C-m])
 #+end_src
 
-
 ** Elide
 :PROPERTIES:
 :CREATED:  [2022-05-26 Thu 16:26]
@@ -748,11 +747,11 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+begin_src emacs-lisp
   (defvar env-original-gc-cons-percentage)
   (defun env-minibuffer-setup ()
-    ""
+    "Change the garbage collection settings while in the minibuffer."
     (setq gc-cons-percentage 0.5))
 
   (defun env-minibuffer-exit ()
-    "Thing."
+    "Restore the garbage collection settings when exiting the minibuffer."
     (setq gc-cons-percentage env-original-gc-cons-percentage))
 
   (add-hook 'minibuffer-setup-hook #'env-minibuffer-setup -90)
@@ -2056,8 +2055,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 
   (customize-set-variable 'rmh-elfeed-org-ignore-tag "disconnected")
   (customize-set-variable 'rmh-elfeed-org-auto-ignore-invalid-feeds nil)
-  (when (ignore-errors (file-exists-p org-directory))
-    (customize-set-variable 'rmh-elfeed-org-files `(,(expand-file-name "feed.org" org-directory))))
+  (customize-set-variable
+   'rmh-elfeed-org-files
+   `(,(expand-file-name "kb.org" org-directory)))
 #+end_src
 
 ** Systemd
@@ -2570,17 +2570,14 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (defvar org-agenda-files)
 
     (let ((list '("diary.org"
-                  "error.org"
                   "quests.org"
                   "kb.org"
                   "home.org"
-                  "software.org"
                   "logbook.org"
                   "media.org"
-                  "hardware.org"
-                  "cyclic.org"
+                  "inventory.org"
                   "inbox.org"
-                  "work-journal.org")))
+                  "access.org")))
       (mapc (lambda (x)
               (when (file-exists-p (expand-file-name x org-directory))
                 (add-to-list 'org-agenda-files x)))
