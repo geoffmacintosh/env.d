@@ -1,7 +1,6 @@
 #+title: Actuator Emacs
 #+startup: contents
-#+property: header-args :tangle (expand-file-name "init.el" user-emacs-directory) ####+property: header-args :comments link
-###+property: header-args :results silent
+#+property: header-args :tangle (expand-file-name "init.el" user-emacs-directory)
 
 * Forward
 Install Emacs via your chosen system. It works with native-compile on both macOS and Linux for me.
@@ -38,8 +37,8 @@ Right now I'm setting Emacs to be [[https://www.emacswiki.org/emacs/EmacsPortabl
 #+end_src
 
 #+begin_src emacs-lisp :results silent
-  (defvar actuator-original-gc-cons-threshold gc-cons-threshold)
-  (defvar actuator-original-gc-cons-percentage gc-cons-percentage)
+  (defvar env-original-gc-cons-threshold gc-cons-threshold)
+  (defvar env-original-gc-cons-percentage gc-cons-percentage)
 
   (customize-set-variable 'gc-cons-threshold (* 128 1000 1000))
   (customize-set-variable 'gc-cons-percentage 2)
@@ -71,7 +70,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
                 exec-path)
     (setq exec-path '()))
 
-  (defvar actuator-path (reverse
+  (defvar env-path (reverse
                        `("/usr/local/sbin"
                          "/usr/local/bin"
                          "/opt/local/sbin"
@@ -85,11 +84,11 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
                          "/Library/Tex/texbin"
                          ,exec-directory)))
 
-  (defun actuator-add-to-path (path)
+  (defun env-add-to-path (path)
     (when (file-exists-p path)
       (add-to-list 'exec-path path)))
 
-  (mapc 'actuator-add-to-path actuator-path)
+  (mapc 'env-add-to-path env-path)
 #+end_src
 
 * Init
@@ -129,7 +128,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 :CREATED:  [2022-08-02 Tue 14:23]
 :END:
 #+begin_src emacs-lisp
-  (defvar xtr-font-mono
+  (defvar env-font-mono
     (cond
      ((member "Fira Mono" (font-family-list))
       "Fira Mono")
@@ -139,14 +138,14 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-    (defvar xtr-font-variable
+    (defvar env-font-variable
       (when (member "SF Pro" (font-family-list))
         "SF Pro")
     "Variable-pitch font that for sure exists on the system.")
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-frame-init (&optional _frame)
+  (defun env-frame-init (&optional _frame)
     "Initialize per-frame variables.
 
   These variables need to be set every time a frame is created."
@@ -154,12 +153,12 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
       (scroll-bar-mode -1))
     (when (fboundp 'fringe-mode)
       (fringe-mode 12))
-    (set-frame-font xtr-font-mono))
+    (set-frame-font env-font-mono))
 
-  (add-hook 'after-make-frame-functions 'actuator-frame-init)
+  (add-hook 'after-make-frame-functions 'env-frame-init)
 
   (unless noninteractive
-    (add-hook 'after-init-hook #'actuator-frame-init))
+    (add-hook 'after-init-hook #'env-frame-init))
 #+end_src
 
 ** Tangle
@@ -175,7 +174,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 #+begin_src emacs-lisp
-  (defvar actuator-directory
+  (defvar env-directory
     (let ((dir "~/env.d"))
       (if (file-exists-p dir)
           dir
@@ -190,16 +189,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 - Refiled on [2022-02-21 Mon 17:29]
 :END:
 #+begin_src emacs-lisp
-  (add-hook 'minibuffer-setup-hook 'actuator-minibuffer-setup)
-
-  (defun actuator-minibuffer-setup ()
-    "Remap minibuffer faces to ensure uniformity.
-
-    I really don't like it when the minibuffer has different font
-    sizes. Currently I have to remap everything manually, but that's
-    probably okay."
-    (set (make-local-variable 'face-remapping-alist)
-         '((org-document-title :height 1.0))))
 
   ;; flymake error
   ;; flymake warning
@@ -207,17 +196,17 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   ;; todo not due yet
   ;; todo past due
 
-  (defvar xtr-highlight)
+  (defvar env-highlight)
 
-  (defvar xtr-red)
+  (defvar env-red)
 
-  (defvar xtr-white)
-  (defvar xtr-black)
+  (defvar env-white)
+  (defvar env-black)
 
-  (defvar xtr-gray-mid)
-  (defvar xtr-gray-light)
-  (defvar xtr-gray-dark)
-  (defvar xtr-gray-xlight)
+  (defvar env-gray-mid)
+  (defvar env-gray-light)
+  (defvar env-gray-dark)
+  (defvar env-gray-xlight)
 
   (let ((blue  "#29BEEA")
         (white "#FFFFFF")
@@ -236,8 +225,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
     (custom-theme-set-faces
      'user
-     ;;`(fixed-pitch ((t (:family ,xtr-font-mono :weight light))))
-     ;;`(variable-pitch ((t (:family ,xtr-font-variable :weight light))))
+     ;;`(fixed-pitch ((t (:family ,env-font-mono :weight light))))
+     ;;`(variable-pitch ((t (:family ,env-font-variable :weight light))))
      `(default ((t (:background ,white
                                 :foreground ,dark
                                 :weight light))))
@@ -306,7 +295,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
      `(org-scheduled ((t :foreground ,dark )))
      `(org-imminent-deadline ((t :foreground ,red)))
      `(org-table ((t :foreground ,dark
-                     :family ,xtr-font-mono)))
+                     :family ,env-font-mono)))
      `(org-habit-overdue-face ((t :background ,lgrey)))
      `(org-habit-clear-face ((t :background ,white)))
      `(org-habit-clear-future-face ((t :background ,white)))
@@ -505,13 +494,13 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 :END:
 
 #+begin_src emacs-lisp
-  (defun xtr-auto-create-missing-dirs ()
+  (defun env-auto-create-missing-dirs ()
     "Automatically create a missing dir in a path."
     (let ((target-dir (file-name-directory buffer-file-name)))
       (unless (file-exists-p target-dir)
         (make-directory target-dir t))))
 
-  (add-to-list 'find-file-not-found-functions #'xtr-auto-create-missing-dirs)
+  (add-to-list 'find-file-not-found-functions #'env-auto-create-missing-dirs)
 #+end_src
 
 [[https://emacsredux.com/blog/2022/06/12/auto-create-missing-directories][Auto-create Missing Directories]]
@@ -519,7 +508,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 *** Unfill paragraph
 
 #+begin_src emacs-lisp
-  (defun actuator-unfill-paragraph ()
+  (defun env-unfill-paragraph ()
     "Does the opposite of filling a paragraph.
 
   This technically causes it to wrap only at a really huge number.
@@ -531,13 +520,13 @@ I am hiding this when not bound because I have weird errors where on Windows it 
     (let ((fill-column most-positive-fixnum))
       (fill-paragraph)))
 
-  (global-set-key (kbd "C-M-q") #'actuator-unfill-paragraph)
+  (global-set-key (kbd "C-M-q") #'env-unfill-paragraph)
 #+end_src
 
 *** Just one space
 
 #+begin_src emacs-lisp
-  (defun actuator-maybe-just-one-space ()
+  (defun env-maybe-just-one-space ()
     "Insert just one space, killing all other whitespace."
     (interactive)
     (just-one-space -1)
@@ -545,7 +534,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
                (looking-back ") " nil))
           (delete-char -1)))
 
-  (global-set-key (kbd "M-/") #'actuator-maybe-just-one-space)
+  (global-set-key (kbd "M-/") #'env-maybe-just-one-space)
 #+end_src
 
 *** Copy sentence
@@ -554,7 +543,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 :END:
 
 #+begin_src emacs-lisp
-  (defun actuator-kill-ring-save ()
+  (defun env-kill-ring-save ()
     "Save the entire sentence to the kill ring."
     (interactive)
     (cond ((region-active-p)
@@ -571,7 +560,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
            (mark-sexp nil t)
            (copy-region-as-kill nil nil t)))))
 
-  (global-set-key (kbd "M-w") #'actuator-kill-ring-save)
+  (global-set-key (kbd "M-w") #'env-kill-ring-save)
 #+end_src
 
 *** Change word case
@@ -582,22 +571,22 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 [[https://christiantietze.de/posts/2021/03/change-case-of-word-at-point/][Change Case of Word at Point in Emacs, But for Real This Time • Christian Tietze]]
 
 #+begin_src emacs-lisp
-  (defun actuator-capitalize-word-at-point ()
+  (defun env-capitalize-word-at-point ()
     "A replacement which operates on the entire word."
     (interactive)
-    (actuator-word-boundary-at-point-or-region #'actuator-capitalize-region))
+    (env-word-boundary-at-point-or-region #'env-capitalize-region))
 
-  (defun actuator-downcase-word-at-point ()
+  (defun env-downcase-word-at-point ()
     "A replacement which operates on the entire word."
     (interactive)
-    (actuator-word-boundary-at-point-or-region #'downcase-region))
+    (env-word-boundary-at-point-or-region #'downcase-region))
 
-  (defun actuator-upcase-word-at-point ()
+  (defun env-upcase-word-at-point ()
     "A replacement which operates on the entire word."
     (interactive)
-    (actuator-word-boundary-at-point-or-region #'upcase-region))
+    (env-word-boundary-at-point-or-region #'upcase-region))
 
-  (defun actuator-capitalize-region (beginning end)
+  (defun env-capitalize-region (beginning end)
     "Downcases then capitalizes between BEGINNING and END only.
   The default capitalization function upcases the first characters
   in the word. This replacement first downcases the word and then
@@ -605,7 +594,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
     (downcase-region beginning end)
     (upcase-initials-region beginning end))
 
-  (defun actuator-word-boundary-at-point-or-region (&optional callback)
+  (defun env-word-boundary-at-point-or-region (&optional callback)
     "Return the boundary of the word at point, or region, if any.
   Forwards the points to CALLBACK as (CALLBACK p1 p2), if present.
 
@@ -627,9 +616,9 @@ I am hiding this when not bound because I have weird errors where on Windows it 
         (funcall callback beginning end))
       (list beginning end)))
 
-  (global-set-key (kbd "M-c") #'actuator-capitalize-word-at-point)
-  (global-set-key (kbd "M-u") #'actuator-upcase-word-at-point)
-  (global-set-key (kbd "M-l") #'actuator-downcase-word-at-point)
+  (global-set-key (kbd "M-c") #'env-capitalize-word-at-point)
+  (global-set-key (kbd "M-u") #'env-upcase-word-at-point)
+  (global-set-key (kbd "M-l") #'env-downcase-word-at-point)
 #+end_src
 
 *** Find-definitions
@@ -642,7 +631,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
     (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
     (declare-function xref-find-definitions "xref" (identifier)))
 
-  (defun actuator-jump-to-correct-location ()
+  (defun env-jump-to-correct-location ()
     "Replacement for `xref-find-definitions' to be org-aware.
 
   This function attempts to jump to the Org source file if it
@@ -655,7 +644,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
         (org-babel-tangle-jump-to-org)
       (error
        (call-interactively #'xref-find-definitions))))
-  (global-set-key (kbd "M-.") #'actuator-jump-to-correct-location)
+  (global-set-key (kbd "M-.") #'env-jump-to-correct-location)
 #+end_src
 
 ** Savehist
@@ -714,7 +703,7 @@ Interprogram paste can cause [[https://github.com/syl20bnr/spacemacs/issues/9409
 Unpropertizing the kill ring is [[https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist][good for the kill ring]].
 
 #+begin_src emacs-lisp
-  (defun actuator-unpropertize-kill-ring ()
+  (defun env-unpropertize-kill-ring ()
     "Remove properties from items in the kill ring.
 
   Text stored in the kill ring is kept propertized; faces that
@@ -726,7 +715,7 @@ Unpropertizing the kill ring is [[https://emacs.stackexchange.com/questions/4187
   to disk should no longer cause weird issues."
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
-  (add-hook 'savehist-save-hook #'actuator-unpropertize-kill-ring)
+  (add-hook 'savehist-save-hook #'env-unpropertize-kill-ring)
 #+end_src
 
 ** Autorevert
@@ -747,26 +736,27 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-minibuffer-normalize-face-height ()
+  (defun env-minibuffer-normalize-face-height ()
     "Reset faces in the minibuffer to be the default height."
 
     (set (make-local-variable 'face-remapping-alist)
          '((org-document-title :height 1.0))))
 
-  (add-hook 'minibuffer-setup-hook #'actuator-minibuffer-normalize-face-height)
+  (add-hook 'minibuffer-setup-hook #'env-minibuffer-normalize-face-height)
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun xtr-minibuffer-setup ()
+  (defvar env-original-gc-cons-percentage)
+  (defun env-minibuffer-setup ()
     ""
     (setq gc-cons-percentage 0.5))
 
-  (defun xtr-minibuffer-exit ()
+  (defun env-minibuffer-exit ()
     "Thing."
-    (setq gc-cons-percentage actuator-original-gc-cons-percentage))
+    (setq gc-cons-percentage env-original-gc-cons-percentage))
 
-  (add-hook 'minibuffer-setup-hook #'xtr-minibuffer-setup -90)
-  (add-hook 'minibuffer-exit-hook #'xtr-minibuffer-exit 90)
+  (add-hook 'minibuffer-setup-hook #'env-minibuffer-setup -90)
+  (add-hook 'minibuffer-exit-hook #'env-minibuffer-exit 90)
 #+end_src
 ** Hippie expand
 
@@ -798,8 +788,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
            try-expand-list-all-buffers
            try-expand-whole-kill
            try-expand-line-all-buffers
-           xtr-try-expand-by-dict
-           xtr-try-add-expansion))
+           env-try-expand-by-dict
+           env-try-add-expansion))
 
   (global-set-key (kbd "<M-SPC>") #'hippie-expand)
 #+end_src
@@ -808,11 +798,11 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 - try-expand-line-all-buffers is very slow
 
 #+begin_src emacs-lisp
-  (defun actuator-hippie-unexpand ()
+  (defun env-hippie-unexpand ()
     "Remove an expansion without having to loop around."
     (interactive)
     (hippie-expand 0))
-  (global-set-key (kbd "M-S-SPC") #'actuator-hippie-unexpand)
+  (global-set-key (kbd "M-S-SPC") #'env-hippie-unexpand)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -820,7 +810,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (declare-function he-init-string "hippie-exp" (beg end))
     (declare-function he-dabbrev-beg "hippie-exp" ())
     (declare-function he-reset-string "hippie-exp" ()))
-  (defun xtr-try-add-expansion (_old)
+  (defun env-try-add-expansion (_old)
     "Add a new global abbrev, `OLD' is required by hippies."
     (he-init-string (he-dabbrev-beg) (point))
     (or (inverse-add-global-abbrev 1)
@@ -842,7 +832,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (defvar he-tried-table)
   (defvar he-expand-list)
 
-  (defun xtr-try-expand-by-dict (old)
+  (defun env-try-expand-by-dict (old)
     "Attempt to expand a word by using the dictionary.
   Needs OLD due to `hippie-expand'."
     (unless (bound-and-true-p ispell-minor-mode)
@@ -927,9 +917,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 ** Actuator startup profile
 
 #+begin_src emacs-lisp
-  (run-with-idle-timer 3 nil #'actuator-startup-profile)
+  (run-with-idle-timer 3 nil #'env-startup-profile)
 
-  (defun actuator-startup-profile ()
+  (defun env-startup-profile ()
     "Display the startup time and garbage collections in the minibuffer."
 
     (message "Emacs %s ready in %s with %d garbage collections."
@@ -993,7 +983,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-ibuffer-setup ()
+  (defun env-ibuffer-setup ()
     "Set up ibuffer defaults that require running functions.
 
   This should be run as in a hook that is called when `ibuffer-mode' is run."
@@ -1008,7 +998,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (ibuffer-do-sort-by-alphabetic)
     (toggle-truncate-lines +1))
 
-  (add-hook 'ibuffer-mode-hook #'actuator-ibuffer-setup)
+  (add-hook 'ibuffer-mode-hook #'env-ibuffer-setup)
 #+end_src
 
 ** Dired
@@ -1110,15 +1100,15 @@ Autorevert via notify is supposed to be much lower power than polling. It should
       (defvar ediff-buffer-B)
       (defvar ediff-buffer-C)
 
-  (defun actuator-ediff-save-window-configuration ()
+  (defun env-ediff-save-window-configuration ()
     "Save current window layout so ediff can control the frame."
     (window-configuration-to-register :ediff))
 
-  (defun actuator-ediff-restore-window-configuration ()
+  (defun env-ediff-restore-window-configuration ()
     "Restore the window layout after diffing."
     (jump-to-register :ediff))
 
-  (defun actuator-ediff-org-reveal-around-difference (&rest _)
+  (defun env-ediff-org-reveal-around-difference (&rest _)
     "Ensure that the relevant Org-mode diff is visible."
     (eval-when-compile
       (declare-function ediff-with-current-buffer "ediff-init" (buffer &rest body) t))
@@ -1129,10 +1119,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
         (when (derived-mode-p 'org-mode)
           (org-reveal t)))))
 
-  (add-hook 'ediff-startup-hook #'actuator-ediff-save-window-configuration)
-  (add-hook 'ediff-quit-hook #'actuator-ediff-restore-window-configuration)
+  (add-hook 'ediff-startup-hook #'env-ediff-save-window-configuration)
+  (add-hook 'ediff-quit-hook #'env-ediff-restore-window-configuration)
 
-  (defun actuator-org-mode-show-all ()
+  (defun env-org-mode-show-all ()
     "Show the entire buffer when in an org buffer.
 
   Sometimes it's better to show the entire buffer, for example when
@@ -1144,7 +1134,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
       (require 'outline)
       (outline-show-all)))
 
-  (add-hook 'ediff-prepare-buffer-hook #'actuator-org-mode-show-all)
+  (add-hook 'ediff-prepare-buffer-hook #'env-org-mode-show-all)
 #+end_src
 
 [[https://www.reddit.com/r/emacs/comments/dxzi96/have_some_code_make_ediffing_folded_org_files/][Have some code: make ediffing folded org files better : emacs]]
@@ -1255,14 +1245,14 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (when (ignore-errors (file-exists-p org-directory))
     (customize-set-variable 'ispell-personal-dictionary (expand-file-name "data/dictionary" org-directory)))
   (customize-set-variable 'ispell-silently-savep t)
-  (defun actuator-org-reveal-around ()
+  (defun env-org-reveal-around ()
     "Reveals the area around the point in Org-mode files."
 
     (when (derived-mode-p 'org-mode)
       (eval-when-compile
         (declare-function org-reveal "org"))
       (org-reveal t)))
-  (add-hook 'ispell-update-post-hook #'actuator-org-reveal-around)
+  (add-hook 'ispell-update-post-hook #'env-org-reveal-around)
 #+end_src
 
 ** Winner
@@ -1298,17 +1288,17 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :CREATED:  [2022-04-10 Sun 10:18]
 :END:
 #+begin_src emacs-lisp
-  (defvar actuator-original-gc-cons-threshold)
-  (defvar actuator-original-gc-cons-percentage)
+  (defvar env-original-gc-cons-threshold)
+  (defvar env-original-gc-cons-percentage)
 
-  (defun actuator-restore-gc-cons ()
+  (defun env-restore-gc-cons ()
     "Restore gc-cons-* to default after startup."
-    (when (boundp 'actuator-original-gc-cons-threshold)
-      (customize-set-variable 'gc-cons-threshold  actuator-original-gc-cons-threshold))
-    (when (boundp 'actuator-original-gc-cons-percentage)
-      (customize-set-variable 'gc-cons-percentage actuator-original-gc-cons-percentage)))
+    (when (boundp 'env-original-gc-cons-threshold)
+      (customize-set-variable 'gc-cons-threshold  env-original-gc-cons-threshold))
+    (when (boundp 'env-original-gc-cons-percentage)
+      (customize-set-variable 'gc-cons-percentage env-original-gc-cons-percentage)))
 
-    (add-hook 'emacs-startup-hook #'actuator-restore-gc-cons)
+    (add-hook 'emacs-startup-hook #'env-restore-gc-cons)
 #+end_src
 
 ** Display buffer
@@ -1351,7 +1341,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (defvar help-at-pt-display-when-idle)
   (defvar help-at-pt-timer-delay)
 
-  (defun actuator-echo-area-tooltips ()
+  (defun env-echo-area-tooltips ()
     "Show tooltips in the echo area automatically for current buffer.
 
   You need to cancel the help-at-pt timer in order so reset the
@@ -1361,7 +1351,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (help-at-pt-cancel-timer)
     (help-at-pt-set-timer))
 
-  (add-hook 'org-mode-hook #'actuator-echo-area-tooltips nil t)
+  (add-hook 'org-mode-hook #'env-echo-area-tooltips nil t)
 #+end_src
 
 ** Pulse line
@@ -1418,7 +1408,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (customize-set-variable 'read-answer-short t)
   (customize-set-variable 'read-file-name-completion-ignore-case t)
 
-  (defun xtr-recentf-completing-read ()
+  (defun env-recentf-completing-read ()
     "Interactive completion on recentf files."
     (interactive)
     (let ((file (completing-read
@@ -1426,7 +1416,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
       (when file
         (find-file file))))
 
-  (defun xtr-kill-whole-line ()
+  (defun env-kill-whole-line ()
     "Kill the whole line, regardless of point location."
     (interactive)
     (move-beginning-of-line nil)
@@ -1437,8 +1427,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (define-key icomplete-fido-mode-map (kbd "C-<return>")
               #'icomplete-fido-exit)
   (define-key icomplete-fido-mode-map (kbd "M-k")
-              #'xtr-kill-whole-line)
-  (global-set-key (kbd "C-x C-r") #'xtr-recentf-completing-read)
+              #'env-kill-whole-line)
+  (global-set-key (kbd "C-x C-r") #'env-recentf-completing-read)
 #+end_src
 
 ** Windmove
@@ -1466,25 +1456,25 @@ Autorevert via notify is supposed to be much lower power than polling. It should
                       (pom property &optional inherit literal-nil))
     (declare-function org-set-property "org" (property value)))
 
-  (defvar actuator-org-created-property-name "CREATED"
+  (defvar env-org-created-property-name "CREATED"
     "The Org-mode property that stores entry creation dates.")
 
-  (defun actuator-org-insert-heading-timestamp ()
+  (defun env-org-insert-heading-timestamp ()
     "Insert a timestamp below a new heading.
 
     Org counts an inactive timestamp on the start of a line as a
     creation date."
     (interactive)
     (let ((now (format-time-string "[%Y-%m-%d %a %H:%M]"))
-          (property actuator-org-created-property-name))
+          (property env-org-created-property-name))
       (unless (org-entry-get (point) property nil)
         (org-set-property property now))))
 
   (add-hook 'org-insert-heading-hook
-            #'actuator-org-insert-heading-timestamp)
+            #'env-org-insert-heading-timestamp)
 
   (add-hook 'org-capture-prepare-finalize-hook
-            #'actuator-org-insert-heading-timestamp)
+            #'env-org-insert-heading-timestamp)
 #+end_src
 
 ** Info
@@ -1575,14 +1565,14 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
     (declare-function package-quickstart-refresh "package" nil))
   (defvar package-quickstart)
 
-  (defun actuator-regen-init ()
+  (defun env-regen-init ()
     "A stupid version of what I was doing."
     (interactive)
     (let ((init       (expand-file-name "init.el" user-emacs-directory))
           (early-init (expand-file-name "early-init.el"
                                         user-emacs-directory))
-          (org        (expand-file-name "init.org"
-                                        actuator-directory)))
+          (org        (expand-file-name "emacs.org"
+                                        env-directory)))
       (when (file-exists-p org)
         (org-babel-tangle-file org))
       (cond ((native-comp-available-p)
@@ -1628,13 +1618,13 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
 :END:
 
 #+begin_src emacs-lisp
-  (defun actuator-elisp-hook ()
+  (defun env-elisp-hook ()
     "Set mode-specific setting for Emacs Lisp."
     (auto-fill-mode +1)
     (display-fill-column-indicator-mode +1)
     (flymake-mode +1))
 
-  (add-hook 'emacs-lisp-mode-hook #'actuator-elisp-hook)
+  (add-hook 'emacs-lisp-mode-hook #'env-elisp-hook)
 #+end_src
 
 ** Add emacs source SRC
@@ -1679,12 +1669,12 @@ https://stackoverflow.com/questions/384284/how-do-i-rename-an-open-file-in-emacs
 #+begin_src emacs-lisp
   (when (ignore-errors (file-exists-p org-directory))
     (customize-set-variable 'abbrev-file-name (expand-file-name "data/abbrev.el" org-directory)))
-  (defun actuator-enable-abbrev-mode ()
+  (defun env-enable-abbrev-mode ()
     "Wrapper to ensure abbrev mode is turned on, not toggled."
     (abbrev-mode +1))
 
-  (add-hook 'text-mode-hook #'actuator-enable-abbrev-mode)
-  (add-hook 'prog-mode-hook #'actuator-enable-abbrev-mode)
+  (add-hook 'text-mode-hook #'env-enable-abbrev-mode)
+  (add-hook 'prog-mode-hook #'env-enable-abbrev-mode)
   (customize-set-variable 'save-abbrevs 'silently)
 #+end_src
 
@@ -1894,11 +1884,11 @@ This will only check the display on starting Emacs. If I need to check later (fo
   (customize-set-variable 'elfeed-search-title-max-width 120)
   (customize-set-variable 'elfeed-db-directory   (expand-file-name "elfeed" user-emacs-directory))
 
-  (global-set-key (kbd "C-x w") #'actuator-elfeed-load-db-and-open)
+  (global-set-key (kbd "C-x w") #'env-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
 
-    (define-key elfeed-search-mode-map (kbd "q") #'actuator-elfeed-save-db-and-bury)
-    (define-key elfeed-search-mode-map (kbd "R") #'actuator-elfeed-mark-all-as-read))
+    (define-key elfeed-search-mode-map (kbd "q") #'env-elfeed-save-db-and-bury)
+    (define-key elfeed-search-mode-map (kbd "R") #'env-elfeed-mark-all-as-read))
 #+end_src
 
 Filters are kind of the star of Elfeed. I mostly use them to remove items that I don't want to see (or already see in other contexts---podcasts for example). I think it's all pretty straightforward. The only thing of note that I do is adding a debug tag to each hook that hides things. That way I can tell which filter it is that's causing problems when I make a stupid typo and suddenly a specific filter matches all entries.
@@ -1970,7 +1960,7 @@ Filters are kind of the star of Elfeed. I mostly use them to remove items that I
 You don't need to do anything special to load Elfeed. You can set up a keybinding that runs ~(elfeed)~ and it should work. I took this function from [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Pragmatic Emacs]] when I first set up Elfeed a few years ago because I wanted to keep the database in sync between multiple computers. These helper functions ensure that the database is loaded and saved at the appropriate moments. I'm not sure there's any benefit to these if you only use them on one computer (as I do now) but I can't find any downsides either, so they stay.
 
 #+begin_src emacs-lisp
-  (defun actuator-elfeed-load-db-and-open ()
+  (defun env-elfeed-load-db-and-open ()
     "Wrapper to load the elfeed database from disk before opening.
 
   Taken from Pragmatic Emacs."
@@ -1989,7 +1979,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-elfeed-save-db-and-bury ()
+  (defun env-elfeed-save-db-and-bury ()
     "Save the Elfeed database to disk before burying buffer.
 
   Taken from Pragmatic Emacs."
@@ -2009,7 +1999,7 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
 #+end_src
 
 #+begin_src emacs-lisp
-    (defun actuator-elfeed-mark-all-as-read ()
+    (defun env-elfeed-mark-all-as-read ()
       "Mark all feeds in search as read.
 
   Taken from Mike Zamansky"
@@ -2026,32 +2016,32 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defvar elfeed-search-face-alist)
   (with-eval-after-load 'elfeed
     (add-to-list 'elfeed-search-face-alist
-                 '(video actuator-elfeed-video-face))
+                 '(video env-elfeed-video-face))
     (add-to-list 'elfeed-search-face-alist
-                 '(image actuator-elfeed-image-face))
+                 '(image env-elfeed-image-face))
     (add-to-list 'elfeed-search-face-alist
-                 '(comic actuator-elfeed-comic-face)))
+                 '(comic env-elfeed-comic-face)))
 #+end_src
 
 #+begin_src emacs-lisp
-  (defface actuator-elfeed-video-face
+  (defface env-elfeed-video-face
     `((t . (:background "gray90" :foreground "black")))
     "Face for elfeed video entry."
-    :group 'actuator-elfeed)
+    :group 'env-elfeed)
 #+end_src
 
 #+begin_src emacs-lisp
-  (defface actuator-elfeed-image-face
+  (defface env-elfeed-image-face
     `((t . (:background "gray90" :foreground "black")))
     "Face for elfeed image entry."
-    :group 'actuator-elfeed)
+    :group 'env-elfeed)
 #+end_src
 
 #+begin_src emacs-lisp
-  (defface actuator-elfeed-comic-face
+  (defface env-elfeed-comic-face
     `((t . (:background "gray90" :foreground "black")))
     "Face for elfeed comic entry."
-    :group 'actuator-elfeed)
+    :group 'env-elfeed)
 #+end_src
 
 ** Org-elfeed
@@ -2116,13 +2106,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (customize-set-variable 'prettify-symbols-unprettify-at-point 'right-edge)
 
-  (defun xtr-prettify-org-symbols ()
+  (defun env-prettify-org-symbols ()
     "Prettifies all Org buffers."
     (add-to-list 'prettify-symbols-alist '("#+title: " . ""))
     (prettify-symbols-mode +1))
 
   (when (display-graphic-p)
-    (add-hook 'org-mode-hook #'xtr-prettify-org-symbols))
+    (add-hook 'org-mode-hook #'env-prettify-org-symbols))
 #+end_src
 
 ** Archive old stuff
@@ -2143,7 +2133,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                       (&optional invisible-ok to-heading)))
   (defvar org-done-keywords)
 
-  (defun actuator-skip-non-archivable-tasks ()
+  (defun env-skip-non-archivable-tasks ()
     "Skip trees that are not available for archiving."
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
       (if (member (org-get-todo-state) org-done-keywords)
@@ -2243,7 +2233,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
-(defun actuator-date-stamp ()
+(defun env-date-stamp ()
   "Pleasant time string."
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
 
@@ -2251,7 +2241,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
     (add-to-list 'org-capture-templates
                  `("sj" "Journal" entry
                    (file+olp+datetree "journal.org.gpg")
-                   "* %(actuator-date-stamp)\n%?"
+                   "* %(env-date-stamp)\n%?"
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
@@ -2343,18 +2333,18 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
     (declare-function org-icalendar-combine-agenda-files "ox-icalendar"
                       (&optional async)))
 
-  (defun xtr-create-and-upload-ical ()
+  (defun env-create-and-upload-ical ()
     "Generate an icalendar file and upload it to my server."
     (message "Creating ical file...")
     (let ((inhibit-message t))
       (org-icalendar-combine-agenda-files))
     (let ((inhibit-message t))
-      (xtr-upload-ical))
+      (env-upload-ical))
     (message "Creating ical file... Done. Uploading file in background."))
 
   (defvar org-icalendar-combined-agenda-file)
 
-  (defun xtr-upload-ical ()
+  (defun env-upload-ical ()
     "Upload ical file to WebDAV."
     (start-process "Upload .ics to webDAV" nil "curl" "--user"
                    (format "%s:%s"
@@ -2369,7 +2359,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                                                  "webdav.fastmail.fm"))))
 
   (when (eq system-type 'darwin)
-    (advice-add #'org-agenda-quit :after #'xtr-create-and-upload-ical))
+    (advice-add #'org-agenda-quit :after #'env-create-and-upload-ical))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2392,7 +2382,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 ** Calendar
 
 #+begin_src emacs-lisp
-  (defun actuator-set-location (location)
+  (defun env-set-location (location)
     "Set the current LOCATION for Emacs."
     (cond ((string-equal (downcase location) "calgary")
            (customize-set-variable 'calendar-latitude [51 02 north])
@@ -2405,11 +2395,11 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
           (t
            (error "Bad location set"))))
 
-  (actuator-set-location "Calgary")
+  (env-set-location "Calgary")
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-calendar-mode-line-entry (command echo &optional key string)
+  (defun env-calendar-mode-line-entry (command echo &optional key string)
     "Return a propertized string for `calendar-mode-line-format'.
   COMMAND is a command to run, ECHO is the help-echo text, KEY
   is COMMAND's keybinding, STRING describes the binding.
@@ -2422,7 +2412,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                 'mouse-face 'mode-line-highlight
                 'keymap (make-mode-line-mouse-map 'mouse-1 command)))
 
-  (advice-add 'calendar-mode-line-entry :override #'actuator-calendar-mode-line-entry)
+  (advice-add 'calendar-mode-line-entry :override #'env-calendar-mode-line-entry)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2495,12 +2485,12 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                  '("vd" "Daily View"
                    ((agenda "")
                     (todo ""
-                          ((org-agenda-skip-function #'xtr-org-agenda-priority-a)
+                          ((org-agenda-skip-function #'env-org-agenda-priority-a)
                            (org-agenda-overriding-header "Today's Priority #A
               tasks: "))))
                    ((org-agenda-span 'day))))
 
-    (defun xtr-org-agenda-priority-a ()
+    (defun env-org-agenda-priority-a ()
       "Show Priority A items."
       (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]"))
 
@@ -2525,7 +2515,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
     (add-to-list 'org-agenda-custom-commands
                  '("A" "Candidate trees for archiving" tags "-NOARCHIVE"
                    ((org-agenda-overriding-header "Candidate tasks for archiving")
-                    (org-agenda-skip-function 'actuator-skip-non-archivable-tasks))))
+                    (org-agenda-skip-function 'env-skip-non-archivable-tasks))))
 
     (add-to-list 'org-agenda-custom-commands
                  '("vc" "Weekly Calendar"
@@ -2656,8 +2646,8 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
-  (defun xtr-org-refile-candidates ()
-    "Collect all the `org-mode' files in the `actuator-directory'.
+  (defun env-org-refile-candidates ()
+    "Collect all the `org-mode' files in the `env-directory'.
 
   Currently it only collects files that start with a lowercase
   letter, which is probably the wrong way to go about it, but I
@@ -2666,12 +2656,12 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   other weird files that might temporarily get caught by the
   refiler that I don't want. This would be an easy fix, but I'm not
   doing it."
-     (when (ignore-errors (file-exists-p actuator-directory))
-         (directory-files actuator-directory t "^[a-z].*\\.org$")))
+     (when (ignore-errors (file-exists-p env-directory))
+         (directory-files env-directory t "^[a-z].*\\.org$")))
 
   (customize-set-variable 'org-refile-targets
                           '((org-agenda-files :maxlevel . 9)
-                            (xtr-org-refile-candidates :maxlevel . 9)))
+                            (env-org-refile-candidates :maxlevel . 9)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2717,10 +2707,10 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-org-src-line-wrap-setup ()
+  (defun env-org-src-line-wrap-setup ()
     "Set truncate-lines-mode in org-source-editing buffers."
     (setq-local truncate-lines t))
-  (add-hook 'org-src-mode-hook #'actuator-org-src-line-wrap-setup)
+  (add-hook 'org-src-mode-hook #'env-org-src-line-wrap-setup)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2759,7 +2749,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
                                            (:hlines   . "no")
                                            (:tangle   . "no")))
 
-    (defun actuator-update-all-dynamic-blocks ()
+    (defun env-update-all-dynamic-blocks ()
       "Update all dynamic blocks in an Org-mode document.
 
       Should only be called when in Org-mode, but also it shouldn't
@@ -2773,13 +2763,13 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       (org-table-map-tables 'org-table-align 'quietly)
       (org-dblock-update 'arg))
 
-    (defun actuator-org-mode-setup ()
+    (defun env-org-mode-setup ()
       "Set basic defaults in Org-mode that aren't variables."
 
       (electric-indent-local-mode -1)
       (visual-line-mode))
 
-    (add-hook 'org-mode-hook #'actuator-org-mode-setup)
+    (add-hook 'org-mode-hook #'env-org-mode-setup)
 
     (global-set-key (kbd "C-c c") #'org-capture)
     (global-set-key (kbd "C-c a") #'org-agenda)
@@ -2845,14 +2835,14 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-org-capture-turn-off-header-line ()
+  (defun env-org-capture-turn-off-header-line ()
     "Disable the header-line in a local mode.
 
   This is used to disable the help line in `org-capture' buffers as
   there's no variable that will do it."
 
     (setq-local header-line-format nil))
-  (add-hook 'org-capture-mode-hook #'actuator-org-capture-turn-off-header-line)
+  (add-hook 'org-capture-mode-hook #'env-org-capture-turn-off-header-line)
 #+end_src
 
 ** Holidays
@@ -2938,13 +2928,13 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
   (declare-function org-clock-in "org-clock" (&arg))
 
-  (defun xtr-org-clock-list ()
+  (defun env-org-clock-list ()
     "Bring up `org-clock-in' menu."
     (interactive)
     (require 'org-clock)
     (funcall #'org-clock-in '(4)))
 
-  (global-set-key (kbd "C-c b") #'xtr-org-clock-list)
+  (global-set-key (kbd "C-c b") #'env-org-clock-list)
 #+end_src
 
 ** World Time
@@ -3039,7 +3029,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+begin_src emacs-lisp
   (defvar org-export-filter-timestamp-functions)
 
-  (defun actuator-filter-timestamp (string backend _comm)
+  (defun env-filter-timestamp (string backend _comm)
     "Remove <> around time-stamps.
   I actually don't know what STRING is. BACKEND can be some version
   of html or latex."
@@ -3052,19 +3042,19 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (with-eval-after-load 'ox
     (require 'ox-icalendar)
     (add-to-list 'org-export-filter-timestamp-functions
-                 #'actuator-filter-timestamp))
+                 #'env-filter-timestamp))
 #+end_src
 
 #+begin_src emacs-lisp
-    (defvar actuator-org-html-head
+    (defvar env-org-html-head
       "<link rel='stylesheet' href='css/site.css' type='text/css'/>")
 
-    (defvar actuator-org-html-preamble
+    (defvar env-org-html-preamble
       "<ul>
     <li><a href='/'>Home</a></li>
     </ul>")
 
-    (defvar actuator-org-html-postamble
+    (defvar env-org-html-postamble
       "Last updated %C. Built with %c. (%v HTML).")
 #+end_src
 
@@ -3097,9 +3087,9 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       :html-head-extra nil
       :html-head-include-default-style nil
       :html-head-include-scripts nil
-      :html-head ,actuator-org-html-head
-      :html-preamble ,actuator-org-html-preamble
-      :html-postamble ,actuator-org-html-postamble
+      :html-head ,env-org-html-head
+      :html-preamble ,env-org-html-preamble
+      :html-postamble ,env-org-html-postamble
       :sitemap-title "Sitemap"
       :sitemap-style list
       :sitemap-filename "sitemap.org"
@@ -3111,8 +3101,8 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (with-eval-after-load
       'ox-publish
     (add-to-list 'org-publish-project-alist
-                 `("actuator-to-org"
-                   :base-directory ,actuator-directory
+                 `("env-to-org"
+                   :base-directory ,env-directory
                    :base-extension "org"
                    :publishing-directory "~/.cache/org-publish-actuator"
                    :publishing-function org-org-publish-to-org
@@ -3134,7 +3124,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
   (defvar org-export-filter-link-functions)
-  (defun actuator-filter-local-links (link backend _info)
+  (defun env-filter-local-links (link backend _info)
     "Filter to convert all the forms of /index.html to /.
 
   Takes LINK and BACKEND as args."
@@ -3146,7 +3136,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (with-eval-after-load
       'ox
 
-    (add-to-list 'org-export-filter-link-functions 'actuator-filter-local-links))
+    (add-to-list 'org-export-filter-link-functions 'env-filter-local-links))
 #+end_src
 
 ** Org agenda sunrise/set
@@ -3232,16 +3222,16 @@ I'm using a custom alert function so that I can use the system's notification sy
     (appt-activate +1)
     (advice-add #'org-agenda-to-appt :after #'org-agenda-quit))
 
-  (defun actuator-appt-notify (minutes-until _current-time message)
+  (defun env-appt-notify (minutes-until _current-time message)
     "An alternative `appt-disp-window-function' to show an alert.
 
    This function accepts three arguments, MINUTES-UNTIL, which
    should be an integer number of minutes until the event occurs,
    the CURRENT-TIME which is discarded, and MESSAGE, which is the
    name of the TODO item that is upcoming."
-    (actuator-notify (format "Appointment in %s minutes" minutes-until)
+    (env-notify (format "Appointment in %s minutes" minutes-until)
                      message))
-  (customize-set-variable 'appt-disp-window-function #'actuator-appt-notify)
+  (customize-set-variable 'appt-disp-window-function #'env-appt-notify)
 #+end_src
 
 ** Org timer
@@ -3270,10 +3260,10 @@ Git doesn't work super great for stuff like personal Org files. I want backups a
 First thing is to set up some variables incase I need to change things. Not really sure if this means that the system will be portable to other backup systems, but it might be?
 
 #+begin_src emacs-lisp
-  (defvar actuator-org-backup-timestamp 0
+  (defvar env-org-backup-timestamp 0
     "Last time a backup was performed.")
 
-  (defvar actuator-backup-command
+  (defvar env-backup-command
     (concat "borg create "
             "--compression zstd,3 "
             "--exclude \"**.DS_Store\" "
@@ -3282,10 +3272,10 @@ First thing is to set up some variables incase I need to change things. Not real
   In my case, I want to have a little compression and exclude a
   few things.")
 
-  (defvar actuator-backup-create-command "borg init -e=none"
+  (defvar env-backup-create-command "borg init -e=none"
     "The shell command used to create a new backup repo if needed.")
 
-  (defvar actuator-backup-dir "~/Backup/"
+  (defvar env-backup-dir "~/Backup/"
     "Location for the backup directories to be stored.
   Must exist. Needs a trailing slash.")
 #+end_src
@@ -3293,36 +3283,36 @@ First thing is to set up some variables incase I need to change things. Not real
 Because ELPA doesn't really work on saving or files in the usual way, I'm using a wrapper function to make sure things get backed up before they're changed. Not really the best situation but oh well.
 
 #+begin_src emacs-lisp
-  (defun actuator-backup-elpa ()
+  (defun env-backup-elpa ()
     "Wrapper function to backup ELPA directory before making a change."
-    (actuator-backup package-user-dir))
+    (env-backup package-user-dir))
 
 
   (when (executable-find "borg")
-    (add-hook 'package-menu-mode-hook #'actuator-backup-elpa))
+    (add-hook 'package-menu-mode-hook #'env-backup-elpa))
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-backup (path)
-    "Backup PATH to `actuator-backup-dir' using `borg'.
+  (defun env-backup (path)
+    "Backup PATH to `env-backup-dir' using `borg'.
   If the backup repo hasn't been created, this will initialize it
   first and then make a backup. Should be fast enough to not be an
   issue to run every save."
     (let* ((time-stamp (format-time-string "%FT%H%M%S%z"))
            (backup-name (string-trim path "^.*/" "/$"))
            (backup-path
-            (expand-file-name backup-name actuator-backup-dir)))
+            (expand-file-name backup-name env-backup-dir)))
 
       (unless (file-exists-p backup-path)
         (call-process-shell-command
-         (concat actuator-backup-create-command " "
+         (concat env-backup-create-command " "
                  backup-path)
          nil nil nil)
         (message (format "Creating backup directory: %s"
                          backup-path)))
 
       (call-process-shell-command (concat
-                                   actuator-backup-command " "
+                                   env-backup-command " "
                                    backup-path "::"
                                    time-stamp " "
                                    path)
@@ -3332,7 +3322,7 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
 
 #+begin_src emacs-lisp
   (defvar org-directory)
-  (defun actuator-backup-org-dir-on-save ()
+  (defun env-backup-org-dir-on-save ()
     "Backs up the org directory.
   Can be added to a global `after-save-hook' because it checks before
   backing up."
@@ -3340,15 +3330,15 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
                              (file-name-as-directory
                               (expand-file-name org-directory)))
                (time-less-p
-                (time-add actuator-org-backup-timestamp (* 15 60)) nil))
-      (actuator-backup org-directory)
-      (setq actuator-org-backup-timestamp (current-time))))
+                (time-add env-org-backup-timestamp (* 15 60)) nil))
+      (env-backup org-directory)
+      (setq env-org-backup-timestamp (current-time))))
 
   (when (executable-find "borg")
-    (add-hook 'after-save-hook #'actuator-backup-org-dir-on-save))
+    (add-hook 'after-save-hook #'env-backup-org-dir-on-save))
 
   (add-to-list 'savehist-additional-variables
-               'actuator-org-backup-timestamp)
+               'env-org-backup-timestamp)
 #+end_src
 
 ** Org path-independent link
@@ -3359,7 +3349,7 @@ Because ELPA doesn't really work on saving or files in the usual way, I'm using 
 This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfile/][Karl Voit]]. I use "locate" as the link type because I like the way this looks. It works very well if you link to the exact file name. HTML export works no issue.
 
 #+begin_src emacs-lisp
-  (defun actuator-handle-locate-link (querystring)
+  (defun env-handle-locate-link (querystring)
     "Locate QUERYSTRING."
     (let ((queryresults
            (split-string
@@ -3385,7 +3375,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
     (with-eval-after-load 'org
       (org-link-set-parameters
        "locate"
-       :follow (lambda (filename) (actuator-handle-locate-link filename))
+       :follow (lambda (filename) (env-handle-locate-link filename))
        :help-echo "Opens the file located via \"locate\" with your default application"))
 #+end_src
 
@@ -3467,7 +3457,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
     (add-to-list 'org-capture-templates
                  '("sf" "Feed" entry
                    (file+headlines "feed.org" "Feeds")
-                   "* [[%(actuator-get-feed)][%^{Title}]] %^g
+                   "* [[%(env-get-feed)][%^{Title}]] %^g
   (yank)\n%?"
                    :prepend
                    :empty-lines 1
@@ -3476,7 +3466,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
   (declare-function feed-discovery-discover-feeds
                     "ext:feed-discovery" (url))
 
-  (defun actuator-get-feed ()
+  (defun env-get-feed ()
     "Get RSS/Atom feed from url in clipboard."
     (car (feed-discovery-discover-feeds
      (with-temp-buffer
@@ -3613,7 +3603,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
     (declare-function notifications-get-capabilities "notifications"
                       (&optional bus)))
 
-  (defun actuator-notify (title message)
+  (defun env-notify (title message)
     "Send a system notification based on capabilities.
   Requires TITLE and MESSAGE strings."
     (cond ((notifications-get-capabilities)
@@ -3657,24 +3647,24 @@ Thunderbird attachment reminder
 "attach\\|\Wfiles?\W\\|\Wphoto\\|\Where\s-+is\\|\Where\s-+are\\|\Where\s-+it\s-+is\\|enclose\\|\Wdraft\\|\Wversion"
 
 #+begin_src emacs-lisp
-  (defvar xtr-message-attachment-regexp "\\([Ww]e send\\|[Ii]
+  (defvar env-message-attachment-regexp "\\([Ww]e send\\|[Ii]
   send\\|attach\\)")
 
-  (defun xtr-message-check-attachment ()
+  (defun env-message-check-attachment ()
     "Check if there is an attachment in the message if I claim it."
     (eval-when-compile
       (declare-function message-goto-body "message" (&optional interactive))
       (declare-function message-y-or-n-p "message" t t))
     (save-excursion
       (message-goto-body)
-      (when (search-forward-regexp xtr-message-attachment-regexp nil t nil)
+      (when (search-forward-regexp env-message-attachment-regexp nil t nil)
         (message-goto-body)
         (unless (or (search-forward "<#part" nil t nil)
                     (message-y-or-n-p
                      "No attachment. Send the message ?" nil nil))
           (error "No message sent")))))
 
-  (add-hook 'message-send-hook 'xtr-message-check-attachment)
+  (add-hook 'message-send-hook 'env-message-check-attachment)
 #+end_src
 
 ** Web
@@ -3686,7 +3676,7 @@ Thunderbird attachment reminder
 I want video links to be opened in MPV. This helps my battery life as well as my personal life because I don't have to visit YouTube. This requires [[https://mpv.io][MPV]] to be installed, which is best installed via [[http://brew.sh][Brew]] on macOS. I've tried to use [[https://nixos.org/download.html][Nix]], but it doesn't work well.
 
 #+begin_src emacs-lisp
-  (defun actuator-browse-video (url &rest _args)
+  (defun env-browse-video (url &rest _args)
     "Browse URL with a dedicated video player.
   Avoids opening a browser window."
     (call-process "mpv" nil 0 nil url))
@@ -3723,7 +3713,7 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 
 ** ERC
 #+begin_src emacs-lisp
-  (defun actuator-twitch-start-irc ()
+  (defun env-twitch-start-irc ()
     "Connect to Twitch IRC channel.
 
   I really want to use irc for something for some reason."
@@ -3807,7 +3797,7 @@ In order to open epub files, doc-view needs mutool:
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun actuator-eshell-prompt ()
+  (defun env-eshell-prompt ()
     "Custom prompt for eshell.
 
   Designed to be as minimalist as possible, while being moderately useful."
@@ -3820,7 +3810,7 @@ In order to open epub files, doc-view needs mutool:
      (fish-path (eshell/pwd) 20)
      " ❯ "))
   (customize-set-variable 'eshell-prompt-regexp "^.+@.+:.+❯ ")
-  (customize-set-variable 'eshell-prompt-function #'actuator-eshell-prompt)
+  (customize-set-variable 'eshell-prompt-function #'env-eshell-prompt)
 #+end_src
 
 ** Emms
@@ -3852,7 +3842,7 @@ In order to open epub files, doc-view needs mutool:
   (defvar emms-info-functions)
   (defvar emms-player-list)
 
-  (defun actuator-setup-emms ()
+  (defun env-setup-emms ()
     "Wrapper because `emms' isn't always available."
     (interactive)
     (if (locate-library "emms")
@@ -3870,7 +3860,7 @@ In order to open epub files, doc-view needs mutool:
           (emms-smart-browse))
       (message "EMMS is not installed.")))
 
-  (global-set-key (kbd "C-c m") #'actuator-setup-emms)
+  (global-set-key (kbd "C-c m") #'env-setup-emms)
 #+end_src
 
 * Afterword
