@@ -1697,7 +1697,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
 :CREATED:  [2022-07-27 Wed 17:06]
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (auto-save-visited-mode +1)
 #+end_src
 
