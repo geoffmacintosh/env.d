@@ -807,9 +807,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
            try-expand-list
            try-expand-list-all-buffers
            try-expand-whole-kill
-           try-expand-line-all-buffers
-           env-try-expand-by-dict
-           env-try-add-expansion))
+           try-expand-line-all-buffers))
 
   (global-set-key (kbd "<M-SPC>") #'hippie-expand)
 #+end_src
@@ -823,56 +821,6 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (interactive)
     (hippie-expand 0))
   (global-set-key (kbd "M-S-SPC") #'env-hippie-unexpand)
-#+end_src
-
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (declare-function he-init-string "hippie-exp" (beg end))
-    (declare-function he-dabbrev-beg "hippie-exp" ())
-    (declare-function he-reset-string "hippie-exp" ()))
-  (defun env-try-add-expansion (_old)
-    "Add a new global abbrev, `OLD' is required by hippies."
-    (he-init-string (he-dabbrev-beg) (point))
-    (or (inverse-add-global-abbrev 1)
-        (he-reset-string)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (declare-function he-init-string "hippie-exp" (beg end))
-    (declare-function he-lisp-symbol-beg "hippie-exp" ())
-    (declare-function he-string-member "hippie-exp"
-                      (str lst &optional trans-case))
-    (declare-function he-reset-string "hippie-exp" ())
-    (declare-function he-substitute-string "hippie-exp"
-                      (str &optional trans-case))
-    (declare-function ispell-lookup-words "ispell"
-                      (word &optional lookup-dict)))
-  (defvar he-search-string)
-  (defvar he-tried-table)
-  (defvar he-expand-list)
-
-  (defun env-try-expand-by-dict (old)
-    "Attempt to expand a word by using the dictionary.
-  Needs OLD due to `hippie-expand'."
-    (unless (bound-and-true-p ispell-minor-mode)
-      (ispell-minor-mode 1))
-
-    (unless old
-      (he-init-string (he-lisp-symbol-beg) (point))
-      (if (not (he-string-member he-search-string he-tried-table))
-          (setq he-tried-table (cons he-search-string he-tried-table)))
-      (setq he-expand-list
-            (and (not (equal he-search-string ""))
-                 (ispell-lookup-words
-                  (concat (buffer-substring-no-properties
-                           (he-lisp-symbol-beg) (point))
-                          "*")))))
-    (if (null he-expand-list)
-        (if old (he-reset-string))
-      (he-substitute-string (car he-expand-list))
-      (setq he-expand-list (cdr he-expand-list))
-      t))
 #+end_src
 
 ** Recentf
