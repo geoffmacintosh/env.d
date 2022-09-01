@@ -240,8 +240,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
     (custom-theme-set-faces
      'user
-     ;;`(fixed-pitch ((t (:family ,env-font-mono :weight light))))
-     ;;`(variable-pitch ((t (:family ,env-font-variable :weight light))))
+     `(fixed-pitch ((t (:family ,env-font-mono :weight light))))
+     `(variable-pitch ((t (:family ,env-font-variable :weight light))))
      `(default ((t (:background ,white
                                 :foreground ,dark
                                 :weight light))))
@@ -296,6 +296,12 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
                     :weight bold)))
      `(org-special-keyword ((t :foreground ,grey)))
 
+    `(org-agenda-date-weekend ((t :inherit org-agenda-date
+                                      :foreground ,lgrey
+                                      :weight normal)))
+
+    `(org-agenda-structure ((t :foreground ,lgrey
+                               :weight normal)))
      `(org-date ((t :foreground ,dark
                     :underline t)))
      `(org-agenda-date ((t :foreground ,dark
@@ -309,8 +315,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
      `(org-scheduled-previously ((t :foreground ,dark )))
      `(org-scheduled ((t :foreground ,dark )))
      `(org-imminent-deadline ((t :foreground ,red)))
-     `(org-table ((t :foreground ,dark
-                     :family ,env-font-mono)))
+     ;; `(org-table ((t :foreground ,dark
+     ;;                 :family ,env-font-mono)))
      `(org-habit-overdue-face ((t :background ,lgrey)))
      `(org-habit-clear-face ((t :background ,white)))
      `(org-habit-clear-future-face ((t :background ,white)))
