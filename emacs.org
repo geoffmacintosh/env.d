@@ -2065,6 +2065,85 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :PROPERTIES:
 :CREATED:  [2022-05-13 Fri 20:07]
 :END:
+#+begin_src emacs-lisp
+  (defvar org-capture-templates nil)
+#+end_src
+
+** Medication capture template
+:PROPERTIES:
+:CREATED:  [2022-08-31 Wed 14:13]
+:ID:       f686270e-d086-4852-92b3-03fcc00d1342
+:END:
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("sm" "Medication" entry
+                   (file+olp+datetree "diary.org")
+                   "* %(env-time-of-day) %^{Drug} %^{Dose}p\n %(org-set-tags \"medicine\")"
+                   :empty-lines 1
+                   :kill-buffer t)))
+
+  (defun env-time-of-day ()
+    "Return a title-cased string that reflects the current time.
+
+    Between 0600 and 1200 returns Morning
+    Between 1200 and 1300 returns Lunchtime
+    Between 1200 and 1800 returns Afternoon
+    Between 1800 and 2300 returns Evening
+    Between 2300 and 0600 returns Night"
+    (let ((hour (decoded-time-hour (decode-time))))
+      (cond ((and (< hour 12) (>= hour 6))
+             "Morning")
+            ((and (< hour 13) (>= hour 12))
+             "Lunchtime")
+            ((and (< hour 18) (>= hour 13))
+             "Afternoon")
+            ((and (< hour 23) (>= hour 18))
+             "Evening")
+            (t
+             "Night"))))
+#+end_src
+** Diary at work
+:PROPERTIES:
+:CREATED:  [2022-08-30 Tue 11:09]
+:ID:       6c3934e9-4f8d-4e60-8875-718aad520377
+:END:
+#+begin_src emacs-lisp
+  (if (eq env-location 'work)
+    (customize-set-variable 'org-agenda-diary-file "access.org")
+(customize-set-variable 'org-agenda-diary-file "diary.org"))
+  (customize-set-variable 'org-agenda-insert-diary-strategy 'date-tree)
+#+end_src
+
+** Smart TODO capture template
+:PROPERTIES:
+:CREATED:  [2022-08-31 Wed 12:35]
+:ID:       59bc77b1-03c4-4de1-ae47-bb0ec86512d9
+:END:
+Should choose the correct location for a todo based on which computer.
+
+#+begin_src emacs-lisp
+  (declare-function org-id-goto "org-id" (id))
+  (declare-function org-capture-target-buffer "org-capture" (file))
+
+(defun env-visit-todo-file-correctly ()
+    "Do thing right."
+    (interactive)
+    (cond ((eq env-location 'work)
+         (org-id-goto "6bfa9722-6910-4913-95c1-a69900a130cd"))
+        (t (let ((file-name "inbox.org"))
+             (set-buffer (org-capture-target-buffer file-name))
+             (goto-char (point-max))))))
+
+  (add-to-list 'org-capture-templates
+               `("t" "TODO" entry
+                 (function env-visit-todo-file-correctly)
+                 "* TODO %?"
+                 :empty-lines 1
+                 :clock-resume t
+                 :clock-in t))
+#+end_src
+
 ** Prettify symbols
 :PROPERTIES:
 :CREATED:  [2022-06-13 Mon 17:55]
@@ -2141,8 +2220,16 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 ** Diary
 #+begin_src emacs-lisp
   (customize-set-variable 'calendar-date-style 'iso)
-  (customize-set-variable 'org-agenda-insert-diary-strategy 'top-level)
+  (customize-set-variable 'org-agenda-insert-diary-strategy 'date-tree)
   (customize-set-variable 'org-agenda-include-diary t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defvar calendar-mode-map)
+  (declare-function calendar-exit "calendar" (&optional kill))
+  (global-set-key (kbd "<f2>") #'calendar)
+  (with-eval-after-load 'calendar
+    (define-key calendar-mode-map (kbd "<f2>") #'calendar-exit))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2151,10 +2238,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
     (unless (file-exists-p diary-file)
       (make-empty-file diary-file t)))
 #+end_src
+
 ** Capture Templates                                              :noexport:
-#+begin_src emacs-lisp
-  (defvar org-capture-templates)
-#+end_src
 
 #+begin_src emacs-lisp
   (customize-set-variable 'org-capture-use-agenda-date t)
@@ -2260,16 +2345,6 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
                  `("mm" "Movie" entry
                    (file+headline "movies.org" "Unwatched")
                    "* %^{Title}%^{Year}p%^{Series}p\n%?"
-                   :empty-lines 1
-                   :kill-buffer t)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("sd" "Drug" entry
-                   (file+olp+datetree "logbook.org")
-                   "* %^{Drug} at %<%R> :drug: %^{Dose}p\n"
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
@@ -2494,7 +2569,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                     (org-agenda-start-on-weekday 1)
                     (org-habit-show-habits nil)
                     (org-agenda-remove-tags t)
-                    (org-agenda-files '("~/org/diary.org"))
+                    (org-agenda-files '("diary.org"))
                     (org-agenda-skip-function '(org-agenda-skip-entry-if
                                                 'scheduled 'deadline 'todo '("TODO ""WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
                     (org-agenda-span 7)))))
@@ -2518,7 +2593,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                         (todo "WAITING"
                               ((org-agenda-overriding-header
                                 "Waiting tasks"))))
-                       ((org-agenda-files '("work-journal.org"))
+                       ((org-agenda-files '("access.org"))
                         (org-agenda-use-time-grid nil)))))
   #+end_src
 
@@ -2530,7 +2605,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                           ((org-agenda-overriding-header "Tasks finished in last six months")))
                     (tags "+review"
                           ((org-agenda-overriding-header "Performance review"))))
-                   ((org-agenda-files '("work-journal.org"))
+                   ((org-agenda-files '("access.org"))
                     (org-agenda-use-time-grid nil)))))
 #+end_src
 
@@ -2542,7 +2617,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                   "quests.org"
                   "kb.org"
                   "home.org"
-                  "logbook.org"
                   "media.org"
                   "inventory.org"
                   "inbox.org"
@@ -2606,7 +2680,6 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                  1200 1300 1400 1500 1600
                  1700 1800 1900 2000 2100)
            " ....." "-----------------"))
-  (customize-set-variable 'org-agenda-diary-file (expand-file-name "diary.org" org-directory))
 #+end_src
 
 https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
@@ -2658,10 +2731,10 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (eval-when-compile
     (declare-function org-agenda-earlier "org-agenda" (ARG))
     (declare-function org-agenda-later   "org-agenda" (ARG)))
-  (with-eval-after-load 'org-agenda
-    (defvar org-agenda-mode-map)
-    (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
-    (define-key org-agenda-mode-map (kbd "<mouse-9>") #'org-agenda-later))
+  ;; (with-eval-after-load 'org-agenda
+  ;;   (defvar org-agenda-mode-map)
+  ;;   (define-key org-agenda-mode-map (kbd "<mouse-8>") #'org-agenda-earlier)
+  ;;   (define-key org-agenda-mode-map (kbd "<mouse-9>") #'org-agenda-later))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3827,6 +3900,15 @@ In order to open epub files, doc-view needs mutool:
       (message "EMMS is not installed.")))
 
   (global-set-key (kbd "C-c m") #'env-setup-emms)
+#+end_src
+
+** Calc
+:PROPERTIES:
+:CREATED:  [2022-09-01 Thu 12:29]
+:END:
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<f3>") #'calc-dispatch)
+  (define-key calc-mode-map (kbd "<f3>") #'calc-reset)
 #+end_src
 
 * Afterword
