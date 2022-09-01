@@ -452,9 +452,9 @@ I am hiding this when not bound because I have weird errors where on Windows it 
   (eval-when-compile
     (declare-function help-go-back "help-mode" ())
     (declare-function help-go-forward "help-mode" ()))
-  (with-eval-after-load 'help-mode
-    (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back)
-    (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward))
+  ;; (with-eval-after-load 'help-mode
+  ;;   (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back)
+  ;;   (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward))
   (customize-set-variable 'jit-lock-defer-time 0)
   (customize-set-variable 'use-short-answers t)
   (global-set-key (kbd "M-o") #'other-window)
