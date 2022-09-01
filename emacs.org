@@ -1483,12 +1483,13 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'desktop-base-file-name "desktop-save-file.el")
   (customize-set-variable 'desktop-dirname  user-emacs-directory)
   (customize-set-variable 'desktop-base-lock-name "desktop-lock")
   (customize-set-variable 'desktop-save t)
   (unless (equal init-file-debug t)
     (desktop-save-mode +1))
+  (customize-set-variable 'desktop-base-file-name
+                          (format "desktop-lock-%s.el" (system-name)))
 #+end_src
 
 ** Context-menu
