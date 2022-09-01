@@ -409,13 +409,13 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 I am hiding this when not bound because I have weird errors where on Windows it says that ~elide-head-mode~ isn't a function.
 
 #+begin_src emacs-lisp
-  (when (fboundp 'elide-head-mode)
-    (add-hook 'prog-mode-hook #'elide-head-mode))
+  (when (fboundp 'elide-head)
+    (add-hook 'prog-mode-hook #'elide-head))
 #+end_src
 
 ** Switches
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (define-key key-translation-map (kbd "<mouse-8>") (kbd "<XF86Back>"))
   (define-key key-translation-map (kbd "<mouse-9>") (kbd "<XF86Forward>"))
 #+end_src
