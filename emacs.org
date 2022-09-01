@@ -184,6 +184,21 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   files from.")
 #+end_src
 
+** Set home or work
+:PROPERTIES:
+:CREATED:  [2022-09-01 Thu 12:23]
+:END:
+
+#+begin_src emacs-lisp
+  (defvar env-location
+    (cond ((string-equal
+            (replace-regexp-in-string
+             "[0-9]+-C.*$" "" (system-name))
+            "MSC")
+           'work)
+          (t 'home)))
+#+end_src
+
 * Theme
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:29]
