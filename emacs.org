@@ -1960,7 +1960,6 @@ You don't need to do anything special to load Elfeed. You can set up a keybindin
      (declare-function elfeed-db-unload "elfeed-db"))
     (elfeed-db-save)
     (elfeed-db-gc)
-    (elfeed-db-compact)
     (elfeed-db-unload)
     (quit-window)
     (garbage-collect)
