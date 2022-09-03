@@ -174,17 +174,6 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
      (make-directory org-directory))
 #+end_src
 
-#+begin_src emacs-lisp
-  (defvar env-directory
-    (let ((dir "~/env.d"))
-      (if (file-exists-p dir)
-          dir
-      nil))
-    "Directory with actuator Org files.
-  This is the directory where Emacs will try to tangle the config
-  files from.")
-#+end_src
-
 ** Set location
 :PROPERTIES:
 :CREATED:  [2022-09-01 Thu 12:23]
@@ -2608,22 +2597,8 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
-  (defun env-org-refile-candidates ()
-    "Collect all the `org-mode' files in the `env-directory'.
-
-  Currently it only collects files that start with a lowercase
-  letter, which is probably the wrong way to go about it, but I
-  don't have any files that start with uppercase or numbers (this
-  is on purpose) and that eliminates adding any autosave, backup or
-  other weird files that might temporarily get caught by the
-  refiler that I don't want. This would be an easy fix, but I'm not
-  doing it."
-     (when (ignore-errors (file-exists-p env-directory))
-         (directory-files env-directory t "^[a-z].*\\.org$")))
-
   (customize-set-variable 'org-refile-targets
-                          '((org-agenda-files :maxlevel . 9)
-                            (env-org-refile-candidates :maxlevel . 9)))
+                          '((org-agenda-files :maxlevel . 9)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3064,7 +3039,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       'ox-publish
     (add-to-list 'org-publish-project-alist
                  `("env-to-org"
-                   :base-directory ,env-directory
+                   :base-directory ,org-directory
                    :base-extension "org"
                    :publishing-directory "~/.cache/org-publish-actuator"
                    :publishing-function org-org-publish-to-org
