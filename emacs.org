@@ -184,7 +184,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   files from.")
 #+end_src
 
-** Set home or work
+** Set location
 :PROPERTIES:
 :CREATED:  [2022-09-01 Thu 12:23]
 :END:
@@ -1520,39 +1520,6 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 #+begin_src emacs-lisp
   (customize-set-variable 'visible-bell nil)
   (customize-set-variable 'ring-bell-function 'ignore)
-#+end_src
-
-** Recompile init
-:PROPERTIES:
-:CREATED:  [2022-04-10 Sun 09:52]
-:END:
-
-#+begin_src emacs-lisp
-  (eval-when-compile
-    (declare-function org-babel-tangle-jump-to-org "ob-tangle" nil)
-    (declare-function org-babel-tangle-file "ob-tangle"
-                      (file &optional target-file lang-re))
-    (declare-function package-quickstart-refresh "package" nil))
-  (defvar package-quickstart)
-
-  (defun env-regen-init ()
-    "A stupid version of what I was doing."
-    (interactive)
-    (let ((init       (expand-file-name "init.el" user-emacs-directory))
-          (early-init (expand-file-name "early-init.el"
-                                        user-emacs-directory))
-          (org        (expand-file-name "emacs.org"
-                                        env-directory)))
-      (when (file-exists-p org)
-        (org-babel-tangle-file org))
-      (cond ((native-comp-available-p)
-             (native-compile init)
-             (native-compile early-init)
-             (message "Native compiled init"))
-            (t
-             (byte-compile-file init)
-             (byte-compile-file early-init)
-             (message "Byte-compiled init")))))
 #+end_src
 
 ** Rename current buffer
