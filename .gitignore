@@ -1,1 +1,3 @@
-*.el
+*
+!emacs.org
+!config.org

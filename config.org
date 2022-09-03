@@ -1,4 +1,5 @@
 #+title: Config
+#+category: Config
 
 * General
 :PROPERTIES:
@@ -2247,6 +2248,7 @@ The wine executable used by proton can automatically set the niceness of a proce
   }
 
 #+end_src
+
 * MacOS
 :PROPERTIES:
 :CREATED:  [2022-09-03 Sat 10:46]
