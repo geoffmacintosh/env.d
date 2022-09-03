@@ -581,12 +581,11 @@ that.
 :PROPERTIES:
 :CREATED:  [2022-09-03 Sat 10:46]
 :END:
-
-** Install Notes
+** Installation Notes
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:10]
 :END:
-#+begin_src fish
+#+begin_src sh
   loadkeys colemak
 
   iwctl
@@ -767,8 +766,8 @@ https://github.com/rfjakob/earlyoom
   if [ "$(tty)" = "/dev/tty1" ]; then
       exec sway
   fi
-  setxkbmap us
 #+end_src
+
 ** Fail lock
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
@@ -814,13 +813,18 @@ As per =/etc/security/faillock.conf=:
     </match>
   </fontconfig>
 #+end_src
-** Game Mode
+** GameMode
 :PROPERTIES:
 :header-args: :tangle ~/.config/gamemode.ini
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
+To test to see if GameMode is installed correctly and will run:
+
+#+begin_src shell :tangle no
+  gamemoded -t
+#+end_src
 
 #+begin_src conf
   [general]
@@ -830,7 +834,16 @@ As per =/etc/security/faillock.conf=:
   renice=10
   ioprio=0
   inhibit_screensaver=1
+  [custom]
+  ~/.local/bin/xkb
 #+end_src
+
+- [[https://github.com/FeralInteractive/gamemode][Gamemode]]
+
+#+begin_src shell :shebang #!/bin/sh :tangle ~/.local/bin/xkb
+  setxkbmap us
+#+end_src
+
 ** Journal
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
