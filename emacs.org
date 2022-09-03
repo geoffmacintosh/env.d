@@ -2280,8 +2280,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'icalendar-export-sexp-enumerate-all t)
-  (customize-set-variable 'org-icalendar-include-sexps t)
+  (customize-set-variable 'icalendar-export-sexp-enumerate-all nil)
+  (customize-set-variable 'org-icalendar-include-sexps nil)
   (customize-set-variable 'org-icalendar-include-body nil)
 
   (eval-when-compile
@@ -2323,7 +2323,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (customize-set-variable 'org-icalendar-include-todo nil)
   (customize-set-variable 'org-icalendar-include-sexps t)
   (customize-set-variable 'org-icalendar-store-UID t)
-  (customize-set-variable 'org-icalendar-exclude-tags '("habit" "noexport" "weather"))
+  (customize-set-variable 'org-icalendar-exclude-tags '("habit" "noexport" "work"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2531,18 +2531,22 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                   "home.org"
                   "media.org"
                   "inventory.org"
+                  "locations.org"
+                  "software.org"
                   "inbox.org"
                   "access.org")))
       (mapc (lambda (x)
               (when (file-exists-p (expand-file-name x org-directory))
-                (add-to-list 'org-agenda-files x)))
+                (add-to-list 'org-agenda-files (expand-file-name x org-directory))))
             list))
 
     (when (and
            (file-exists-p (expand-file-name "contacts.org" org-directory))
            (locate-library "org-contacts"))
-      (add-to-list 'org-agenda-files "contacts.org")))
+      (add-to-list 'org-agenda-files (expand-file-name "contacts.org" org-directory))))
 #+end_src
+
+
 
 #+begin_src emacs-lisp
   (customize-set-variable 'org-fold-catch-invisible-edits 'smart)

@@ -835,15 +835,10 @@ To test to see if GameMode is installed correctly and will run:
   ioprio=0
   inhibit_screensaver=1
   [custom]
-  ~/.local/bin/xkb
+  start=setxkbmap us
 #+end_src
 
 - [[https://github.com/FeralInteractive/gamemode][Gamemode]]
-
-#+begin_src shell :shebang #!/bin/sh :tangle ~/.local/bin/xkb
-  setxkbmap us
-#+end_src
-
 ** Journal
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
