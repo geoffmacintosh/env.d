@@ -301,15 +301,14 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
                                       :weight normal)))
 
     `(org-agenda-structure ((t :foreground ,lgrey
-                               :weight normal)))
+                               :weight normal
+                               :height 180)))
      `(org-date ((t :foreground ,dark
                     :underline t)))
-     `(org-agenda-date ((t :foreground ,dark
-                           :height 180)))
+     `(org-agenda-date ((t :foreground ,dark)))
      `(org-agenda-date-today ((t :foreground ,dark
                                  :weight bold
-                                 :slant normal
-                                 :height 180)))
+                                 :slant normal)))
      `(org-time-grid ((t :foreground ,grey )))
      `(org-scheduled-today ((t :foreground ,dark )))
      `(org-scheduled-previously ((t :foreground ,dark )))
@@ -383,6 +382,8 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
      ))
 #+end_src
+
+#+results:
 
 * Emacs
 :PROPERTIES:
@@ -2069,6 +2070,48 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
   (defvar org-capture-templates nil)
 #+end_src
 
+** Refile to subtree                                                 :emacs:
+:PROPERTIES:
+:CREATED:  [2022-08-29 Mon 14:27]
+:ID:       caf022f1-0635-48c2-b084-0835fa05d502
+:END:
+
+#+begin_src emacs-lisp
+  (declare-function org-entry-get "org" (pom property &optional inherit
+                                             literal-nil))
+  (declare-function org-read-date "org" (&optional with-time to-time
+                                                   from-string prompt
+                                                   default-time
+                                                   default-input
+                                                   inactive))
+  (declare-function org-date-to-gregorian "org" (d))
+  (declare-function org-datetree-find-date-create "org-datetree"
+                    (d &optional keep-restriction))
+  (declare-function org-refile "org-refile"
+                    (&optional arg default-buffer rfloc msg))
+
+  (defun env-refile-to-local-datetree ()
+    "Probably deletes the file."
+    (interactive)
+    (require 'org-refile)
+    (let ((date (org-entry-get nil "TIMESTAMP" t)))
+      (unless date
+        (setq date (org-read-date t nil "now")))
+      (org-refile
+       nil
+       (buffer-name)
+       (list nil
+             (buffer-file-name)
+             nil
+             (with-current-buffer (buffer-name)
+               (save-excursion
+                 (org-datetree-find-date-create
+                  (org-date-to-gregorian
+                   (replace-regexp-in-string "--.*" "" date)))
+                 (point))))
+       nil)))
+#+end_src
+
 ** Medication capture template
 :PROPERTIES:
 :CREATED:  [2022-08-31 Wed 14:13]
@@ -2582,18 +2625,19 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
                        ((agenda ""
                                 ((org-agenda-start-on-weekday 1)
                                  (org-agenda-span 'week)
-                                 (org-agenda-overriding-header "Agenda")
+                                 (org-agenda-overriding-header "\nAgenda")
                                  ))
                         (todo "TODO"
                               ((org-agenda-overriding-header
-                                "Next tasks")))
+                                "\nNext tasks")))
                         (tags "+ongoing"
                               ((org-agenda-overriding-header
-                                "Ongoing tasks")))
+                                "\nOngoing tasks")))
                         (todo "WAITING"
                               ((org-agenda-overriding-header
-                                "Waiting tasks"))))
+                                "\nWaiting tasks"))))
                        ((org-agenda-files '("access.org"))
+                        (org-agenda-compact-blocks t)
                         (org-agenda-use-time-grid nil)))))
   #+end_src
 
