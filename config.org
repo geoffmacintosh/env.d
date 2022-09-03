@@ -1,67 +1,11 @@
 #+title: Config
 
-* Application list
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:10]
-:END:
-- paru :: AUR helper
-- fish :: Default (human) shell
-- qmk :: Keyboard configuration
-- texlive-most :: LaTeX
-- mpv :: Video playback
-- anki :: Flashcards
-- qbittorrent :: Torrents
-- openrgb :: Fancy LED controller
-- emacs-pgtk-native-comp-git :: Emacs with GTK and Native Comp
-- pulseeffects :: An audio effects package for pipewire (noise reduction!)
-- systemdgenie :: SystemD managemnent
-- downgrade :: Pacman downgrading tool
-- mangohud :: FPS overlay
-- element-desktop :: Element
-- discord :: Discord
-- lyrebird :: voice changer
-- obs-studio-wayland :: Stream/recording tool with Wayland support
-- reflector :: Pacman mirror updater
-- zathura :: PDF viewer
-- imv :: Image viewer
-- mako :: Notification daemon
-- borg :: Backup tool
-- amphetype :: Typing trainer
-- mg :: Micro text editor (alias mg -n to mg for no backup files)
-* Audio
+* General
 :PROPERTIES:
-:CREATED:  [2021-09-18 Sat 11:25]
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/modprobe.d/default.conf" "no") :comments no
-  options snd_hda_intel index=1
-#+end_src
-
-* Automatic login
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/system/getty@tty1.service.d/override.conf" "no") :comments no
-  [Service]
-  ExecStart=
-  ExecStart=-/usr/bin/agetty --autologin g --noclear %I $TERM
-#+end_src
-* Bash
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
+:CREATED:  [2022-09-03 Sat 10:46]
 :END:
 
-#+begin_src shell :tangle ~/.bash_profile
-  export GRIM_DEFAULT_DIR=~/Downloads/
-  export MOZ_ENABLE_WAYLAND=1
-  if [ "$(tty)" = "/dev/tty1" ]; then
-      exec sway
-  fi
-  setxkbmap us
-#+end_src
-* Beets
+** Beets
 :PROPERTIES:
 :header-args: :tangle ~/.config/beets/config.yaml
 :END:
@@ -107,7 +51,2208 @@
       singleton: Non-Album/$artist/$title
       comp: Compilations/$album%aunique{}/$track $title
 #+end_src
-* Defaults Write
+
+** Ediff binary
+:PROPERTIES:
+:CREATED:  [2022-01-25 Tue 12:47]
+:ID:       B61A484C-87BF-40E8-B9BE-4165C365D084
+:END:
+:LOGBOOK:
+- State "NEXT"       from "TODO"       [2022-06-13 Mon 17:14]
+- Refiled on [2022-01-25 Tue 17:28]
+- Refiled on [2022-01-25 Tue 16:57]
+:END:
+https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-ediff-directories-from-command-line
+
+#+begin_src shell :shebang #!/bin/sh :tangle ~/.local/bin/ediff
+  EMACS=$(which emacsclient)
+
+  if [ $# -lt 2 ] ; then
+      echo "Usage:: " `basename $0` " [ -d ]  item1  item2"
+      exit 1
+  fi
+
+  dir="no"
+  if [ "$1" = "-d" ]; then
+      dir="yes"
+      item1="$2"
+      item2="$3"
+  else
+      if [ -d "$1" -a -d "$2" ]; then
+          dir="yes"
+      fi
+      item1="$1"
+      item2="$2"
+  fi
+
+  if [ "$dir" = "no" ]; then
+
+      # Check that files do exist
+      if [ ! -f "$item1" ] ; then
+          printf "File %s not found.\n" "$item1"
+          exit 2
+      fi
+      if [ ! -f "$item2" ] ; then
+          printf "File %s not found.\n" "$item2"
+          exit 2
+      fi
+
+      # Check whether files are identical or not
+      diffdata=`diff "$item1" "$item2"`
+      if [ "_" = "_$diffdata" ] ; then
+          printf "%s and %s are identical.\n" "$item1" "$item2"
+          exit 3
+      fi
+
+  fi
+
+  diff_fn="ediff-files"
+  if [ "$dir" = "yes" ]; then
+      diff_fn="ediff-directories"
+      opt="\"\""
+  fi
+
+  # Run Emacs with ediff-files function
+  printf "Comparing files %s and %s . . .  " "$item1" "$item2"
+  $EMACS -q -c -eval "($diff_fn \"$item1\" \"$item2\" $opt)" && echo done.
+
+  exit 0
+#+end_src
+
+** Fish
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+*** Main Config
+
+#+begin_src fish :tangle ~/.config/fish/config.fish
+  set -gx XDG_DATA_HOME   $HOME/.local/share
+  set -gx XDG_CONFIG_HOME $HOME/.config
+  set -gx XDG_CACHE_HOME  $HOME/.cache
+
+  set -gx EDITOR "emacsclient -tty -a \"\""
+  set -gx VISUAL "emacsclient -c -a \"\""
+
+  test -e "/usr/local/sbin" && fish_add_path "/usr/local/sbin"
+  test -e "/usr/local/bin" && fish_add_path "/usr/local/bin"
+  test -e "/Library/TeX/texbin" && fish_add_path "/Library/TeX/texbin"
+  test -e "/usr/local/opt/ruby/libexec/gembin" && fish_add_path "/usr/local/opt/ruby/libexec/gembin"
+  test -e "/usr/local/opt/ruby/bin" && fish_add_path "/usr/local/opt/ruby/bin"
+  test -e "/opt/local/bin" && fish_add_path "/opt/local/bin"
+  test -e "/opt/local/sbin" && fish_add_path "/opt/local/sbin"
+  test -e "/usr/local/opt/e2fsprogs/bin" && fish_add_path "/usr/local/opt/e2fsprogs/bin"
+  test -e "/usr/local/opt/e2fsprogs/sbin" && fish_add_path "/usr/local/opt/e2fsprogs/sbin"
+
+  function __fish_describe_command; end # Fixes issues with Catalina
+
+  function fish_command_not_found
+      __fish_default_command_not_found_handler $argv[1]
+  end
+
+  # set __fish_git_prompt_show_informative_status "yes"
+  # set __fish_git_prompt_char_dirtystate "+"
+
+  function fish_greeting; end
+  function fish_title; end
+
+  function dired
+      emacsclient -c -a emacs -e "(dired \"$argv\")" &
+  end
+
+  function mail
+      emacsclient -c -n -a emacs -e "(browse-url-mail \"$argv\")"
+  end
+
+  abbr -a -- - prevd
+  abbr -a -- = nextd
+
+  abbr -a yt  youtube-dl
+  abbr -a yta youtube-dl -x --audio-format best
+  abbr -a mg  mg -n
+
+  if not functions -q fisher
+      set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
+      curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
+      fish -c fisher
+  end
+
+  if type brew > /dev/null 2>&1
+      set -gx HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK 1
+  end
+#+end_src
+
+#+begin_src fish :tangle ~/.config/fish/fishfile
+   jorgebucaran/fish-bax
+#+end_src
+
+#+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
+  function prompt_ssh -d "Check to see if in an SSH session."
+      if test -n "$SSH_CLIENT"
+          printf '%s@%s ' (whoami) (hostname -s)
+      end
+  end
+
+  function prompt_cwd -d "Display the current working directory."
+      # set_color $fish_color_cwd
+      printf '%s' (prompt_pwd)
+      set_color normal
+  end
+
+  function prompt_git -d "Display git status in the prompt"
+      printf '%s' (__fish_git_prompt)
+  end
+
+  function fish_prompt -d "The prompt for fish"
+      #prompt_ssh
+      prompt_cwd
+      prompt_git
+      printf ' ❯ '
+  end
+#+end_src
+
+*** Manp
+
+#+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish
+  bind \ef forward-bigword
+#+end_src
+
+#+begin_src fish :tangle ~/.config/fish/functions/manp.fish
+  function manp  -d "Open man pages as PDF documents"
+      if type open > /dev/null 2>&1
+          man -t $argv | open -f -a Preview
+      else
+          man $argv
+      end
+  end
+#+end_src
+
+*** FLAC/ALAC
+
+#+begin_src fish :tangle ~/.config/fish/functions/flac-alac.fish
+  function flac-alac -d "Convert flac to alac"
+      if type ffmpeg > /dev/null 2>&1
+           for f in *.flac; ffmpeg -i $f -acodec alac -vsync 2 -c:v copy $f.m4a; end;
+      else
+          echo "Install FFMPEG with ALAC support."
+      end
+  end
+#+end_src
+
+*** Brace expansion
+convert company-logo.{svg,png} # Convert a SVG vector graphics file into a PNG raster graphics file. This uses brace expansion to generate the names to pass to ImageMagick's convert command.
+*** Stabilize
+**** Requirements
+You'll need ffmpeg built =-with-libvidstab= in homebrew, as in
+
+#+begin_src shell
+  brew install varenc/ffmpeg/ffmpeg --with-libvidstab
+#+end_src
+
+**** Steps
+Analyse the video with default or more intense settings. This is step one and doesn't actually make a video.
+
+#+begin_src shell
+  ffmpeg -i input.mov -vf vidstabdetect -f null -
+#+end_src
+
+**** References
+- [[https://github.com/georgmartius/vid.stab][vid.stab]]
+*** Split a FLAC file
+I didn't actually know that FLAC files could be produced as a single file for an entire album, as that seems insane. In order to turn them into useful files you need ~shntool~ and ~flac~ in Nix. Then run this in the correct directory:
+
+#+begin_src shell
+  shnsplit -f *.cue -t "%n-%t" -o flac *.flac
+#+end_src
+
+This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to turn the flac files into more playable files or something.
+
+*References*
+- [[https://unix.stackexchange.com/questions/10251/how-do-i-split-a-flac-with-a-cue][command line - How do I split a flac with a cue? - Unix & Linux Stack Exchange]] [2020-05-09 Sat]
+
+*** Dict
+#+begin_src fish :tangle ~/.config/fish/functions/dict.fish
+  function dict -d "Overload the dict function to keep a log"
+      command dict "$argv" | less
+      printf "%s %s\n" (date) "$argv" >> ~/org/meta/dictlog
+  end
+
+#+end_src
+** Git
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:09]
+:END:
+#+begin_src gitignore :tangle ~/.config/git/ignore
+  .DS_Store
+  ,*~
+  \#*\#
+  .\#*
+  ,*.elc
+  ,*.pyc
+#+end_src
+
+#+begin_src conf :tangle ~/.config/git/config
+  [core]
+          excludesfile = ~/.config/git/ignore
+          quotepath = false
+          editor = emacsclient
+          ignorecase = false
+
+  [user]
+          name = Geoff MacIntosh
+          email = geoff@mac.into.sh
+
+  [color]
+          diff = auto
+          status = auto
+          branch = auto
+          interactive = auto
+          ui = auto
+
+  [diff]
+          renameLimit = 5000
+
+  [pull]
+          rebase = false
+
+  [init]
+          defaultBranch = main
+
+  [fetch]
+          prune = true
+          pruneTags = true
+
+  [diff "org"]
+        xfuncname = "^\\*+.*"
+
+  [diff "lisp"]
+        xfuncname = "^\\([^ ]+ [^ ]+"
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.config/git/config" "no")
+  [credential]
+            helper = osxkeychain
+#+end_src
+
+#+begin_src conf :tangle ~/.config/git/attributes
+  ,,*.org   diff=org
+  ,,*.lisp  diff=lisp
+  ,,*.el    diff=lisp
+  ,,*.hy    diff=lisp
+  ,,*.scm   diff=lisp
+#+end_src
+** GPG
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:09]
+:END:
+
+#+begin_src conf :tangle ~/.gnupg/gpg.conf :comments no
+  no-greeting
+  no-secmem-warning
+  keyserver pool.sks-keyservers.net
+  #default-key CB7647349621074630BED0DADDCB697E089A4F88
+  #default-recipient-self
+  #encrypt-to CB7647349621074630BED0DADDCB697E089A4F88
+  bzip2-compress-level 9
+  compress-level 9
+#+end_src
+
+#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf :comments no
+  # allow-emacs-pinentry
+  # allow-loopback-entry
+  max-cache-ttl 86400
+  default-cache-ttl 86400
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.gnupg/gpg-agent.conf" "no") :comments no
+  pinentry-program /usr/local/bin/pinentry-mac
+#+end_src
+** Mbsync
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:12]
+:END:
+
+#+begin_src conf :tangle ~/.mbsyncrc :comments none
+    IMAPAccount fastmail
+    Host imap.fastmail.com
+    Port 993
+    User gmacintosh@fastmail.fm
+    PassCmd "pass mbsync.fastmail.com"
+    SSLType IMAPS
+
+    IMAPStore fastmail-remote
+    Account fastmail
+
+    MaildirStore fastmail-local
+    Path ~/Mail/
+    Inbox ~/Mail/INBOX
+    SubFolders Verbatim
+
+    Channel fastmail
+    Far :fastmail-remote:
+    Near :fastmail-local:
+    Patterns *
+    Expunge Both
+    CopyArrivalDate yes
+    Sync All
+    Create Both
+    Remove Both
+    SyncState *
+#+end_src
+
+Before everything works, you'll still need to set up mbsync and mu, so run the following commands:
+
+#+begin_src shell :tangle no
+  mbsync --all
+  mu init --maildir=~/Mail --my-address=geoff@mac.into.sh
+  mu index
+#+end_src
+
+I think mu will actually index correctly on its own the first time you launch mu4e, but I'm not sure.
+** MPD
+:PROPERTIES:
+:header-args: :tangle ~/.mpd/mpd.conf :comments no
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:13]
+:END:
+
+MPD hates to create its own files.
+
+#+begin_src shell :tangle no
+  touch ~/.mpd/{database,pid,state,sticker.sql,log}
+#+end_src
+
+You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and will not work. Do not do this.
+
+#+begin_src shell :tangle no
+  systemctl enable --user mpd
+#+end_src
+
+#+begin_src conf
+  music_directory    "~/Music/Music Files"
+  playlist_directory "~/Music/Playlists"
+  db_file            "~/.mpd/database"
+  pid_file           "~/.mpd/pid"
+  state_file         "~/.mpd/state"
+  sticker_file       "~/.mpd/sticker.sql"
+  log_file           "~/.mpd/log"
+  port               "6600"
+  #auto_update        "yes"
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.mpd/mpd.conf" "no")
+  audio_output {
+  type       "osx"
+  name       "CoreAudio"
+  mixer_type "software"
+  }
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.mpd/mpd.conf" "no")
+  audio_output {
+  type "pulse"
+  name "pulse audio"
+  }
+#+end_src
+** MPV
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:13]
+:END:
+*Defaults*
+
+
+ #+begin_src conf :tangle ~/.config/mpv/mpv.conf
+   screenshot-directory=~/Downloads/
+   screenshot-format=png
+   screenshot-template="%F-%whh%wMm%wSs%wT"
+
+   save-position-on-quit
+   hwdec
+ #+end_src
+
+*Audio level normalization*
+
+ #+begin_src conf :tangle ~/.config/mpv/mpv.conf
+   #af="lavfi=[dynaudnorm=f=75:g=25:n=0:p=0.58]"
+   af=loudnorm=I=-30
+ #+end_src
+
+*Keybindings*
+
+ #+begin_src conf :tangle ~/.config/mpv/input.conf
+   z           no-osd async screenshot video
+   WHEEL_UP    ignore
+   WHEEL_DOWN  ignore
+   WHEEL_RIGHT ignore
+   WHEEL_LEFT  ignore
+ #+end_src
+** NCMPCPP
+:PROPERTIES:
+:header-args: :tangle ~/.config/ncmpcpp/config
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:13]
+:END:
+
+#+begin_src conf
+  mpd_host = localhost
+  mpd_port = 6600
+  mpd_music_dir = "~/Music/Music Files"
+
+  progressbar_look = "─░─"
+  display_volume_level = no
+  user_interface = alternative
+  ignore_leading_the = yes
+  media_library_hide_album_dates = yes
+  media_library_primary_tag = album_artist
+#+end_src
+** SSH
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:13]
+:END:
+The =~/.ssh= config is a strange thing. The user-editable =~/.ssh/config=
+file, (as tangled by this org file) is only semi-private, while the
+other files in the directory are something to avoid putting on the
+internet at all.
+
+I hope I never have to do this again, because I plan never to lose my
+generated keys. But if its needed, it's pretty easy. The current key
+I'm using was generated via =ssh-keygen -t rsa -b 2048=.
+
+That's also pretty easy, especially if the current machine only has
+one key. The command is =ssh-copy-id user@host=.
+
+First, [[https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent][generate]] a new SSH key. The =ssh-keygen= command will ask for a
+location to save it in, I tend to use the default of =~/.ssh/id_rsa=.
+
+#+BEGIN_SRC sh
+  ssh-keygen -t rsa -b 4096 -C "geoff@mac.into.sh"
+#+END_SRC
+
+Then copy the key to the [[https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/][clipboard]].
+
+#+BEGIN_SRC sh
+  pbcopy < ~/.ssh/id_rsa.pub
+#+END_SRC
+
+Paste the key into the =GitHub > Settings > SSH and GPG keys= section.
+
+As per [[https://github.com/jirsbek/SSH-keys-in-macOS-Sierra-keychain][jirsbek]] and [[https://developer.apple.com/library/content/technotes/tn2449/_index.html#//apple_ref/doc/uid/DTS40017589][Apple]], the behaviour of SSH in macOS Sierra has
+changed. It's pretty easy to make things work correctly, so I've done
+that.
+
+#+begin_src conf  :mkdirp yes :tangle ~/.ssh/config
+  Host *
+       AddKeysToAgent yes
+       IdentityFile ~/.ssh/id_rsa
+       ControlPath ~/.ssh/master-%h:%p
+       ControlMaster auto
+       ControlPersist 10m
+       AddKeysToAgent yes
+       IdentitiesOnly yes
+#       UseKeychain yes
+  Host router
+       Hostname 192.168.1.1
+       User root
+#+end_src
+** Syncthing
+:PROPERTIES:
+:CREATED:  [2022-02-22 Tue 11:39]
+:ID:       FDD3C8B5-55C3-4013-89AC-2A904D97D1CD
+:END:
+:LOGBOOK:
+- Refiled on [2022-05-16 Mon 13:29]
+:END:
+#+begin_src conf :tangle .stignore
+  (?d).DS_Store
+  #*
+  .git
+#+end_src
+
+** Youtube DL
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:15]
+:END:
+#+begin_src conf :tangle ~/.config/youtube-dl/config
+  -o ~/Downloads/%(title)s-%(id)s.%(ext)s
+#+end_src
+* Arch
+:PROPERTIES:
+:CREATED:  [2022-09-03 Sat 10:46]
+:END:
+
+** Install Notes
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:10]
+:END:
+#+begin_src fish
+  loadkeys colemak
+
+  iwctl
+  > station wlan0 scan
+  > station wlan0 get-networks
+  > station wlan0 connect X5-452
+
+  timedatectl set-ntp true
+
+  fdisk # BAD, use gdisk or parted
+  # /dev/nvme0n1p1 512M EFI system partition (EF00)
+  # /dev/nvme0n1p2 465.5G Linux filesystem (8300)
+
+  mkfs.fat -F32 /dev/nvme0n1p1
+  mkfs.btrfs /dev/nvme0n1p2
+
+  mount /dev/nvme0n1p2 /mnt
+  btrfs sub create /mnt/@
+  btrfs sub create /mnt/@home
+  btrfs sub create /mnt/@var
+  btrfs sub create /mnt/@snapshots
+  umount /mnt
+
+  mount -o
+  noatime,nodiratime,compress-force=zstd,space_cache=v2,ssd,subvol=@
+  /dev/nvme0n1p2 /mnt
+  mkdir /mnt/{boot,home,var,snapshots}
+  mount /dev/nvme0n1p1 /mnt/boot
+  mount -o ...subvol=@home /dev/nvme0n1p2 /mnt/home
+  mount -o ...subvol=@var /dev/nvme0n1p2 /mnt/var
+  mount -o ...subvol=@snapshots /dev/nvme0n1p2 /mnt/snapshots
+
+  cd /mnt
+  truncate -s 0 ./swapfile
+  chattr +C ./swapfile
+  btrfs property set ./swapfile compression none
+  dd if=/dev/zero of=./swapfile bs=1M count=8000 status=progress
+  chmod 600 ./swapfile
+  mkswap ./swapfile
+  swapon ./swapfile
+
+  # edit /etc/fstab
+  # /swapfile none swap defaults 0 0
+
+  pacstrap /mnt base linux linux-firmware mg btrfs-progs amd-ucode iwd networkmanager
+
+  genfstab -U /mnt >> /mnt/etc/fstab
+
+  arch-chroot /mnt
+
+  ln -sf /usr/share/zoneinfo/America/St_Johns /etc/localtime
+  hwclock --systohc
+
+  # edit /etc/locale.gen to uncomment en_CA.UTF-8
+
+  locale-gen
+
+  # create /etc/locale.conf to LANG=en_CA.UTF-8
+  # create /etc/vconsole.conf be KEYMAP=colemak
+  # create /etc/hostname to be d
+  # edit /etc/mkinitcpio.conf to contain ...block btrfs keymap
+  # filesystems...
+  mkinitcpio -P
+
+  passwd
+
+  bootctl --path=/boot install
+
+  # create /boot/loader/entries/arch.conf
+  # title Arch Linux
+  # linux /vmlinuz-linux
+  # initrd /amd-ucode.img
+  # initrd /initramfs-linux.img
+  # options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85
+  # rootflags=subvol=@ rw
+
+  exit
+  reboot
+#+end_src
+
+#+begin_src shell
+  systemctl enable systemd-resolved
+  systemctl enable NetworkManager
+
+  nmcli
+#+end_src
+
+#+begin_src shell
+  systemctl enable systemd-networktimed
+  systemctl enable fstrim.timer
+#+end_src
+
+#+begin_src shell
+  useradd -m -G wheel -s /bin/bash g
+  passwd g
+
+  pacman -S sudo
+  EDITOR="mg -n" visudo
+
+  # %wheel ALL=(ALL) ALL
+  # Defaults passwd_timeout=0
+
+  reboot
+
+  pacman -S xorg-wayland sway alacritty wofi texinfo man-db man-pages
+
+  sudo mg -n /etc/pacman.conf
+  # ILoveCandy
+  # enable multilib
+#+end_src
+
+** Enable BAR
+CLOSED: [2022-08-21 Sun 09:55]
+:PROPERTIES:
+:CREATED:  [2022-06-10 Fri 22:22]
+:ID:       2022-June-16-1229-39388554
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2022-08-21 Sun 09:55]
+- State "NEXT"       from "TODO"       [2022-06-30 Thu 11:18]
+- Refiled on [2022-06-14 Tue 17:14]
+- State "NEXT"       from "TODO"       [2022-06-14 Tue 17:14]
+- Refiled on [2022-06-13 Mon 17:54]
+:END:
+
+Enabling Above 4G Decoding and SAM (Smart Access Memory) in the BIOS. To check if it's enabled:
+
+#+begin_src shell
+  dmesg | grep BAR=
+#+end_src
+
+- [[https://www.reddit.com/r/linux_gaming/comments/v58ts5/quick_heads_up_about_something_i_discovered/][Reddit]]
+- [[https://wiki.archlinux.org/title/improving_performance#Enabling_PCI_Resizable_BAR][ArchWiki]]
+
+** Earlyoom
+:PROPERTIES:
+:Effort:   0:30
+:CREATED:  [2022-06-30 Thu 10:53]
+:ID:       2022-June-30-1336-28599153
+:END:
+:LOGBOOK:
+- State "NEXT"       from "TODO"       [2022-06-30 Thu 11:17]
+:END:
+https://github.com/rfjakob/earlyoom
+
+#+begin_src shell :tangle no :dir /sudo::
+  sudo systemctl enable --now earlyoom
+#+end_src
+
+** Audio
+:PROPERTIES:
+:CREATED:  [2021-09-18 Sat 11:25]
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/modprobe.d/default.conf" "no") :comments no
+  options snd_hda_intel index=1
+#+end_src
+
+** Automatic login
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/system/getty@tty1.service.d/override.conf" "no") :comments no
+  [Service]
+  ExecStart=
+  ExecStart=-/usr/bin/agetty --autologin g --noclear %I $TERM
+#+end_src
+** Bash
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+
+#+begin_src shell :tangle ~/.bash_profile
+  export GRIM_DEFAULT_DIR=~/Downloads/
+  export MOZ_ENABLE_WAYLAND=1
+  if [ "$(tty)" = "/dev/tty1" ]; then
+      exec sway
+  fi
+  setxkbmap us
+#+end_src
+** Fail lock
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+[[https://wiki.archlinux.org/index.php/Security#Lock_out_user_after_three_failed_login_attempts][Security - ArchWiki]]
+
+As per =/etc/security/faillock.conf=:
+
+- unlock_time :: the lockout time (in seconds, default 10 minutes).
+- fail_interval :: the time in which failed logins can cause a lockout (in seconds, default 15 minutes).
+- deny :: the number of failed logins before lockout (default 3).
+- =deny = 0= will disable lockout
+
+#+begin_src shell :dir /sudo::
+  echo "deny = 0" | tee -a /etc/security/faillock.conf
+#+end_src
+
+#+results:
+: deny = 0
+
+** Font Config
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:09]
+:END:
+#+begin_src xml :tangle ~/.config/fontconfig/fonts.conf :comments no
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+  <fontconfig>
+    <match target="font">
+      <edit name="hintstyle" mode="assign">
+        <const>hintfull</const>
+      </edit>
+    </match>
+    <match target="font">
+      <edit name="rgba" mode="assign">
+        <const>rgb</const>
+      </edit>
+    </match>
+    <match target="font">
+      <edit name="lcdfilter" mode="assign">
+        <const>lcddefault</const>
+      </edit>
+    </match>
+  </fontconfig>
+#+end_src
+** Game Mode
+:PROPERTIES:
+:header-args: :tangle ~/.config/gamemode.ini
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:09]
+:END:
+
+#+begin_src conf
+  [general]
+  reaper_freq=15
+  desiredgov=performance
+  softrealtime=auto
+  renice=10
+  ioprio=0
+  inhibit_screensaver=1
+#+end_src
+** Journal
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+#+begin_src conf  :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/journald.conf.d/00-journal-size.conf" "no") :comments no
+  [Journal]
+  SystemMaxUse=100M
+#+end_src
+
+** Journald
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:10]
+:END:
+By default, journald can use up to 4 GB of storage for logs or something like that.
+
+#+begin_src conf :tangle /sudo::/etc/systemd/system.conf.d/journald.conf
+  SystemMaxUse=100M
+#+end_src
+
+And to check how much space the journal is currently using:
+
+#+begin_src shell :results replace :tangle no
+  journalctl --disk-usage
+#+end_src
+
+#+results:
+: Archived and active journals take up 72.0M in the file system.
+
+** Kitty
+:PROPERTIES:
+:header-args: :tangle ~/.config/kitty/kitty.conf
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:10]
+:END:
+
+#+begin_src conf
+  cursor_blink_interval 0
+  cursor_shape block
+  shell fish
+  close_on_child_death yes
+  editor emacs
+  font_size 13.0
+  font_family SF Mono
+  tab_bar_style separator
+  tab_separator "  "
+  # tab_activity_symbol "*"
+  foreground #000000
+  background #FFFFFF
+#+end_src
+** Locate
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:11]
+:END:
+I am currently using mdfind on macOS and plocate on Linux.
+
+There is some [[https://bugzilla.redhat.com/show_bug.cgi?id=906591][issue with pruning bind mounts on BTRFS subvolumes]], so we disable the it which is the default that the system is supposed to use. Not sure what the downsides are this way and why so many distributions change the default? Whatever.
+
+I'd really rather not alter the main conf file as pacman will complain whenever there are updates, but I don't think there's a good alternative. I don't bother to do anything fancy with tangling because there's no such file on macOS. That will come back to bite me for sure.
+
+#+begin_src conf :tangle /sudo:/etc/updatedb.conf
+  PRUNE_BIND_MOUNTS = "no"
+  PRUNEFS = "9p afs anon_inodefs auto autofs bdev binfmt_misc cgroup cifs coda configfs cpuset cramfs debugfs devpts devtmpfs ecryptfs exofs ftpfs fuse fuse.encfs fuse.s3fs fuse.sshfs fusectl gfs gfs2 hugetlbfs inotifyfs iso9660 jffs2 lustre mqueue ncpfs nfs nfs4 nfsd pipefs proc ramfs rootfs rpc_pipefs securityfs selinuxfs sfs shfs smbfs sockfs sshfs sysfs tmpfs ubifs udf usbfs vboxsf"
+  PRUNENAMES = ".git .hg .svn"
+  PRUNEPATHS = "/afs /media /mnt /net /sfs /tmp /udev /var/cache /var/lib/pacman/local /var/lock /var/run /var/spool /var/tmp"
+#+end_src
+** Mako
+:PROPERTIES:
+:header-args: :tangle ~/.config/mako/config
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:12]
+:END:
+
+#+begin_src conf
+  sort=-time
+  max-history=3
+  on-button-middle=dismiss-all
+  on-notify=exec mpv ~/org/etc/DeusExSounds0437.wav
+
+  font=Helvetica 12
+  background-color=#000000BF
+  text-color=#FFFFFF
+  border-size=5
+  border-color=#000000BF
+  border-radius=3
+  padding=0,5,15,5
+#+end_src
+** Mango Hud
+:PROPERTIES:
+:CREATED:  [2021-09-18 Sat 15:44]
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:12]
+:END:
+#+begin_src conf :tangle ~/.config/MangoHud/MangoHud.conf
+  cpu_temp
+  cpu_color=FFFFFF
+
+  gpu_temp
+  gpu_color=FFFFFF
+
+  ram
+  ram_color=FFFFFF
+
+  swap
+  engine_color=FFFFFF
+
+  fps_limit=144
+  frame_timing=0
+
+  round_corners=0
+  position=top-center
+#+end_src
+** Nautilus
+:PROPERTIES:
+:CREATED:  [2022-08-13 Sat 14:49]
+:ID:       BC84C185-DF86-48B6-8B9D-4849A94A2EC2
+:END:
+#+begin_src conf :tangle ~/.local/share/applications/nautilus.desktop
+  [Desktop Entry]
+  Name=Nautilus
+  Type=Application
+  Exec=nautilus --new-window
+  Terminal=False
+  Icon=org.gnome.Nautilus
+  Comment=File manager
+#+end_src
+** Paccache clean
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+
+Install pacman-contrib.
+
+#+begin_src shell :dir /sudo:: :results replace
+  pacman --sync --noconfirm pacman-contrib
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/pacman.d/hooks/clean_cache.hook
+  [Trigger]
+  Operation = Upgrade
+  Operation = Install
+  Operation = Remove
+  Type = Package
+  Target = *
+
+  [Action]
+  Description = Cleaning pacman cache...
+  When = PostTransaction
+  Exec = /usr/bin/paccache -r
+#+end_src
+
+** Pacman
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:13]
+:END:
+
+#+begin_src conf :tangle /sudo::/etc/pacman.conf
+  NoExtract=/etc/xdg/reflector/*
+#+end_src
+
+
+#+begin_src conf
+  #
+  # /etc/pacman.conf
+  #
+  # See the pacman.conf(5) manpage for option and repository directives
+
+  #
+  # GENERAL OPTIONS
+  #
+  [options]
+  # The following paths are commented out with their default values listed.
+  # If you wish to use different paths, uncomment and update the paths.
+  #RootDir     = /
+  #DBPath      = /var/lib/pacman/
+  #CacheDir    = /var/cache/pacman/pkg/
+  #LogFile     = /var/log/pacman.log
+  #GPGDir      = /etc/pacman.d/gnupg/
+  #HookDir     = /etc/pacman.d/hooks/
+  HoldPkg     = pacman glibc
+  #XferCommand = /usr/bin/curl -L -C - -f -o %o %u
+  #XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
+  #CleanMethod = KeepInstalled
+  Architecture = auto
+
+  # Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup
+  #IgnorePkg   =
+  #IgnoreGroup =
+
+  #NoUpgrade   =
+  #NoExtract   =
+
+  # Misc options
+  #UseSyslog
+  Color
+  #TotalDownload
+  CheckSpace
+  ILoveCandy
+  #VerbosePkgLists
+  ParallelDownloads = 5
+
+  # By default, pacman accepts packages signed by keys that its local keyring
+  # trusts (see pacman-key and its man page), as well as unsigned packages.
+  SigLevel    = Required DatabaseOptional
+  LocalFileSigLevel = Optional
+  #RemoteFileSigLevel = Required
+
+  # NOTE: You must run `pacman-key --init` before first using pacman; the local
+  # keyring can then be populated with the keys of all official Arch Linux
+  # packagers with `pacman-key --populate archlinux`.
+
+  #
+  # REPOSITORIES
+  #   - can be defined here or included from another file
+  #   - pacman will search repositories in the order defined here
+  #   - local/custom mirrors can be added here or in separate files
+  #   - repositories listed first will take precedence when packages
+  #     have identical names, regardless of version number
+  #   - URLs will have $repo replaced by the name of the current repo
+  #   - URLs will have $arch replaced by the name of the architecture
+  #
+  # Repository entries are of the format:
+  #       [repo-name]
+  #       Server = ServerName
+  #       Include = IncludePath
+  #
+  # The header [repo-name] is crucial - it must be present and
+  # uncommented to enable the repo.
+  #
+
+  # The testing repositories are disabled by default. To enable, uncomment the
+  # repo name header and Include lines. You can add preferred servers immediately
+  # after the header, and they will be used before the default mirrors.
+
+  #[testing]
+  #Include = /etc/pacman.d/mirrorlist
+
+  [core]
+  Include = /etc/pacman.d/mirrorlist
+
+  [extra]
+  Include = /etc/pacman.d/mirrorlist
+
+  #[community-testing]
+  #Include = /etc/pacman.d/mirrorlist
+
+  [community]
+  Include = /etc/pacman.d/mirrorlist
+
+  # If you want to run 32 bit applications on your x86_64 system,
+  # enable the multilib repositories as required here.
+
+  #[multilib-testing]
+  #Include = /etc/pacman.d/mirrorlist
+
+  [multilib]
+  Include = /etc/pacman.d/mirrorlist
+
+  # An example of a custom package repository.  See the pacman manpage for
+  # tips on creating your own repositories.
+  #[custom]
+  #SigLevel = Optional TrustAll
+  #Server = file:///home/custompkgs
+#+end_src
+** Paru
+:PROPERTIES:
+:CREATED:  [2022-05-28 Sat 09:50]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 19:35]
+:END:
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.config/paru/paru.conf" "no")
+  #
+  # $PARU_CONF
+  # /etc/paru.conf
+  # ~/.config/paru/paru.conf
+  #
+  # See the paru.conf(5) manpage for options
+
+  #
+  # GENERAL OPTIONS
+  #
+  [options]
+  PgpFetch
+  Devel
+  Provides
+  DevelSuffixes = -git -cvs -svn -bzr -darcs -always -hg -fossil
+  #AurOnly
+  #BottomUp
+  #RemoveMake
+  SudoLoop
+  #UseAsk
+  #SaveChanges
+  #CombinedUpgrade
+  CleanAfter
+  BatchInstall
+  #UpgradeMenu
+  NewsOnUpgrade
+
+  #LocalRepo
+  #Chroot
+  #Sign
+  #SignDb
+  #KeepRepoCache
+
+  #
+  # Binary OPTIONS
+  #
+  #[bin]
+  #FileManager = vifm
+  #MFlags = --skippgpcheck
+  #Sudo = doas
+#+end_src
+** Power button
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/logind.conf.d/10-logind.conf" "no") :comments no
+  [Login]
+  HandlePowerKey=suspend
+#+end_src
+** Reflector
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+:END:
+Enable the timer via =systemctl enable reflector.timer=.
+
+#+begin_src conf :tangle /sudo::/etc/xdg/reflector/reflector.conf :comments no
+  --save /etc/pacman.d/mirrorlist
+  --protocol https
+  --country CA
+  --country US
+  --latest 25
+  --age 12
+  --sort rate
+#+end_src
+** Set XKB for games
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:08]
+- Refiled on [2021-06-11 Fri 12:31]
+:END:
+[2021-06-11 Fri 12:06]
+
+#+begin_src conf :tangle /sudo::/etc/X11/xorg.conf.d/00-keyboard.conf
+  Section "InputClass"
+          Identifier "keyboard defaults"
+          MatchIsKeyboard "on"
+          Option "XkbLayout" "us,us"
+          Option "XkbVariant" ",colemak"
+          Option "XkbOptions" "grp:shifts_toggle"
+  EndSection
+#+end_src
+
+** Sway
+:PROPERTIES:
+:CREATED:  [2022-02-21 Mon 17:14]
+:header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:14]
+:END:
+
+*** Intro
+
+#+begin_src conf
+  set $mod Mod4
+  set $term kitty
+#+end_src
+
+*** Background
+
+#+begin_src conf
+  # output * bg ~/Downloads/desktop.jpg fill
+#+end_src
+
+*** Keyboard
+
+#+begin_src conf
+  input * {
+          natural_scroll enabled
+          xkb_layout "us,us"
+          xkb_variant "colemak,,"
+          xkb_options "ctrl:nocaps"
+  }
+#+end_src
+
+*** Basic bindings
+
+#+begin_src conf
+  for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
+  set $menu exec $term --class=launcher -e sway-launcher-desktop
+  bindsym $mod+space exec $menu
+  bindsym $mod+Return exec $term
+  bindsym $mod+Shift+q kill
+#+end_src
+
+*** Floating windows
+      # Drag floating windows by holding down $mod and left mouse button.
+      # Resize them with right mouse button + $mod.
+      # Despite the name, also works for non-floating windows.
+      # Change normal to inverse to use left mouse button for resizing and right
+      # mouse button for dragging.
+
+#+begin_src conf
+      floating_modifier $mod normal
+#+end_src
+
+*** Reload config
+
+#+begin_src conf
+  bindsym $mod+Shift+c reload
+#+end_src
+
+*** Screenshots
+
+#+begin_src conf
+      bindsym $mod+x exec grim ~/Downloads/$(date +%Y-%m-%d_%H-%m-%s).png
+      bindsym $mod+Shift+x exec grim -g "$(slurp)" ~/Downloads/$(date +%Y-%m-%d_%H-%m-%s).png
+#+end_src
+
+*** Log out
+
+#+begin_src conf
+  bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+#+end_src
+
+*** Moving around
+
+#+begin_src conf
+  set $left b
+  set $right f
+  set $up p
+  set $down n
+#+end_src
+
+Move focus around
+
+#+begin_src conf
+  bindsym $mod+$left focus left
+  bindsym $mod+$down focus down
+  bindsym $mod+$up focus up
+  bindsym $mod+$right focus right
+
+  bindsym $mod+Left focus left
+  bindsym $mod+Down focus down
+  bindsym $mod+Up focus up
+  bindsym $mod+Right focus right
+#+end_src
+
+Move the focused window with the same, but add Shift
+
+#+begin_src conf
+  bindsym $mod+Shift+$left move left
+  bindsym $mod+Shift+$down move down
+  bindsym $mod+Shift+$up move up
+  bindsym $mod+Shift+$right move right
+
+  bindsym $mod+Shift+Left move left
+  bindsym $mod+Shift+Down move down
+  bindsym $mod+Shift+Up move up
+  bindsym $mod+Shift+Right move right
+#+end_src
+
+*** Workspaces
+
+Switch to workspace
+
+#+begin_src conf
+  bindsym $mod+1 workspace number 1
+  bindsym $mod+2 workspace number 2
+  bindsym $mod+3 workspace number 3
+  bindsym $mod+4 workspace number 4
+  bindsym $mod+5 workspace number 5
+  bindsym $mod+6 workspace number 6
+  bindsym $mod+7 workspace number 7
+  bindsym $mod+8 workspace number 8
+  bindsym $mod+9 workspace number 9
+  bindsym $mod+0 workspace number 10
+#+end_src
+
+Move focused container to workspace
+
+#+begin_src conf
+  bindsym $mod+Shift+1 move container to workspace number 1
+  bindsym $mod+Shift+2 move container to workspace number 2
+  bindsym $mod+Shift+3 move container to workspace number 3
+  bindsym $mod+Shift+4 move container to workspace number 4
+  bindsym $mod+Shift+5 move container to workspace number 5
+  bindsym $mod+Shift+6 move container to workspace number 6
+  bindsym $mod+Shift+7 move container to workspace number 7
+  bindsym $mod+Shift+8 move container to workspace number 8
+  bindsym $mod+Shift+9 move container to workspace number 9
+  bindsym $mod+Shift+0 move container to workspace number 10
+#+end_src
+
+*** Layout stuff
+
+#+begin_src conf
+  # You can "split" the current object of your focus with
+  # $mod+b or $mod+v, for horizontal and vertical splits
+  # respectively.
+  #bindsym $mod+b splith
+  #bindsym $mod+v splitv
+
+  # Switch the current container between different layout styles
+  bindsym $mod+s layout stacking
+  bindsym $mod+w layout tabbed
+  bindsym $mod+e layout toggle split
+
+  # Make the current focus fullscreen
+  #bindsym $mod+f fullscreen
+
+  # Toggle the current focus between tiling and floating mode
+  bindsym $mod+Shift+space floating toggle
+
+  # Swap focus between the tiling area and the floating area
+  # bindsym $mod+space focus mode_toggle
+
+  # Move focus to the parent container
+  bindsym $mod+a focus parent
+#+end_src
+
+*** Scratchpad
+
+Sway has a "scratchpad", which is a bag of holding for windows. You can send windows there and get them back later.
+
+#+begin_src conf
+  bindsym $mod+Shift+minus move scratchpad
+  bindsym $mod+minus scratchpad show
+#+end_src
+
+*** Resizing containers
+
+ left will shrink the containers width
+ right will grow the containers width
+ up will shrink the containers height
+ down will grow the containers height
+
+#+begin_src conf
+  mode "resize" {
+      bindsym $left resize shrink width 10px
+      bindsym $down resize grow height 10px
+      bindsym $up resize shrink height 10px
+      bindsym $right resize grow width 10px
+
+      bindsym Left resize shrink width 10px
+      bindsym Down resize grow height 10px
+      bindsym Up resize shrink height 10px
+      bindsym Right resize grow width 10px
+
+      bindsym Return mode "default"
+      bindsym Escape mode "default"
+  }
+
+  bindsym $mod+r mode "resize"
+#+end_src
+
+*** Bar
+
+#+begin_src conf
+  bar {
+      swaybar_command waybar
+  }
+
+#+end_src
+
+*** Gaps
+
+#+begin_src conf
+  gaps outer 0
+  default_border pixel 0
+#+end_src
+
+*** Include
+
+#+begin_src conf
+  include /etc/sway/config.d/*
+#+end_src
+** TKG
+:PROPERTIES:
+:header-args: :tangle ~/.config/frogminer/linux-tkg.cfg
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:11]
+:END:
+*** Linux TKG
+#+begin_src conf
+  _distro="Arch"
+  _EXT_CONFIG_PATH=~/.config/frogminer/linux-tkg.cfg
+  _NUKR="true"
+  CUSTOM_GCC_PATH=""
+  CUSTOM_LLVM_PATH=""
+#+end_src
+
+*** Profile
+Set to the number corresponding to a predefined profile to use it. Current list of available profiles:
+
+1. Custom (meaning nothing will be enforced and you get to configure everything)
+2. Ryzen desktop (performance)
+3. Generic Desktop (Performance)
+
+#+begin_src conf
+  _OPTIPROFILE="1"
+  _force_all_threads="true"
+#+end_src
+
+*** Ccache
+ Set to true to prevent ccache from being used and set CONFIG_GCC_PLUGINS=y (which needs to be disabled for ccache to work properly).
+
+#+begin_src conf
+  _noccache="false"
+#+end_src
+
+*** Modprobe
+Set to true to use modprobed db to clean config from unneeded modules. Speeds up compilation considerably. Requires root - https://wiki.archlinux.org/index.php/Modprobed-db.
+
+Make sure to have a well populated db - Leave empty to be asked about it at build time.
+
+#+begin_src conf
+  _modprobeddb="false"
+#+end_src
+
+#+begin_src conf
+  _modprobeddb_db_path=~/.config/modprobed.db
+#+end_src
+
+*** Menuconfig
+Set to "1" to call make menuconfig, "2" to call make nconfig, "3" to call make xconfig, before building the kernel. Set to false to disable and skip the prompt.
+
+#+begin_src conf
+  _menunconfig="false"
+#+end_src
+
+*** Config fragment
+Set to true to generate a kernel config fragment from your changes in menuconfig/nconfig. Set to false to disable and skip the prompt.
+
+#+begin_src conf
+  _diffconfig="false"
+#+end_src
+
+Set to the file name where the generated config fragment should be written to. Only used if _diffconfig is active.
+
+#+begin_src conf
+  _diffconfig_name=""
+#+end_src
+
+*** Config File
+Name of the default config file to use for the kernel
+- Default (empty):
+   - Archlinux (PKGBUILD): "config.x86_64" from the linux-tkg-config/5.y folder.
+   - install.sh: Picks the .config file from the currently running kernel. It is recommended to be running an official kernel before running this script, to pick off a correct .config file
+- User provided:
+   - Archlinux: use "config_hardened.x86_64" to get a hardened kernel. To get a complete hardened setup, you have to use "cfs" as _cpusched.
+   - Any: custom user provided file, the given path should be relative to the PKGBUILD file. This enables for example to use a user stripped down .config file. If the .config file isn't up to date with the chosen kernel version, any extra CONFIG_XXXX is set to its default value.
+
+The script copies the resulting .config file as "kernelconfig.new" next to the PKGBUILD as a convenience for an eventual re-use. It gets overwritten at each run. One can use "kernelconfig.new" here to always use the latest edited .config file. modprobed-db needs to be used only once for its changes to be picked up.
+
+#+begin_src conf
+  _configfile=""
+#+end_src
+
+*** Debugging
+Disable some non-module debugging - See PKGBUILD for the list
+
+#+begin_src conf
+  _debugdisable="false"
+#+end_src
+
+*** CPU scheduler
+LEAVE AN EMPTY VALUE TO BE PROMPTED ABOUT FOLLOWING OPTIONS AT BUILD TIME
+
+CPU scheduler - Options are "upds" (TkG's Undead PDS), "pds", "bmq", "muqss" or "cfs". "upds" is the recommended option for gaming
+
+#+begin_src conf
+  _cpusched="upds"
+#+end_src
+
+*** Compiler
+Compiler to use - Options are "gcc" or "llvm".
+For advanced users.
+
+#+begin_src conf
+  _compiler="gcc"
+#+end_src
+
+*** Scheduler yield type
+CPU sched_yield_type - Choose what sort of yield sched_yield will perform.
+
+For PDS and MuQSS:
+- 0: No yield. (Recommended option for gaming on PDS and MuQSS)
+- 1: Yield only to better priority/deadline tasks. (Default - can be unstable with PDS on some platforms)
+- 2: Expire timeslice and recalculate deadline. (Usually the slowest option for PDS and MuQSS, not recommended)
+
+For BMQ:
+- 0: No yield.
+- 1: Deboost and requeue task. (Default)
+- 2: Set rq skip task.
+
+#+begin_src conf
+  _sched_yield_type="0"
+#+end_src
+
+*** Round robin
+Round Robin interval is the longest duration two tasks with the same nice level will be delayed for. When CPU time is requested by a task, it receives a time slice equal to the rr_interval in addition to a virtual deadline. When using yield_type 2, a low value can help offset the disadvantages of rescheduling a process that has yielded.
+
+ - MuQSS default: 6ms"
+ - PDS default: 4ms"
+ - BMQ default: 2ms"
+
+ Set to "1" for 2ms, "2" for 4ms, "3" for 6ms, "4" for 8ms, or "default" to keep the chosen scheduler defaults.
+
+#+begin_src conf
+  _rr_interval="default"
+#+end_src
+
+*** Tracer
+  Set to "true" to disable FUNCTION_TRACER/GRAPH_TRACER, lowering overhead but limiting debugging and analyzing of kernel functions - Kernel default is "false"
+
+#+begin_src conf
+  _ftracedisable="true"
+#+end_src
+
+*** NUMA
+Set to "true" to disable NUMA, lowering overhead, but breaking CUDA/NvEnc on Nvidia equipped systems - Kernel default is "false"
+
+#+begin_src conf
+  _numadisable="true"
+#+end_src
+
+*** Misc additions
+  Set to "true" to enable misc additions - May contain temporary fixes pending upstream or changes that can break on non-Arch - Kernel default is "true"
+
+#+begin_src conf
+  _misc_adds="true"
+#+end_src
+
+*** Tickless
+- "1" to use CattaRappa mode (enabling full tickless)
+- "2" for tickless idle only
+- "0" for periodic ticks
+
+Full tickless can give higher performances in various cases but, depending on hardware, lower consistency. Just tickless idle can perform better on some platforms (mostly AMD based).
+
+#+begin_src conf
+  _tickless="2"
+#+end_src
+
+*** Voluntary preempt
+ Setting this to to "true" can improve latency on PDS (at the cost of throughput) and improve throughput on other schedulers (at the cost of latency) - Can improve VMs performance - Kernel default is "false".
+
+#+begin_src conf
+  _voluntary_preempt="true"
+#+end_src
+
+*** Device tree and open firmware
+Set to "true" to enable Device Tree and Open Firmware support. If you don't know about it, you don't need it - Default is "false".
+
+#+begin_src conf
+  _OFenable="false"
+#+end_src
+
+*** ACS override
+  Set to "true" to use ACS override patch https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF#Bypassing_the_IOMMU_groups_.28ACS_override_patch.29 - Kernel default is "false".
+
+#+begin_src conf
+  _acs_override=""
+#+end_src
+
+*** Bcache filesystem
+Set to "true" to add Bcache filesystem support. You'll have to install bcachefs-tools-git from AUR for utilities - https://bcachefs.org/ - If in doubt, set to "false"
+
+#+begin_src conf
+  _bcachefs="false"
+#+end_src
+
+*** ZFS symbols
+Set to "true" to add back missing symbol for AES-NI/AVX support on ZFS - https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/export_kernel_fpu_functions.patch - Kernel default is "false"
+
+#+begin_src conf
+  _zfsfix="false"
+#+end_src
+
+*** Proton
+Set to "true" to enable support for fsync, an experimental replacement for esync found in Valve Proton 4.11+ - https://steamcommunity.com/games/221410/announcements/detail/2957094910196249305
+
+#+begin_src conf
+  _fsync="true"
+#+end_src
+
+Set to "true" to enable support for futex2, an experimental interface that can be used by proton-tkg and proton 5.13 experimental through Fsync - Can be enabled alongside fsync to use it as a fallback.
+
+https://gitlab.collabora.com/tonyk/linux/-/tree/futex2-dev
+#+begin_src conf
+  _futex2="true"
+#+end_src
+
+Set to "true" to enable support for winesync, an experimental replacement for esync - requires patched wine - https://repo.or.cz/linux/zf.git/shortlog/refs/heads/winesync
+
+#+begin_src conf
+  _winesync="false"
+#+end_src
+
+*** Anbox
+  Set to "true" to enable the Binder and Ashmem, the kernel modules required to use the android emulator Anbox.
+
+#+begin_src conf
+  _anbox="false"
+#+end_src
+
+*** Zen
+A selection of patches from Zen/Liquorix kernel and additional tweaks for a better gaming experience (ZENIFY) - Default is "true"
+
+#+begin_src conf
+  _zenify="true"
+#+end_src
+
+*** Compiler optimization
+Compiler optimization level
+
+1. Optimize for performance (-O2)
+2. Optimize harder (-O3)
+3. Optimize for size (-Os)
+
+- Kernel default is "1"
+
+#+begin_src conf
+  _compileroptlevel="1"
+#+end_src
+
+*** CPU compiler optimizations
+CPU compiler optimizations - Defaults to prompt at kernel config if left empty
+
+AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" (zen3 opt support depends on GCC11)
+
+Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake"
+
+Other options :
+
+- "native_amd" (use compiler autodetection - Selecting your arch manually in the list above is recommended instead of this option)
+- "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
+- "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
+
+https://en.wikipedia.org/wiki/X86-64#Microarchitecture_Levels)
+
+- "generic_v2" (depends on GCC11 - to share the package between machines with different CPU µarch supporting at least x86-64-v2
+- "generic_v3" (depends on GCC11 - to share the package between machines with different CPU µarch supporting at least x86-64-v3
+- "generic_v4" (depends on GCC11 - to share the package between machines with different CPU µarch supporting at least x86-64-v4
+
+#+begin_src conf
+  _processor_opt="native"
+#+end_src
+
+*** IRQ Threading
+MuQSS only - Make IRQ threading compulsory (FORCE_IRQ_THREADING) - Default is "false"
+
+#+begin_src conf
+  _irq_threading="false"
+#+end_src
+
+*** SMT
+MuQSS and PDS only - SMT (Hyperthreading) aware nice priority and policy support (SMT_NICE) - Kernel default is "true" - You can disable this on non-SMT/HT CPUs for lower overhead
+
+#+begin_src conf
+  _smt_nice=""
+#+end_src
+
+
+*** Random
+Trust the CPU manufacturer to initialize Linux's CRNG (RANDOM_TRUST_CPU) - Kernel default is "false"
+
+#+begin_src conf
+  _random_trust_cpu="false"
+#+end_src
+
+*** CPU runqueue sharing
+  MuQSS only - CPU scheduler runqueue sharing - No sharing (RQ_NONE), SMT (hyperthread) siblings (RQ_SMT), Multicore siblings (RQ_MC), Symmetric Multi-Processing (RQ_SMP), NUMA (RQ_ALL)
+
+  Valid values are "none", "smt", "mc", "mc-llc"(for zen), "smp", "all" - Kernel default is "smt"
+
+#+begin_src conf
+  _runqueue_sharing=""
+#+end_src
+
+*** Timer frequency
+Timer frequency - "100" "500", "750" or "1000" - More options available in kernel config prompt when left empty depending on selected cpusched - Kernel default is "500" - For MuQSS, 100Hz is recommended.
+
+#+begin_src conf
+  _timer_freq="500"
+#+end_src
+
+*** CPU governor
+Default CPU governor - "performance", "ondemand", "schedutil" or leave empty for default (schedutil)
+
+#+begin_src conf
+  _default_cpu_gov="ondemand"
+#+end_src
+
+*** Aggressive ondemand governor
+Use an aggressive ondemand governor instead of default ondemand to improve performance on low loads/high core count CPUs while keeping some power efficiency from frequency scaling. It still requires you to either set ondemand as default governor or to select it some way.
+
+#+begin_src conf
+  _aggressive_ondemand="true"
+#+end_src
+
+*** ACPI_CPUFREQ
+On some platforms, an acpi_cpufreq bug affects performance negatively. Set to "true" to disable it as a workaround, but it will use more power.
+
+https://github.com/Tk-Glitch/PKGBUILDS/issues/263
+
+#+begin_src conf
+  _disable_acpi_cpufreq=""
+#+end_src
+
+*** Cusom command lines
+You can pass a default set of kernel command line options here - example: "intel_pstate=passive nowatchdog amdgpu.ppfeaturemask=0xfffd7fff mitigations=off"
+
+#+begin_src conf
+  _custom_commandline="intel_pstate=passive"
+#+end_src
+
+*** Custom package base
+If you want to bypass the stock naming scheme and enforce something else (example : "linux") - Useful for some bootloaders requiring manual entry editing on each release.
+
+It will also change pkgname - If you don't explicitely need this, don't use it !!!
+
+#+begin_src conf
+  _custom_pkgbase=""
+#+end_src
+
+*** Kernel localversion
+[non-Arch specific] Kernel localversion. Putting it to "Mario" will make for example the kernel version be 5.7.0-tkg-Mario (given by uname -r)
+
+If left empty, it will use -tkg-"${_cpusched}" where "${_cpusched}" will be replaced by the user chosen scheduler
+
+#+begin_src conf
+  _kernel_localversion=""
+#+end_src
+
+*** Community patches
+community patches - add patches (separated by a space) of your choice by name from the community-patches dir
+
+example: _community_patches="clear_nack_in_tend_isr.myrevert ffb_regression_fix.mypatch 0008-drm-amd-powerplay-force-the-trim-of-the-mclk-dpm-levels-if-OD-is-enabled.mypatch"
+
+#+begin_src conf
+  _community_patches=""
+#+end_src
+
+You can use your own patches by putting them in a subfolder called linux<version>-tkg-userpatches (e.g. linux510-tkg-userpatches) next to the PKGBUILD and giving them the .mypatch extension.
+
+You can also revert patches by putting them in that same folder and giving them the .myrevert extension.
+
+Also, userpatches variable below must be set to true for the above to work.
+
+#+begin_src conf
+  _user_patches="true"
+#+end_src
+
+Apply all user patches without confirmation - !!! NOT RECOMMENDED !!!
+
+#+begin_src conf
+
+  _user_patches_no_confirm="false"
+#+end_src
+
+You can use your own kernel config fragments by putting them in the same folder as the PKGBUILD and giving them the .myfrag extension.
+
+Also, the config fragments variable below must be set to true for the above to work.
+
+#+begin_src conf
+  _config_fragments="true"
+#+end_src
+
+Apply all config fragments without confirmation.
+
+#+begin_src conf
+  _config_fragments_no_confirm="false"
+#+end_src
+** Systemd-bootd
+:PROPERTIES:
+:CREATED:  [2021-12-22 Wed 15:23]
+:END:
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:14]
+:END:
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/loader.conf" "no")
+  default frog.conf
+  timeout 0
+  console-mode max
+  #console-mode keep
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/frog.conf" "no")
+  title Arch Gamer Linux
+  linux /vmlinuz-linux518-tkg-bmq
+  initrd /amd-ucode.img
+  initrd /initramfs-linux518-tkg-bmq.img
+  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet loglevel=3 udev.log-priority=0 rd.systemd.show_status=auto rd.udev.log_level=3 modprobe.blacklist=iTC0_wdtl acpi_enforce_resources=lax amdgpu.ppfeaturemask=0xffffffff nmi_watchdog=0 modprobe.blacklist=pcspkr
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/arch.conf" "no")
+  title Arch Linux
+  linux /vmlinuz-linux
+  initrd /amd-ucode.img
+  initrd /initramfs-linux.img
+  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet modprobe.blacklist=iTC0_wdt
+
+#+end_src
+
+#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/arch-fallback.conf" "no")
+  title Arch Linux (Fallback)
+  linux /vmlinuz-linux
+  initrd /amd-ucode.img
+  initrd /initramfs-linux-fallback.img
+  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw
+#+end_src
+
+#+begin_src systemd :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/pacman.d/hooks/100-systemd-boot.hook")
+  [Trigger]
+  Type = Package
+  Operation = Upgrade
+  Target = systemd
+
+  [Action]
+  Description = Gracefully upgrading systemd-boot...
+  When = PostTransaction
+  Exec = /usr/bin/systemctl restart systemd-boot-update.service
+#+end_src
+
+** usermod for games
+:PROPERTIES:
+:CREATED:  [2022-05-27 Fri 19:03]
+:END:
+:LOGBOOK:
+- Refiled on [2022-06-08 Wed 21:05]
+:END:
+The wine executable used by proton can automatically set the niceness of a process; consider adding yourself to the games group to make this work by issuing: usermod -a -G games
+
+#+begin_src shell :eval never
+  sudo usermod -a -G games g
+#+end_src
+
+** VConsole caps-control remap
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:14]
+- Refiled on [2021-05-28 Fri 11:26]
+- Refiled on [2021-05-06 Thu 10:50]
+:END:
+
+#+begin_src text :tangle (if (eq system-type 'gnu/linux) "/usr/local/share/kbd/keymaps/colemak-no-caps.map" "no") :comments no :mkdirp yes
+  # colemak.kmap for Linux console.
+  # 2006-01-01 Shai Coleman, http://colemak.com/ . Public domain.
+  alt_is_meta
+  charset "iso-8859-15"  # use a ISO-8859-15 font, e.g.: consolechars -f lat9v-14
+  keymaps 0-12
+  include "qwerty-layout"
+  include "linux-with-alt-and-altgr"
+  strings as usual
+
+  keycode  41 =          grave    asciitilde       dead_tilde        asciitilde    nul
+  keycode   2 =            one        exclam       exclamdown       onesuperior
+  keycode   3 =            two            at        masculine       twosuperior    nul
+  keycode   4 =          three    numbersign      ordfeminine     threesuperior    Escape
+  keycode   5 =           four        dollar             cent          sterling    Control_backslash
+  keycode   6 =           five       percent             euro               yen    Control_bracketright               #          EuroSign               yen
+  keycode   7 =            six   asciicircum       asciitilde        asciitilde	 Control_asciicircum               #           hstroke           Hstroke
+  keycode   8 =          seven     ampersand              eth               ETH    Control_underscore
+  keycode   9 =          eight      asterisk            thorn             THORN    Delete
+  keycode  10 =           nine     parenleft       asciitilde        asciitilde               #   leftsinglequotemark   leftdoublequotemark
+  keycode  11 =           zero    parenright       asciitilde        asciitilde               #  rightsinglequotemark   rightdoublequotemark
+  keycode  12 =          minus    underscore       asciitilde        asciitilde	 Control_underscore          #            endash            emdash
+  keycode  13 =          equal          plus         multiply          division
+
+  keycode  16 =              q             Q       adiaeresis        Adiaeresis    Control_q
+  keycode  17 =              w             W            aring             Aring    Control_w
+  keycode  18 =              f             F           atilde            Atilde    Control_f
+  keycode  19 =              p             P           oslash          Ooblique    Control_p
+  keycode  20 =              g             G       asciitilde        asciitilde    Control_g	#       dead_ogonek        asciitilde
+  keycode  21 =              j             J       asciitilde        asciitilde    Control_j	#           dstroke           Dstroke
+  keycode  22 =              l             L       asciitilde        asciitilde    Control_l	#           lstroke           Lstroke
+  keycode  23 =              u             U           uacute            Uacute    Control_u
+  keycode  24 =              y             Y       udiaeresis        Udiaeresis    Control_y
+  keycode  25 =      semicolon         colon       odiaeresis        Odiaeresis
+  keycode  26 =    bracketleft     braceleft    guillemotleft        asciitilde    Escape               #     guillemotleft         0x1002039
+  keycode  27 =   bracketright    braceright   guillemotright        asciitilde    Control_bracketright #    guillemotright         0x100203a
+  keycode  43 =      backslash           bar       asciitilde        asciitilde    Control_backslash
+
+  keycode  30 =              a             A           aacute            Aacute    Control_a
+  keycode  31 =              r             R       dead_grave        asciitilde    Control_r
+  keycode  32 =              s             S           ssharp        asciitilde    Control_s
+  keycode  33 =              t             T       dead_acute        asciitilde    Control_t	#        dead_acute  dead_doubleacute
+  keycode  34 =              d             D   dead_diaeresis        asciitilde    Control_d
+  keycode  35 =              h             H       asciitilde        asciitilde    Control_h	#        dead_caron        asciitilde
+  keycode  36 =              n             N           ntilde            Ntilde    Control_n
+  keycode  37 =              e             E           eacute            Eacute    Control_e
+  keycode  38 =              i             I           iacute            Iacute    Control_i
+  keycode  39 =              o             O           oacute            Oacute    Control_o
+  keycode  40 =     apostrophe      quotedbl           otilde            Otilde
+
+  keycode  44 =              z             Z               ae                AE    Control_z
+  keycode  45 =              x             X  dead_circumflex        asciitilde    Control_x
+  keycode  46 =              c             C         ccedilla          Ccedilla    Control_c
+  keycode  47 =              v             V               oe                OE    Control_v
+  keycode  48 =              b             B       asciitilde        asciitilde    Control_b	#        dead_breve        asciitilde
+  keycode  49 =              k             K       asciitilde        asciitilde    Control_k      #    dead_abovering        asciitilde
+  keycode  50 =              m             M       asciitilde        asciitilde    Control_m	#       dead_macron        asciitilde
+  keycode  51 =          comma          less     dead_cedilla        asciitilde
+  keycode  52 =         period       greater       asciitilde        asciitilde			#     dead_abovedot        asciitilde
+  keycode  53 =          slash      question     questiondown        asciitilde    Delete
+
+  keycode  58 =        Control # Formerly Caps-lock
+  keycode  86 =          minus    underscore       asciitilde        asciitilde	 Control_underscore          #            endash            emdash
+  keycode  57 =          space         space            space      nobreakspace    nul
+
+
+  keycode   1 = Escape
+  keycode  14 = Delete
+  keycode  15 = Tab
+  keycode  28 = Return
+          alt     keycode  28 = Meta_Control_m
+  keycode  29 = Control
+  keycode  42 = Shift
+  keycode  54 = Shift
+  keycode  56 = Alt
+  keycode  97 = Control
+#+end_src
+
+
+#+begin_src text :tangle (if (eq system-type 'gnu/linux) "/etc/vconsole.conf" "no") :comments no
+  KEYMAP=/usr/local/share/kbd/keymaps/colemak-no-caps.map
+#+end_src
+
+[[https://man.archlinux.org/man/keymaps.5][Keymaps]]
+[[https://man.archlinux.org/man/vconsole.conf.5][VConsole]]
+[[https://wiki.archlinux.org/index.php/Linux_console/Keyboard_configuration#Loadkeys][Loadkeys]]
+[[https://askubuntu.com/questions/982863/change-caps-lock-to-control-in-virtual-console-on-ubuntu-17][Change caps lock to control in virtual console on ubuntu 17]]
+** Vial
+:PROPERTIES:
+:CREATED:  [2022-08-13 Sat 14:54]
+:ID:       11513D6F-8899-41C5-993E-9ACBF597167B
+:END:
+#+begin_src conf :tangle ~/.local/share/application/vial.desktop
+  [Desktop Entry]
+  Name=Vial
+  Exec=Vial
+  Terminal=False
+  Comment=Configure keyboard
+  Icon=Vial
+#+end_src
+** Waybar
+:LOGBOOK:
+- Refiled on [2022-02-21 Mon 17:15]
+:END:
+*** Config
+#+begin_src json :tangle ~/.config/waybar/config :comments no
+  {
+      "layer": "top",
+      "height": 30,
+      "modules-left": ["sway/workspaces", "sway/mode"],
+      //"modules-center": ["sway/window"],
+      "modules-right": ["pulseaudio", "mpd", "clock", "tray"],
+      "sway/window": {
+          "max-length": 50
+      },
+      "clock": {
+          "format-alt": "{:%a, %d. %b  %H:%M}"
+      },
+      "pulseaudio": {
+          "scroll-step": 5,
+          "on-click": "pavucontrol",
+          "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
+          "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ +5%"
+      }
+  }
+#+end_src
+
+*** Styling
+
+#+begin_src css :tangle ~/.config/waybar/style.css :comments no
+  ,* {
+      border: none;
+      border-radius: 0;
+      /* `otf-font-awesome` is required to be installed for icons */
+      font-family: Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      min-height: 0;
+  }
+
+  window#waybar {
+      background-color: rgba(43, 48, 59, 0.5);
+      border-bottom: 3px solid rgba(100, 114, 125, 0.5);
+      color: #ffffff;
+      transition-property: background-color;
+      transition-duration: .5s;
+  }
+
+  window#waybar.hidden {
+      opacity: 0.2;
+  }
+
+  /*
+  window#waybar.empty {
+      background-color: transparent;
+  }
+  window#waybar.solo {
+      background-color: #FFFFFF;
+  }
+  ,*/
+
+  window#waybar.termite {
+      background-color: #3F3F3F;
+  }
+
+  window#waybar.chromium {
+      background-color: #000000;
+      border: none;
+  }
+
+  #workspaces button {
+      padding: 0 5px;
+      background-color: transparent;
+      color: #ffffff;
+      /* Use box-shadow instead of border so the text isn't offset */
+      box-shadow: inset 0 -3px transparent;
+  }
+
+  /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+  #workspaces button:hover {
+      background: rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 -3px #ffffff;
+  }
+
+  #workspaces button.focused {
+      background-color: #64727D;
+      box-shadow: inset 0 -3px #ffffff;
+  }
+
+  #workspaces button.urgent {
+      background-color: #eb4d4b;
+  }
+
+  #mode {
+      background-color: #64727D;
+      border-bottom: 3px solid #ffffff;
+  }
+
+  #clock,
+  #battery,
+  #cpu,
+  #memory,
+  #disk,
+  #temperature,
+  #backlight,
+  #network,
+  #pulseaudio,
+  #custom-media,
+  #tray,
+  #mode,
+  #idle_inhibitor,
+  #mpd {
+      padding: 0 10px;
+      margin: 0 4px;
+      color: #ffffff;
+  }
+
+  #window,
+  #workspaces {
+      margin: 0 4px;
+  }
+
+  /* If workspaces is the leftmost module, omit left margin */
+  .modules-left > widget:first-child > #workspaces {
+      margin-left: 0;
+  }
+
+  /* If workspaces is the rightmost module, omit right margin */
+  .modules-right > widget:last-child > #workspaces {
+      margin-right: 0;
+  }
+
+  #clock {
+      background-color: #000;
+      color: #fff;
+  }
+
+  #battery {
+      background-color: #ffffff;
+      color: #000000;
+  }
+
+  #battery.charging, #battery.plugged {
+      color: #ffffff;
+      background-color: #26A65B;
+  }
+
+  @keyframes blink {
+      to {
+          background-color: #ffffff;
+          color: #000000;
+      }
+  }
+
+  #battery.critical:not(.charging) {
+      background-color: #f53c3c;
+      color: #ffffff;
+      animation-name: blink;
+      animation-duration: 0.5s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+  }
+
+  label:focus {
+      background-color: #000000;
+  }
+
+  #cpu {
+      background-color: #2ecc71;
+      color: #000000;
+  }
+
+  #memory {
+      background-color: #9b59b6;
+  }
+
+  #disk {
+      background-color: #964B00;
+  }
+
+  #backlight {
+      background-color: #90b1b1;
+  }
+
+  #network {
+      background-color: #2980b9;
+  }
+
+  #network.disconnected {
+      background-color: #f53c3c;
+  }
+
+  #pulseaudio {
+      background-color: #000;
+      color: #fff;
+  }
+
+  #pulseaudio.muted {
+      background-color: #90b1b1;
+      color: #2a5c45;
+  }
+
+  #custom-media {
+      background-color: #66cc99;
+      color: #2a5c45;
+      min-width: 100px;
+  }
+
+  #custom-media.custom-spotify {
+      background-color: #66cc99;
+  }
+
+  #custom-media.custom-vlc {
+      background-color: #ffa000;
+  }
+
+  #temperature {
+      background-color: #f0932b;
+  }
+
+  #temperature.critical {
+      background-color: #eb4d4b;
+  }
+
+  #tray {
+      background-color: #000;
+      color: #fff;
+  }
+
+  #idle_inhibitor {
+      background-color: #2d3436;
+  }
+
+  #idle_inhibitor.activated {
+      background-color: #ecf0f1;
+      color: #2d3436;
+  }
+
+  #mpd {
+      background-color: #66cc99;
+      color: #2a5c45;
+  }
+
+  #mpd.disconnected {
+      background-color: #f53c3c;
+  }
+
+  #mpd.stopped {
+      background-color: rgba(0, 0, 0, 1);
+      color: #fff;
+  }
+
+  #mpd.paused {
+      background-color: #51a37a;
+  }
+
+  #language {
+      background: #00b093;
+      color: #740864;
+      padding: 0 5px;
+      margin: 0 5px;
+      min-width: 16px;
+  }
+
+#+end_src
+* MacOS
+:PROPERTIES:
+:CREATED:  [2022-09-03 Sat 10:46]
+:END:
+
+** Defaults Write
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -259,7 +2404,7 @@
 
   defaults write com.apple.dock ResetLaunchPad -bool TRUE;killall Dock
 #+end_src
-* Disable Launchd stuff
+** Disable Launchd stuff
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -573,402 +2718,26 @@
 #+end_src
 
 https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
-* Ediff binary
-:PROPERTIES:
-:CREATED:  [2022-01-25 Tue 12:47]
-:ID:       B61A484C-87BF-40E8-B9BE-4165C365D084
-:END:
-:LOGBOOK:
-- State "NEXT"       from "TODO"       [2022-06-13 Mon 17:14]
-- Refiled on [2022-01-25 Tue 17:28]
-- Refiled on [2022-01-25 Tue 16:57]
-:END:
-https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-ediff-directories-from-command-line
-
-#+begin_src shell :shebang #!/bin/sh :tangle ~/.local/bin/ediff
-  EMACS=$(which emacsclient)
-
-  if [ $# -lt 2 ] ; then
-      echo "Usage:: " `basename $0` " [ -d ]  item1  item2"
-      exit 1
-  fi
-
-  dir="no"
-  if [ "$1" = "-d" ]; then
-      dir="yes"
-      item1="$2"
-      item2="$3"
-  else
-      if [ -d "$1" -a -d "$2" ]; then
-          dir="yes"
-      fi
-      item1="$1"
-      item2="$2"
-  fi
-
-  if [ "$dir" = "no" ]; then
-
-      # Check that files do exist
-      if [ ! -f "$item1" ] ; then
-          printf "File %s not found.\n" "$item1"
-          exit 2
-      fi
-      if [ ! -f "$item2" ] ; then
-          printf "File %s not found.\n" "$item2"
-          exit 2
-      fi
-
-      # Check whether files are identical or not
-      diffdata=`diff "$item1" "$item2"`
-      if [ "_" = "_$diffdata" ] ; then
-          printf "%s and %s are identical.\n" "$item1" "$item2"
-          exit 3
-      fi
-
-  fi
-
-  diff_fn="ediff-files"
-  if [ "$dir" = "yes" ]; then
-      diff_fn="ediff-directories"
-      opt="\"\""
-  fi
-
-  # Run Emacs with ediff-files function
-  printf "Comparing files %s and %s . . .  " "$item1" "$item2"
-  $EMACS -q -c -eval "($diff_fn \"$item1\" \"$item2\" $opt)" && echo done.
-
-  exit 0
-#+end_src
-
-* Fail lock
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-[[https://wiki.archlinux.org/index.php/Security#Lock_out_user_after_three_failed_login_attempts][Security - ArchWiki]]
-
-As per =/etc/security/faillock.conf=:
-
-- unlock_time :: the lockout time (in seconds, default 10 minutes).
-- fail_interval :: the time in which failed logins can cause a lockout (in seconds, default 15 minutes).
-- deny :: the number of failed logins before lockout (default 3).
-- =deny = 0= will disable lockout
-
-#+begin_src shell :dir /sudo::
-  echo "deny = 0" | tee -a /etc/security/faillock.conf
-#+end_src
-
-#+results:
-: deny = 0
-
-* Fish
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-** Main Config
-
-#+begin_src fish :tangle ~/.config/fish/config.fish
-  set -gx XDG_DATA_HOME   $HOME/.local/share
-  set -gx XDG_CONFIG_HOME $HOME/.config
-  set -gx XDG_CACHE_HOME  $HOME/.cache
-
-  set -gx EDITOR "emacsclient -tty -a \"\""
-  set -gx VISUAL "emacsclient -c -a \"\""
-
-  test -e "/usr/local/sbin" && fish_add_path "/usr/local/sbin"
-  test -e "/usr/local/bin" && fish_add_path "/usr/local/bin"
-  test -e "/Library/TeX/texbin" && fish_add_path "/Library/TeX/texbin"
-  test -e "/usr/local/opt/ruby/libexec/gembin" && fish_add_path "/usr/local/opt/ruby/libexec/gembin"
-  test -e "/usr/local/opt/ruby/bin" && fish_add_path "/usr/local/opt/ruby/bin"
-  test -e "/opt/local/bin" && fish_add_path "/opt/local/bin"
-  test -e "/opt/local/sbin" && fish_add_path "/opt/local/sbin"
-  test -e "/usr/local/opt/e2fsprogs/bin" && fish_add_path "/usr/local/opt/e2fsprogs/bin"
-  test -e "/usr/local/opt/e2fsprogs/sbin" && fish_add_path "/usr/local/opt/e2fsprogs/sbin"
-
-  function __fish_describe_command; end # Fixes issues with Catalina
-
-  function fish_command_not_found
-      __fish_default_command_not_found_handler $argv[1]
-  end
-
-  # set __fish_git_prompt_show_informative_status "yes"
-  # set __fish_git_prompt_char_dirtystate "+"
-
-  function fish_greeting; end
-  function fish_title; end
-
-  function dired
-      emacsclient -c -a emacs -e "(dired \"$argv\")" &
-  end
-
-  function mail
-      emacsclient -c -n -a emacs -e "(browse-url-mail \"$argv\")"
-  end
-
-  abbr -a -- - prevd
-  abbr -a -- = nextd
-
-  abbr -a yt  youtube-dl
-  abbr -a yta youtube-dl -x --audio-format best
-  abbr -a mg  mg -n
-
-  if not functions -q fisher
-      set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
-      curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
-      fish -c fisher
-  end
-
-  if type brew > /dev/null 2>&1
-      set -gx HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK 1
-  end
-#+end_src
-
-#+begin_src fish :tangle ~/.config/fish/fishfile
-   jorgebucaran/fish-bax
-#+end_src
-
-#+begin_src fish :tangle ~/.config/fish/functions/fish_prompt.fish
-  function prompt_ssh -d "Check to see if in an SSH session."
-      if test -n "$SSH_CLIENT"
-          printf '%s@%s ' (whoami) (hostname -s)
-      end
-  end
-
-  function prompt_cwd -d "Display the current working directory."
-      # set_color $fish_color_cwd
-      printf '%s' (prompt_pwd)
-      set_color normal
-  end
-
-  function prompt_git -d "Display git status in the prompt"
-      printf '%s' (__fish_git_prompt)
-  end
-
-  function fish_prompt -d "The prompt for fish"
-      #prompt_ssh
-      prompt_cwd
-      prompt_git
-      printf ' ❯ '
-  end
-#+end_src
-
-** Manp
-
-#+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish
-  bind \ef forward-bigword
-#+end_src
-
-#+begin_src fish :tangle ~/.config/fish/functions/manp.fish
-  function manp  -d "Open man pages as PDF documents"
-      if type open > /dev/null 2>&1
-          man -t $argv | open -f -a Preview
-      else
-          man $argv
-      end
-  end
-#+end_src
-
-** FLAC/ALAC
-
-#+begin_src fish :tangle ~/.config/fish/functions/flac-alac.fish
-  function flac-alac -d "Convert flac to alac"
-      if type ffmpeg > /dev/null 2>&1
-           for f in *.flac; ffmpeg -i $f -acodec alac -vsync 2 -c:v copy $f.m4a; end;
-      else
-          echo "Install FFMPEG with ALAC support."
-      end
-  end
-#+end_src
-
-** Brace expansion
-convert company-logo.{svg,png} # Convert a SVG vector graphics file into a PNG raster graphics file. This uses brace expansion to generate the names to pass to ImageMagick's convert command.
-** Stabilize
-*** Requirements
-You'll need ffmpeg built =-with-libvidstab= in homebrew, as in
-
-#+begin_src shell
-  brew install varenc/ffmpeg/ffmpeg --with-libvidstab
-#+end_src
-
-*** Steps
-Analyse the video with default or more intense settings. This is step one and doesn't actually make a video.
-
-#+begin_src shell
-  ffmpeg -i input.mov -vf vidstabdetect -f null -
-#+end_src
-
-*** References
-- [[https://github.com/georgmartius/vid.stab][vid.stab]]
-** Split a FLAC file
-I didn't actually know that FLAC files could be produced as a single file for an entire album, as that seems insane. In order to turn them into useful files you need ~shntool~ and ~flac~ in Nix. Then run this in the correct directory:
-
-#+begin_src shell
-  shnsplit -f *.cue -t "%n-%t" -o flac *.flac
-#+end_src
-
-This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to turn the flac files into more playable files or something.
-
-*References*
-- [[https://unix.stackexchange.com/questions/10251/how-do-i-split-a-flac-with-a-cue][command line - How do I split a flac with a cue? - Unix & Linux Stack Exchange]] [2020-05-09 Sat]
-
-** Dict
-#+begin_src fish :tangle ~/.config/fish/functions/dict.fish
-  function dict -d "Overload the dict function to keep a log"
-      command dict "$argv" | less
-      printf "%s %s\n" (date) "$argv" >> ~/org/meta/dictlog
-  end
-
-#+end_src
-* Font Config
+** Hammerspoon
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
-#+begin_src xml :tangle ~/.config/fontconfig/fonts.conf :comments no
-  <?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-  <fontconfig>
-    <match target="font">
-      <edit name="hintstyle" mode="assign">
-        <const>hintfull</const>
-      </edit>
-    </match>
-    <match target="font">
-      <edit name="rgba" mode="assign">
-        <const>rgb</const>
-      </edit>
-    </match>
-    <match target="font">
-      <edit name="lcdfilter" mode="assign">
-        <const>lcddefault</const>
-      </edit>
-    </match>
-  </fontconfig>
-#+end_src
-* Game Mode
-:PROPERTIES:
-:header-args: :tangle ~/.config/gamemode.ini
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:09]
-:END:
-
-#+begin_src conf
-  [general]
-  reaper_freq=15
-  desiredgov=performance
-  softrealtime=auto
-  renice=10
-  ioprio=0
-  inhibit_screensaver=1
-#+end_src
-* Git
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:09]
-:END:
-#+begin_src gitignore :tangle ~/.config/git/ignore
-  .DS_Store
-  ,*~
-  \#*\#
-  .\#*
-  ,*.elc
-  ,*.pyc
-#+end_src
-
-#+begin_src conf :tangle ~/.config/git/config
-  [core]
-          excludesfile = ~/.config/git/ignore
-          quotepath = false
-          editor = emacsclient
-          ignorecase = false
-
-  [user]
-          name = Geoff MacIntosh
-          email = geoff@mac.into.sh
-
-  [color]
-          diff = auto
-          status = auto
-          branch = auto
-          interactive = auto
-          ui = auto
-
-  [diff]
-          renameLimit = 5000
-
-  [pull]
-          rebase = false
-
-  [init]
-          defaultBranch = main
-
-  [fetch]
-          prune = true
-          pruneTags = true
-
-  [diff "org"]
-        xfuncname = "^\\*+.*"
-
-  [diff "lisp"]
-        xfuncname = "^\\([^ ]+ [^ ]+"
-#+end_src
-
-#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.config/git/config" "no")
-  [credential]
-            helper = osxkeychain
-#+end_src
-
-#+begin_src conf :tangle ~/.config/git/attributes
-  ,,*.org   diff=org
-  ,,*.lisp  diff=lisp
-  ,,*.el    diff=lisp
-  ,,*.hy    diff=lisp
-  ,,*.scm   diff=lisp
-#+end_src
-* GPG
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:09]
-:END:
-
-#+begin_src conf :tangle ~/.gnupg/gpg.conf :comments no
-  no-greeting
-  no-secmem-warning
-  keyserver pool.sks-keyservers.net
-  #default-key CB7647349621074630BED0DADDCB697E089A4F88
-  #default-recipient-self
-  #encrypt-to CB7647349621074630BED0DADDCB697E089A4F88
-  bzip2-compress-level 9
-  compress-level 9
-#+end_src
-
-#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf :comments no
-  # allow-emacs-pinentry
-  # allow-loopback-entry
-  max-cache-ttl 86400
-  default-cache-ttl 86400
-#+end_src
-
-#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.gnupg/gpg-agent.conf" "no") :comments no
-  pinentry-program /usr/local/bin/pinentry-mac
-#+end_src
-* Hammerspoon
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:09]
-:END:
-** Setup
+*** Setup
 #+begin_src shell
   defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
 #+end_src
 
-** Init
+*** Init
 :PROPERTIES:
 :header-args: :tangle ~/.config/hammerspoon/init.lua
 :END:
-*** Hyper
+**** Hyper
 
 #+begin_src lua
   local hyper = {"ctrl", "alt", "cmd"}
 #+end_src
 
-*** WM
+**** WM
 #+begin_src lua
     hs.loadSpoon("MiroWindowsManager")
 
@@ -994,21 +2763,21 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
   end)
 #+end_src
 
-*** Finder
+**** Finder
 #+begin_src lua
   hs.hotkey.bind(hyper, 'n', function()
                     hs.application.launchOrFocus("Finder")
   end)
 #+end_src
 
-*** Reload Hammerspoon
+**** Reload Hammerspoon
 #+begin_src lua
   hs.hotkey.bind(hyper, 'r', function()
                     hs.reload()
   end)
 #+end_src
 
-*** Text Inflator
+**** Text Inflator
 
 #+begin_src lua
   local function textInflaterCallback(choice)
@@ -1064,7 +2833,7 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
         textInflaterChooser:show()
      end)
 #+end_src
-* Hushlogin
+** Hushlogin
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
@@ -1072,189 +2841,7 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 #+begin_src conf :tangle (if (eq system-type 'darwin) "~/.hushlogin" "no")
   # Silence
 #+end_src
-* Install Notes
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:10]
-:END:
-#+begin_src fish
-  loadkeys colemak
-
-  iwctl
-  > station wlan0 scan
-  > station wlan0 get-networks
-  > station wlan0 connect X5-452
-
-  timedatectl set-ntp true
-
-  fdisk # BAD, use gdisk or parted
-  # /dev/nvme0n1p1 512M EFI system partition (EF00)
-  # /dev/nvme0n1p2 465.5G Linux filesystem (8300)
-
-  mkfs.fat -F32 /dev/nvme0n1p1
-  mkfs.btrfs /dev/nvme0n1p2
-
-  mount /dev/nvme0n1p2 /mnt
-  btrfs sub create /mnt/@
-  btrfs sub create /mnt/@home
-  btrfs sub create /mnt/@var
-  btrfs sub create /mnt/@snapshots
-  umount /mnt
-
-  mount -o
-  noatime,nodiratime,compress-force=zstd,space_cache=v2,ssd,subvol=@
-  /dev/nvme0n1p2 /mnt
-  mkdir /mnt/{boot,home,var,snapshots}
-  mount /dev/nvme0n1p1 /mnt/boot
-  mount -o ...subvol=@home /dev/nvme0n1p2 /mnt/home
-  mount -o ...subvol=@var /dev/nvme0n1p2 /mnt/var
-  mount -o ...subvol=@snapshots /dev/nvme0n1p2 /mnt/snapshots
-
-  cd /mnt
-  truncate -s 0 ./swapfile
-  chattr +C ./swapfile
-  btrfs property set ./swapfile compression none
-  dd if=/dev/zero of=./swapfile bs=1M count=8000 status=progress
-  chmod 600 ./swapfile
-  mkswap ./swapfile
-  swapon ./swapfile
-
-  # edit /etc/fstab
-  # /swapfile none swap defaults 0 0
-
-  pacstrap /mnt base linux linux-firmware mg btrfs-progs amd-ucode iwd networkmanager
-
-  genfstab -U /mnt >> /mnt/etc/fstab
-
-  arch-chroot /mnt
-
-  ln -sf /usr/share/zoneinfo/America/St_Johns /etc/localtime
-  hwclock --systohc
-
-  # edit /etc/locale.gen to uncomment en_CA.UTF-8
-
-  locale-gen
-
-  # create /etc/locale.conf to LANG=en_CA.UTF-8
-  # create /etc/vconsole.conf be KEYMAP=colemak
-  # create /etc/hostname to be d
-  # edit /etc/mkinitcpio.conf to contain ...block btrfs keymap
-  # filesystems...
-  mkinitcpio -P
-
-  passwd
-
-  bootctl --path=/boot install
-
-  # create /boot/loader/entries/arch.conf
-  # title Arch Linux
-  # linux /vmlinuz-linux
-  # initrd /amd-ucode.img
-  # initrd /initramfs-linux.img
-  # options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85
-  # rootflags=subvol=@ rw
-
-  exit
-  reboot
-#+end_src
-
-#+begin_src shell
-  systemctl enable systemd-resolved
-  systemctl enable NetworkManager
-
-  nmcli
-#+end_src
-
-#+begin_src shell
-  systemctl enable systemd-networktimed
-  systemctl enable fstrim.timer
-#+end_src
-
-#+begin_src shell
-  useradd -m -G wheel -s /bin/bash g
-  passwd g
-
-  pacman -S sudo
-  EDITOR="mg -n" visudo
-
-  # %wheel ALL=(ALL) ALL
-  # Defaults passwd_timeout=0
-
-  reboot
-
-  pacman -S xorg-wayland sway alacritty wofi texinfo man-db man-pages
-
-  sudo mg -n /etc/pacman.conf
-  # ILoveCandy
-  # enable multilib
-#+end_src
-
-* Journal
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-#+begin_src conf  :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/journald.conf.d/00-journal-size.conf" "no") :comments no
-  [Journal]
-  SystemMaxUse=100M
-#+end_src
-
-* Journald
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:10]
-:END:
-By default, journald can use up to 4 GB of storage for logs or something like that.
-
-#+begin_src conf :tangle /sudo::/etc/systemd/system.conf.d/journald.conf
-  SystemMaxUse=100M
-#+end_src
-
-And to check how much space the journal is currently using:
-
-#+begin_src shell :results replace :tangle no
-  journalctl --disk-usage
-#+end_src
-
-#+results:
-: Archived and active journals take up 72.0M in the file system.
-
-* Kitty
-:PROPERTIES:
-:header-args: :tangle ~/.config/kitty/kitty.conf
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:10]
-:END:
-
-#+begin_src conf
-  cursor_blink_interval 0
-  cursor_shape block
-  shell fish
-  close_on_child_death yes
-  editor emacs
-  font_size 13.0
-  font_family SF Mono
-  tab_bar_style separator
-  tab_separator "  "
-  # tab_activity_symbol "*"
-  foreground #000000
-  background #FFFFFF
-#+end_src
-* Locate
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:11]
-:END:
-I am currently using mdfind on macOS and plocate on Linux.
-
-There is some [[https://bugzilla.redhat.com/show_bug.cgi?id=906591][issue with pruning bind mounts on BTRFS subvolumes]], so we disable the it which is the default that the system is supposed to use. Not sure what the downsides are this way and why so many distributions change the default? Whatever.
-
-I'd really rather not alter the main conf file as pacman will complain whenever there are updates, but I don't think there's a good alternative. I don't bother to do anything fancy with tangling because there's no such file on macOS. That will come back to bite me for sure.
-
-#+begin_src conf :tangle /sudo:/etc/updatedb.conf
-  PRUNE_BIND_MOUNTS = "no"
-  PRUNEFS = "9p afs anon_inodefs auto autofs bdev binfmt_misc cgroup cifs coda configfs cpuset cramfs debugfs devpts devtmpfs ecryptfs exofs ftpfs fuse fuse.encfs fuse.s3fs fuse.sshfs fusectl gfs gfs2 hugetlbfs inotifyfs iso9660 jffs2 lustre mqueue ncpfs nfs nfs4 nfsd pipefs proc ramfs rootfs rpc_pipefs securityfs selinuxfs sfs shfs smbfs sockfs sshfs sysfs tmpfs ubifs udf usbfs vboxsf"
-  PRUNENAMES = ".git .hg .svn"
-  PRUNEPATHS = "/afs /media /mnt /net /sfs /tmp /udev /var/cache /var/lib/pacman/local /var/lock /var/run /var/spool /var/tmp"
-#+end_src
-* macOS Default Keybindings
+** macOS Default Keybindings
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -1304,143 +2891,7 @@ I'd really rather not alter the main conf file as pacman will complain whenever 
        };
   }
 #+end_src
-* Mako
-:PROPERTIES:
-:header-args: :tangle ~/.config/mako/config
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:12]
-:END:
-
-#+begin_src conf
-  sort=-time
-  max-history=3
-  on-button-middle=dismiss-all
-  on-notify=exec mpv ~/org/etc/DeusExSounds0437.wav
-
-  font=Helvetica 12
-  background-color=#000000BF
-  text-color=#FFFFFF
-  border-size=5
-  border-color=#000000BF
-  border-radius=3
-  padding=0,5,15,5
-#+end_src
-* Mango Hud
-:PROPERTIES:
-:CREATED:  [2021-09-18 Sat 15:44]
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:12]
-:END:
-#+begin_src conf :tangle ~/.config/MangoHud/MangoHud.conf
-  cpu_temp
-  cpu_color=FFFFFF
-
-  gpu_temp
-  gpu_color=FFFFFF
-
-  ram
-  ram_color=FFFFFF
-
-  swap
-  engine_color=FFFFFF
-
-  fps_limit=144
-  frame_timing=0
-
-  round_corners=0
-  position=top-center
-#+end_src
-* Mbsync
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:12]
-:END:
-
-#+begin_src conf :tangle ~/.mbsyncrc :comments none
-    IMAPAccount fastmail
-    Host imap.fastmail.com
-    Port 993
-    User gmacintosh@fastmail.fm
-    PassCmd "pass mbsync.fastmail.com"
-    SSLType IMAPS
-
-    IMAPStore fastmail-remote
-    Account fastmail
-
-    MaildirStore fastmail-local
-    Path ~/Mail/
-    Inbox ~/Mail/INBOX
-    SubFolders Verbatim
-
-    Channel fastmail
-    Far :fastmail-remote:
-    Near :fastmail-local:
-    Patterns *
-    Expunge Both
-    CopyArrivalDate yes
-    Sync All
-    Create Both
-    Remove Both
-    SyncState *
-#+end_src
-
-Before everything works, you'll still need to set up mbsync and mu, so run the following commands:
-
-#+begin_src shell :tangle no
-  mbsync --all
-  mu init --maildir=~/Mail --my-address=geoff@mac.into.sh
-  mu index
-#+end_src
-
-I think mu will actually index correctly on its own the first time you launch mu4e, but I'm not sure.
-* MPD
-:PROPERTIES:
-:header-args: :tangle ~/.mpd/mpd.conf :comments no
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:13]
-:END:
-
-MPD hates to create its own files.
-
-#+begin_src shell :tangle no
-  touch ~/.mpd/{database,pid,state,sticker.sql,log}
-#+end_src
-
-You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and will not work. Do not do this.
-
-#+begin_src shell :tangle no
-  systemctl enable --user mpd
-#+end_src
-
-#+begin_src conf
-  music_directory    "~/Music/Music Files"
-  playlist_directory "~/Music/Playlists"
-  db_file            "~/.mpd/database"
-  pid_file           "~/.mpd/pid"
-  state_file         "~/.mpd/state"
-  sticker_file       "~/.mpd/sticker.sql"
-  log_file           "~/.mpd/log"
-  port               "6600"
-  #auto_update        "yes"
-#+end_src
-
-#+begin_src conf :tangle (if (eq system-type 'darwin) "~/.mpd/mpd.conf" "no")
-  audio_output {
-  type       "osx"
-  name       "CoreAudio"
-  mixer_type "software"
-  }
-#+end_src
-
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.mpd/mpd.conf" "no")
-  audio_output {
-  type "pulse"
-  name "pulse audio"
-  }
-#+end_src
-* MPD MacOS
+** MPD MacOS
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
 :END:
@@ -1468,284 +2919,7 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
   </dict>
   </plist>
 #+end_src
-* MPV
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:13]
-:END:
-*Defaults*
-
-
- #+begin_src conf :tangle ~/.config/mpv/mpv.conf
-   screenshot-directory=~/Downloads/
-   screenshot-format=png
-   screenshot-template="%F-%whh%wMm%wSs%wT"
-
-   save-position-on-quit
-   hwdec
- #+end_src
-
-*Audio level normalization*
-
- #+begin_src conf :tangle ~/.config/mpv/mpv.conf
-   #af="lavfi=[dynaudnorm=f=75:g=25:n=0:p=0.58]"
-   af=loudnorm=I=-30
- #+end_src
-
-*Keybindings*
-
- #+begin_src conf :tangle ~/.config/mpv/input.conf
-   z           no-osd async screenshot video
-   WHEEL_UP    ignore
-   WHEEL_DOWN  ignore
-   WHEEL_RIGHT ignore
-   WHEEL_LEFT  ignore
- #+end_src
-* Nautilus
-:PROPERTIES:
-:CREATED:  [2022-08-13 Sat 14:49]
-:ID:       BC84C185-DF86-48B6-8B9D-4849A94A2EC2
-:END:
-#+begin_src conf :tangle ~/.local/share/applications/nautilus.desktop
-  [Desktop Entry]
-  Name=Nautilus
-  Type=Application
-  Exec=nautilus --new-window
-  Terminal=False
-  Icon=org.gnome.Nautilus
-  Comment=File manager
-#+end_src
-* NCMPCPP
-:PROPERTIES:
-:header-args: :tangle ~/.config/ncmpcpp/config
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:13]
-:END:
-
-#+begin_src conf
-  mpd_host = localhost
-  mpd_port = 6600
-  mpd_music_dir = "~/Music/Music Files"
-
-  progressbar_look = "─░─"
-  display_volume_level = no
-  user_interface = alternative
-  ignore_leading_the = yes
-  media_library_hide_album_dates = yes
-  media_library_primary_tag = album_artist
-#+end_src
-* Paccache clean
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-
-Install pacman-contrib.
-
-#+begin_src shell :dir /sudo:: :results replace
-  pacman --sync --noconfirm pacman-contrib
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/pacman.d/hooks/clean_cache.hook
-  [Trigger]
-  Operation = Upgrade
-  Operation = Install
-  Operation = Remove
-  Type = Package
-  Target = *
-
-  [Action]
-  Description = Cleaning pacman cache...
-  When = PostTransaction
-  Exec = /usr/bin/paccache -r
-#+end_src
-
-* Pacman
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:13]
-:END:
-
-#+begin_src conf :tangle /sudo::/etc/pacman.conf
-  NoExtract=/etc/xdg/reflector/*
-#+end_src
-
-
-#+begin_src conf
-  #
-  # /etc/pacman.conf
-  #
-  # See the pacman.conf(5) manpage for option and repository directives
-
-  #
-  # GENERAL OPTIONS
-  #
-  [options]
-  # The following paths are commented out with their default values listed.
-  # If you wish to use different paths, uncomment and update the paths.
-  #RootDir     = /
-  #DBPath      = /var/lib/pacman/
-  #CacheDir    = /var/cache/pacman/pkg/
-  #LogFile     = /var/log/pacman.log
-  #GPGDir      = /etc/pacman.d/gnupg/
-  #HookDir     = /etc/pacman.d/hooks/
-  HoldPkg     = pacman glibc
-  #XferCommand = /usr/bin/curl -L -C - -f -o %o %u
-  #XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
-  #CleanMethod = KeepInstalled
-  Architecture = auto
-
-  # Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup
-  #IgnorePkg   =
-  #IgnoreGroup =
-
-  #NoUpgrade   =
-  #NoExtract   =
-
-  # Misc options
-  #UseSyslog
-  Color
-  #TotalDownload
-  CheckSpace
-  ILoveCandy
-  #VerbosePkgLists
-  ParallelDownloads = 5
-
-  # By default, pacman accepts packages signed by keys that its local keyring
-  # trusts (see pacman-key and its man page), as well as unsigned packages.
-  SigLevel    = Required DatabaseOptional
-  LocalFileSigLevel = Optional
-  #RemoteFileSigLevel = Required
-
-  # NOTE: You must run `pacman-key --init` before first using pacman; the local
-  # keyring can then be populated with the keys of all official Arch Linux
-  # packagers with `pacman-key --populate archlinux`.
-
-  #
-  # REPOSITORIES
-  #   - can be defined here or included from another file
-  #   - pacman will search repositories in the order defined here
-  #   - local/custom mirrors can be added here or in separate files
-  #   - repositories listed first will take precedence when packages
-  #     have identical names, regardless of version number
-  #   - URLs will have $repo replaced by the name of the current repo
-  #   - URLs will have $arch replaced by the name of the architecture
-  #
-  # Repository entries are of the format:
-  #       [repo-name]
-  #       Server = ServerName
-  #       Include = IncludePath
-  #
-  # The header [repo-name] is crucial - it must be present and
-  # uncommented to enable the repo.
-  #
-
-  # The testing repositories are disabled by default. To enable, uncomment the
-  # repo name header and Include lines. You can add preferred servers immediately
-  # after the header, and they will be used before the default mirrors.
-
-  #[testing]
-  #Include = /etc/pacman.d/mirrorlist
-
-  [core]
-  Include = /etc/pacman.d/mirrorlist
-
-  [extra]
-  Include = /etc/pacman.d/mirrorlist
-
-  #[community-testing]
-  #Include = /etc/pacman.d/mirrorlist
-
-  [community]
-  Include = /etc/pacman.d/mirrorlist
-
-  # If you want to run 32 bit applications on your x86_64 system,
-  # enable the multilib repositories as required here.
-
-  #[multilib-testing]
-  #Include = /etc/pacman.d/mirrorlist
-
-  [multilib]
-  Include = /etc/pacman.d/mirrorlist
-
-  # An example of a custom package repository.  See the pacman manpage for
-  # tips on creating your own repositories.
-  #[custom]
-  #SigLevel = Optional TrustAll
-  #Server = file:///home/custompkgs
-#+end_src
-* Paru
-:PROPERTIES:
-:CREATED:  [2022-05-28 Sat 09:50]
-:END:
-:LOGBOOK:
-- Refiled on [2022-06-08 Wed 19:35]
-:END:
-
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "~/.config/paru/paru.conf" "no")
-  #
-  # $PARU_CONF
-  # /etc/paru.conf
-  # ~/.config/paru/paru.conf
-  #
-  # See the paru.conf(5) manpage for options
-
-  #
-  # GENERAL OPTIONS
-  #
-  [options]
-  PgpFetch
-  Devel
-  Provides
-  DevelSuffixes = -git -cvs -svn -bzr -darcs -always -hg -fossil
-  #AurOnly
-  #BottomUp
-  #RemoveMake
-  SudoLoop
-  #UseAsk
-  #SaveChanges
-  #CombinedUpgrade
-  CleanAfter
-  BatchInstall
-  #UpgradeMenu
-  NewsOnUpgrade
-
-  #LocalRepo
-  #Chroot
-  #Sign
-  #SignDb
-  #KeepRepoCache
-
-  #
-  # Binary OPTIONS
-  #
-  #[bin]
-  #FileManager = vifm
-  #MFlags = --skippgpcheck
-  #Sudo = doas
-#+end_src
-* Power button
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/systemd/logind.conf.d/10-logind.conf" "no") :comments no
-  [Login]
-  HandlePowerKey=suspend
-#+end_src
-* Reflector
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-:END:
-Enable the timer via =systemctl enable reflector.timer=.
-
-#+begin_src conf :tangle /sudo::/etc/xdg/reflector/reflector.conf :comments no
-  --save /etc/pacman.d/mirrorlist
-  --protocol https
-  --country CA
-  --country US
-  --latest 25
-  --age 12
-  --sort rate
-#+end_src
-* Set Emacs As Default Editor
+** Set Emacs As Default Editor
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -1770,1152 +2944,4 @@ Enable the timer via =systemctl enable reflector.timer=.
   duti -s org.gnu.Emacs public.unix-executable all
   duti -s org.gnu.Emacs public.xml all
   duti -s org.gnu.Emacs public.yaml all
-#+end_src
-* Set XKB for games
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:08]
-- Refiled on [2021-06-11 Fri 12:31]
-:END:
-[2021-06-11 Fri 12:06]
-
-#+begin_src conf :tangle /sudo::/etc/X11/xorg.conf.d/00-keyboard.conf
-  Section "InputClass"
-          Identifier "keyboard defaults"
-          MatchIsKeyboard "on"
-          Option "XkbLayout" "us,us"
-          Option "XkbVariant" ",colemak"
-          Option "XkbOptions" "grp:shifts_toggle"
-  EndSection
-#+end_src
-
-* SSH
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:13]
-:END:
-The =~/.ssh= config is a strange thing. The user-editable =~/.ssh/config=
-file, (as tangled by this org file) is only semi-private, while the
-other files in the directory are something to avoid putting on the
-internet at all.
-
-I hope I never have to do this again, because I plan never to lose my
-generated keys. But if its needed, it's pretty easy. The current key
-I'm using was generated via =ssh-keygen -t rsa -b 2048=.
-
-That's also pretty easy, especially if the current machine only has
-one key. The command is =ssh-copy-id user@host=.
-
-First, [[https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent][generate]] a new SSH key. The =ssh-keygen= command will ask for a
-location to save it in, I tend to use the default of =~/.ssh/id_rsa=.
-
-#+BEGIN_SRC sh
-  ssh-keygen -t rsa -b 4096 -C "geoff@mac.into.sh"
-#+END_SRC
-
-Then copy the key to the [[https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/][clipboard]].
-
-#+BEGIN_SRC sh
-  pbcopy < ~/.ssh/id_rsa.pub
-#+END_SRC
-
-Paste the key into the =GitHub > Settings > SSH and GPG keys= section.
-
-As per [[https://github.com/jirsbek/SSH-keys-in-macOS-Sierra-keychain][jirsbek]] and [[https://developer.apple.com/library/content/technotes/tn2449/_index.html#//apple_ref/doc/uid/DTS40017589][Apple]], the behaviour of SSH in macOS Sierra has
-changed. It's pretty easy to make things work correctly, so I've done
-that.
-
-#+begin_src conf  :mkdirp yes :tangle ~/.ssh/config
-  Host *
-       AddKeysToAgent yes
-       IdentityFile ~/.ssh/id_rsa
-       ControlPath ~/.ssh/master-%h:%p
-       ControlMaster auto
-       ControlPersist 10m
-       AddKeysToAgent yes
-       IdentitiesOnly yes
-#       UseKeychain yes
-  Host router
-       Hostname 192.168.1.1
-       User root
-#+end_src
-* Sway
-:PROPERTIES:
-:CREATED:  [2022-02-21 Mon 17:14]
-:header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:14]
-:END:
-
-** Intro
-
-#+begin_src conf
-  set $mod Mod4
-  set $term kitty
-#+end_src
-
-** Background
-
-#+begin_src conf
-  # output * bg ~/Downloads/desktop.jpg fill
-#+end_src
-
-** Keyboard
-
-#+begin_src conf
-  input * {
-          natural_scroll enabled
-          xkb_layout "us,us"
-          xkb_variant "colemak,,"
-          xkb_options "ctrl:nocaps"
-  }
-#+end_src
-
-** Basic bindings
-
-#+begin_src conf
-  for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
-  set $menu exec $term --class=launcher -e sway-launcher-desktop
-  bindsym $mod+space exec $menu
-  bindsym $mod+Return exec $term
-  bindsym $mod+Shift+q kill
-#+end_src
-
-** Floating windows
-      # Drag floating windows by holding down $mod and left mouse button.
-      # Resize them with right mouse button + $mod.
-      # Despite the name, also works for non-floating windows.
-      # Change normal to inverse to use left mouse button for resizing and right
-      # mouse button for dragging.
-
-#+begin_src conf
-      floating_modifier $mod normal
-#+end_src
-
-** Reload config
-
-#+begin_src conf
-  bindsym $mod+Shift+c reload
-#+end_src
-
-** Screenshots
-
-#+begin_src conf
-      bindsym $mod+x exec grim ~/Downloads/$(date +%Y-%m-%d_%H-%m-%s).png
-      bindsym $mod+Shift+x exec grim -g "$(slurp)" ~/Downloads/$(date +%Y-%m-%d_%H-%m-%s).png
-#+end_src
-
-** Log out
-
-#+begin_src conf
-  bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
-#+end_src
-
-** Moving around
-
-#+begin_src conf
-  set $left b
-  set $right f
-  set $up p
-  set $down n
-#+end_src
-
-Move focus around
-
-#+begin_src conf
-  bindsym $mod+$left focus left
-  bindsym $mod+$down focus down
-  bindsym $mod+$up focus up
-  bindsym $mod+$right focus right
-
-  bindsym $mod+Left focus left
-  bindsym $mod+Down focus down
-  bindsym $mod+Up focus up
-  bindsym $mod+Right focus right
-#+end_src
-
-Move the focused window with the same, but add Shift
-
-#+begin_src conf
-  bindsym $mod+Shift+$left move left
-  bindsym $mod+Shift+$down move down
-  bindsym $mod+Shift+$up move up
-  bindsym $mod+Shift+$right move right
-
-  bindsym $mod+Shift+Left move left
-  bindsym $mod+Shift+Down move down
-  bindsym $mod+Shift+Up move up
-  bindsym $mod+Shift+Right move right
-#+end_src
-
-** Workspaces
-
-Switch to workspace
-
-#+begin_src conf
-  bindsym $mod+1 workspace number 1
-  bindsym $mod+2 workspace number 2
-  bindsym $mod+3 workspace number 3
-  bindsym $mod+4 workspace number 4
-  bindsym $mod+5 workspace number 5
-  bindsym $mod+6 workspace number 6
-  bindsym $mod+7 workspace number 7
-  bindsym $mod+8 workspace number 8
-  bindsym $mod+9 workspace number 9
-  bindsym $mod+0 workspace number 10
-#+end_src
-
-Move focused container to workspace
-
-#+begin_src conf
-  bindsym $mod+Shift+1 move container to workspace number 1
-  bindsym $mod+Shift+2 move container to workspace number 2
-  bindsym $mod+Shift+3 move container to workspace number 3
-  bindsym $mod+Shift+4 move container to workspace number 4
-  bindsym $mod+Shift+5 move container to workspace number 5
-  bindsym $mod+Shift+6 move container to workspace number 6
-  bindsym $mod+Shift+7 move container to workspace number 7
-  bindsym $mod+Shift+8 move container to workspace number 8
-  bindsym $mod+Shift+9 move container to workspace number 9
-  bindsym $mod+Shift+0 move container to workspace number 10
-#+end_src
-
-** Layout stuff
-
-#+begin_src conf
-  # You can "split" the current object of your focus with
-  # $mod+b or $mod+v, for horizontal and vertical splits
-  # respectively.
-  #bindsym $mod+b splith
-  #bindsym $mod+v splitv
-
-  # Switch the current container between different layout styles
-  bindsym $mod+s layout stacking
-  bindsym $mod+w layout tabbed
-  bindsym $mod+e layout toggle split
-
-  # Make the current focus fullscreen
-  #bindsym $mod+f fullscreen
-
-  # Toggle the current focus between tiling and floating mode
-  bindsym $mod+Shift+space floating toggle
-
-  # Swap focus between the tiling area and the floating area
-  # bindsym $mod+space focus mode_toggle
-
-  # Move focus to the parent container
-  bindsym $mod+a focus parent
-#+end_src
-
-** Scratchpad
-
-Sway has a "scratchpad", which is a bag of holding for windows. You can send windows there and get them back later.
-
-#+begin_src conf
-  bindsym $mod+Shift+minus move scratchpad
-  bindsym $mod+minus scratchpad show
-#+end_src
-
-** Resizing containers
-
- left will shrink the containers width
- right will grow the containers width
- up will shrink the containers height
- down will grow the containers height
-
-#+begin_src conf
-  mode "resize" {
-      bindsym $left resize shrink width 10px
-      bindsym $down resize grow height 10px
-      bindsym $up resize shrink height 10px
-      bindsym $right resize grow width 10px
-
-      bindsym Left resize shrink width 10px
-      bindsym Down resize grow height 10px
-      bindsym Up resize shrink height 10px
-      bindsym Right resize grow width 10px
-
-      bindsym Return mode "default"
-      bindsym Escape mode "default"
-  }
-
-  bindsym $mod+r mode "resize"
-#+end_src
-
-** Bar
-
-#+begin_src conf
-  bar {
-      swaybar_command waybar
-  }
-
-#+end_src
-
-** Gaps
-
-#+begin_src conf
-  gaps outer 0
-  default_border pixel 0
-#+end_src
-
-** Include
-
-#+begin_src conf
-  include /etc/sway/config.d/*
-#+end_src
-* Syncthing
-:PROPERTIES:
-:CREATED:  [2022-02-22 Tue 11:39]
-:ID:       FDD3C8B5-55C3-4013-89AC-2A904D97D1CD
-:END:
-:LOGBOOK:
-- Refiled on [2022-05-16 Mon 13:29]
-:END:
-#+begin_src conf :tangle .stignore
-  (?d).DS_Store
-  #*
-  .git
-#+end_src
-
-* Systemd-bootd
-:PROPERTIES:
-:CREATED:  [2021-12-22 Wed 15:23]
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:14]
-:END:
-
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/loader.conf" "no")
-  default frog.conf
-  timeout 0
-  console-mode max
-  #console-mode keep
-#+end_src
-
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/frog.conf" "no")
-  title Arch Gamer Linux
-  linux /vmlinuz-linux518-tkg-bmq
-  initrd /amd-ucode.img
-  initrd /initramfs-linux518-tkg-bmq.img
-  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet loglevel=3 udev.log-priority=0 rd.systemd.show_status=auto rd.udev.log_level=3 modprobe.blacklist=iTC0_wdtl acpi_enforce_resources=lax amdgpu.ppfeaturemask=0xffffffff nmi_watchdog=0 modprobe.blacklist=pcspkr
-#+end_src
-
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/arch.conf" "no")
-  title Arch Linux
-  linux /vmlinuz-linux
-  initrd /amd-ucode.img
-  initrd /initramfs-linux.img
-  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet modprobe.blacklist=iTC0_wdt
-
-#+end_src
-
-#+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/arch-fallback.conf" "no")
-  title Arch Linux (Fallback)
-  linux /vmlinuz-linux
-  initrd /amd-ucode.img
-  initrd /initramfs-linux-fallback.img
-  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw
-#+end_src
-
-#+begin_src systemd :tangle (if (eq system-type 'gnu/linux) "/sudo::/etc/pacman.d/hooks/100-systemd-boot.hook")
-  [Trigger]
-  Type = Package
-  Operation = Upgrade
-  Target = systemd
-
-  [Action]
-  Description = Gracefully upgrading systemd-boot...
-  When = PostTransaction
-  Exec = /usr/bin/systemctl restart systemd-boot-update.service
-#+end_src
-
-* TKG
-:PROPERTIES:
-:header-args: :tangle ~/.config/frogminer/linux-tkg.cfg
-:END:
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:11]
-:END:
-** Linux TKG
-#+begin_src conf
-  _distro="Arch"
-  _EXT_CONFIG_PATH=~/.config/frogminer/linux-tkg.cfg
-  _NUKR="true"
-  CUSTOM_GCC_PATH=""
-  CUSTOM_LLVM_PATH=""
-#+end_src
-
-** Profile
-Set to the number corresponding to a predefined profile to use it. Current list of available profiles:
-
-1. Custom (meaning nothing will be enforced and you get to configure everything)
-2. Ryzen desktop (performance)
-3. Generic Desktop (Performance)
-
-#+begin_src conf
-  _OPTIPROFILE="1"
-  _force_all_threads="true"
-#+end_src
-
-** Ccache
- Set to true to prevent ccache from being used and set CONFIG_GCC_PLUGINS=y (which needs to be disabled for ccache to work properly).
-
-#+begin_src conf
-  _noccache="false"
-#+end_src
-
-** Modprobe
-Set to true to use modprobed db to clean config from unneeded modules. Speeds up compilation considerably. Requires root - https://wiki.archlinux.org/index.php/Modprobed-db.
-
-Make sure to have a well populated db - Leave empty to be asked about it at build time.
-
-#+begin_src conf
-  _modprobeddb="false"
-#+end_src
-
-#+begin_src conf
-  _modprobeddb_db_path=~/.config/modprobed.db
-#+end_src
-
-** Menuconfig
-Set to "1" to call make menuconfig, "2" to call make nconfig, "3" to call make xconfig, before building the kernel. Set to false to disable and skip the prompt.
-
-#+begin_src conf
-  _menunconfig="false"
-#+end_src
-
-** Config fragment
-Set to true to generate a kernel config fragment from your changes in menuconfig/nconfig. Set to false to disable and skip the prompt.
-
-#+begin_src conf
-  _diffconfig="false"
-#+end_src
-
-Set to the file name where the generated config fragment should be written to. Only used if _diffconfig is active.
-
-#+begin_src conf
-  _diffconfig_name=""
-#+end_src
-
-** Config File
-Name of the default config file to use for the kernel
-- Default (empty):
-   - Archlinux (PKGBUILD): "config.x86_64" from the linux-tkg-config/5.y folder.
-   - install.sh: Picks the .config file from the currently running kernel. It is recommended to be running an official kernel before running this script, to pick off a correct .config file
-- User provided:
-   - Archlinux: use "config_hardened.x86_64" to get a hardened kernel. To get a complete hardened setup, you have to use "cfs" as _cpusched.
-   - Any: custom user provided file, the given path should be relative to the PKGBUILD file. This enables for example to use a user stripped down .config file. If the .config file isn't up to date with the chosen kernel version, any extra CONFIG_XXXX is set to its default value.
-
-The script copies the resulting .config file as "kernelconfig.new" next to the PKGBUILD as a convenience for an eventual re-use. It gets overwritten at each run. One can use "kernelconfig.new" here to always use the latest edited .config file. modprobed-db needs to be used only once for its changes to be picked up.
-
-#+begin_src conf
-  _configfile=""
-#+end_src
-
-** Debugging
-Disable some non-module debugging - See PKGBUILD for the list
-
-#+begin_src conf
-  _debugdisable="false"
-#+end_src
-
-** CPU scheduler
-LEAVE AN EMPTY VALUE TO BE PROMPTED ABOUT FOLLOWING OPTIONS AT BUILD TIME
-
-CPU scheduler - Options are "upds" (TkG's Undead PDS), "pds", "bmq", "muqss" or "cfs". "upds" is the recommended option for gaming
-
-#+begin_src conf
-  _cpusched="upds"
-#+end_src
-
-** Compiler
-Compiler to use - Options are "gcc" or "llvm".
-For advanced users.
-
-#+begin_src conf
-  _compiler="gcc"
-#+end_src
-
-** Scheduler yield type
-CPU sched_yield_type - Choose what sort of yield sched_yield will perform.
-
-For PDS and MuQSS:
-- 0: No yield. (Recommended option for gaming on PDS and MuQSS)
-- 1: Yield only to better priority/deadline tasks. (Default - can be unstable with PDS on some platforms)
-- 2: Expire timeslice and recalculate deadline. (Usually the slowest option for PDS and MuQSS, not recommended)
-
-For BMQ:
-- 0: No yield.
-- 1: Deboost and requeue task. (Default)
-- 2: Set rq skip task.
-
-#+begin_src conf
-  _sched_yield_type="0"
-#+end_src
-
-** Round robin
-Round Robin interval is the longest duration two tasks with the same nice level will be delayed for. When CPU time is requested by a task, it receives a time slice equal to the rr_interval in addition to a virtual deadline. When using yield_type 2, a low value can help offset the disadvantages of rescheduling a process that has yielded.
-
- - MuQSS default: 6ms"
- - PDS default: 4ms"
- - BMQ default: 2ms"
-
- Set to "1" for 2ms, "2" for 4ms, "3" for 6ms, "4" for 8ms, or "default" to keep the chosen scheduler defaults.
-
-#+begin_src conf
-  _rr_interval="default"
-#+end_src
-
-** Tracer
-  Set to "true" to disable FUNCTION_TRACER/GRAPH_TRACER, lowering overhead but limiting debugging and analyzing of kernel functions - Kernel default is "false"
-
-#+begin_src conf
-  _ftracedisable="true"
-#+end_src
-
-** NUMA
-Set to "true" to disable NUMA, lowering overhead, but breaking CUDA/NvEnc on Nvidia equipped systems - Kernel default is "false"
-
-#+begin_src conf
-  _numadisable="true"
-#+end_src
-
-** Misc additions
-  Set to "true" to enable misc additions - May contain temporary fixes pending upstream or changes that can break on non-Arch - Kernel default is "true"
-
-#+begin_src conf
-  _misc_adds="true"
-#+end_src
-
-** Tickless
-- "1" to use CattaRappa mode (enabling full tickless)
-- "2" for tickless idle only
-- "0" for periodic ticks
-
-Full tickless can give higher performances in various cases but, depending on hardware, lower consistency. Just tickless idle can perform better on some platforms (mostly AMD based).
-
-#+begin_src conf
-  _tickless="2"
-#+end_src
-
-** Voluntary preempt
- Setting this to to "true" can improve latency on PDS (at the cost of throughput) and improve throughput on other schedulers (at the cost of latency) - Can improve VMs performance - Kernel default is "false".
-
-#+begin_src conf
-  _voluntary_preempt="true"
-#+end_src
-
-** Device tree and open firmware
-Set to "true" to enable Device Tree and Open Firmware support. If you don't know about it, you don't need it - Default is "false".
-
-#+begin_src conf
-  _OFenable="false"
-#+end_src
-
-** ACS override
-  Set to "true" to use ACS override patch https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF#Bypassing_the_IOMMU_groups_.28ACS_override_patch.29 - Kernel default is "false".
-
-#+begin_src conf
-  _acs_override=""
-#+end_src
-
-** Bcache filesystem
-Set to "true" to add Bcache filesystem support. You'll have to install bcachefs-tools-git from AUR for utilities - https://bcachefs.org/ - If in doubt, set to "false"
-
-#+begin_src conf
-  _bcachefs="false"
-#+end_src
-
-** ZFS symbols
-Set to "true" to add back missing symbol for AES-NI/AVX support on ZFS - https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/export_kernel_fpu_functions.patch - Kernel default is "false"
-
-#+begin_src conf
-  _zfsfix="false"
-#+end_src
-
-** Proton
-Set to "true" to enable support for fsync, an experimental replacement for esync found in Valve Proton 4.11+ - https://steamcommunity.com/games/221410/announcements/detail/2957094910196249305
-
-#+begin_src conf
-  _fsync="true"
-#+end_src
-
-Set to "true" to enable support for futex2, an experimental interface that can be used by proton-tkg and proton 5.13 experimental through Fsync - Can be enabled alongside fsync to use it as a fallback.
-
-https://gitlab.collabora.com/tonyk/linux/-/tree/futex2-dev
-#+begin_src conf
-  _futex2="true"
-#+end_src
-
-Set to "true" to enable support for winesync, an experimental replacement for esync - requires patched wine - https://repo.or.cz/linux/zf.git/shortlog/refs/heads/winesync
-
-#+begin_src conf
-  _winesync="false"
-#+end_src
-
-** Anbox
-  Set to "true" to enable the Binder and Ashmem, the kernel modules required to use the android emulator Anbox.
-
-#+begin_src conf
-  _anbox="false"
-#+end_src
-
-** Zen
-A selection of patches from Zen/Liquorix kernel and additional tweaks for a better gaming experience (ZENIFY) - Default is "true"
-
-#+begin_src conf
-  _zenify="true"
-#+end_src
-
-** Compiler optimization
-Compiler optimization level
-
-1. Optimize for performance (-O2)
-2. Optimize harder (-O3)
-3. Optimize for size (-Os)
-
-- Kernel default is "1"
-
-#+begin_src conf
-  _compileroptlevel="1"
-#+end_src
-
-** CPU compiler optimizations
-CPU compiler optimizations - Defaults to prompt at kernel config if left empty
-
-AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" (zen3 opt support depends on GCC11)
-
-Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake"
-
-Other options :
-
-- "native_amd" (use compiler autodetection - Selecting your arch manually in the list above is recommended instead of this option)
-- "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
-- "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
-
-https://en.wikipedia.org/wiki/X86-64#Microarchitecture_Levels)
-
-- "generic_v2" (depends on GCC11 - to share the package between machines with different CPU µarch supporting at least x86-64-v2
-- "generic_v3" (depends on GCC11 - to share the package between machines with different CPU µarch supporting at least x86-64-v3
-- "generic_v4" (depends on GCC11 - to share the package between machines with different CPU µarch supporting at least x86-64-v4
-
-#+begin_src conf
-  _processor_opt="native"
-#+end_src
-
-** IRQ Threading
-MuQSS only - Make IRQ threading compulsory (FORCE_IRQ_THREADING) - Default is "false"
-
-#+begin_src conf
-  _irq_threading="false"
-#+end_src
-
-** SMT
-MuQSS and PDS only - SMT (Hyperthreading) aware nice priority and policy support (SMT_NICE) - Kernel default is "true" - You can disable this on non-SMT/HT CPUs for lower overhead
-
-#+begin_src conf
-  _smt_nice=""
-#+end_src
-
-
-** Random
-Trust the CPU manufacturer to initialize Linux's CRNG (RANDOM_TRUST_CPU) - Kernel default is "false"
-
-#+begin_src conf
-  _random_trust_cpu="false"
-#+end_src
-
-** CPU runqueue sharing
-  MuQSS only - CPU scheduler runqueue sharing - No sharing (RQ_NONE), SMT (hyperthread) siblings (RQ_SMT), Multicore siblings (RQ_MC), Symmetric Multi-Processing (RQ_SMP), NUMA (RQ_ALL)
-
-  Valid values are "none", "smt", "mc", "mc-llc"(for zen), "smp", "all" - Kernel default is "smt"
-
-#+begin_src conf
-  _runqueue_sharing=""
-#+end_src
-
-** Timer frequency
-Timer frequency - "100" "500", "750" or "1000" - More options available in kernel config prompt when left empty depending on selected cpusched - Kernel default is "500" - For MuQSS, 100Hz is recommended.
-
-#+begin_src conf
-  _timer_freq="500"
-#+end_src
-
-** CPU governor
-Default CPU governor - "performance", "ondemand", "schedutil" or leave empty for default (schedutil)
-
-#+begin_src conf
-  _default_cpu_gov="ondemand"
-#+end_src
-
-** Aggressive ondemand governor
-Use an aggressive ondemand governor instead of default ondemand to improve performance on low loads/high core count CPUs while keeping some power efficiency from frequency scaling. It still requires you to either set ondemand as default governor or to select it some way.
-
-#+begin_src conf
-  _aggressive_ondemand="true"
-#+end_src
-
-** ACPI_CPUFREQ
-On some platforms, an acpi_cpufreq bug affects performance negatively. Set to "true" to disable it as a workaround, but it will use more power.
-
-https://github.com/Tk-Glitch/PKGBUILDS/issues/263
-
-#+begin_src conf
-  _disable_acpi_cpufreq=""
-#+end_src
-
-** Cusom command lines
-You can pass a default set of kernel command line options here - example: "intel_pstate=passive nowatchdog amdgpu.ppfeaturemask=0xfffd7fff mitigations=off"
-
-#+begin_src conf
-  _custom_commandline="intel_pstate=passive"
-#+end_src
-
-** Custom package base
-If you want to bypass the stock naming scheme and enforce something else (example : "linux") - Useful for some bootloaders requiring manual entry editing on each release.
-
-It will also change pkgname - If you don't explicitely need this, don't use it !!!
-
-#+begin_src conf
-  _custom_pkgbase=""
-#+end_src
-
-** Kernel localversion
-[non-Arch specific] Kernel localversion. Putting it to "Mario" will make for example the kernel version be 5.7.0-tkg-Mario (given by uname -r)
-
-If left empty, it will use -tkg-"${_cpusched}" where "${_cpusched}" will be replaced by the user chosen scheduler
-
-#+begin_src conf
-  _kernel_localversion=""
-#+end_src
-
-** Community patches
-community patches - add patches (separated by a space) of your choice by name from the community-patches dir
-
-example: _community_patches="clear_nack_in_tend_isr.myrevert ffb_regression_fix.mypatch 0008-drm-amd-powerplay-force-the-trim-of-the-mclk-dpm-levels-if-OD-is-enabled.mypatch"
-
-#+begin_src conf
-  _community_patches=""
-#+end_src
-
-You can use your own patches by putting them in a subfolder called linux<version>-tkg-userpatches (e.g. linux510-tkg-userpatches) next to the PKGBUILD and giving them the .mypatch extension.
-
-You can also revert patches by putting them in that same folder and giving them the .myrevert extension.
-
-Also, userpatches variable below must be set to true for the above to work.
-
-#+begin_src conf
-  _user_patches="true"
-#+end_src
-
-Apply all user patches without confirmation - !!! NOT RECOMMENDED !!!
-
-#+begin_src conf
-
-  _user_patches_no_confirm="false"
-#+end_src
-
-You can use your own kernel config fragments by putting them in the same folder as the PKGBUILD and giving them the .myfrag extension.
-
-Also, the config fragments variable below must be set to true for the above to work.
-
-#+begin_src conf
-  _config_fragments="true"
-#+end_src
-
-Apply all config fragments without confirmation.
-
-#+begin_src conf
-  _config_fragments_no_confirm="false"
-#+end_src
-* usermod for games
-:PROPERTIES:
-:CREATED:  [2022-05-27 Fri 19:03]
-:END:
-:LOGBOOK:
-- Refiled on [2022-06-08 Wed 21:05]
-:END:
-The wine executable used by proton can automatically set the niceness of a process; consider adding yourself to the games group to make this work by issuing: usermod -a -G games
-
-#+begin_src shell :eval never
-  sudo usermod -a -G games g
-#+end_src
-
-* VConsole caps-control remap
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:14]
-- Refiled on [2021-05-28 Fri 11:26]
-- Refiled on [2021-05-06 Thu 10:50]
-:END:
-
-#+begin_src text :tangle (if (eq system-type 'gnu/linux) "/usr/local/share/kbd/keymaps/colemak-no-caps.map" "no") :comments no :mkdirp yes
-  # colemak.kmap for Linux console.
-  # 2006-01-01 Shai Coleman, http://colemak.com/ . Public domain.
-  alt_is_meta
-  charset "iso-8859-15"  # use a ISO-8859-15 font, e.g.: consolechars -f lat9v-14
-  keymaps 0-12
-  include "qwerty-layout"
-  include "linux-with-alt-and-altgr"
-  strings as usual
-
-  keycode  41 =          grave    asciitilde       dead_tilde        asciitilde    nul
-  keycode   2 =            one        exclam       exclamdown       onesuperior
-  keycode   3 =            two            at        masculine       twosuperior    nul
-  keycode   4 =          three    numbersign      ordfeminine     threesuperior    Escape
-  keycode   5 =           four        dollar             cent          sterling    Control_backslash
-  keycode   6 =           five       percent             euro               yen    Control_bracketright               #          EuroSign               yen
-  keycode   7 =            six   asciicircum       asciitilde        asciitilde	 Control_asciicircum               #           hstroke           Hstroke
-  keycode   8 =          seven     ampersand              eth               ETH    Control_underscore
-  keycode   9 =          eight      asterisk            thorn             THORN    Delete
-  keycode  10 =           nine     parenleft       asciitilde        asciitilde               #   leftsinglequotemark   leftdoublequotemark
-  keycode  11 =           zero    parenright       asciitilde        asciitilde               #  rightsinglequotemark   rightdoublequotemark
-  keycode  12 =          minus    underscore       asciitilde        asciitilde	 Control_underscore          #            endash            emdash
-  keycode  13 =          equal          plus         multiply          division
-
-  keycode  16 =              q             Q       adiaeresis        Adiaeresis    Control_q
-  keycode  17 =              w             W            aring             Aring    Control_w
-  keycode  18 =              f             F           atilde            Atilde    Control_f
-  keycode  19 =              p             P           oslash          Ooblique    Control_p
-  keycode  20 =              g             G       asciitilde        asciitilde    Control_g	#       dead_ogonek        asciitilde
-  keycode  21 =              j             J       asciitilde        asciitilde    Control_j	#           dstroke           Dstroke
-  keycode  22 =              l             L       asciitilde        asciitilde    Control_l	#           lstroke           Lstroke
-  keycode  23 =              u             U           uacute            Uacute    Control_u
-  keycode  24 =              y             Y       udiaeresis        Udiaeresis    Control_y
-  keycode  25 =      semicolon         colon       odiaeresis        Odiaeresis
-  keycode  26 =    bracketleft     braceleft    guillemotleft        asciitilde    Escape               #     guillemotleft         0x1002039
-  keycode  27 =   bracketright    braceright   guillemotright        asciitilde    Control_bracketright #    guillemotright         0x100203a
-  keycode  43 =      backslash           bar       asciitilde        asciitilde    Control_backslash
-
-  keycode  30 =              a             A           aacute            Aacute    Control_a
-  keycode  31 =              r             R       dead_grave        asciitilde    Control_r
-  keycode  32 =              s             S           ssharp        asciitilde    Control_s
-  keycode  33 =              t             T       dead_acute        asciitilde    Control_t	#        dead_acute  dead_doubleacute
-  keycode  34 =              d             D   dead_diaeresis        asciitilde    Control_d
-  keycode  35 =              h             H       asciitilde        asciitilde    Control_h	#        dead_caron        asciitilde
-  keycode  36 =              n             N           ntilde            Ntilde    Control_n
-  keycode  37 =              e             E           eacute            Eacute    Control_e
-  keycode  38 =              i             I           iacute            Iacute    Control_i
-  keycode  39 =              o             O           oacute            Oacute    Control_o
-  keycode  40 =     apostrophe      quotedbl           otilde            Otilde
-
-  keycode  44 =              z             Z               ae                AE    Control_z
-  keycode  45 =              x             X  dead_circumflex        asciitilde    Control_x
-  keycode  46 =              c             C         ccedilla          Ccedilla    Control_c
-  keycode  47 =              v             V               oe                OE    Control_v
-  keycode  48 =              b             B       asciitilde        asciitilde    Control_b	#        dead_breve        asciitilde
-  keycode  49 =              k             K       asciitilde        asciitilde    Control_k      #    dead_abovering        asciitilde
-  keycode  50 =              m             M       asciitilde        asciitilde    Control_m	#       dead_macron        asciitilde
-  keycode  51 =          comma          less     dead_cedilla        asciitilde
-  keycode  52 =         period       greater       asciitilde        asciitilde			#     dead_abovedot        asciitilde
-  keycode  53 =          slash      question     questiondown        asciitilde    Delete
-
-  keycode  58 =        Control # Formerly Caps-lock
-  keycode  86 =          minus    underscore       asciitilde        asciitilde	 Control_underscore          #            endash            emdash
-  keycode  57 =          space         space            space      nobreakspace    nul
-
-
-  keycode   1 = Escape
-  keycode  14 = Delete
-  keycode  15 = Tab
-  keycode  28 = Return
-          alt     keycode  28 = Meta_Control_m
-  keycode  29 = Control
-  keycode  42 = Shift
-  keycode  54 = Shift
-  keycode  56 = Alt
-  keycode  97 = Control
-#+end_src
-
-
-#+begin_src text :tangle (if (eq system-type 'gnu/linux) "/etc/vconsole.conf" "no") :comments no
-  KEYMAP=/usr/local/share/kbd/keymaps/colemak-no-caps.map
-#+end_src
-
-[[https://man.archlinux.org/man/keymaps.5][Keymaps]]
-[[https://man.archlinux.org/man/vconsole.conf.5][VConsole]]
-[[https://wiki.archlinux.org/index.php/Linux_console/Keyboard_configuration#Loadkeys][Loadkeys]]
-[[https://askubuntu.com/questions/982863/change-caps-lock-to-control-in-virtual-console-on-ubuntu-17][Change caps lock to control in virtual console on ubuntu 17]]
-* Vial
-:PROPERTIES:
-:CREATED:  [2022-08-13 Sat 14:54]
-:ID:       11513D6F-8899-41C5-993E-9ACBF597167B
-:END:
-#+begin_src conf :tangle ~/.local/share/application/vial.desktop
-  [Desktop Entry]
-  Name=Vial
-  Exec=Vial
-  Terminal=False
-  Comment=Configure keyboard
-  Icon=Vial
-#+end_src
-* Waybar
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:15]
-:END:
-** Config
-#+begin_src json :tangle ~/.config/waybar/config :comments no
-  {
-      "layer": "top",
-      "height": 30,
-      "modules-left": ["sway/workspaces", "sway/mode"],
-      //"modules-center": ["sway/window"],
-      "modules-right": ["pulseaudio", "mpd", "clock", "tray"],
-      "sway/window": {
-          "max-length": 50
-      },
-      "clock": {
-          "format-alt": "{:%a, %d. %b  %H:%M}"
-      },
-      "pulseaudio": {
-          "scroll-step": 5,
-          "on-click": "pavucontrol",
-          "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
-          "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ +5%"
-      }
-  }
-#+end_src
-
-** Styling
-
-#+begin_src css :tangle ~/.config/waybar/style.css :comments no
-  ,* {
-      border: none;
-      border-radius: 0;
-      /* `otf-font-awesome` is required to be installed for icons */
-      font-family: Roboto, Helvetica, Arial, sans-serif;
-      font-size: 13px;
-      min-height: 0;
-  }
-
-  window#waybar {
-      background-color: rgba(43, 48, 59, 0.5);
-      border-bottom: 3px solid rgba(100, 114, 125, 0.5);
-      color: #ffffff;
-      transition-property: background-color;
-      transition-duration: .5s;
-  }
-
-  window#waybar.hidden {
-      opacity: 0.2;
-  }
-
-  /*
-  window#waybar.empty {
-      background-color: transparent;
-  }
-  window#waybar.solo {
-      background-color: #FFFFFF;
-  }
-  ,*/
-
-  window#waybar.termite {
-      background-color: #3F3F3F;
-  }
-
-  window#waybar.chromium {
-      background-color: #000000;
-      border: none;
-  }
-
-  #workspaces button {
-      padding: 0 5px;
-      background-color: transparent;
-      color: #ffffff;
-      /* Use box-shadow instead of border so the text isn't offset */
-      box-shadow: inset 0 -3px transparent;
-  }
-
-  /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-  #workspaces button:hover {
-      background: rgba(0, 0, 0, 0.2);
-      box-shadow: inset 0 -3px #ffffff;
-  }
-
-  #workspaces button.focused {
-      background-color: #64727D;
-      box-shadow: inset 0 -3px #ffffff;
-  }
-
-  #workspaces button.urgent {
-      background-color: #eb4d4b;
-  }
-
-  #mode {
-      background-color: #64727D;
-      border-bottom: 3px solid #ffffff;
-  }
-
-  #clock,
-  #battery,
-  #cpu,
-  #memory,
-  #disk,
-  #temperature,
-  #backlight,
-  #network,
-  #pulseaudio,
-  #custom-media,
-  #tray,
-  #mode,
-  #idle_inhibitor,
-  #mpd {
-      padding: 0 10px;
-      margin: 0 4px;
-      color: #ffffff;
-  }
-
-  #window,
-  #workspaces {
-      margin: 0 4px;
-  }
-
-  /* If workspaces is the leftmost module, omit left margin */
-  .modules-left > widget:first-child > #workspaces {
-      margin-left: 0;
-  }
-
-  /* If workspaces is the rightmost module, omit right margin */
-  .modules-right > widget:last-child > #workspaces {
-      margin-right: 0;
-  }
-
-  #clock {
-      background-color: #000;
-      color: #fff;
-  }
-
-  #battery {
-      background-color: #ffffff;
-      color: #000000;
-  }
-
-  #battery.charging, #battery.plugged {
-      color: #ffffff;
-      background-color: #26A65B;
-  }
-
-  @keyframes blink {
-      to {
-          background-color: #ffffff;
-          color: #000000;
-      }
-  }
-
-  #battery.critical:not(.charging) {
-      background-color: #f53c3c;
-      color: #ffffff;
-      animation-name: blink;
-      animation-duration: 0.5s;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-      animation-direction: alternate;
-  }
-
-  label:focus {
-      background-color: #000000;
-  }
-
-  #cpu {
-      background-color: #2ecc71;
-      color: #000000;
-  }
-
-  #memory {
-      background-color: #9b59b6;
-  }
-
-  #disk {
-      background-color: #964B00;
-  }
-
-  #backlight {
-      background-color: #90b1b1;
-  }
-
-  #network {
-      background-color: #2980b9;
-  }
-
-  #network.disconnected {
-      background-color: #f53c3c;
-  }
-
-  #pulseaudio {
-      background-color: #000;
-      color: #fff;
-  }
-
-  #pulseaudio.muted {
-      background-color: #90b1b1;
-      color: #2a5c45;
-  }
-
-  #custom-media {
-      background-color: #66cc99;
-      color: #2a5c45;
-      min-width: 100px;
-  }
-
-  #custom-media.custom-spotify {
-      background-color: #66cc99;
-  }
-
-  #custom-media.custom-vlc {
-      background-color: #ffa000;
-  }
-
-  #temperature {
-      background-color: #f0932b;
-  }
-
-  #temperature.critical {
-      background-color: #eb4d4b;
-  }
-
-  #tray {
-      background-color: #000;
-      color: #fff;
-  }
-
-  #idle_inhibitor {
-      background-color: #2d3436;
-  }
-
-  #idle_inhibitor.activated {
-      background-color: #ecf0f1;
-      color: #2d3436;
-  }
-
-  #mpd {
-      background-color: #66cc99;
-      color: #2a5c45;
-  }
-
-  #mpd.disconnected {
-      background-color: #f53c3c;
-  }
-
-  #mpd.stopped {
-      background-color: rgba(0, 0, 0, 1);
-      color: #fff;
-  }
-
-  #mpd.paused {
-      background-color: #51a37a;
-  }
-
-  #language {
-      background: #00b093;
-      color: #740864;
-      padding: 0 5px;
-      margin: 0 5px;
-      min-width: 16px;
-  }
-
-#+end_src
-* Youtube DL
-:LOGBOOK:
-- Refiled on [2022-02-21 Mon 17:15]
-:END:
-#+begin_src conf :tangle ~/.config/youtube-dl/config
-  -o ~/Downloads/%(title)s-%(id)s.%(ext)s
 #+end_src
