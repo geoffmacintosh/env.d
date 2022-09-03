@@ -2087,7 +2087,7 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("sm" "Medication" entry
+                 `("m" "Medication" entry
                    (file+olp+datetree "diary.org")
                    "* %(env-time-of-day) %^{Drug} %^{Dose}p\n %(org-set-tags \"medicine\")"
                    :empty-lines 1
@@ -2256,54 +2256,13 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 '("m" "Media"))
-    (add-to-list 'org-capture-templates
-                 '("s" "Extra")))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("c" "Current TODO" entry
-                   (file "inbox.org")
-                   "* TODO %? %^G"
-                   :empty-lines 1
-                   :clock-in t
-                   :clock-resume t
-                   :kill-buffer t)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("w" "Work TODO" entry
-                   (file "inbox.org")
-                   "* TODO %? %^g"
-                   :empty-lines 1
-                   :clock-in t
-                   :clock-resume t
-                   :kill-buffer t)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("t" "Future TODO" entry
-                   (file "inbox.org")
-                   "* TODO %? %^G%^{Effort}p"
-                   :empty-lines 1)))
-#+end_src
-
-#+begin_src emacs-lisp
 (defun env-date-stamp ()
   "Pleasant time string."
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
 
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("sj" "Journal" entry
+                 `("j" "Journal" entry
                    (file+olp+datetree "journal.org.gpg")
                    "* %(env-date-stamp)\n%?"
                    :empty-lines 1
@@ -2313,48 +2272,9 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("sn" "Note" entry
-                   (file "inbox.org")
-                   "* %?"
-                   :empty-lines 1)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 '("sc" "Changelog" entry
-                   (file+olp+datetree "changelog.org")
-                   "* %?\n %a"
-                   :empty-lines 1
-                   :kill-buffer: 1)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 '("ss" "Inventory" entry
+                 '("s" "Inventory" entry
                    (file+headline "inventory.org" "Unapproved")
                    "* %^{Specific item}%^{Purchased_Date|N/A}p%^{Price}p%^{Home_Location}p%^{Purchased_Location}p%^{Provides}p\n%?"
-                   :empty-lines 1
-                   :kill-buffer t)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("mb" "Book" entry
-                   (file+headline "books.org" "Unread")
-                   "* %^{Title}%^{Author}p%^{Year}p%^{Series}p\n%?"
-                   :empty-lines 1
-                   :kill-buffer t)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("mm" "Movie" entry
-                   (file+headline "movies.org" "Unwatched")
-                   "* %^{Title}%^{Year}p%^{Series}p\n%?"
                    :empty-lines 1
                    :kill-buffer t)))
 #+end_src
@@ -2367,16 +2287,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 - Refiled on [2022-06-15 Wed 15:49]
 :END:
 
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("w" "Work" entry
-                   (file+olp+datetree "work-journal.org")
-                   "* TODO %?"
-                   :empty-lines 1
-                   :tree-type month
-                   :clock-in t)))
-#+end_src
+
 
 #+begin_src emacs-lisp
   (customize-set-variable 'icalendar-export-sexp-enumerate-all t)
@@ -3027,7 +2938,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
     (when (locate-library "org-cliplink")
       (add-to-list 'org-capture-templates
-                   '("sb" "Bookmark" entry
+                   '("b" "Bookmark" entry
                      (file "bookmark.org")
                      "* %(org-cliplink-capture) %^g\n%?"
                      :prepend
@@ -3505,7 +3416,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
   (with-eval-after-load 'org-capture
     (when (locate-library "feed-discovery")
     (add-to-list 'org-capture-templates
-                 '("sf" "Feed" entry
+                 '("f" "Feed" entry
                    (file+headlines "feed.org" "Feeds")
                    "* [[%(env-get-feed)][%^{Title}]] %^g
   (yank)\n%?"
