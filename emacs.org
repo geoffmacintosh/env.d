@@ -2990,9 +2990,13 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-tag-persistent-alist '(("noexport")
-                                    ("ignore")
-                                    ("crypt")))
+  (customize-set-variable 'org-tag-persistent-alist
+                          '(("noexport")
+                            ("ignore")
+                            ("project")
+                            ("FLAGGED")
+                            ("noarchive")
+                            ("crypt")))
 #+end_src
 
 #+begin_src emacs-lisp
