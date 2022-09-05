@@ -168,7 +168,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
       (scroll-bar-mode -1))
     (when (fboundp 'fringe-mode)
       (fringe-mode 12))
-    (set-frame-font env-font-mono))
+    (set-frame-font env-font-mono nil t))
 
   (add-hook 'after-make-frame-functions 'env-frame-init)
 
