@@ -2106,7 +2106,7 @@ Apply all config fragments without confirmation.
   linux /vmlinuz-linux518-tkg-bmq
   initrd /amd-ucode.img
   initrd /initramfs-linux518-tkg-bmq.img
-  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet loglevel=3 udev.log-priority=0 rd.systemd.show_status=auto rd.udev.log_level=3 modprobe.blacklist=iTC0_wdtl acpi_enforce_resources=lax amdgpu.ppfeaturemask=0xffffffff nmi_watchdog=0 modprobe.blacklist=pcspkr
+  options root=UUID=f3369b3c-4b0b-4fa4-9c94-c2b3e1ee6c85 rootflags=subvol=@ rw quiet loglevel=3 udev.log-priority=0 rd.systemd.show_status=auto rd.udev.log_level=3 modprobe.blacklist=iTC0_wdtl acpi_enforce_resources=lax amdgpu.ppfeaturemask=0xffffffff nmi_watchdog=0 modprobe.blacklist=pcspkr nowatchdog splash vga=current vt.global_cursor_default=0
 #+end_src
 
 #+begin_src conf :tangle (if (eq system-type 'gnu/linux) "/sudo::/boot/loader/entries/arch.conf" "no")
