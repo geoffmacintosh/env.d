@@ -2171,21 +2171,32 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 #+end_src
 
 ** Systemd
+:PROPERTIES:
+:ID:       7d782501-49ad-4e4a-9110-b1bd213d1090
+:END:
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'systemd))
 #+end_src
 
 ** Rainbow
+:PROPERTIES:
+:ID:       053aeb6a-4ca2-416c-a933-a37e1ee7bc58
+:END:
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'rainbow-mode))
   (when (and (locate-library "rainbow-mode") (display-graphic-p))
     (eval-when-compile
       (declare-function rainbow-mode "rainbow-mode"))
-    (rainbow-mode))
+    (add-hook 'prog-mode-hook #'rainbow-mode)
+    (add-hook 'org-mode-hook #'rainbow-mode))
 #+end_src
+
 ** Sudoers
+:PROPERTIES:
+:ID:       c55c5518-4fea-4190-b1bb-4b2e89ab38a7
+:END:
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
