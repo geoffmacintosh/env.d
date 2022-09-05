@@ -2739,6 +2739,10 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
+  (customize-set-variable 'org-agenda-files (expand-file-name "agenda" org-directory))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
   (with-eval-after-load 'org-agenda
     (defvar org-agenda-files)
 
