@@ -4,11 +4,13 @@
 * General
 :PROPERTIES:
 :CREATED:  [2022-09-03 Sat 10:46]
+:ID:       b6a85535-3bd9-44ef-994b-ef57fbac83c9
 :END:
 
 ** Beets
 :PROPERTIES:
 :header-args: :tangle ~/.config/beets/config.yaml
+:ID:       a1f44374-1f12-4ff2-b346-2d82b2d71d5e
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
@@ -121,10 +123,16 @@ https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-
 #+end_src
 
 ** Fish
+:PROPERTIES:
+:ID:       eae663a5-9c44-4a7f-8d5b-65d6ba9e3bea
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
 *** Main Config
+:PROPERTIES:
+:ID:       ceb19713-e0ad-4664-bf45-ad54a571ebbb
+:END:
 
 #+begin_src fish :tangle ~/.config/fish/config.fish
   set -gx XDG_DATA_HOME   $HOME/.local/share
@@ -212,6 +220,9 @@ https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-
 #+end_src
 
 *** Manp
+:PROPERTIES:
+:ID:       e19e41ad-47ca-406f-9e38-cecc41f918d4
+:END:
 
 #+begin_src fish :tangle ~/.config/fish/functions/fish_user_key_bindings.fish
   bind \ef forward-bigword
@@ -228,6 +239,9 @@ https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-
 #+end_src
 
 *** FLAC/ALAC
+:PROPERTIES:
+:ID:       675e305e-36f7-4bc9-87ef-93a1fc97636d
+:END:
 
 #+begin_src fish :tangle ~/.config/fish/functions/flac-alac.fish
   function flac-alac -d "Convert flac to alac"
@@ -240,9 +254,18 @@ https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-
 #+end_src
 
 *** Brace expansion
+:PROPERTIES:
+:ID:       58bcb732-8868-450e-bc1b-48eae98f8fb1
+:END:
 convert company-logo.{svg,png} # Convert a SVG vector graphics file into a PNG raster graphics file. This uses brace expansion to generate the names to pass to ImageMagick's convert command.
 *** Stabilize
+:PROPERTIES:
+:ID:       ba40871e-e825-4239-853b-e82eae114f7b
+:END:
 **** Requirements
+:PROPERTIES:
+:ID:       9ff58f67-5fb9-4357-89be-e85d85a7d00d
+:END:
 You'll need ffmpeg built =-with-libvidstab= in homebrew, as in
 
 #+begin_src shell
@@ -250,6 +273,9 @@ You'll need ffmpeg built =-with-libvidstab= in homebrew, as in
 #+end_src
 
 **** Steps
+:PROPERTIES:
+:ID:       c3d6a023-80e1-40ab-9a6b-17d3b11a01a5
+:END:
 Analyse the video with default or more intense settings. This is step one and doesn't actually make a video.
 
 #+begin_src shell
@@ -257,8 +283,14 @@ Analyse the video with default or more intense settings. This is step one and do
 #+end_src
 
 **** References
+:PROPERTIES:
+:ID:       8296da1c-a2bd-4350-b758-41bec9c37582
+:END:
 - [[https://github.com/georgmartius/vid.stab][vid.stab]]
 *** Split a FLAC file
+:PROPERTIES:
+:ID:       559986e0-5a1a-458d-b732-eb8beb2bd348
+:END:
 I didn't actually know that FLAC files could be produced as a single file for an entire album, as that seems insane. In order to turn them into useful files you need ~shntool~ and ~flac~ in Nix. Then run this in the correct directory:
 
 #+begin_src shell
@@ -271,6 +303,9 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 - [[https://unix.stackexchange.com/questions/10251/how-do-i-split-a-flac-with-a-cue][command line - How do I split a flac with a cue? - Unix & Linux Stack Exchange]] [2020-05-09 Sat]
 
 *** Dict
+:PROPERTIES:
+:ID:       fe2053cd-c319-4053-ace9-44575dd0c085
+:END:
 #+begin_src fish :tangle ~/.config/fish/functions/dict.fish
   function dict -d "Overload the dict function to keep a log"
       command dict "$argv" | less
@@ -279,6 +314,9 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 
 #+end_src
 ** Git
+:PROPERTIES:
+:ID:       80f5ac05-4077-412e-b055-ec132870700d
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
@@ -342,6 +380,9 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
   ,,*.scm   diff=lisp
 #+end_src
 ** GPG
+:PROPERTIES:
+:ID:       ce620e4d-1497-4918-a966-a08c423755f5
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
@@ -367,7 +408,11 @@ This seems to work as of 9 May 2020 with Fish v3.1.2. Obviously you then want to
 #+begin_src conf :tangle (if (eq system-type 'darwin) "~/.gnupg/gpg-agent.conf" "no") :comments no
   pinentry-program /usr/local/bin/pinentry-mac
 #+end_src
+
 ** Mbsync
+:PROPERTIES:
+:ID:       e7a033db-97fa-44be-91e4-88a4665603c5
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -412,6 +457,7 @@ I think mu will actually index correctly on its own the first time you launch mu
 ** MPD
 :PROPERTIES:
 :header-args: :tangle ~/.mpd/mpd.conf :comments no
+:ID:       47632ceb-6dbc-487f-b489-b3839e438708
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
@@ -456,6 +502,9 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
   }
 #+end_src
 ** MPV
+:PROPERTIES:
+:ID:       f18e118e-6b45-460e-8d1a-9f459859c371
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
 :END:
@@ -490,6 +539,7 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
 ** NCMPCPP
 :PROPERTIES:
 :header-args: :tangle ~/.config/ncmpcpp/config
+:ID:       eae20c06-c34e-4e9f-a006-7696a043076e
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
@@ -508,6 +558,9 @@ You /can/ enable mpd as a non-user unit, but it will cause no end of trouble and
   media_library_primary_tag = album_artist
 #+end_src
 ** SSH
+:PROPERTIES:
+:ID:       1d6a86b3-abae-4855-9b59-4f1fee1c376e
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
 :END:
@@ -571,6 +624,9 @@ that.
 #+end_src
 
 ** Youtube DL
+:PROPERTIES:
+:ID:       1c3fe6dc-7c69-40e1-b1fc-7946b3add5a8
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:15]
 :END:
@@ -580,8 +636,12 @@ that.
 * Arch
 :PROPERTIES:
 :CREATED:  [2022-09-03 Sat 10:46]
+:ID:       5d7e391f-caec-4044-9e90-11e8c7f3d11b
 :END:
 ** Installation Notes
+:PROPERTIES:
+:ID:       11ca3d1c-7547-4949-8b84-ffe4c9b2a887
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:10]
 :END:
@@ -738,6 +798,7 @@ https://github.com/rfjakob/earlyoom
 ** Audio
 :PROPERTIES:
 :CREATED:  [2021-09-18 Sat 11:25]
+:ID:       428c94f8-a406-4604-9721-0de5ac58d271
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
@@ -747,6 +808,9 @@ https://github.com/rfjakob/earlyoom
 #+end_src
 
 ** Automatic login
+:PROPERTIES:
+:ID:       a9154ced-a4c9-438d-bd35-fd775a458077
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
@@ -756,6 +820,9 @@ https://github.com/rfjakob/earlyoom
   ExecStart=-/usr/bin/agetty --autologin g --noclear %I $TERM
 #+end_src
 ** Bash
+:PROPERTIES:
+:ID:       3598c11c-2d51-4cd1-b1e3-753b6f9bb036
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
@@ -769,6 +836,9 @@ https://github.com/rfjakob/earlyoom
 #+end_src
 
 ** Fail lock
+:PROPERTIES:
+:ID:       5f2b285e-9163-4dea-a458-ecbe9375126e
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
@@ -789,6 +859,9 @@ As per =/etc/security/faillock.conf=:
 : deny = 0
 
 ** Font Config
+:PROPERTIES:
+:ID:       969a04ea-d6c1-4f4e-a773-2208e607e10d
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
@@ -816,6 +889,7 @@ As per =/etc/security/faillock.conf=:
 ** GameMode
 :PROPERTIES:
 :header-args: :tangle ~/.config/gamemode.ini
+:ID:       9a1d7a28-a453-4c99-a1c3-cbfbc46e3b14
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
@@ -840,6 +914,9 @@ To test to see if GameMode is installed correctly and will run:
 
 - [[https://github.com/FeralInteractive/gamemode][Gamemode]]
 ** Journal
+:PROPERTIES:
+:ID:       f462fdf4-4e55-4ea8-bb5c-684aeeef5872
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
@@ -849,6 +926,9 @@ To test to see if GameMode is installed correctly and will run:
 #+end_src
 
 ** Journald
+:PROPERTIES:
+:ID:       f3aa1bab-1362-487f-adfa-3a85e5c171ea
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:10]
 :END:
@@ -870,6 +950,7 @@ And to check how much space the journal is currently using:
 ** Kitty
 :PROPERTIES:
 :header-args: :tangle ~/.config/kitty/kitty.conf
+:ID:       aa93fe6a-ebe3-4263-a19c-6d65f2ed53b2
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:10]
@@ -890,6 +971,9 @@ And to check how much space the journal is currently using:
   background #FFFFFF
 #+end_src
 ** Locate
+:PROPERTIES:
+:ID:       9007516f-6259-40ac-8385-ff261bbcac32
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:11]
 :END:
@@ -908,6 +992,7 @@ I'd really rather not alter the main conf file as pacman will complain whenever 
 ** Mako
 :PROPERTIES:
 :header-args: :tangle ~/.config/mako/config
+:ID:       0b023131-ab5f-49b2-9be9-2579bfd4d640
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
@@ -930,6 +1015,7 @@ I'd really rather not alter the main conf file as pacman will complain whenever 
 ** Mango Hud
 :PROPERTIES:
 :CREATED:  [2021-09-18 Sat 15:44]
+:ID:       e5c01ba6-7a87-4ee7-a2cb-7eda2d3db872
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
@@ -968,6 +1054,9 @@ I'd really rather not alter the main conf file as pacman will complain whenever 
   Comment=File manager
 #+end_src
 ** Paccache clean
+:PROPERTIES:
+:ID:       c7785fa2-d52c-457b-a12a-a74df8cb9f33
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
@@ -993,6 +1082,9 @@ Install pacman-contrib.
 #+end_src
 
 ** Pacman
+:PROPERTIES:
+:ID:       68965868-7d7a-4529-bfab-e5ff3f831a81
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
 :END:
@@ -1108,6 +1200,7 @@ Install pacman-contrib.
 ** Paru
 :PROPERTIES:
 :CREATED:  [2022-05-28 Sat 09:50]
+:ID:       1023f3cc-f321-4fe2-ab5c-788e782d3cda
 :END:
 :LOGBOOK:
 - Refiled on [2022-06-08 Wed 19:35]
@@ -1156,6 +1249,9 @@ Install pacman-contrib.
   #Sudo = doas
 #+end_src
 ** Power button
+:PROPERTIES:
+:ID:       620b721f-a219-47c8-ae8c-6ca21a026840
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
@@ -1164,6 +1260,9 @@ Install pacman-contrib.
   HandlePowerKey=suspend
 #+end_src
 ** Reflector
+:PROPERTIES:
+:ID:       63fdc6d9-cc66-4ddd-9a8d-76c95465f4c7
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 :END:
@@ -1179,6 +1278,9 @@ Enable the timer via =systemctl enable reflector.timer=.
   --sort rate
 #+end_src
 ** Set XKB for games
+:PROPERTIES:
+:ID:       bba5e389-b6e3-4812-8d46-f26f0e239a09
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:08]
 - Refiled on [2021-06-11 Fri 12:31]
@@ -1199,12 +1301,16 @@ Enable the timer via =systemctl enable reflector.timer=.
 :PROPERTIES:
 :CREATED:  [2022-02-21 Mon 17:14]
 :header-args: :tangle (if (eq system-type 'gnu/linux) "~/.config/sway/config" "no")
+:ID:       5dd25f0d-8aa2-40f4-a361-c38ac8359357
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:14]
 :END:
 
 *** Intro
+:PROPERTIES:
+:ID:       9ea608d0-4cc8-48cb-aec3-88f0aba5068e
+:END:
 
 #+begin_src conf
   set $mod Mod4
@@ -1212,12 +1318,18 @@ Enable the timer via =systemctl enable reflector.timer=.
 #+end_src
 
 *** Background
+:PROPERTIES:
+:ID:       73a79371-5146-4eb4-9426-a19f66a235ab
+:END:
 
 #+begin_src conf
   # output * bg ~/Downloads/desktop.jpg fill
 #+end_src
 
 *** Keyboard
+:PROPERTIES:
+:ID:       9a0cb433-f8ed-44d4-ac5a-c36f2396c95c
+:END:
 
 #+begin_src conf
   input * {
@@ -1229,6 +1341,9 @@ Enable the timer via =systemctl enable reflector.timer=.
 #+end_src
 
 *** Basic bindings
+:PROPERTIES:
+:ID:       c31a2843-a98d-4177-a2c8-53919afb5d9e
+:END:
 
 #+begin_src conf
   for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
@@ -1239,6 +1354,9 @@ Enable the timer via =systemctl enable reflector.timer=.
 #+end_src
 
 *** Floating windows
+:PROPERTIES:
+:ID:       64c3a5b3-40c6-4fa7-bbe0-c7c2b0692b76
+:END:
       # Drag floating windows by holding down $mod and left mouse button.
       # Resize them with right mouse button + $mod.
       # Despite the name, also works for non-floating windows.
@@ -1250,12 +1368,18 @@ Enable the timer via =systemctl enable reflector.timer=.
 #+end_src
 
 *** Reload config
+:PROPERTIES:
+:ID:       eb747e44-270a-42b6-9340-c3b1ebf94291
+:END:
 
 #+begin_src conf
   bindsym $mod+Shift+c reload
 #+end_src
 
 *** Screenshots
+:PROPERTIES:
+:ID:       f98b8acc-2a0b-497f-9c8c-0f413b25679a
+:END:
 
 #+begin_src conf
       bindsym $mod+x exec grim ~/Downloads/$(date +%Y-%m-%d_%H-%m-%s).png
@@ -1263,12 +1387,18 @@ Enable the timer via =systemctl enable reflector.timer=.
 #+end_src
 
 *** Log out
+:PROPERTIES:
+:ID:       97f1cbf4-14b3-4b4d-8438-5552048c3357
+:END:
 
 #+begin_src conf
   bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 #+end_src
 
 *** Moving around
+:PROPERTIES:
+:ID:       a41906bf-60ee-4e5d-ae2d-828e3c50d737
+:END:
 
 #+begin_src conf
   set $left b
@@ -1306,6 +1436,9 @@ Move the focused window with the same, but add Shift
 #+end_src
 
 *** Workspaces
+:PROPERTIES:
+:ID:       54b25369-b38c-4b58-abd8-70e5a72e526b
+:END:
 
 Switch to workspace
 
@@ -1338,6 +1471,9 @@ Move focused container to workspace
 #+end_src
 
 *** Layout stuff
+:PROPERTIES:
+:ID:       8e9d4f28-5ec5-4c95-8daf-abc03681cd62
+:END:
 
 #+begin_src conf
   # You can "split" the current object of your focus with
@@ -1365,6 +1501,9 @@ Move focused container to workspace
 #+end_src
 
 *** Scratchpad
+:PROPERTIES:
+:ID:       f6bb84d6-8ed4-4ec2-bae0-6720d98c86d8
+:END:
 
 Sway has a "scratchpad", which is a bag of holding for windows. You can send windows there and get them back later.
 
@@ -1374,6 +1513,9 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 #+end_src
 
 *** Resizing containers
+:PROPERTIES:
+:ID:       d3c9b561-2b4d-46c3-825b-ac7c99357050
+:END:
 
  left will shrink the containers width
  right will grow the containers width
@@ -1400,6 +1542,9 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 #+end_src
 
 *** Bar
+:PROPERTIES:
+:ID:       88eed0ff-4006-47da-93d6-c0ebf07a8b8c
+:END:
 
 #+begin_src conf
   bar {
@@ -1409,6 +1554,9 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 #+end_src
 
 *** Gaps
+:PROPERTIES:
+:ID:       d2d1b2e3-55ba-4139-9399-975791ccfd61
+:END:
 
 #+begin_src conf
   gaps outer 0
@@ -1416,6 +1564,9 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 #+end_src
 
 *** Include
+:PROPERTIES:
+:ID:       dae20516-291d-49e3-8add-49e76d736b21
+:END:
 
 #+begin_src conf
   include /etc/sway/config.d/*
@@ -1423,11 +1574,15 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 ** TKG
 :PROPERTIES:
 :header-args: :tangle ~/.config/frogminer/linux-tkg.cfg
+:ID:       434a7475-072b-46e3-bad9-575527fd287a
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:11]
 :END:
 *** Linux TKG
+:PROPERTIES:
+:ID:       2afa64aa-f096-4b55-b060-f3535e89de10
+:END:
 #+begin_src conf
   _distro="Arch"
   _EXT_CONFIG_PATH=~/.config/frogminer/linux-tkg.cfg
@@ -1437,6 +1592,9 @@ Sway has a "scratchpad", which is a bag of holding for windows. You can send win
 #+end_src
 
 *** Profile
+:PROPERTIES:
+:ID:       b2f925b9-0ec6-46f6-b905-e2401bfa0eb0
+:END:
 Set to the number corresponding to a predefined profile to use it. Current list of available profiles:
 
 1. Custom (meaning nothing will be enforced and you get to configure everything)
@@ -1449,6 +1607,9 @@ Set to the number corresponding to a predefined profile to use it. Current list 
 #+end_src
 
 *** Ccache
+:PROPERTIES:
+:ID:       3ec280f5-df10-4a06-b7a2-57be3ab5ee5b
+:END:
  Set to true to prevent ccache from being used and set CONFIG_GCC_PLUGINS=y (which needs to be disabled for ccache to work properly).
 
 #+begin_src conf
@@ -1456,6 +1617,9 @@ Set to the number corresponding to a predefined profile to use it. Current list 
 #+end_src
 
 *** Modprobe
+:PROPERTIES:
+:ID:       9827b8f9-7e40-4033-9259-bb2473cbdaf0
+:END:
 Set to true to use modprobed db to clean config from unneeded modules. Speeds up compilation considerably. Requires root - https://wiki.archlinux.org/index.php/Modprobed-db.
 
 Make sure to have a well populated db - Leave empty to be asked about it at build time.
@@ -1469,6 +1633,9 @@ Make sure to have a well populated db - Leave empty to be asked about it at buil
 #+end_src
 
 *** Menuconfig
+:PROPERTIES:
+:ID:       f426a559-1777-4d47-b363-4484fc2918cc
+:END:
 Set to "1" to call make menuconfig, "2" to call make nconfig, "3" to call make xconfig, before building the kernel. Set to false to disable and skip the prompt.
 
 #+begin_src conf
@@ -1476,6 +1643,9 @@ Set to "1" to call make menuconfig, "2" to call make nconfig, "3" to call make x
 #+end_src
 
 *** Config fragment
+:PROPERTIES:
+:ID:       5a52a74e-8969-4bd0-a569-29c3ea626487
+:END:
 Set to true to generate a kernel config fragment from your changes in menuconfig/nconfig. Set to false to disable and skip the prompt.
 
 #+begin_src conf
@@ -1489,6 +1659,9 @@ Set to the file name where the generated config fragment should be written to. O
 #+end_src
 
 *** Config File
+:PROPERTIES:
+:ID:       58e12c11-0ba7-479f-8f71-c80f053921a2
+:END:
 Name of the default config file to use for the kernel
 - Default (empty):
    - Archlinux (PKGBUILD): "config.x86_64" from the linux-tkg-config/5.y folder.
@@ -1504,6 +1677,9 @@ The script copies the resulting .config file as "kernelconfig.new" next to the P
 #+end_src
 
 *** Debugging
+:PROPERTIES:
+:ID:       f6fa31be-9875-4d78-83ed-80671133b3a6
+:END:
 Disable some non-module debugging - See PKGBUILD for the list
 
 #+begin_src conf
@@ -1511,6 +1687,9 @@ Disable some non-module debugging - See PKGBUILD for the list
 #+end_src
 
 *** CPU scheduler
+:PROPERTIES:
+:ID:       267886de-3f13-46cf-b24a-a538a3f86201
+:END:
 LEAVE AN EMPTY VALUE TO BE PROMPTED ABOUT FOLLOWING OPTIONS AT BUILD TIME
 
 CPU scheduler - Options are "upds" (TkG's Undead PDS), "pds", "bmq", "muqss" or "cfs". "upds" is the recommended option for gaming
@@ -1520,6 +1699,9 @@ CPU scheduler - Options are "upds" (TkG's Undead PDS), "pds", "bmq", "muqss" or 
 #+end_src
 
 *** Compiler
+:PROPERTIES:
+:ID:       53c4ba8d-1bd6-40bb-b861-68d5af656d32
+:END:
 Compiler to use - Options are "gcc" or "llvm".
 For advanced users.
 
@@ -1528,6 +1710,9 @@ For advanced users.
 #+end_src
 
 *** Scheduler yield type
+:PROPERTIES:
+:ID:       05480185-0253-4486-9d61-78ecf9d6a528
+:END:
 CPU sched_yield_type - Choose what sort of yield sched_yield will perform.
 
 For PDS and MuQSS:
@@ -1545,6 +1730,9 @@ For BMQ:
 #+end_src
 
 *** Round robin
+:PROPERTIES:
+:ID:       8e87468b-4bb4-4e42-8651-2219f5593ba9
+:END:
 Round Robin interval is the longest duration two tasks with the same nice level will be delayed for. When CPU time is requested by a task, it receives a time slice equal to the rr_interval in addition to a virtual deadline. When using yield_type 2, a low value can help offset the disadvantages of rescheduling a process that has yielded.
 
  - MuQSS default: 6ms"
@@ -1558,6 +1746,9 @@ Round Robin interval is the longest duration two tasks with the same nice level 
 #+end_src
 
 *** Tracer
+:PROPERTIES:
+:ID:       629e9d33-bcc3-4ba4-a5fb-47285e30bf41
+:END:
   Set to "true" to disable FUNCTION_TRACER/GRAPH_TRACER, lowering overhead but limiting debugging and analyzing of kernel functions - Kernel default is "false"
 
 #+begin_src conf
@@ -1565,6 +1756,9 @@ Round Robin interval is the longest duration two tasks with the same nice level 
 #+end_src
 
 *** NUMA
+:PROPERTIES:
+:ID:       48237a87-5817-4be0-b9a3-0490303cb186
+:END:
 Set to "true" to disable NUMA, lowering overhead, but breaking CUDA/NvEnc on Nvidia equipped systems - Kernel default is "false"
 
 #+begin_src conf
@@ -1572,6 +1766,9 @@ Set to "true" to disable NUMA, lowering overhead, but breaking CUDA/NvEnc on Nvi
 #+end_src
 
 *** Misc additions
+:PROPERTIES:
+:ID:       896cd87f-c0e8-4506-9a00-5e94bf69bd66
+:END:
   Set to "true" to enable misc additions - May contain temporary fixes pending upstream or changes that can break on non-Arch - Kernel default is "true"
 
 #+begin_src conf
@@ -1579,6 +1776,9 @@ Set to "true" to disable NUMA, lowering overhead, but breaking CUDA/NvEnc on Nvi
 #+end_src
 
 *** Tickless
+:PROPERTIES:
+:ID:       b728121b-c3c8-426a-afb5-c7085447f15d
+:END:
 - "1" to use CattaRappa mode (enabling full tickless)
 - "2" for tickless idle only
 - "0" for periodic ticks
@@ -1590,6 +1790,9 @@ Full tickless can give higher performances in various cases but, depending on ha
 #+end_src
 
 *** Voluntary preempt
+:PROPERTIES:
+:ID:       c5978dd7-00db-4cd8-a2e7-a8e9095ca3d1
+:END:
  Setting this to to "true" can improve latency on PDS (at the cost of throughput) and improve throughput on other schedulers (at the cost of latency) - Can improve VMs performance - Kernel default is "false".
 
 #+begin_src conf
@@ -1597,6 +1800,9 @@ Full tickless can give higher performances in various cases but, depending on ha
 #+end_src
 
 *** Device tree and open firmware
+:PROPERTIES:
+:ID:       33a9c3c2-9beb-4d9f-9e09-7e4cc3c8a1a5
+:END:
 Set to "true" to enable Device Tree and Open Firmware support. If you don't know about it, you don't need it - Default is "false".
 
 #+begin_src conf
@@ -1604,6 +1810,9 @@ Set to "true" to enable Device Tree and Open Firmware support. If you don't know
 #+end_src
 
 *** ACS override
+:PROPERTIES:
+:ID:       0a0be853-6678-47ac-99a6-c8294da2e924
+:END:
   Set to "true" to use ACS override patch https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF#Bypassing_the_IOMMU_groups_.28ACS_override_patch.29 - Kernel default is "false".
 
 #+begin_src conf
@@ -1611,6 +1820,9 @@ Set to "true" to enable Device Tree and Open Firmware support. If you don't know
 #+end_src
 
 *** Bcache filesystem
+:PROPERTIES:
+:ID:       7b6341c1-c28c-4b96-a988-ee8bba408a66
+:END:
 Set to "true" to add Bcache filesystem support. You'll have to install bcachefs-tools-git from AUR for utilities - https://bcachefs.org/ - If in doubt, set to "false"
 
 #+begin_src conf
@@ -1618,6 +1830,9 @@ Set to "true" to add Bcache filesystem support. You'll have to install bcachefs-
 #+end_src
 
 *** ZFS symbols
+:PROPERTIES:
+:ID:       a074f6aa-3213-4c94-9c72-5e19bf984f8f
+:END:
 Set to "true" to add back missing symbol for AES-NI/AVX support on ZFS - https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/export_kernel_fpu_functions.patch - Kernel default is "false"
 
 #+begin_src conf
@@ -1625,6 +1840,9 @@ Set to "true" to add back missing symbol for AES-NI/AVX support on ZFS - https:/
 #+end_src
 
 *** Proton
+:PROPERTIES:
+:ID:       2fdff4ac-826f-4e64-92c2-3da1308ad9ba
+:END:
 Set to "true" to enable support for fsync, an experimental replacement for esync found in Valve Proton 4.11+ - https://steamcommunity.com/games/221410/announcements/detail/2957094910196249305
 
 #+begin_src conf
@@ -1645,6 +1863,9 @@ Set to "true" to enable support for winesync, an experimental replacement for es
 #+end_src
 
 *** Anbox
+:PROPERTIES:
+:ID:       09443964-6395-4207-a9bf-1214636eb825
+:END:
   Set to "true" to enable the Binder and Ashmem, the kernel modules required to use the android emulator Anbox.
 
 #+begin_src conf
@@ -1652,6 +1873,9 @@ Set to "true" to enable support for winesync, an experimental replacement for es
 #+end_src
 
 *** Zen
+:PROPERTIES:
+:ID:       d3e538eb-4cb6-4baa-99d0-2f34ac90edb3
+:END:
 A selection of patches from Zen/Liquorix kernel and additional tweaks for a better gaming experience (ZENIFY) - Default is "true"
 
 #+begin_src conf
@@ -1659,6 +1883,9 @@ A selection of patches from Zen/Liquorix kernel and additional tweaks for a bett
 #+end_src
 
 *** Compiler optimization
+:PROPERTIES:
+:ID:       2828e18c-531a-4496-831f-ec1c07bc0880
+:END:
 Compiler optimization level
 
 1. Optimize for performance (-O2)
@@ -1672,6 +1899,9 @@ Compiler optimization level
 #+end_src
 
 *** CPU compiler optimizations
+:PROPERTIES:
+:ID:       c8b657fa-1222-48ff-b925-32fcddc35340
+:END:
 CPU compiler optimizations - Defaults to prompt at kernel config if left empty
 
 AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" (zen3 opt support depends on GCC11)
@@ -1695,6 +1925,9 @@ https://en.wikipedia.org/wiki/X86-64#Microarchitecture_Levels)
 #+end_src
 
 *** IRQ Threading
+:PROPERTIES:
+:ID:       1a0784ce-0041-4da3-9c20-90d23b5d3b60
+:END:
 MuQSS only - Make IRQ threading compulsory (FORCE_IRQ_THREADING) - Default is "false"
 
 #+begin_src conf
@@ -1702,6 +1935,9 @@ MuQSS only - Make IRQ threading compulsory (FORCE_IRQ_THREADING) - Default is "f
 #+end_src
 
 *** SMT
+:PROPERTIES:
+:ID:       0a414b2b-7f44-45e6-a129-6771ec068e4b
+:END:
 MuQSS and PDS only - SMT (Hyperthreading) aware nice priority and policy support (SMT_NICE) - Kernel default is "true" - You can disable this on non-SMT/HT CPUs for lower overhead
 
 #+begin_src conf
@@ -1710,6 +1946,9 @@ MuQSS and PDS only - SMT (Hyperthreading) aware nice priority and policy support
 
 
 *** Random
+:PROPERTIES:
+:ID:       8d128c59-8c47-40a9-919f-0bb1dbc6683e
+:END:
 Trust the CPU manufacturer to initialize Linux's CRNG (RANDOM_TRUST_CPU) - Kernel default is "false"
 
 #+begin_src conf
@@ -1717,6 +1956,9 @@ Trust the CPU manufacturer to initialize Linux's CRNG (RANDOM_TRUST_CPU) - Kerne
 #+end_src
 
 *** CPU runqueue sharing
+:PROPERTIES:
+:ID:       5d541c63-a471-4c49-9b0c-af0a2c2ef858
+:END:
   MuQSS only - CPU scheduler runqueue sharing - No sharing (RQ_NONE), SMT (hyperthread) siblings (RQ_SMT), Multicore siblings (RQ_MC), Symmetric Multi-Processing (RQ_SMP), NUMA (RQ_ALL)
 
   Valid values are "none", "smt", "mc", "mc-llc"(for zen), "smp", "all" - Kernel default is "smt"
@@ -1726,6 +1968,9 @@ Trust the CPU manufacturer to initialize Linux's CRNG (RANDOM_TRUST_CPU) - Kerne
 #+end_src
 
 *** Timer frequency
+:PROPERTIES:
+:ID:       116b8f56-6cee-43e9-a4c0-c8809a032c76
+:END:
 Timer frequency - "100" "500", "750" or "1000" - More options available in kernel config prompt when left empty depending on selected cpusched - Kernel default is "500" - For MuQSS, 100Hz is recommended.
 
 #+begin_src conf
@@ -1733,6 +1978,9 @@ Timer frequency - "100" "500", "750" or "1000" - More options available in kerne
 #+end_src
 
 *** CPU governor
+:PROPERTIES:
+:ID:       cf9d77a6-89df-4366-add3-710035419b57
+:END:
 Default CPU governor - "performance", "ondemand", "schedutil" or leave empty for default (schedutil)
 
 #+begin_src conf
@@ -1740,6 +1988,9 @@ Default CPU governor - "performance", "ondemand", "schedutil" or leave empty for
 #+end_src
 
 *** Aggressive ondemand governor
+:PROPERTIES:
+:ID:       0367c9f0-d286-4cbf-992a-554f0acda122
+:END:
 Use an aggressive ondemand governor instead of default ondemand to improve performance on low loads/high core count CPUs while keeping some power efficiency from frequency scaling. It still requires you to either set ondemand as default governor or to select it some way.
 
 #+begin_src conf
@@ -1747,6 +1998,9 @@ Use an aggressive ondemand governor instead of default ondemand to improve perfo
 #+end_src
 
 *** ACPI_CPUFREQ
+:PROPERTIES:
+:ID:       bae56a8a-6a8b-4351-b617-d90bcebc3f9d
+:END:
 On some platforms, an acpi_cpufreq bug affects performance negatively. Set to "true" to disable it as a workaround, but it will use more power.
 
 https://github.com/Tk-Glitch/PKGBUILDS/issues/263
@@ -1756,6 +2010,9 @@ https://github.com/Tk-Glitch/PKGBUILDS/issues/263
 #+end_src
 
 *** Cusom command lines
+:PROPERTIES:
+:ID:       a80d070d-1eb1-40c0-a31e-5e43d66363a7
+:END:
 You can pass a default set of kernel command line options here - example: "intel_pstate=passive nowatchdog amdgpu.ppfeaturemask=0xfffd7fff mitigations=off"
 
 #+begin_src conf
@@ -1763,6 +2020,9 @@ You can pass a default set of kernel command line options here - example: "intel
 #+end_src
 
 *** Custom package base
+:PROPERTIES:
+:ID:       cf9dc74d-eba9-42e3-b2bd-5fa468dd13a2
+:END:
 If you want to bypass the stock naming scheme and enforce something else (example : "linux") - Useful for some bootloaders requiring manual entry editing on each release.
 
 It will also change pkgname - If you don't explicitely need this, don't use it !!!
@@ -1772,6 +2032,9 @@ It will also change pkgname - If you don't explicitely need this, don't use it !
 #+end_src
 
 *** Kernel localversion
+:PROPERTIES:
+:ID:       02e3e5e3-2c57-4f9a-ae82-f50693380579
+:END:
 [non-Arch specific] Kernel localversion. Putting it to "Mario" will make for example the kernel version be 5.7.0-tkg-Mario (given by uname -r)
 
 If left empty, it will use -tkg-"${_cpusched}" where "${_cpusched}" will be replaced by the user chosen scheduler
@@ -1781,6 +2044,9 @@ If left empty, it will use -tkg-"${_cpusched}" where "${_cpusched}" will be repl
 #+end_src
 
 *** Community patches
+:PROPERTIES:
+:ID:       8df00340-f32d-418e-abec-7dc3060fe202
+:END:
 community patches - add patches (separated by a space) of your choice by name from the community-patches dir
 
 example: _community_patches="clear_nack_in_tend_isr.myrevert ffb_regression_fix.mypatch 0008-drm-amd-powerplay-force-the-trim-of-the-mclk-dpm-levels-if-OD-is-enabled.mypatch"
@@ -1822,6 +2088,7 @@ Apply all config fragments without confirmation.
 ** Systemd-bootd
 :PROPERTIES:
 :CREATED:  [2021-12-22 Wed 15:23]
+:ID:       05a712f3-3636-45b2-b2a0-48951ac7e339
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:14]
@@ -1874,6 +2141,7 @@ Apply all config fragments without confirmation.
 ** usermod for games
 :PROPERTIES:
 :CREATED:  [2022-05-27 Fri 19:03]
+:ID:       a838189b-16d4-4b07-8629-0602838200ac
 :END:
 :LOGBOOK:
 - Refiled on [2022-06-08 Wed 21:05]
@@ -1885,6 +2153,9 @@ The wine executable used by proton can automatically set the niceness of a proce
 #+end_src
 
 ** VConsole caps-control remap
+:PROPERTIES:
+:ID:       a8b0922e-ebc4-4f35-b89b-2a393da3c87a
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:14]
 - Refiled on [2021-05-28 Fri 11:26]
@@ -1992,10 +2263,16 @@ The wine executable used by proton can automatically set the niceness of a proce
   Icon=Vial
 #+end_src
 ** Waybar
+:PROPERTIES:
+:ID:       0ca3363f-b28c-46a9-b574-6c8b965b272a
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:15]
 :END:
 *** Config
+:PROPERTIES:
+:ID:       d287ec24-67c3-462e-9b37-21f653952e5b
+:END:
 #+begin_src json :tangle ~/.config/waybar/config :comments no
   {
       "layer": "top",
@@ -2019,6 +2296,9 @@ The wine executable used by proton can automatically set the niceness of a proce
 #+end_src
 
 *** Styling
+:PROPERTIES:
+:ID:       d46482b5-2e44-47f5-9b44-1c3982aaeb93
+:END:
 
 #+begin_src css :tangle ~/.config/waybar/style.css :comments no
   ,* {
@@ -2260,9 +2540,13 @@ The wine executable used by proton can automatically set the niceness of a proce
 * MacOS
 :PROPERTIES:
 :CREATED:  [2022-09-03 Sat 10:46]
+:ID:       3b5453dd-00f2-416c-b903-cdc7e0fba6fa
 :END:
 
 ** Defaults Write
+:PROPERTIES:
+:ID:       f4460741-294c-4986-8a5b-5669cb7a438f
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -2415,6 +2699,9 @@ The wine executable used by proton can automatically set the niceness of a proce
   defaults write com.apple.dock ResetLaunchPad -bool TRUE;killall Dock
 #+end_src
 ** Disable Launchd stuff
+:PROPERTIES:
+:ID:       92e16df5-d739-491d-9c91-4cd1897cb964
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -2729,10 +3016,16 @@ The wine executable used by proton can automatically set the niceness of a proce
 
 https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
 ** Hammerspoon
+:PROPERTIES:
+:ID:       f424ba40-a903-42a0-b53e-8e1d1f5a034e
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
 *** Setup
+:PROPERTIES:
+:ID:       49834521-6d61-4b90-9f38-88a425581b06
+:END:
 #+begin_src shell
   defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
 #+end_src
@@ -2740,14 +3033,21 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
 *** Init
 :PROPERTIES:
 :header-args: :tangle ~/.config/hammerspoon/init.lua
+:ID:       d6d827fe-a1dd-4169-8f90-61b45768dd82
 :END:
 **** Hyper
+:PROPERTIES:
+:ID:       58127331-ed37-4dfc-93d5-97a1c576118a
+:END:
 
 #+begin_src lua
   local hyper = {"ctrl", "alt", "cmd"}
 #+end_src
 
 **** WM
+:PROPERTIES:
+:ID:       37c0869b-51f9-4547-b05c-a90f6e5d9e3d
+:END:
 #+begin_src lua
     hs.loadSpoon("MiroWindowsManager")
 
@@ -2774,6 +3074,9 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
 #+end_src
 
 **** Finder
+:PROPERTIES:
+:ID:       f4df4084-fde9-4a21-baca-89fe67f1e80e
+:END:
 #+begin_src lua
   hs.hotkey.bind(hyper, 'n', function()
                     hs.application.launchOrFocus("Finder")
@@ -2781,6 +3084,9 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
 #+end_src
 
 **** Reload Hammerspoon
+:PROPERTIES:
+:ID:       2982d6ea-8ad5-4256-8523-01722bf48025
+:END:
 #+begin_src lua
   hs.hotkey.bind(hyper, 'r', function()
                     hs.reload()
@@ -2788,6 +3094,9 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
 #+end_src
 
 **** Text Inflator
+:PROPERTIES:
+:ID:       6bfdec78-2ec1-4bad-a3ee-b2ed2302c198
+:END:
 
 #+begin_src lua
   local function textInflaterCallback(choice)
@@ -2844,6 +3153,9 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
      end)
 #+end_src
 ** Hushlogin
+:PROPERTIES:
+:ID:       43965240-28c6-47bc-8438-6afa76e650ea
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:09]
 :END:
@@ -2852,6 +3164,9 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
   # Silence
 #+end_src
 ** macOS Default Keybindings
+:PROPERTIES:
+:ID:       c07f02e7-b9ea-42cc-97eb-6cfd313c5174
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
@@ -2902,6 +3217,9 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
   }
 #+end_src
 ** MPD MacOS
+:PROPERTIES:
+:ID:       a2d80965-a6c3-4bd3-b9a2-ee00c91fd38e
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:13]
 :END:
@@ -2930,6 +3248,9 @@ https://gist.github.com/pwnsdx/1217727ca57de2dd2a372afdd7a0fc21
   </plist>
 #+end_src
 ** Set Emacs As Default Editor
+:PROPERTIES:
+:ID:       fac7f03e-3f47-4bd5-a4a5-a9770de1011f
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:12]
 :END:
