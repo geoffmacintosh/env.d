@@ -4013,57 +4013,17 @@ In order to open epub files, doc-view needs mutool:
     (add-to-list 'eshell-modules-list 'eshell-elecslash))
 #+end_src
 
-*** Fish path
-
-#+begin_src emacs-lisp
-  (defun fish-path (path max-len)
-    "Return a potentially trimmed-down version of the directory PATH.
-  Replacing parent directories with their initial characters to try
-  to get the character length of PATH (sans directory slashes) down
-  to MAX-LEN."
-    (require 'cl-seq)
-    (declare-function cl-reduce "cl-seq")
-    (let* ((components (split-string (abbreviate-file-name path) "/"))
-           (len (+ (1- (length components))
-                   (cl-reduce '+ components :key 'length)))
-           (str ""))
-      (while (and (> len max-len)
-                  (cdr components))
-        (setq str (concat str
-                          (cond ((= 0 (length (car components))) "/")
-                                ((= 1 (length (car components)))
-                                 (concat (car components) "/"))
-                                (t
-                                 (if (string= "."
-                                              (string (elt (car components) 0)))
-                                     (concat (substring (car components) 0 2)
-                                             "/")
-                                   (string (elt (car components) 0) ?/)))))
-              len (- len (1- (length (car components))))
-              components (cdr components)))
-      (concat str (cl-reduce (lambda (a b) (concat a "/" b)) components))))
-#+end_src
-
 #+begin_src emacs-lisp
   (defun env-eshell-prompt ()
-    "Custom prompt for eshell.
-
-  Designed to be as minimalist as possible, while being moderately useful."
-
-    (require 'eshell)
-    (require 'em-dirs)
-    (eval-when-compile
-      (declare-function eshell/pwd "em-dirs"))
-    (concat
-     (fish-path (eshell/pwd) 20)
-     " ❯ "))
-  (customize-set-variable 'eshell-prompt-regexp "^.+@.+:.+❯ ")
+    "Custom prompt for eshell."
+     "; ")
+  (customize-set-variable 'eshell-prompt-regexp "^; ")
   (customize-set-variable 'eshell-prompt-function #'env-eshell-prompt)
 #+end_src
-
 ** Emms
 :PROPERTIES:
 :CREATED:  [2022-02-02 Wed 11:25]
+:ID:       ffff1cdc-4947-48f8-9b6b-191f78642feb
 :END:
 :LOGBOOK:
 - Refiled on [2022-02-04 Fri 10:52]
