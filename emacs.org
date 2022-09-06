@@ -2198,8 +2198,13 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :CREATED:  [2022-05-13 Fri 20:07]
 :ID:       89ac4d93-fb3f-4fc7-bdf6-08d345afe335
 :END:
-#+begin_src emacs-lisp
-  (defvar org-capture-templates nil)
+#+begin_src emacs-lisp :noweb yes
+  (customize-set-variable
+   'org-capture-templates `(
+                            <<todo-template>>
+                            <<medication-template>>
+                            <<inventory-template>>
+                            <<journal-template>>))
 #+end_src
 
 ** Refile to subtree                                                 :emacs:
@@ -2249,15 +2254,16 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :CREATED:  [2022-08-31 Wed 14:13]
 :ID:       f686270e-d086-4852-92b3-03fcc00d1342
 :END:
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("m" "Medication" entry
+#+name: medication-template
+#+begin_src emacs-lisp :tangle no
+                 ("m" "Medication" entry
                    (file+olp+datetree "diary.org")
                    "* %(env-time-of-day) %^{Drug} %^{Dose}p\n %(org-set-tags \"medicine\")"
                    :empty-lines 1
-                   :kill-buffer t)))
+                   :kill-buffer t)
+#+end_src
 
+#+begin_src emacs-lisp :tangle no
   (defun env-time-of-day ()
     "Return a title-cased string that reflects the current time.
 
@@ -2309,14 +2315,16 @@ Should choose the correct location for a todo based on which computer.
         (t (let ((file-name "inbox.org"))
              (set-buffer (org-capture-target-buffer file-name))
              (goto-char (point-max))))))
+#+end_src
 
-  (add-to-list 'org-capture-templates
-               `("t" "TODO" entry
-                 (function env-visit-todo-file-correctly)
-                 "* TODO %?"
-                 :empty-lines 1
-                 :clock-resume t
-                 :clock-in t))
+#+name: todo-template
+#+begin_src emacs-lisp :tangle no
+  ("t" "TODO" entry
+   (function env-visit-todo-file-correctly)
+   "* TODO %?"
+   :empty-lines 1
+   :clock-resume t
+   :clock-in t)
 #+end_src
 
 ** Prettify symbols
@@ -2441,24 +2449,24 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 (defun env-date-stamp ()
   "Pleasant time string."
       (format-time-string "%A %-e %B %Y %H:%M %Z"))
-
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 `("j" "Journal" entry
-                   (file+olp+datetree "journal.org.gpg")
-                   "* %(env-date-stamp)\n%?"
-                   :empty-lines 1
-                   :kill-buffer t)))
 #+end_src
 
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 '("s" "Inventory" entry
-                   (file+headline "inventory.org" "Unapproved")
-                   "* %^{Specific item}%^{Purchased_Date|N/A}p%^{Price}p%^{Home_Location}p%^{Purchased_Location}p%^{Provides}p\n%?"
-                   :empty-lines 1
-                   :kill-buffer t)))
+#+name: journal-template
+#+begin_src emacs-lisp :tangle no
+  ("j" "Journal" entry
+   (file+olp+datetree "journal.org.gpg")
+   "* %(env-date-stamp)\n%?"
+   :empty-lines 1
+   :kill-buffer t)
+#+end_src
+
+#+name: inventory-template
+#+begin_src emacs-lisp :tangle no
+  ("s" "Inventory" entry
+   (file+headline "inventory.org" "Unapproved")
+   "* %^{Specific item}%^{Purchased_Date|N/A}p%^{Price}p%^{Home_Location}p%^{Purchased_Location}p%^{Provides}p\n%?"
+   :empty-lines 1
+   :kill-buffer t)
 #+end_src
 
 ** Export ics
@@ -2609,115 +2617,114 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
   (customize-set-variable 'org-publish-timestamp-directory (expand-file-name "org-timestamps/" user-emacs-directory))
 #+end_src
 
-#+begin_src emacs-lisp
-  (defvar org-agenda-custom-commands)
+#+begin_src emacs-lisp :noweb yes :results silent
+  (customize-set-variable 'org-agenda-custom-commands
+                          `(
+                            <<performance-review-agenda>>
+                            <<work-agenda>>
+                            <<unscheduled-agenda>>
+                            <<weekly-agenda>>
+                            <<daily-agenda>>
+                            <<archive-agenda>>
+                            <<someday-agenda>>))
+#+end_src
 
+#+begin_src emacs-lisp
   (eval-when-compile
     (declare-function org-agenda-skip-entry-if "org-agenda"
                       (&rest conditions)))
+#+end_src
 
-  (with-eval-after-load 'org-agenda
-    (add-to-list 'org-agenda-custom-commands
-                 '("u" "Unscheduled TODOs"
-                   ((todo ""
-                          ((org-agenda-overriding-header
-                            "\nUnscheduled TODOs")
-                           (org-agenda-skip-function
-                            '(org-agenda-skip-entry-if
-                              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
-                           (org-agenda-sorting-strategy '((todo tsia-up alpha-up))))))))
+#+name: unscheduled-agenda
+#+begin_src emacs-lisp :tangle no
+  ("u" "Unscheduled TODOs"
+   ((todo ""
+          ((org-agenda-overriding-header
+            "\nUnscheduled TODOs")
+           (org-agenda-skip-function
+            '(org-agenda-skip-entry-if
+              'timestamp 'todo '("WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
+           (org-agenda-sorting-strategy '((todo tsia-up alpha-up)))))))
+#+end_src
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("b" "Purchase List" tags "+buy"
-                   ((org-overriding-columns-format "%20ITEM %PRICE")
-                    (org-agenda-view-columns-initially t))))
+#+name: daily-agenda
+#+begin_src emacs-lisp :tangle no
+  ("d" "Daily View"
+   ((agenda "")
+    (todo ""
+          ((org-agenda-skip-function #'env-org-agenda-priority-a)
+           (org-agenda-overriding-header
+            "Today's Priority #A tasks: "))))
+   ((org-agenda-span 'day)))
+#+end_src
 
-    (add-to-list 'org-agenda-custom-commands
-                 '("v" . "Recurring Views"))
-
-    (add-to-list 'org-agenda-custom-commands
-                 '("vd" "Daily View"
-                   ((agenda "")
-                    (todo ""
-                          ((org-agenda-skip-function #'env-org-agenda-priority-a)
-                           (org-agenda-overriding-header "Today's Priority #A
-              tasks: "))))
-                   ((org-agenda-span 'day))))
-
+#+begin_src emacs-lisp
     (defun env-org-agenda-priority-a ()
       "Show Priority A items."
       (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]"))
-
-    (add-to-list 'org-agenda-custom-commands
-                 '("vw" "Weekly View"
-                   ((agenda "")
-                    (todo "WAITING")
-                    (todo "PROJECT")
-                    (org-agenda-list-stuck-projects))
-                   ((org-agenda-span 7)
-                    (org-agenda-start-day "+0d")
-                    (org-agenda-start-on-weekday nil)
-                    (org-agenda-start-with-log-mode nil)
-                    (org-agenda-start-with-clockreport-mode nil)
-                    (org-agenda-use-time-grid nil)
-                    (org-habit-show-habits nil))))
-
-    (add-to-list 'org-agenda-custom-commands
-                 '("vm" "Monthly View"
-                   ((todo "SOMEDAY"))))
-
-    (add-to-list 'org-agenda-custom-commands
-                 '("A" "Candidate trees for archiving" tags "-NOARCHIVE"
-                   ((org-agenda-overriding-header "Candidate tasks for archiving")
-                    (org-agenda-skip-function 'env-skip-non-archivable-tasks))))
-
-    (add-to-list 'org-agenda-custom-commands
-                 '("vc" "Weekly Calendar"
-                   ((agenda ""))
-                   ((org-agenda-use-time-grid nil)
-                    (org-agenda-start-day "sun")
-                    (org-agenda-start-on-weekday 1)
-                    (org-habit-show-habits nil)
-                    (org-agenda-remove-tags t)
-                    (org-agenda-files '("diary.org"))
-                    (org-agenda-skip-function '(org-agenda-skip-entry-if
-                                                'scheduled 'deadline 'todo '("TODO ""WAITING" "SOMEDAY" "PROJECT" "DONE" "CANCELLED")))
-                    (org-agenda-span 7)))))
 #+end_src
 
-  #+begin_src emacs-lisp
-    (with-eval-after-load 'org-agenda
-        (add-to-list 'org-agenda-custom-commands
-                     '("w" "Work"
-                       ((agenda ""
-                                ((org-agenda-start-on-weekday 1)
-                                 (org-agenda-span 'week)
-                                 (org-agenda-overriding-header "\nAgenda")
-                                 ))
-                        (todo "TODO"
-                              ((org-agenda-overriding-header
-                                "\nNext tasks")))
-                        (tags "+ongoing"
-                              ((org-agenda-overriding-header
-                                "\nOngoing tasks")))
-                        (todo "WAITING"
-                              ((org-agenda-overriding-header
-                                "\nWaiting tasks"))))
-                       ((org-agenda-files '("access.org"))
-                        (org-agenda-compact-blocks t)
-                        (org-agenda-use-time-grid nil)))))
-  #+end_src
 
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-agenda
-    (add-to-list 'org-agenda-custom-commands
-                 '("p" "Performance Review"
-                   ((tags "-review+TODO=\"DONE\"+CLOSED>=\"<-6m>\""
-                          ((org-agenda-overriding-header "Tasks finished in last six months")))
-                    (tags "+review"
-                          ((org-agenda-overriding-header "Performance review"))))
-                   ((org-agenda-files '("access.org"))
-                    (org-agenda-use-time-grid nil)))))
+#+name: weekly-agenda
+#+begin_src emacs-lisp :tangle no
+  ("w" "Weekly View"
+   ((agenda "")
+    (todo "WAITING")
+    (todo "PROJECT")
+    (org-agenda-list-stuck-projects))
+   ((org-agenda-span 7)
+    (org-agenda-start-day "+0d")
+    (org-agenda-start-on-weekday nil)
+    (org-agenda-start-with-log-mode nil)
+    (org-agenda-start-with-clockreport-mode nil)
+    (org-agenda-use-time-grid nil)
+    (org-habit-show-habits nil)))
+#+end_src
+
+#+name: someday-agenda
+#+begin_src emacs-lisp :tangle no
+  ("m" "Someday"
+   ((todo "SOMEDAY")))
+#+end_src
+
+#+name: archive-agenda
+#+begin_src emacs-lisp :tangle no
+  ("A" "Candidate trees for archiving" tags "-NOARCHIVE"
+   ((org-agenda-overriding-header "Candidate tasks for archiving")
+    (org-agenda-skip-function 'env-skip-non-archivable-tasks)))
+#+end_src
+
+#+name: work-agenda
+#+begin_src emacs-lisp :tangle no
+  ("w" "Work"
+   ((agenda ""
+            ((org-agenda-start-on-weekday 1)
+             (org-agenda-span 'week)
+             (org-agenda-overriding-header "\nAgenda")
+             ))
+    (todo "TODO"
+          ((org-agenda-overriding-header
+            "\nNext tasks")))
+    (tags "+ongoing"
+          ((org-agenda-overriding-header
+            "\nOngoing tasks")))
+    (todo "WAITING"
+          ((org-agenda-overriding-header
+            "\nWaiting tasks"))))
+   ((org-agenda-files '("access.org"))
+    (org-agenda-compact-blocks t)
+    (org-agenda-use-time-grid nil)))
+#+end_src
+
+#+name: performance-review-agenda
+#+begin_src emacs-lisp :tangle no
+  ("p" "Performance Review"
+    ((tags "-review+TODO=\"DONE\"+CLOSED>=\"<-6m>\""
+           ((org-agenda-overriding-header "Tasks finished in last six months")))
+     (tags "+review"
+           ((org-agenda-overriding-header "Performance review"))))
+    ((org-agenda-files '("access.org"))
+     (org-agenda-use-time-grid nil)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3129,7 +3136,6 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 :END:
 
 #+begin_src emacs-lisp
-  (defvar org-capture-templates)
   (with-eval-after-load 'package
    (add-to-list 'package-selected-packages 'org-cliplink))
   (eval-when-compile
