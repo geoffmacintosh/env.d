@@ -2328,15 +2328,18 @@ Should choose the correct location for a todo based on which computer.
 - Refiled on [2022-06-13 Mon 18:48]
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'prettify-symbols-unprettify-at-point 'right-edge)
+  (customize-set-variable 'prettify-symbols-unprettify-at-point
+                          'right-edge)
 
-  (defun env-prettify-org-symbols ()
-    "Prettifies all Org buffers."
-    (add-to-list 'prettify-symbols-alist '("#+title: " . ""))
-    (prettify-symbols-mode +1))
+  (customize-set-variable 'prettify-symbols-alist '(("#+title: " . "")))
+
+  ;; (defun env-prettify-org-symbols ()
+  ;;   "Prettifies all Org buffers."
+  ;;   (add-to-list 'prettify-symbols-alist '("#+title: " . ""))
+  ;;   (prettify-symbols-mode +1))
 
   (when (display-graphic-p)
-    (add-hook 'org-mode-hook #'env-prettify-org-symbols))
+    (add-hook 'org-mode-hook #'prettify-symbols-mode))
 #+end_src
 
 ** Archive old stuff
@@ -2855,15 +2858,15 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
   (defvar org-default-properties)
-  (defvar org-global-properties)
   (eval-when-compile
     (declare-function org-indent-mode "org-indent"))
 
   (with-eval-after-load 'org
     (add-to-list 'org-default-properties "DIR")
     (add-to-list 'org-default-properties "header-args")
-    (add-to-list 'org-global-properties
-               '("Effort_ALL". "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00"))
+    (customize-set-variable 'org-global-properties
+                            '(("Effort_ALL".
+                               "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00")))
     (require 'org-habit)
     (require 'org-crypt)
     (org-crypt-use-before-save-magic)
@@ -2876,96 +2879,97 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-    (with-eval-after-load 'package
-      (add-to-list 'package-selected-packages 'org)
-      (add-to-list 'package-selected-packages 'org-contrib))
-    (customize-set-variable 'org-babel-default-header-args '((:mkdirp   . "yes")
-                                           (:comments . "link")
-                                           (:session  . "none")
-                                           (:results  . "replace")
-                                           (:exports  . "code")
-                                           (:cache    . "no")
-                                           (:noweb    . "no")
-                                           (:hlines   . "no")
-                                           (:tangle   . "no")))
+  (with-eval-after-load 'package
+    (add-to-list 'package-selected-packages 'org)
+    (add-to-list 'package-selected-packages 'org-contrib))
+  (customize-set-variable 'org-babel-default-header-args
+                          '((:mkdirp   . "yes")
+                            (:comments . "link")
+                            (:session  . "none")
+                            (:results  . "replace")
+                            (:exports  . "code")
+                            (:cache    . "no")
+                            (:noweb    . "no")
+                            (:hlines   . "no")
+                            (:tangle   . "no")))
 
-    (defun env-update-all-dynamic-blocks ()
-      "Update all dynamic blocks in an Org-mode document.
+  (defun env-update-all-dynamic-blocks ()
+    "Update all dynamic blocks in an Org-mode document.
 
-      Should only be called when in Org-mode, but also it shouldn't
-      cause an error if not."
+        Should only be called when in Org-mode, but also it shouldn't
+        cause an error if not."
 
-      (require 'org)
-      (require 'org-table)
-      (eval-when-compile
-        (declare-function org-dblock-update "org")
-        (declare-function org-table-map-tables "org-table"))
-      (org-table-map-tables 'org-table-align 'quietly)
-      (org-dblock-update 'arg))
-
-    (defun env-org-mode-setup ()
-      "Set basic defaults in Org-mode that aren't variables."
-
-      (electric-indent-local-mode -1)
-      (visual-line-mode))
-
-    (add-hook 'org-mode-hook #'env-org-mode-setup)
-
-    (global-set-key (kbd "C-c c") #'org-capture)
-    (global-set-key (kbd "C-c a") #'org-agenda)
+    (require 'org)
+    (require 'org-table)
     (eval-when-compile
-      (declare-function org-store-link "ol"))
-    (global-set-key (kbd "C-c l") #'org-store-link)
+      (declare-function org-dblock-update "org")
+      (declare-function org-table-map-tables "org-table"))
+    (org-table-map-tables 'org-table-align 'quietly)
+    (org-dblock-update 'arg))
 
-    (customize-set-variable 'org-startup-folded 'content)
-    (customize-set-variable 'org-ellipsis " →")
-    (customize-set-variable 'org-startup-align-all-tables t)
-    (customize-set-variable 'org-startup-shrink-all-tables t)
-    (customize-set-variable 'org-startup-with-inline-images t)
-    (customize-set-variable 'org-startup-indented t)
-    (customize-set-variable 'org-hide-leading-stars t)
-    (customize-set-variable 'org-pretty-entities-include-sub-superscripts t)
-    (customize-set-variable 'org-hide-emphasis-markers t)
-    (customize-set-variable 'org-image-actual-width 300)
-    (customize-set-variable 'org-fontify-done-headline t)
-    (customize-set-variable 'org-structure-template-alist
-           '(("e" . "src emacs-lisp")
-             ("s" . "src shell")
-             ("c" . "src conf")
-             ("C" . "comment")
-             ("h" . "export html")
-             ("q" . "quote")
-             ("v" . "verse")))
-    (customize-set-variable 'org-log-done 'time)
-    (customize-set-variable 'org-log-into-drawer t)
-    (customize-set-variable 'org-log-reschedule 'time)
-    (customize-set-variable 'org-log-refile nil)
-    (customize-set-variable 'org-log-redeadline 'time)
-    (customize-set-variable 'org-closed-keep-when-no-todo t)
-    (customize-set-variable 'org-enforce-todo-dependencies t)
-    (customize-set-variable 'org-enforce-todo-checkbox-dependencies nil)
-    (customize-set-variable 'org-complete-tags-always-offer-all-agenda-tags t)
-    (customize-set-variable 'org-clone-delete-id t)
-    (customize-set-variable 'org-catch-invisible-edits 'show-and-error)
-    (customize-set-variable 'org-insert-heading-respect-content nil)
-    (customize-set-variable 'org-ctrl-k-protect-subtree t)
-    (customize-set-variable 'org-M-RET-may-split-line '((default . nil)))
-    (customize-set-variable 'org-special-ctrl-k t)
-    (customize-set-variable 'org-special-ctrl-a/e t)
-    (customize-set-variable 'org-blank-before-new-entry '((heading         . t)
-                                        (plain-list-item . nil)))
-    (customize-set-variable 'org-use-property-inheritance t)
+  (defun env-org-mode-setup ()
+    "Set basic defaults in Org-mode that aren't variables."
 
-    (defvar org-modules)
+    (electric-indent-local-mode -1)
+    (visual-line-mode))
 
-    (with-eval-after-load 'org
-      (delete 'ol-doi org-modules)
-      (delete 'ol-w3m org-modules)
-      (delete 'ol-bibtex org-modules)
-      (delete 'ol-irc org-modules)
-      (delete 'ol-mhe org-modules)
-      (delete 'ol-rmail org-modules)
-      (delete 'ol-gnus org-modules))
+  (add-hook 'org-mode-hook #'env-org-mode-setup)
+
+  (global-set-key (kbd "C-c c") #'org-capture)
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (eval-when-compile
+    (declare-function org-store-link "ol"))
+  (global-set-key (kbd "C-c l") #'org-store-link)
+
+  (customize-set-variable 'org-startup-folded 'content)
+  (customize-set-variable 'org-ellipsis " →")
+  (customize-set-variable 'org-startup-align-all-tables t)
+  (customize-set-variable 'org-startup-shrink-all-tables t)
+  (customize-set-variable 'org-startup-with-inline-images t)
+  (customize-set-variable 'org-startup-indented t)
+  (customize-set-variable 'org-hide-leading-stars t)
+  (customize-set-variable 'org-pretty-entities-include-sub-superscripts t)
+  (customize-set-variable 'org-hide-emphasis-markers t)
+  (customize-set-variable 'org-image-actual-width 300)
+  (customize-set-variable 'org-fontify-done-headline t)
+  (customize-set-variable 'org-structure-template-alist
+                          '(("e" . "src emacs-lisp")
+                            ("s" . "src shell")
+                            ("c" . "src conf")
+                            ("C" . "comment")
+                            ("h" . "export html")
+                            ("q" . "quote")
+                            ("v" . "verse")))
+  (customize-set-variable 'org-log-done 'time)
+  (customize-set-variable 'org-log-into-drawer t)
+  (customize-set-variable 'org-log-reschedule 'time)
+  (customize-set-variable 'org-log-refile nil)
+  (customize-set-variable 'org-log-redeadline 'time)
+  (customize-set-variable 'org-closed-keep-when-no-todo t)
+  (customize-set-variable 'org-enforce-todo-dependencies t)
+  (customize-set-variable 'org-enforce-todo-checkbox-dependencies nil)
+  (customize-set-variable 'org-complete-tags-always-offer-all-agenda-tags t)
+  (customize-set-variable 'org-clone-delete-id t)
+  (customize-set-variable 'org-catch-invisible-edits 'show-and-error)
+  (customize-set-variable 'org-insert-heading-respect-content nil)
+  (customize-set-variable 'org-ctrl-k-protect-subtree t)
+  (customize-set-variable 'org-M-RET-may-split-line '((default . nil)))
+  (customize-set-variable 'org-special-ctrl-k t)
+  (customize-set-variable 'org-special-ctrl-a/e t)
+  (customize-set-variable 'org-blank-before-new-entry '((heading         . t)
+                                                        (plain-list-item . nil)))
+  (customize-set-variable 'org-use-property-inheritance t)
+
+  (defvar org-modules)
+
+  (with-eval-after-load 'org
+    (delete 'ol-doi org-modules)
+    (delete 'ol-w3m org-modules)
+    (delete 'ol-bibtex org-modules)
+    (delete 'ol-irc org-modules)
+    (delete 'ol-mhe org-modules)
+    (delete 'ol-rmail org-modules)
+    (delete 'ol-gnus org-modules))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3225,68 +3229,68 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
       "Last updated %C. Built with %c. (%v HTML).")
 #+end_src
 
-#+begin_src emacs-lisp
-(defvar org-publish-project-alist)
-  (with-eval-after-load
-   'ox-publish
-   (add-to-list
-    'org-publish-project-alist
-    `("org-content"
-      :base-directory ,org-directory
-      :base-extension "org"
-      :html-link-home "/"
-      :html-link-up nil
-      :publishing-directory "~/.cache/org-publish/"
-      :publishing-function org-html-publish-to-html
-      :with-author t
-      :with-creator nil
-      :with-date t
-      :with-title t
-      :section-numbers nil
-      :with-drawers t
-      :with-sub-superscript t
-      :html-viewport nil
-      :recursive nil
-      :with-toc nil
-      :with-broken-links mark
-      :html-doctype "html5"
-      :html-html5-fancy t
-      :html-head-extra nil
-      :html-head-include-default-style nil
-      :html-head-include-scripts nil
-      :html-head ,env-org-html-head
-      :html-preamble ,env-org-html-preamble
-      :html-postamble ,env-org-html-postamble
-      :sitemap-title "Sitemap"
-      :sitemap-style list
-      :sitemap-filename "sitemap.org"
-      :auto-sitemap t
-      :makeindex t)))
+#+begin_src emacs-lisp :noweb yes
+  (customize-set-variable 'org-publish-project-alist `(
+                                                       <<org-content>>
+                                                       <<env-to-org>>))
 #+end_src
 
-#+begin_src emacs-lisp
-  (with-eval-after-load
-      'ox-publish
-    (add-to-list 'org-publish-project-alist
-                 `("env-to-org"
-                   :base-directory ,org-directory
-                   :base-extension "org"
-                   :publishing-directory "~/.cache/org-publish-actuator"
-                   :publishing-function org-org-publish-to-org
-                   :with-author nil
-                   :with-creator nil
-                   :with-date t
-                   :with-title t
-                   :section-numbers t
-                   :with-drawers nil
-                   :with-toc t
-                   :exclude-tags "noexport"
-                   :with-tasks nil
-                   :with-todo-keywords nil
-                   :with-properties nil
-                   :with-planning nil
-                   :with-inlinetasks nil
-                   )))
+#+name: org-content
+#+begin_src emacs-lisp :tangle no
+  ("org-content"
+   :base-directory ,org-directory
+   :base-extension "org"
+   :html-link-home "/"
+   :html-link-up nil
+   :publishing-directory "~/.cache/org-publish/"
+   :publishing-function org-html-publish-to-html
+   :with-author t
+   :with-creator nil
+   :with-date t
+   :with-title t
+   :section-numbers nil
+   :with-drawers t
+   :with-sub-superscript t
+   :html-viewport nil
+   :recursive nil
+   :with-toc nil
+   :with-broken-links mark
+   :html-doctype "html5"
+   :html-html5-fancy t
+   :html-head-extra nil
+   :html-head-include-default-style nil
+   :html-head-include-scripts nil
+   :html-head ,env-org-html-head
+   :html-preamble ,env-org-html-preamble
+   :html-postamble ,env-org-html-postamble
+   :sitemap-title "Sitemap"
+   :sitemap-style list
+   :sitemap-filename "sitemap.org"
+   :auto-sitemap t
+   :makeindex t)
+#+end_src
+
+#+name: env-to-org
+#+begin_src emacs-lisp :tangle no
+  ("env-to-org"
+   :base-directory ,org-directory
+   :base-extension "org"
+   :publishing-directory "~/.cache/org-publish-actuator"
+   :publishing-function org-org-publish-to-org
+   :with-author nil
+   :with-creator nil
+   :with-date t
+   :with-title t
+   :section-numbers t
+   :with-drawers nil
+   :with-toc t
+   :exclude-tags "noexport"
+   :with-tasks nil
+   :with-todo-keywords nil
+   :with-properties nil
+   :with-planning nil
+   :with-inlinetasks nil
+   )
 #+end_src
 
 #+begin_src emacs-lisp
@@ -4038,8 +4042,8 @@ In order to open epub files, doc-view needs mutool:
             (require 'emms-setup)
             (require 'emms-player-mpd)
             (emms-all)
-            (add-to-list 'emms-info-functions 'emms-info-mpd)
-            (add-to-list 'emms-player-list 'emms-player-mpd)
+            (customize-set-variable 'emms-info-functions '(emms-info-mpd))
+            (customize-set-variable 'emms-player-list '(emms-player-mpd))
             (emms-player-mpd-connect)
             (emms-mode-line-mode -1)
             (emms-playing-time-display-mode -1)
@@ -4056,6 +4060,9 @@ In order to open epub files, doc-view needs mutool:
 :ID:       187973dd-0a5b-4779-875f-31cd46743056
 :END:
 #+begin_src emacs-lisp
+  (defvar calc-mode-map)
+  (declare-function calc-reset "calc-ext" (arg))
+
   (global-set-key (kbd "<f3>") #'calc-dispatch)
   (define-key calc-mode-map (kbd "<f3>") #'calc-reset)
 #+end_src
