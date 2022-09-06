@@ -521,27 +521,6 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 :PROPERTIES:
 :ID:       d29a04b1-926b-4c43-8feb-665ea15d83fa
 :END:
-*** Auto-create missing directories
-:PROPERTIES:
-:CREATED:  [2022-06-12 Sun 16:38]
-:ID:       89be7550-f078-4d9a-8de9-b57102700511
-:END:
-:LOGBOOK:
-- Refiled on [2022-06-13 Mon 18:46]
-:END:
-
-#+begin_src emacs-lisp
-  (defun env-auto-create-missing-dirs ()
-    "Automatically create a missing dir in a path."
-    (let ((target-dir (file-name-directory buffer-file-name)))
-      (unless (file-exists-p target-dir)
-        (make-directory target-dir t))))
-
-  (add-to-list 'find-file-not-found-functions #'env-auto-create-missing-dirs)
-#+end_src
-
-[[https://emacsredux.com/blog/2022/06/12/auto-create-missing-directories][Auto-create Missing Directories]]
-
 *** Unfill paragraph
 :PROPERTIES:
 :ID:       e6172b7e-76fa-4ff1-82e1-3941070a76f3
