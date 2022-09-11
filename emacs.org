@@ -46,10 +46,10 @@ Right now I'm setting Emacs to be [[https://www.emacswiki.org/emacs/EmacsPortabl
   (defvar env-original-gc-cons-threshold gc-cons-threshold)
   (defvar env-original-gc-cons-percentage gc-cons-percentage)
 
-  (customize-set-variable 'gc-cons-threshold (* 128 1000 1000))
-  (customize-set-variable 'gc-cons-percentage 2)
-  (customize-set-variable 'load-prefer-newer t)
-  (customize-set-variable 'frame-inhibit-implied-resize t)
+  (setopt gc-cons-threshold (* 128 1000 1000))
+  (setopt gc-cons-percentage 2.0)
+  (setopt load-prefer-newer t)
+  (setopt frame-inhibit-implied-resize t)
 #+end_src
 
 [[*Reset garbage collection][Reset garbage collection]]
@@ -57,12 +57,12 @@ Right now I'm setting Emacs to be [[https://www.emacswiki.org/emacs/EmacsPortabl
 I moved the custom-file to early init because when it was in the auto-tangled Org file some things ended up being saved in the init.el file and some in the custom-file, so there were weird errors occurring. This way there's only one location that I need to worry about.
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'custom-file (expand-file-name "custom-settings.el" user-emacs-directory))
+  (setopt custom-file (expand-file-name "custom-settings.el" user-emacs-directory))
   (load custom-file 'noerror 'nomessage)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'window-system-default-frame-alist
+  (setopt window-system-default-frame-alist
           '((ns (ns-transparent-titlebar . t)
                 (ns-appearance           . 'light))))
 #+end_src
@@ -123,7 +123,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 :END:
 #+begin_src emacs-lisp
   (when noninteractive
-    (customize-set-variable 'gc-cons-percentage 1)
+    (setopt gc-cons-percentage 1)
      (defvar package-selected-packages nil))
 #+end_src
 
@@ -184,7 +184,7 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 
  #+begin_src emacs-lisp
    (defvar org-directory)
-   (customize-set-variable 'org-directory (expand-file-name "org" "~"))
+   (setopt org-directory (expand-file-name "org" "~"))
    (unless (file-exists-p org-directory)
      (make-directory org-directory))
 #+end_src
@@ -490,29 +490,29 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'redisplay-skip-fontification-on-input t)
-  (customize-set-variable 'switch-to-buffer-obey-display-actions t)
-  (customize-set-variable 'completions-detailed t)
-  (customize-set-variable 'completions-format 'one-column)
-  (customize-set-variable 'next-error-message-highlight 'keep)
-  (customize-set-variable 'fast-but-imprecise-scrolling t)
-  (customize-set-variable 'tab-first-completion 'word)
-  (customize-set-variable 'tab-always-indent 'complete)
-  (customize-set-variable 'save-place-abbreviate-file-names t)
-  (customize-set-variable 'dired-do-revert-buffer t)
-  (customize-set-variable 'abbrev-suggest nil)
-  (customize-set-variable 'calc-make-windows-dedicated t)
-  (customize-set-variable 'image-dired-thumb-visible-marks t)
+  (setopt redisplay-skip-fontification-on-input t)
+  (setopt switch-to-buffer-obey-display-actions t)
+  (setopt completions-detailed t)
+  (setopt completions-format 'one-column)
+  (setopt next-error-message-highlight 'keep)
+  (setopt fast-but-imprecise-scrolling t)
+  (setopt tab-first-completion 'word)
+  (setopt tab-always-indent 'complete)
+  (setopt save-place-abbreviate-file-names t)
+  (setopt dired-do-revert-buffer t)
+  (setopt abbrev-suggest nil)
+  (setopt calc-make-windows-dedicated t)
+  (setopt image-dired-thumb-visible-marks t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'view-read-only t)
+  (setopt view-read-only t)
   (global-unset-key (kbd "C-z"))
-  (customize-set-variable 'window-combination-resize t)
-  (customize-set-variable 'undo-limit (* 10 1024 1024))
+  (setopt window-combination-resize t)
+  (setopt undo-limit (* 10 1024 1024))
   (global-unset-key (kbd "<C-wheel-down>"))
   (global-unset-key (kbd "<C-wheel-up>"))
-  (customize-set-variable 'help-window-select t)
+  (setopt help-window-select t)
   (defvar help-mode-map)
   (eval-when-compile
     (declare-function help-go-back "help-mode" ())
@@ -520,52 +520,52 @@ I am hiding this when not bound because I have weird errors where on Windows it 
   ;; (with-eval-after-load 'help-mode
   ;;   (define-key help-mode-map (kbd "<mouse-8>") #'help-go-back)
   ;;   (define-key help-mode-map (kbd "<mouse-9>") #'help-go-forward))
-  (customize-set-variable 'jit-lock-defer-time 0)
-  (customize-set-variable 'use-short-answers t)
+  (setopt jit-lock-defer-time 0)
+  (setopt use-short-answers t)
   (global-set-key (kbd "M-o") #'other-window)
   (delete-selection-mode +1)
   (midnight-mode t)
-  (customize-set-variable 'sentence-end-double-space nil)
+  (setopt sentence-end-double-space nil)
   (set-language-environment "UTF-8")
   (add-hook 'before-save-hook 'whitespace-cleanup)
-  (customize-set-variable 'indent-tabs-mode nil)
-  (customize-set-variable 'require-final-newline t)
+  (setopt indent-tabs-mode nil)
+  (setopt require-final-newline t)
   (save-place-mode +1)
-  (customize-set-variable 'find-file-visit-truename nil)
-  (customize-set-variable 'confirm-kill-emacs 'y-or-n-p)
+  (setopt find-file-visit-truename nil)
+  (setopt confirm-kill-emacs 'y-or-n-p)
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-defun  'disabled nil)
   (add-hook 'after-save-hook
             #'executable-make-buffer-file-executable-if-script-p)
-    (customize-set-variable 'bookmark-save-flag 1)
-  (customize-set-variable 'bookmark-set-fringe-mark nil)
-  (customize-set-variable 'frame-resize-pixelwise t)
-  (customize-set-variable 'frame-inhibit-implied-resize t)
+    (setopt bookmark-save-flag 1)
+  (setopt bookmark-set-fringe-mark nil)
+  (setopt frame-resize-pixelwise t)
+  (setopt frame-inhibit-implied-resize t)
   (global-set-key (kbd "M-=") #'count-words)
   (blink-cursor-mode -1)
-  (customize-set-variable 'cursor-type 'box)
-  (customize-set-variable 'scroll-conservatively 101)
-  (customize-set-variable 'scroll-margin 3)
-  (customize-set-variable 'mouse-wheel-scroll-amount '(1))
-  (customize-set-variable 'inhibit-startup-message t)
-  (customize-set-variable 'initial-scratch-message "")
+  (setopt cursor-type 'box)
+  (setopt scroll-conservatively 101)
+  (setopt scroll-margin 3)
+  (setopt mouse-wheel-scroll-amount '(1))
+  (setopt inhibit-startup-message t)
+  (setopt initial-scratch-message "")
   (when (executable-find "mdfind")
-    (customize-set-variable 'locate-command "mdfind"))
+    (setopt locate-command "mdfind"))
   (show-paren-mode +1)
   (electric-pair-mode +1)
-  (customize-set-variable 'blink-matching-paren nil)
-  (customize-set-variable 'show-paren-delay 0)
-  (customize-set-variable 'show-paren-style 'mixed)
-  (customize-set-variable 'epg-pinentry-mode 'loopback)
-  (customize-set-variable 'package-native-compile t)
-  (customize-set-variable 'sort-fold-case t)
-  (customize-set-variable 'disabled-command-function 'ignore)
-  (customize-set-variable 'bidi-paragraph-direction 'left-to-right)
-  (customize-set-variable 'bidi-inhibit-bpa t)
+  (setopt blink-matching-paren nil)
+  (setopt show-paren-delay 0)
+  (setopt show-paren-style 'mixed)
+  (setopt epg-pinentry-mode 'loopback)
+  (setopt package-native-compile t)
+  (setopt sort-fold-case t)
+  (setopt disabled-command-function 'ignore)
+  (setopt bidi-paragraph-direction 'left-to-right)
+  (setopt bidi-inhibit-bpa t)
   (global-so-long-mode +1)
-  (customize-set-variable 'proced-auto-update-flag t)
-  (customize-set-variable 'create-lockfiles nil)
-  (customize-set-variable 'image-use-external-converter t)
+  (setopt proced-auto-update-flag t)
+  (setopt create-lockfiles nil)
+  (setopt image-use-external-converter t)
   (remove-hook 'after-save-hook 'rmail-after-save-hook)
  #+end_src
 
@@ -729,14 +729,14 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 :ID:       a3a22e88-3d96-48f8-b5b8-852989e95f7d
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'history-length 10000)
-  (customize-set-variable 'history-delete-duplicates t)
-  (customize-set-variable 'message-log-max 10000)
+  (setopt history-length 10000)
+  (setopt history-delete-duplicates t)
+  (setopt message-log-max 10000)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'savehist-save-minibuffer-history t)
-  (customize-set-variable 'savehist-additional-variables
+  (setopt savehist-save-minibuffer-history t)
+  (setopt savehist-additional-variables
          '(bookmark-history
            buffer-name-history
            command-history
@@ -777,7 +777,7 @@ I am hiding this when not bound because I have weird errors where on Windows it 
 Interprogram paste can cause [[https://github.com/syl20bnr/spacemacs/issues/9409][issues]] if it saves too much, setting it to an integer or nil limits it.
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'save-interprogram-paste-before-kill 100)
+  (setopt save-interprogram-paste-before-kill 100)
 #+end_src
 
 Unpropertizing the kill ring is [[https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist][good for the kill ring]].
@@ -806,10 +806,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (global-auto-revert-mode +1)
-  ;;(customize-set-variable 'auto-revert-avoid-polling t)
-  (customize-set-variable 'global-auto-revert-non-file-buffers t)
-  (customize-set-variable 'auto-revert-verbose t)
-  (customize-set-variable 'auto-revert-check-vc-info nil)
+  ;;(setopt auto-revert-avoid-polling t)
+  (setopt global-auto-revert-non-file-buffers t)
+  (setopt auto-revert-verbose t)
+  (setopt auto-revert-check-vc-info nil)
 #+end_src
 
 ** Minibuffer
@@ -818,7 +818,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'read-minibuffer-restore-windows nil)
+  (setopt read-minibuffer-restore-windows nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -850,9 +850,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'dabbrev-case-distinction t)
-  (customize-set-variable 'dabbrev-case-fold-search t)
-  (customize-set-variable 'dabbrev-case-replace nil)
+  (setopt dabbrev-case-distinction t)
+  (setopt dabbrev-case-fold-search t)
+  (setopt dabbrev-case-replace nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -861,8 +861,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'hippie-expand-verbose t)
-  (customize-set-variable 'hippie-expand-try-functions-list
+  (setopt hippie-expand-verbose t)
+  (setopt hippie-expand-try-functions-list
          '(try-expand-all-abbrevs
            try-expand-dabbrev-visible
            try-expand-dabbrev
@@ -904,10 +904,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
   (global-set-key (kbd "C-x C-r") #'recentf-open-files)
 
-  (customize-set-variable 'recentf-filename-handlers '(abbreviate-file-name))
-  (customize-set-variable 'recentf-max-saved-items 1000)
-  (customize-set-variable 'recentf-auto-cleanup 'never)
-  (customize-set-variable 'recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
+  (setopt recentf-filename-handlers '(abbreviate-file-name))
+  (setopt recentf-max-saved-items 1000)
+  (setopt recentf-auto-cleanup 'never)
+  (setopt recentf-exclude `("^/\\(?:ssh\\|su\\|sudo\\)?:"
                            "/var/folders/"))
   (add-hook 'midnight-hook #'recentf-cleanup)
   (let ((inhibit-message t))
@@ -919,8 +919,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :ID:       76a675eb-4633-407c-8932-8c44886df68e
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'ns-use-proxy-icon nil)
-  (customize-set-variable 'frame-title-format
+  (setopt ns-use-proxy-icon nil)
+  (setopt frame-title-format
          '((:eval (when (buffer-file-name)
                     (abbreviate-file-name default-directory)))
            "%b"))
@@ -934,11 +934,11 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (when (executable-find "trash")
-    (customize-set-variable 'delete-by-moving-to-trash t))
+    (setopt delete-by-moving-to-trash t))
 
   (let ((trash "~/.Trash"))
     (when (file-exists-p trash)
-      (customize-set-variable 'trash-directory "~/.Trash")))
+      (setopt trash-directory "~/.Trash")))
 
   (defun system-move-file-to-trash (path)
     "Move file at PATH to the Trash according to `move-file-to-trash'.
@@ -956,7 +956,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'server-client-instructions nil)
+  (setopt server-client-instructions nil)
     (eval-when-compile
       (declare-function server-running-p "server"))
   (require 'server)
@@ -1011,12 +1011,12 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x C-b") #'ibuffer)
-  (customize-set-variable 'ibuffer-expert t)
+  (setopt ibuffer-expert t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'ibuffer-show-empty-filter-groups nil)
-  (customize-set-variable 'ibuffer-saved-filter-groups
+  (setopt ibuffer-show-empty-filter-groups nil)
+  (setopt ibuffer-saved-filter-groups
          `(("default"
             ("Scratch" (name . "\*scratch\*"))
             ("Org" (or
@@ -1082,12 +1082,12 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
       (defvar image-dired-thumbnail-mode-map)
-  (customize-set-variable 'image-dired-thumb-size 100)
-  (customize-set-variable 'image-dired-thumb-width 300)
-  (customize-set-variable 'image-dired-thumb-height 300)
-  (customize-set-variable 'image-dired-thumb-margin 5)
-  (customize-set-variable 'image-dired-thumb-relief 0)
-  (customize-set-variable 'image-dired-thumbs-per-row 4)
+  (setopt image-dired-thumb-size 100)
+  (setopt image-dired-thumb-width 300)
+  (setopt image-dired-thumb-height 300)
+  (setopt image-dired-thumb-margin 5)
+  (setopt image-dired-thumb-relief 0)
+  (setopt image-dired-thumbs-per-row 4)
   (with-eval-after-load 'image-dired
     (eval-when-compile
       (declare-function image-dired-thumbnail-display-external "image-dired"))
@@ -1095,13 +1095,13 @@ Autorevert via notify is supposed to be much lower power than polling. It should
       (kbd "<return>") #'image-dired-thumbnail-display-external))
 
   (cond ((executable-find "open")
-         (customize-set-variable 'image-dired-external-viewer "open"))
+         (setopt image-dired-external-viewer "open"))
         ((executable-find "xdg-open")
-         (customize-set-variable 'image-dired-external-viewer "xdg-open")))
+         (setopt image-dired-external-viewer "xdg-open")))
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
+  (setopt dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.DS_Store\\'\\|^.git$")
 
   (with-eval-after-load 'savehist
     (eval-when-compile (defvar savehist-additional-variables))
@@ -1109,33 +1109,33 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
   (eval-when-compile
     (declare-function dired-directory-changed-p "dired"))
-  (customize-set-variable 'dired-auto-revert-buffer #'dired-directory-changed-p)
-  (customize-set-variable 'dired-dwim-target t)
-  (customize-set-variable 'wdired-create-parent-directories t)
-  (customize-set-variable 'wdired-allow-to-change-permissions t)
-  (customize-set-variable 'dired-recursive-copies 'always)
-  (customize-set-variable 'dired-isearch-filenames 'dwim)
-  (customize-set-variable 'dired-create-destination-dirs 'ask)
-  (customize-set-variable 'dired-vc-rename-file t)
-  (customize-set-variable 'dired-kill-when-opening-new-dired-buffer t)
+  (setopt dired-auto-revert-buffer #'dired-directory-changed-p)
+  (setopt dired-dwim-target t)
+  (setopt wdired-create-parent-directories t)
+  (setopt wdired-allow-to-change-permissions t)
+  (setopt dired-recursive-copies 'always)
+  (setopt dired-isearch-filenames 'dwim)
+  (setopt dired-create-destination-dirs 'ask)
+  (setopt dired-vc-rename-file t)
+  (setopt dired-kill-when-opening-new-dired-buffer t)
 
   (add-hook 'dired-mode-hook #'hl-line-mode)
 
-  (customize-set-variable 'ls-lisp-use-insert-directory-program t)
-  (customize-set-variable 'ls-lisp-ignore-case t)
-  (customize-set-variable 'ls-lisp-use-string-collate nil)
-  (customize-set-variable 'ls-lisp-verbosity '(links uid))
-  (customize-set-variable 'ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
-  (customize-set-variable 'ls-lisp-use-localized-time-format nil)
+  (setopt ls-lisp-use-insert-directory-program t)
+  (setopt ls-lisp-ignore-case t)
+  (setopt ls-lisp-use-string-collate nil)
+  (setopt ls-lisp-verbosity '(links uid))
+  (setopt ls-lisp-format-time-list '("%Y-%m-%d %H:%M" "%Y-%m-%d"))
+  (setopt ls-lisp-use-localized-time-format nil)
 
   (cond ((or (eq system-type 'gnu-linux) (executable-find "gls"))
          (when (executable-find "gls")
-           (customize-set-variable 'insert-directory-program "gls"))
-         (customize-set-variable 'dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso --dired"))
+           (setopt insert-directory-program "gls"))
+         (setopt dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso --dired"))
         ((eq system-type 'darwin)
-         (customize-set-variable 'dired-listing-switches "-alhFo"))
+         (setopt dired-listing-switches "-alhFo"))
         ((unless (executable-find "ls")
-           (customize-set-variable 'ls-lisp-use-insert-directory-program nil))))
+           (setopt ls-lisp-use-insert-directory-program nil))))
 #+end_src
 
 - a :: include files beginning with dots
@@ -1152,14 +1152,14 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :ID:       7f9409f9-2a3d-42f5-bf5a-4cf1581e203f
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'ediff-window-setup-function
+  (setopt ediff-window-setup-function
                           'ediff-setup-windows-plain)
-  (customize-set-variable 'ediff-split-window-function
+  (setopt ediff-split-window-function
                           'split-window-horizontally)
-  (customize-set-variable 'ediff-diff-options "-w")
-  (customize-set-variable 'ediff-forward-word-function 'forward-char)
-  (customize-set-variable 'ediff-highlight-all-diffs t)
-  (customize-set-variable 'ediff-keep-variants nil)
+  (setopt ediff-diff-options "-w")
+  (setopt ediff-forward-word-function 'forward-char)
+  (setopt ediff-highlight-all-diffs t)
+  (setopt ediff-keep-variants nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1212,10 +1212,10 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'epa-file-encrypt-to '("geoff@mac.into.sh"))
-  (customize-set-variable 'epa-file-select-keys nil)
-  (customize-set-variable 'auth-sources '(password-store))
-  (customize-set-variable 'password-cache-expiry 600)
+  (setopt epa-file-encrypt-to '("geoff@mac.into.sh"))
+  (setopt epa-file-select-keys nil)
+  (setopt auth-sources '(password-store))
+  (setopt password-cache-expiry 600)
 
   (when (file-exists-p "~/.password-store")
     (require 'password-store)
@@ -1243,9 +1243,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'eldoc))
 
-  (customize-set-variable 'eldoc-echo-area-use-multiline-p t)
-  (customize-set-variable 'eldoc-idle-delay 0)
-  (customize-set-variable 'eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+  (setopt eldoc-echo-area-use-multiline-p t)
+  (setopt eldoc-idle-delay 0)
+  (setopt eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
 
   (with-eval-after-load 'eldoc
     (eval-when-compile
@@ -1266,7 +1266,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :ID:       063087d0-0468-4e1c-89af-94006360ab9b
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'tramp-auto-save-directory (expand-file-name "tramp/" user-emacs-directory))
+  (setopt tramp-auto-save-directory (expand-file-name "tramp/" user-emacs-directory))
 #+end_src
 
 ** Modeline
@@ -1275,7 +1275,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'mode-line-compact t)
+  (setopt mode-line-compact t)
   (setq-default mode-line-format
                 (list
                  " %e"
@@ -1306,18 +1306,18 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
-   (customize-set-variable 'auto-save-no-message t)
+   (setopt auto-save-no-message t)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'auto-save-list-file-prefix
+  (setopt auto-save-list-file-prefix
          (expand-file-name "auto-save-list/" user-emacs-directory))
-  (customize-set-variable 'auto-save-default t)
+  (setopt auto-save-default t)
 #+end_src
 
 #+begin_src emacs-lisp
   (make-directory (expand-file-name "auto-saves" user-emacs-directory) t)
-  (customize-set-variable 'auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
+  (setopt auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
 #+end_src
 
 ** Backups
@@ -1325,7 +1325,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :ID:       7fcacb50-6a4a-4bcd-8242-bbeb1eb2e547
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'backup-directory-alist
+  (setopt backup-directory-alist
          `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 #+end_src
 
@@ -1337,8 +1337,8 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (defvar org-directory)
 
   (when (ignore-errors (file-exists-p org-directory))
-    (customize-set-variable 'ispell-personal-dictionary (expand-file-name "data/dictionary" org-directory)))
-  (customize-set-variable 'ispell-silently-savep t)
+    (setopt ispell-personal-dictionary (expand-file-name "data/dictionary" org-directory)))
+  (setopt ispell-silently-savep t)
   (defun env-org-reveal-around ()
     "Reveals the area around the point in Org-mode files."
 
@@ -1355,7 +1355,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 #+begin_src emacs-lisp
   (winner-mode)
-  (customize-set-variable 'winner-boring-buffers-regexp "^\\*")
+  (setopt winner-boring-buffers-regexp "^\\*")
 #+end_src
 
 ** Flymake
@@ -1368,9 +1368,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (defvar flymake-mode-map)
-  (customize-set-variable 'flymake-suppress-zero-counters t)
-  (customize-set-variable 'flymake-no-changes-timeout 1)
-  (customize-set-variable 'flymake-start-on-save-buffer t)
+  (setopt flymake-suppress-zero-counters t)
+  (setopt flymake-no-changes-timeout 1)
+  (setopt flymake-start-on-save-buffer t)
   (with-eval-after-load 'flymake
     (eval-when-compile
       (declare-function flymake-start "flymake")
@@ -1395,9 +1395,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (defun env-restore-gc-cons ()
     "Restore gc-cons-* to default after startup."
     (when (boundp 'env-original-gc-cons-threshold)
-      (customize-set-variable 'gc-cons-threshold  env-original-gc-cons-threshold))
+      (setopt gc-cons-threshold  env-original-gc-cons-threshold))
     (when (boundp 'env-original-gc-cons-percentage)
-      (customize-set-variable 'gc-cons-percentage env-original-gc-cons-percentage)))
+      (setopt gc-cons-percentage env-original-gc-cons-percentage)))
 
     (add-hook 'emacs-startup-hook #'env-restore-gc-cons)
 #+end_src
@@ -1411,7 +1411,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 
 #+begin_src emacs-lisp
   (when (display-graphic-p)
-    (customize-set-variable 'display-buffer-alist
+    (setopt display-buffer-alist
            '(("\\*\\(Org Lint\\|Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Completions\\)\\*"
               (display-buffer-in-side-window)
               (side . bottom)
@@ -1442,9 +1442,9 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-return-follows-link nil)
-  (customize-set-variable 'help-at-pt-display-when-idle t)
-  (customize-set-variable 'help-at-pt-timer-delay 0)
+  (setopt org-return-follows-link nil)
+  (setopt help-at-pt-display-when-idle t)
+  (setopt help-at-pt-timer-delay 0)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1490,7 +1490,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
     (pulse-line))
 
 
-  (customize-set-variable 'pulse-delay .07)
+  (setopt pulse-delay .07)
 #+end_src
 
 ** Minions
@@ -1518,14 +1518,14 @@ Autorevert via notify is supposed to be much lower power than polling. It should
   (eval-when-compile
     (declare-function icomplete-fido-exit "icomplete" (force)))
 
-  (customize-set-variable 'icomplete-scroll t)
-  (customize-set-variable 'icomplete-show-matches-on-no-input t)
-  (customize-set-variable 'read-buffer-completion-ignore-case t)
-  (customize-set-variable 'completion-ignore-case t)
+  (setopt icomplete-scroll t)
+  (setopt icomplete-show-matches-on-no-input t)
+  (setopt read-buffer-completion-ignore-case t)
+  (setopt completion-ignore-case t)
   (customize-set-variable
    'completion-pcm-complete-word-inserts-delimiters t)
-  (customize-set-variable 'read-answer-short t)
-  (customize-set-variable 'read-file-name-completion-ignore-case t)
+  (setopt read-answer-short t)
+  (setopt read-file-name-completion-ignore-case t)
 
   (defun env-recentf-completing-read ()
     "Interactive completion on recentf files."
@@ -1555,7 +1555,7 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 :ID:       fcb4e98a-b02f-4fb8-beaa-e76d96053fdf
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'windmove-create-window nil)
+  (setopt windmove-create-window nil)
   (global-set-key (kbd "<s-up>")   #'windmove-up)
   (global-set-key (kbd "<s-down>") #'windmove-down)
   (global-set-key (kbd "<s-left>")  #'windmove-left)
@@ -1623,12 +1623,12 @@ Autorevert via notify is supposed to be much lower power than polling. It should
 As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default. I add MELPA as a low-priority archive for now (Jan 2022).
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'package-archives
+  (setopt package-archives
          '(("melpa"  . "https://melpa.org/packages/")
            ("gnu"    . "https://elpa.gnu.org/packages/")
            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-  (customize-set-variable 'package-archive-priorities '(("melpa"  . 10)
+  (setopt package-archive-priorities '(("melpa"  . 10)
                                       ("gnu"    . 30)
                                       ("nongnu" . 20)))
 #+end_src
@@ -1643,12 +1643,12 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'desktop-dirname  user-emacs-directory)
-  (customize-set-variable 'desktop-base-lock-name "desktop-lock")
-  (customize-set-variable 'desktop-save t)
+  (setopt desktop-dirname  user-emacs-directory)
+  (setopt desktop-base-lock-name "desktop-lock")
+  (setopt desktop-save t)
   (unless (equal init-file-debug t)
     (desktop-save-mode +1))
-  (customize-set-variable 'desktop-base-file-name
+  (setopt desktop-base-file-name
                           (format "desktop-lock-%s.el" (system-name)))
 #+end_src
 
@@ -1669,8 +1669,8 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :ID:       c2014d6e-4ab9-4433-85e3-a580cb21fdfb
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'help-enable-symbol-autoload t)
-  (customize-set-variable 'describe-bindings-outline t)
+  (setopt help-enable-symbol-autoload t)
+  (setopt describe-bindings-outline t)
 #+end_src
 
 ** Bell
@@ -1680,8 +1680,8 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'visible-bell nil)
-  (customize-set-variable 'ring-bell-function 'ignore)
+  (setopt visible-bell nil)
+  (setopt ring-bell-function 'ignore)
 #+end_src
 
 ** Elisp mode
@@ -1709,7 +1709,7 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
   (defvar find-function-C-source-directory)
   (let ((emacs-source "~/Source/emacs/src/"))
     (when (file-exists-p emacs-source)
-      (customize-set-variable 'find-function-C-source-directory emacs-source)))
+      (setopt find-function-C-source-directory emacs-source)))
 #+end_src
 
 ** Backups
@@ -1719,12 +1719,12 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'backup-by-copying    t)
-  (customize-set-variable 'delete-old-versions  t)
-  (customize-set-variable 'kept-new-versions    100)
-  (customize-set-variable 'kept-old-versions    50) ; I don't know what an old version is
-  (customize-set-variable 'version-control      t)
-  (customize-set-variable 'vc-make-backup-files t)
+  (setopt backup-by-copying    t)
+  (setopt delete-old-versions  t)
+  (setopt kept-new-versions    100)
+  (setopt kept-old-versions    50) ; I don't know what an old version is
+  (setopt version-control      t)
+  (setopt vc-make-backup-files t)
 #+end_src
 
 ** Startup echo
@@ -1749,14 +1749,14 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 
 #+begin_src emacs-lisp
   (when (ignore-errors (file-exists-p org-directory))
-    (customize-set-variable 'abbrev-file-name (expand-file-name "data/abbrev.el" org-directory)))
+    (setopt abbrev-file-name (expand-file-name "data/abbrev.el" org-directory)))
   (defun env-enable-abbrev-mode ()
     "Wrapper to ensure abbrev mode is turned on, not toggled."
     (abbrev-mode +1))
 
   (add-hook 'text-mode-hook #'env-enable-abbrev-mode)
   (add-hook 'prog-mode-hook #'env-enable-abbrev-mode)
-  (customize-set-variable 'save-abbrevs 'silently)
+  (setopt save-abbrevs 'silently)
 #+end_src
 
 ** Package
@@ -1764,14 +1764,14 @@ As of Emacs 29 or so, both the Gnu and NonGnu ELPA package archives are default.
 :ID:       fa975df9-c49f-45ac-a2c0-f2a9689bf3fd
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'package-name-column-width 40)
+  (setopt package-name-column-width 40)
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
 #+end_src
 
 According to [[https://lists.gnu.org/archive/html/emacs-devel/2020-12/msg01162.html][Stephan Monnier]], we only need to set the =package-quickstart= variable to generate a quickstart file, not to load one if it exists.
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'package-quickstart t)
+  (setopt package-quickstart t)
 #+end_src
 
 Further in the same link, he recommends against calling =package-activate-all= as it should be auto-called between early-init and init and may cause issues if called twice.
@@ -1782,11 +1782,11 @@ Further in the same link, he recommends against calling =package-activate-all= a
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
-  (customize-set-variable 'uniquify-separator "/")
-  (customize-set-variable 'uniquify-after-kill-buffer-p t)
-  (customize-set-variable 'uniquify-ignore-buffers-re "^\\*")
-  (customize-set-variable 'uniquify-strip-common-suffix nil)
+  (setopt uniquify-buffer-name-style 'forward) ; Like a path, the way that makes sense
+  (setopt uniquify-separator "/")
+  (setopt uniquify-after-kill-buffer-p t)
+  (setopt uniquify-ignore-buffers-re "^\\*")
+  (setopt uniquify-strip-common-suffix nil)
 #+end_src
 
 ** Completion
@@ -1795,7 +1795,7 @@ Further in the same link, he recommends against calling =package-activate-all= a
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'completion-styles
+  (setq completion-styles
         '(fuzzy
           partial-completion
           substring
@@ -1846,7 +1846,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
   (when (executable-find "sbcl")
     (add-to-list 'package-selected-packages 'slime)
     (add-to-list 'package-selected-packages 'hippie-expand-slime)
-    (customize-set-variable 'inferior-lisp-program "sbcl")
+    (setopt inferior-lisp-program "sbcl")
     (when (locate-library "slime")
       (require 'slime)
       (add-to-list 'load-path (expand-file-name "contrib" slime-path)))
@@ -1867,7 +1867,7 @@ This will only check the display on starting Emacs. If I need to check later (fo
 :ID:       b151b680-343b-4617-964a-3f5bcb5305a8
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'ledger-default-date-format "%Y-%m-%d")
+  (setopt ledger-default-date-format "%Y-%m-%d")
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'ledger-mode))
 #+end_src
@@ -1954,17 +1954,17 @@ This will only check the display on starting Emacs. If I need to check later (fo
   (global-set-key (kbd "C-x g") #'magit-status)
   (global-set-key (kbd "C-x G") #'magit-list-repositories)
 
-  (customize-set-variable 'magit-diff-refine-hunk 'all)
-  (customize-set-variable 'magit-save-repository-buffers 'dontask)
-  (customize-set-variable 'magit-section-initial-visibility-alist
+  (setopt magit-diff-refine-hunk 'all)
+  (setopt magit-save-repository-buffers 'dontask)
+  (setopt magit-section-initial-visibility-alist
          '((untracked . show)
            (unstaged  . show)
            (unpushed  . show)
            (upstream  . show)))
-  (customize-set-variable 'magit-push-always-verify nil)
-  (customize-set-variable 'magit-no-confirm '(stage-all-changes
+  (setopt magit-push-always-verify nil)
+  (setopt magit-no-confirm '(stage-all-changes
                             unstage-all-changes))
-  (customize-set-variable 'magit-status-initial-section nil)
+  (setopt magit-status-initial-section nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1991,8 +1991,8 @@ This will only check the display on starting Emacs. If I need to check later (fo
 #+begin_src emacs-lisp
   (when (executable-find "luatex")
     (add-to-list 'package-selected-packages 'auctex))
-  (customize-set-variable 'TeX-engine 'luatex)
-  (customize-set-variable 'TeX-source-correlate-start-server t)
+  (setopt TeX-engine 'luatex)
+  (setopt TeX-source-correlate-start-server t)
 #+end_src
 ** Anki
 :PROPERTIES:
@@ -2017,10 +2017,10 @@ This will only check the display on starting Emacs. If I need to check later (fo
 
 #+begin_src emacs-lisp
   (defvar elfeed-search-mode-map)
-  (customize-set-variable 'elfeed-search-filter "@1-week-ago +unread ")
-  (customize-set-variable 'elfeed-enclosure-default-dir "~/Download/")
-  (customize-set-variable 'elfeed-search-title-max-width 120)
-  (customize-set-variable 'elfeed-db-directory   (expand-file-name "elfeed" user-emacs-directory))
+  (setopt elfeed-search-filter "@1-week-ago +unread ")
+  (setopt elfeed-enclosure-default-dir "~/Download/")
+  (setopt elfeed-search-title-max-width 120)
+  (setopt elfeed-db-directory   (expand-file-name "elfeed" user-emacs-directory))
 
   (global-set-key (kbd "C-x w") #'env-elfeed-load-db-and-open)
   (with-eval-after-load 'elfeed
@@ -2194,8 +2194,8 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
       (declare-function elfeed-org "elfeed-org"))
     (elfeed-org))
 
-  (customize-set-variable 'rmh-elfeed-org-ignore-tag "disconnected")
-  (customize-set-variable 'rmh-elfeed-org-auto-ignore-invalid-feeds nil)
+  (setopt rmh-elfeed-org-ignore-tag "disconnected")
+  (setopt rmh-elfeed-org-auto-ignore-invalid-feeds nil)
   (customize-set-variable
    'rmh-elfeed-org-files
    `(,(expand-file-name "kb.org" org-directory)))
@@ -2343,9 +2343,9 @@ Changing the colours of an entry is neat, but not that useful. I mostly have thi
 :END:
 #+begin_src emacs-lisp
   (if (eq env-location 'work)
-    (customize-set-variable 'org-agenda-diary-file "access.org")
-(customize-set-variable 'org-agenda-diary-file "diary.org"))
-  (customize-set-variable 'org-agenda-insert-diary-strategy 'date-tree)
+    (setopt org-agenda-diary-file "access.org")
+(setopt org-agenda-diary-file "diary.org"))
+  (setopt org-agenda-insert-diary-strategy 'date-tree)
 #+end_src
 
 ** Smart TODO capture template
@@ -2388,10 +2388,10 @@ Should choose the correct location for a todo based on which computer.
 - Refiled on [2022-06-13 Mon 18:48]
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'prettify-symbols-unprettify-at-point
+  (setopt prettify-symbols-unprettify-at-point
                           'right-edge)
 
-  (customize-set-variable 'prettify-symbols-alist '(("#+title: " . "")))
+  (setopt prettify-symbols-alist '(("#+title: " . "")))
 
   ;; (defun env-prettify-org-symbols ()
   ;;   "Prettifies all Org buffers."
@@ -2457,8 +2457,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 :PROPERTIES:
 :ID:       d1135649-c08b-4a38-8fbb-dcd919ae3a87
 :END:
-#+begin_src emacs-lisp
-  (customize-set-variable 'org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+#+begin_src emacs-lisp :tangle no
+  (setopt org-link-frame-setup '((vm . vm-visit-folder-other-frame)
                                 (vm-imap . vm-visit-imap-folder-other-frame)
                                 (gnus . org-gnus-no-new-news)
                                 (file . find-file)))
@@ -2468,9 +2468,9 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 :ID:       d3924216-6b1e-4f14-b788-6a0fd7a14137
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'calendar-date-style 'iso)
-  (customize-set-variable 'org-agenda-insert-diary-strategy 'date-tree)
-  (customize-set-variable 'org-agenda-include-diary t)
+  (setopt calendar-date-style 'iso)
+  (setopt org-agenda-insert-diary-strategy 'date-tree)
+  (setopt org-agenda-include-diary t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2494,7 +2494,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-capture-use-agenda-date t)
+  (setopt org-capture-use-agenda-date t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2533,9 +2533,9 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'icalendar-export-sexp-enumerate-all nil)
-  (customize-set-variable 'org-icalendar-include-sexps nil)
-  (customize-set-variable 'org-icalendar-include-body nil)
+  (setopt icalendar-export-sexp-enumerate-all nil)
+  (setopt org-icalendar-include-sexps nil)
+  (setopt org-icalendar-include-body nil)
 
   (eval-when-compile
     (declare-function org-icalendar-combine-agenda-files "ox-icalendar"
@@ -2571,12 +2571,12 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-icalendar-use-scheduled '(event-if-not-todo))
-  (customize-set-variable 'org-icalendar-use-deadline '(event-if-not-todo todo-due))
-  (customize-set-variable 'org-icalendar-include-todo nil)
-  (customize-set-variable 'org-icalendar-include-sexps t)
-  (customize-set-variable 'org-icalendar-store-UID t)
-  (customize-set-variable 'org-icalendar-exclude-tags '("habit" "noexport" "work"))
+  (setopt org-icalendar-use-scheduled '(event-if-not-todo))
+  (setopt org-icalendar-use-deadline '(event-if-not-todo todo-due))
+  (setopt org-icalendar-include-todo nil)
+  (setopt org-icalendar-include-sexps t)
+  (setopt org-icalendar-store-UID t)
+  (setopt org-icalendar-exclude-tags '("habit" "noexport" "work"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2584,7 +2584,7 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
    'org-icalendar-combined-agenda-file
    (format "~/.cache/%s.ics"
            (auth-source-pass-get "filename" "webdav.fastmail.fm")))
-  (customize-set-variable 'org-icalendar-combined-name "Geoff")
+  (setopt org-icalendar-combined-name "Geoff")
 #+end_src
 
 ** Calendar
@@ -2596,13 +2596,13 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
   (defun env-set-location (location)
     "Set the current LOCATION for Emacs."
     (cond ((string-equal (downcase location) "calgary")
-           (customize-set-variable 'calendar-latitude [51 02 north])
-           (customize-set-variable 'calendar-longitude [114 03 west])
-           (customize-set-variable 'calendar-location-name "Calgary"))
+           (setopt calendar-latitude [51 02 north])
+           (setopt calendar-longitude [114 03 west])
+           (setopt calendar-location-name "Calgary"))
           ((string-equal (downcase location) "st. john's")
-           (customize-set-variable 'calendar-latitude [47 28 north])
-           (customize-set-variable 'calendar-longitude [52 47 west])
-           (customize-set-variable 'calendar-location-name "St. John's"))
+           (setopt calendar-latitude [47 28 north])
+           (setopt calendar-longitude [52 47 west])
+           (setopt calendar-location-name "St. John's"))
           (t
            (error "Bad location set"))))
 
@@ -2627,8 +2627,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'calendar-date-style 'iso)
-  (customize-set-variable 'calendar-offset -1)
+  (setopt calendar-date-style 'iso)
+  (setopt calendar-offset -1)
 #+end_src
 
 ** Org
@@ -2639,8 +2639,8 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
     (require 'org-id))
-  (customize-set-variable 'org-id-locations-file (expand-file-name "org-id-locations.el" user-emacs-directory))
-  (customize-set-variable 'org-id-track-globally t)
+  (setopt org-id-locations-file (expand-file-name "org-id-locations.el" user-emacs-directory))
+  (setopt org-id-track-globally t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2660,13 +2660,13 @@ Stolen from http://doc.norang.ca/org-mode.html#Archiving
 The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "PROJECT" to match projects. The escaped quotes are needed.
 
 #+begin_src emacs-lisp
-    (customize-set-variable 'org-stuck-projects
+    (setopt org-stuck-projects
            '("+project/-SOMEDAY-DONE" ("TODO") nil ""))
 #+end_src
 
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-publish-timestamp-directory (expand-file-name "org-timestamps/" user-emacs-directory))
+  (setopt org-publish-timestamp-directory (expand-file-name "org-timestamps/" user-emacs-directory))
 #+end_src
 
 #+begin_src emacs-lisp :noweb yes :results silent
@@ -2780,7 +2780,7 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-agenda-files (expand-file-name "agenda" org-directory))
+  (setopt org-agenda-files (expand-file-name "agenda" org-directory))
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
@@ -2810,48 +2810,48 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-fold-catch-invisible-edits 'smart)
-  (customize-set-variable 'org-use-fast-todo-selection 'expert)
-  (customize-set-variable 'org-todo-keywords
+  (setopt org-fold-catch-invisible-edits 'smart)
+  (setopt org-use-fast-todo-selection 'expert)
+  (setopt org-todo-keywords
          '((sequence "TODO(t)" "WAITING(w@)" "SOMEDAY(s!)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(c@)")))
-  (customize-set-variable 'org-agenda-window-setup 'current-window)
-  (customize-set-variable 'org-agenda-restore-windows-after-quit t)
-  (customize-set-variable 'org-agenda-span 7)
-  (customize-set-variable 'org-agenda-todo-list-sublevels t)
-  (customize-set-variable 'org-agenda-dim-blocked-tasks t)
-  (customize-set-variable 'org-list-indent-offset 1)
+  (setopt org-agenda-window-setup 'current-window)
+  (setopt org-agenda-restore-windows-after-quit t)
+  (setopt org-agenda-span 7)
+  (setopt org-agenda-todo-list-sublevels t)
+  (setopt org-agenda-dim-blocked-tasks t)
+  (setopt org-list-indent-offset 1)
   (defvar org-outline-regexp)
-  (customize-set-variable 'org-use-speed-commands
+  (setopt org-use-speed-commands
          (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**" 5))))
-  (customize-set-variable 'org-footnote-auto-adjust t)
-  (customize-set-variable 'org-footnote-define-inline t)
-  (customize-set-variable 'org-footnote-auto-label t)
-  (customize-set-variable 'org-confirm-babel-evaluate nil)
-  (customize-set-variable 'org-babel-results-keyword "results")
-  (customize-set-variable 'org-edit-src-persistent-message nil)
-  (customize-set-variable 'org-src-tab-acts-natively t)
-  (customize-set-variable 'org-src-window-setup 'current-window)
-  (customize-set-variable 'org-src-ask-before-returning-to-edit-buffer nil)
-  (customize-set-variable 'org-src-fontify-natively t)
-  (customize-set-variable 'org-tags-exclude-from-inheritance '("crypt"))
-  (customize-set-variable 'org-crypt-key "geoff@mac.into.sh")
-  (customize-set-variable 'org-agenda-window-setup 'current-window)
-  (customize-set-variable 'org-habit-show-habits-only-for-today t)
-  (customize-set-variable 'org-habit-show-all-today t)
-  (customize-set-variable 'org-capture-bookmark t)
-  (customize-set-variable 'org-hide-macro-markers t)
-  (customize-set-variable 'org-reverse-note-order t)
-  (customize-set-variable 'org-agenda-insert-diary-extract-time t)
-  (customize-set-variable 'org-agenda-start-with-follow-mode nil)
-  (customize-set-variable 'org-agenda-follow-indirect t)
-  (customize-set-variable 'org-agenda-skip-scheduled-if-done t)
-  (customize-set-variable 'org-agenda-skip-deadline-if-done t)
-  (customize-set-variable 'org-agenda-skip-additional-timestamps-same-entry t)
-  (customize-set-variable 'org-agenda-skip-timestamp-if-done nil)
-  (customize-set-variable 'org-agenda-time-leading-zero t)
-  (customize-set-variable 'org-agenda-current-time-string
+  (setopt org-footnote-auto-adjust t)
+  (setopt org-footnote-define-inline t)
+  (setopt org-footnote-auto-label t)
+  (setopt org-confirm-babel-evaluate nil)
+  (setopt org-babel-results-keyword "results")
+  (setopt org-edit-src-persistent-message nil)
+  (setopt org-src-tab-acts-natively t)
+  (setopt org-src-window-setup 'current-window)
+  (setopt org-src-ask-before-returning-to-edit-buffer nil)
+  (setopt org-src-fontify-natively t)
+  (setopt org-tags-exclude-from-inheritance '("crypt"))
+  (setopt org-crypt-key "geoff@mac.into.sh")
+  (setopt org-agenda-window-setup 'current-window)
+  (setopt org-habit-show-habits-only-for-today t)
+  (setopt org-habit-show-all-today t)
+  (setopt org-capture-bookmark t)
+  (setopt org-hide-macro-markers t)
+  (setopt org-reverse-note-order t)
+  (setopt org-agenda-insert-diary-extract-time t)
+  (setopt org-agenda-start-with-follow-mode nil)
+  (setopt org-agenda-follow-indirect t)
+  (setopt org-agenda-skip-scheduled-if-done t)
+  (setopt org-agenda-skip-deadline-if-done t)
+  (setopt org-agenda-skip-additional-timestamps-same-entry t)
+  (setopt org-agenda-skip-timestamp-if-done nil)
+  (setopt org-agenda-time-leading-zero t)
+  (setopt org-agenda-current-time-string
          "Now - - - - - - -")
-  (customize-set-variable 'org-agenda-time-grid
+  (setopt org-agenda-time-grid
          '((daily today remove-match)
            (0600 0700 0800 0900 1000 1100
                  1200 1300 1400 1500 1600
@@ -2862,22 +2862,22 @@ The first item "+TODO=\"PROJECT\"" tells Org to look for a TODO keyword called "
 https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-refile-targets
+  (setopt org-refile-targets
                           '((org-agenda-files :maxlevel . 9)))
 #+end_src
 
 #+begin_src emacs-lisp
   (add-hook 'org-after-refile-insert-hook #'save-buffer)
-  (customize-set-variable 'org-refile-use-cache t)
-  (customize-set-variable 'org-refile-allow-creating-parent-nodes 'confirm)
-  (customize-set-variable 'org-outline-path-complete-in-steps nil)
-  (customize-set-variable 'org-refile-use-outline-path 'file)
+  (setopt org-refile-use-cache t)
+  (setopt org-refile-allow-creating-parent-nodes 'confirm)
+  (setopt org-outline-path-complete-in-steps nil)
+  (setopt org-refile-use-outline-path 'file)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-agenda-start-with-log-mode nil)
-  (customize-set-variable 'org-agenda-start-with-clockreport-mode nil)
-  (customize-set-variable 'org-agenda-columns-add-appointments-to-effort-sum t)
+  (setopt org-agenda-start-with-log-mode nil)
+  (setopt org-agenda-start-with-clockreport-mode nil)
+  (setopt org-agenda-columns-add-appointments-to-effort-sum t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2901,11 +2901,11 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-agenda-todo-ignore-scheduled 'future)
-  (customize-set-variable 'org-agenda-todo-ignore-deadlines 'far)
-  (customize-set-variable 'org-agenda-todo-ignore-timestamp 'future)
-  (customize-set-variable 'org-agenda-todo-ignore-with-date nil)
-  (customize-set-variable 'org-agenda-tags-todo-honor-ignore-options t)
+  (setopt org-agenda-todo-ignore-scheduled 'future)
+  (setopt org-agenda-todo-ignore-deadlines 'far)
+  (setopt org-agenda-todo-ignore-timestamp 'future)
+  (setopt org-agenda-todo-ignore-with-date nil)
+  (setopt org-agenda-tags-todo-honor-ignore-options t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2923,7 +2923,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (with-eval-after-load 'org
     (add-to-list 'org-default-properties "DIR")
     (add-to-list 'org-default-properties "header-args")
-    (customize-set-variable 'org-global-properties
+    (setopt org-global-properties
                             '(("Effort_ALL".
                                "0 0:10 0:30 0:45 1:00 2:00 3:00 4:00")))
     (require 'org-habit)
@@ -2941,7 +2941,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
   (with-eval-after-load 'package
     (add-to-list 'package-selected-packages 'org)
     (add-to-list 'package-selected-packages 'org-contrib))
-  (customize-set-variable 'org-babel-default-header-args
+  (setopt org-babel-default-header-args
                           '((:mkdirp   . "yes")
                             (:comments . "link")
                             (:session  . "none")
@@ -2980,18 +2980,18 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     (declare-function org-store-link "ol"))
   (global-set-key (kbd "C-c l") #'org-store-link)
 
-  (customize-set-variable 'org-startup-folded 'content)
-  (customize-set-variable 'org-ellipsis " →")
-  (customize-set-variable 'org-startup-align-all-tables t)
-  (customize-set-variable 'org-startup-shrink-all-tables t)
-  (customize-set-variable 'org-startup-with-inline-images t)
-  (customize-set-variable 'org-startup-indented t)
-  (customize-set-variable 'org-hide-leading-stars t)
-  (customize-set-variable 'org-pretty-entities-include-sub-superscripts t)
-  (customize-set-variable 'org-hide-emphasis-markers t)
-  (customize-set-variable 'org-image-actual-width 300)
-  (customize-set-variable 'org-fontify-done-headline t)
-  (customize-set-variable 'org-structure-template-alist
+  (setopt org-startup-folded 'content)
+  (setopt org-ellipsis " →")
+  (setopt org-startup-align-all-tables t)
+  (setopt org-startup-shrink-all-tables t)
+  (setopt org-startup-with-inline-images t)
+  (setopt org-startup-indented t)
+  (setopt org-hide-leading-stars t)
+  (setopt org-pretty-entities-include-sub-superscripts t)
+  (setopt org-hide-emphasis-markers t)
+  (setopt org-image-actual-width 300)
+  (setopt org-fontify-done-headline t)
+  (setopt org-structure-template-alist
                           '(("e" . "src emacs-lisp")
                             ("s" . "src shell")
                             ("c" . "src conf")
@@ -2999,25 +2999,25 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
                             ("h" . "export html")
                             ("q" . "quote")
                             ("v" . "verse")))
-  (customize-set-variable 'org-log-done 'time)
-  (customize-set-variable 'org-log-into-drawer t)
-  (customize-set-variable 'org-log-reschedule 'time)
-  (customize-set-variable 'org-log-refile nil)
-  (customize-set-variable 'org-log-redeadline 'time)
-  (customize-set-variable 'org-closed-keep-when-no-todo t)
-  (customize-set-variable 'org-enforce-todo-dependencies t)
-  (customize-set-variable 'org-enforce-todo-checkbox-dependencies nil)
-  (customize-set-variable 'org-complete-tags-always-offer-all-agenda-tags t)
-  (customize-set-variable 'org-clone-delete-id t)
-  (customize-set-variable 'org-catch-invisible-edits 'show-and-error)
-  (customize-set-variable 'org-insert-heading-respect-content nil)
-  (customize-set-variable 'org-ctrl-k-protect-subtree t)
-  (customize-set-variable 'org-M-RET-may-split-line '((default . nil)))
-  (customize-set-variable 'org-special-ctrl-k t)
-  (customize-set-variable 'org-special-ctrl-a/e t)
-  (customize-set-variable 'org-blank-before-new-entry '((heading         . t)
+  (setopt org-log-done 'time)
+  (setopt org-log-into-drawer t)
+  (setopt org-log-reschedule 'time)
+  (setopt org-log-refile nil)
+  (setopt org-log-redeadline 'time)
+  (setopt org-closed-keep-when-no-todo t)
+  (setopt org-enforce-todo-dependencies t)
+  (setopt org-enforce-todo-checkbox-dependencies nil)
+  (setopt org-complete-tags-always-offer-all-agenda-tags t)
+  (setopt org-clone-delete-id t)
+  (setopt org-catch-invisible-edits 'show-and-error)
+  (setopt org-insert-heading-respect-content nil)
+  (setopt org-ctrl-k-protect-subtree t)
+  (setopt org-M-RET-may-split-line '((default . nil)))
+  (setopt org-special-ctrl-k t)
+  (setopt org-special-ctrl-a/e t)
+  (setopt org-blank-before-new-entry '((heading         . t)
                                                         (plain-list-item . nil)))
-  (customize-set-variable 'org-use-property-inheritance t)
+  (setopt org-use-property-inheritance t)
 
   (defvar org-modules)
 
@@ -3032,7 +3032,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-tag-persistent-alist
+  (setopt org-tag-persistent-alist
                           '(("noexport")
                             ("ignore")
                             ("project")
@@ -3058,12 +3058,12 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 :ID:       94e677b0-a287-4357-81f6-5c3fa5ea4ffb
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'calendar-chinese-all-holidays-flag nil)
-  (customize-set-variable 'calendar-hebrew-all-holidays-flag nil)
-  (customize-set-variable 'calendar-christian-all-holidays-flag nil)
-  (customize-set-variable 'calendar-islamic-all-holidays-flag t)
-  (customize-set-variable 'calendar-bahai-all-holidays-flag nil)
-  (customize-set-variable 'holiday-bahai-holidays nil)
+  (setopt calendar-chinese-all-holidays-flag nil)
+  (setopt calendar-hebrew-all-holidays-flag nil)
+  (setopt calendar-christian-all-holidays-flag nil)
+  (setopt calendar-islamic-all-holidays-flag t)
+  (setopt calendar-bahai-all-holidays-flag nil)
+  (setopt holiday-bahai-holidays nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3079,7 +3079,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     "General holidays for the United States.
   See the documentation for `calendar-holidays' for details.")
 
-  (customize-set-variable 'holiday-general-holidays
+  (setopt holiday-general-holidays
          '((holiday-fixed 1 1   "New Year's Day")
            (holiday-fixed 2 2   "Groundhog Day")
            (holiday-fixed 2 14  "Valentine's Day")
@@ -3102,7 +3102,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     "General holidays for Canada.
   See the documentation for `calendar-holidays' for details.")
 
-  (customize-set-variable 'holiday-other-holidays (append holiday-canadian-holidays
+  (setopt holiday-other-holidays (append holiday-canadian-holidays
                                         holiday-american-holidays))
 #+end_src
 ** Attach
@@ -3111,13 +3111,13 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-attach-store-link-p t)
-  (customize-set-variable 'org-attach-expert nil)
-  (customize-set-variable 'org-attach-dir-relative t)
-  (customize-set-variable 'org-attach-preferred-new-method 'ask)
-  (customize-set-variable 'org-attach-method 'mv)
-  (customize-set-variable 'org-attach-auto-tag "attach")
-  (customize-set-variable 'org-attach-archive-delete 'query)
+  (setopt org-attach-store-link-p t)
+  (setopt org-attach-expert nil)
+  (setopt org-attach-dir-relative t)
+  (setopt org-attach-preferred-new-method 'ask)
+  (setopt org-attach-method 'mv)
+  (setopt org-attach-auto-tag "attach")
+  (setopt org-attach-archive-delete 'query)
 #+end_src
 
 ** Clocking
@@ -3128,14 +3128,14 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
     (org-clock-persistence-insinuate))
-  (customize-set-variable 'org-clock-persist t)
-  (customize-set-variable 'org-clock-out-remove-zero-time-clocks t)
-  (customize-set-variable 'org-clock-mode-line-total 'auto)
-  (customize-set-variable 'org-clock-rounding-minutes 5)
+  (setopt org-clock-persist t)
+  (setopt org-clock-out-remove-zero-time-clocks t)
+  (setopt org-clock-mode-line-total 'auto)
+  (setopt org-clock-rounding-minutes 5)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-clock-history-length 35)
+  (setopt org-clock-history-length 35)
 
   (declare-function org-clock-in "org-clock" (&arg))
 
@@ -3153,7 +3153,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 :ID:       c218bdda-34de-4ba3-9a42-7d53fd682304
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'world-clock-list '(("America/New_York" "New York")
+  (setopt world-clock-list '(("America/New_York" "New York")
                             ("Europe/London"    "London")
                             ("Australia/Sydney" "Sydney")
                             ("America/Edmonton" "Calgary")
@@ -3218,9 +3218,9 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
     (with-eval-after-load 'org
       (require 'org-download)))
 
-  (customize-set-variable 'org-download-method 'attach)
-  (customize-set-variable 'org-download-annotate-function nil)
-  (customize-set-variable 'org-download-timestamp "")
+  (setopt org-download-method 'attach)
+  (setopt org-download-annotate-function nil)
+  (setopt org-download-timestamp "")
 #+end_src
 
 ** Org-msg
@@ -3231,17 +3231,19 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'package
-   (add-to-list 'package-selected-packages 'org-msg))
+    (add-to-list 'package-selected-packages 'org-msg))
 
-  (customize-set-variable 'org-msg-default-alternatives '((new           . (text html))
-                                        (reply-to-html . (text html))
-                                        (reply-to-text . (text))))
-  (customize-set-variable 'org-msg-posting-style nil)
-  (customize-set-variable 'org-msg-greeting-fmt "\n%s,\n\n")
-  (customize-set-variable 'org-msg-greeting-name-limit 3)
-  (customize-set-variable 'org-msg-convert-citation t)
-  (customize-set-variable 'mail-user-agent 'mu4e-user-agent)
-  (customize-set-variable 'org-msg-signature "#+begin_signature\n-- \nGeoff MacIntosh.\n#+end_signature")
+  (customize-set-variable 'org-msg-default-alternatives
+                          '((new           . (text html))
+                            (reply-to-html . (text html))
+                            (reply-to-text . (text))))
+  (setopt org-msg-posting-style nil)
+  (setopt org-msg-greeting-fmt "\n%s,\n\n")
+  (setopt org-msg-greeting-name-limit 3)
+  (setopt org-msg-convert-citation t)
+  (setopt mail-user-agent 'mu4e-user-agent)
+  (setopt org-msg-signature
+          "#+begin_signature\n-- \nGeoff MacIntosh.\n#+end_signature")
 
   (eval-when-compile
     (declare-function org-msg-mode "ext:org-msg" (&optional arg)))
@@ -3288,7 +3290,7 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 #+end_src
 
 #+begin_src emacs-lisp :noweb yes
-  (customize-set-variable 'org-publish-project-alist `(
+  (setopt org-publish-project-alist `(
                                                        <<org-content>>
                                                        <<env-to-org>>))
 #+end_src
@@ -3438,10 +3440,10 @@ https://yiming.dev/blog/2018/03/02/my-org-refile-workflow/
 Appt can connect with org-mode to grab all the events for the day and issue alerts.
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'appt-display-mode-line nil)
-  (customize-set-variable 'appt-message-warning-time 15)
-  (customize-set-variable 'appt-display-interval 5)
-  (customize-set-variable 'appt-display-format 'window)
+  (setopt appt-display-mode-line nil)
+  (setopt appt-message-warning-time 15)
+  (setopt appt-display-interval 5)
+  (setopt appt-display-format 'window)
 #+end_src
 
 I'm using a custom alert function so that I can use the system's notification system instead of only internal Emacs features. This way I can use it as either a wrapper or a complete replacement.
@@ -3464,7 +3466,7 @@ I'm using a custom alert function so that I can use the system's notification sy
    name of the TODO item that is upcoming."
     (env-notify (format "Appointment in %s minutes" minutes-until)
                      message))
-  (customize-set-variable 'appt-disp-window-function #'env-appt-notify)
+  (setopt appt-disp-window-function #'env-appt-notify)
 #+end_src
 
 ** Org timer
@@ -3474,8 +3476,8 @@ I'm using a custom alert function so that I can use the system's notification sy
 [2021-08-11 Wed 14:58]
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-clock-sound (expand-file-name "etc/DeusExSounds0437.wav" org-directory))
-  (customize-set-variable 'org-timer-default-timer 25)
+  (setopt org-clock-sound (expand-file-name "etc/DeusExSounds0437.wav" org-directory))
+  (setopt org-timer-default-timer 25)
 #+end_src
 
 ** Org archive
@@ -3483,11 +3485,11 @@ I'm using a custom alert function so that I can use the system's notification sy
 :ID:       087abbb7-ff20-4ef4-bb5c-e2bb6e617517
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-archive-mark-done "ARCHIVED")
+  (setopt org-archive-mark-done "ARCHIVED")
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-agenda-text-search-extra-files
+  (setopt org-agenda-text-search-extra-files
          (directory-files
           org-directory t "^[^.#].*\\.\\(org$\\|org_archive$\\)"))
 #+end_src
@@ -3669,7 +3671,7 @@ This is legit cool, stolen completely from [[https://karl-voit.at/2022/02/10/lfi
   (when (locate-library "org-contacts")
     (with-eval-after-load 'org
     (require 'org-contacts)))
-  (customize-set-variable 'org-contacts-files '("contacts.org"))
+  (setopt org-contacts-files '("contacts.org"))
 #+end_src
 
 ** Org links
@@ -3727,7 +3729,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 :ID:       a5ce20cd-b642-451d-a538-f1c74725b5f4
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-tags-sort-function 'org-string-collate-lessp)
+  (setopt org-tags-sort-function 'org-string-collate-lessp)
 #+end_src
 
 ** Org ID
@@ -3736,7 +3738,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 :ID:       ee4fbee5-3fc2-4762-9429-da03b59ed879
 :END:
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 #+end_src
 
 * Apps
@@ -3765,39 +3767,39 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 #+begin_src emacs-lisp
   (let ((fish (executable-find "fish")))
     (when fish
-      (customize-set-variable 'shell-file-name fish)))
+      (setopt shell-file-name fish)))
 #+end_src
 
 #+begin_src emacs-lisp
   (customize-set-variable 'mu4e-maildir-shortcuts
          '((:maildir "/Archive" :key ?a)
            (:maildir "/Inbox"   :key ?i)))
-  (customize-set-variable 'mail-user-agent 'mu4e-user-agent)
-  (customize-set-variable 'mu4e-hide-index-messages t)
-  (customize-set-variable 'mu4e-update-interval (* 60 15))
-  (customize-set-variable 'mu4e-index-update-in-background nil)
-  (customize-set-variable 'mu4e-index-update-error-warning t)
-  (customize-set-variable 'mu4e-refile-folder "/Archive")
-  (customize-set-variable 'mu4e-sent-folder   "/Sent Items")
-  (customize-set-variable 'mu4e-drafts-folder "/Drafts")
-  (customize-set-variable 'mu4e-trash-folder  "/Trash")
-  (customize-set-variable 'mu4e-attachment-dir "~/Downloads/")
-  (customize-set-variable 'mu4e-view-show-images t)
-  (customize-set-variable 'mu4e-view-show-addresses t)
-  (customize-set-variable 'mu4e-change-filenames-when-moving t)
-  (customize-set-variable 'mu4e-headers-skip-duplicates t)
-  (customize-set-variable 'mu4e-compose-format-flowed t)
-  (customize-set-variable 'mu4e-date-format "%y-%m-%d")
-  (customize-set-variable 'mu4e-headers-date-format "%y-%m-%d")
-  (customize-set-variable 'mu4e-get-mail-command "mbsync --all")
-  (customize-set-variable 'mu4e-mu-binary (executable-find "mu"))
+  (setopt mail-user-agent 'mu4e-user-agent)
+  (setopt mu4e-hide-index-messages t)
+  (setopt mu4e-update-interval (* 60 15))
+  (setopt mu4e-index-update-in-background nil)
+  (setopt mu4e-index-update-error-warning t)
+  (setopt mu4e-refile-folder "/Archive")
+  (setopt mu4e-sent-folder   "/Sent Items")
+  (setopt mu4e-drafts-folder "/Drafts")
+  (setopt mu4e-trash-folder  "/Trash")
+  (setopt mu4e-attachment-dir "~/Downloads/")
+  (setopt mu4e-view-show-images t)
+  (setopt mu4e-view-show-addresses t)
+  (setopt mu4e-change-filenames-when-moving t)
+  (setopt mu4e-headers-skip-duplicates t)
+  (setopt mu4e-compose-format-flowed t)
+  (setopt mu4e-date-format "%y-%m-%d")
+  (setopt mu4e-headers-date-format "%y-%m-%d")
+  (setopt mu4e-get-mail-command "mbsync --all")
+  (setopt mu4e-mu-binary (executable-find "mu"))
   (add-hook 'message-mode-hook 'auto-fill-mode)
-  (customize-set-variable 'message-cite-reply-position 'traditional)
+  (setopt message-cite-reply-position 'traditional)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'mu4e-icalendar-trash-after-reply t)
-  (customize-set-variable 'mu4e-icalendar-diary-file (expand-file-name "inbox.org" org-directory))
+  (setopt mu4e-icalendar-trash-after-reply t)
+  (setopt mu4e-icalendar-diary-file (expand-file-name "inbox.org" org-directory))
   (with-eval-after-load 'mu4e
     (eval-when-compile
       (declare-function mu4e-icalendar-setup "ext:mu4e-icalendar-setup" nil))
@@ -3811,16 +3813,16 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'send-mail-function 'smtpmail-send-it)
-  (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
+  (setopt send-mail-function 'smtpmail-send-it)
+  (setopt message-send-mail-function 'smtpmail-send-it)
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'user-full-name "Geoff MacIntosh")
-  (customize-set-variable 'user-mail-address "geoff@mac.into.sh")
-  (customize-set-variable 'smtpmail-smtp-server "smtp.fastmail.com")
-  (customize-set-variable 'smtpmail-smtp-service "587")
-  (customize-set-variable 'smtpmail-servers-requiring-authorization "fastmail")
+  (setopt user-full-name "Geoff MacIntosh")
+  (setopt user-mail-address "geoff@mac.into.sh")
+  (setopt smtpmail-smtp-server "smtp.fastmail.com")
+  (setopt smtpmail-smtp-service "587")
+  (setopt smtpmail-servers-requiring-authorization "fastmail")
 #+end_src
 
 *** Mu4e Alert
@@ -3854,7 +3856,7 @@ This requires the [[https://github.com/HKey/feed-discovery][feed discovery]] pac
     (unless (eq system-type 'windows-nt)
       (add-to-list 'package-selected-packages 'alert)))
   (cond ((eq system-type 'gnu/linux)
-         (customize-set-variable 'alert-default-style 'libnotify))
+         (setopt alert-default-style 'libnotify))
         ((eq system-type 'darwin)
          (customize-set-variable 'alert-default-style 'osx-notifier)))
 #+end_src
@@ -3938,7 +3940,7 @@ Thunderbird attachment reminder
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'eww-history-limit 1000)
+  (setopt eww-history-limit 1000)
 #+end_src
 *** Handle video urls
 :PROPERTIES:
@@ -3960,11 +3962,11 @@ I want video links to be opened in MPV. This helps my battery life as well as my
 SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts and Nov.el books. Normally it wraps at the page width, but that can be adjusted.
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'shr-width 75)
-  (customize-set-variable 'shr-use-colors nil)
-  (customize-set-variable 'shr-use-fonts nil)
-  (customize-set-variable 'shr-image-animate nil)
-  (customize-set-variable 'shr-cookie-policy nil)
+  (setopt shr-width 75)
+  (setopt shr-use-colors nil)
+  (setopt shr-use-fonts nil)
+  (setopt shr-image-animate nil)
+  (setopt shr-cookie-policy nil)
 #+end_src
 
 *** Open links in background
@@ -3973,19 +3975,19 @@ SHR is used to render all sorts of basic HTML in Emacs, including Elfeed posts a
 :END:
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'browse-url-secondary-browser-function 'eww)
+  (setopt browse-url-secondary-browser-function 'eww)
 #+end_src
 
 #+begin_src emacs-lisp
   (when (executable-find "firefox")
-    (customize-set-variable 'browse-url-browser-function 'browse-url-firefox))
+    (setopt browse-url-browser-function 'browse-url-firefox))
 #+end_src
 
 #+begin_src emacs-lisp
   (when (executable-find "open")
-    (customize-set-variable 'browse-url-browser-function 'browse-url-generic)
-    (customize-set-variable 'browse-url-generic-program "open")
-    (customize-set-variable 'browse-url-generic-args '("--background")))
+    (setopt browse-url-browser-function 'browse-url-generic)
+    (setopt browse-url-generic-program "open")
+    (setopt browse-url-generic-args '("--background")))
 #+end_src
 
 ** ERC
@@ -4014,11 +4016,11 @@ In order to open epub files, doc-view needs mutool:
 
 #+begin_src emacs-lisp
   (when (executable-find "mutool")
-    (customize-set-variable 'doc-view-pdfdraw-program "mutool"))
+    (setopt doc-view-pdfdraw-program "mutool"))
 #+end_src
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'doc-view-resolution 150)
+  (setopt doc-view-resolution 150)
 #+end_src
 
 ** Eshell
@@ -4032,15 +4034,15 @@ In order to open epub files, doc-view needs mutool:
   (defalias 'eshell/v  'view-file-other-window)
   (defalias 'eshell/vv 'view-file)
 
-  (customize-set-variable 'eshell-destroy-buffer-when-process-dies t)
-  (customize-set-variable 'eshell-banner-message "")
-  (customize-set-variable 'eshell-history-size 10000)
-  (customize-set-variable 'eshell-hist-ignoredups t)
-  (customize-set-variable 'eshell-cmpl-cycle-completions nil)
-  (customize-set-variable 'eshell-cmpl-ignore-case t)
-  (customize-set-variable 'eshell-where-to-jump 'begin)
-  (customize-set-variable 'eshell-review-quick-commands nil)
-  (customize-set-variable 'eshell-smart-space-goes-to-end t)
+  (setopt eshell-destroy-buffer-when-process-dies t)
+  (setopt eshell-banner-message "")
+  (setopt eshell-history-size 10000)
+  (setopt eshell-hist-ignoredups t)
+  (setopt eshell-cmpl-cycle-completions nil)
+  (setopt eshell-cmpl-ignore-case t)
+  (setopt eshell-where-to-jump 'begin)
+  (setopt eshell-review-quick-commands nil)
+  (setopt eshell-smart-space-goes-to-end t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -4058,8 +4060,8 @@ In order to open epub files, doc-view needs mutool:
   (defun env-eshell-prompt ()
     "Custom prompt for eshell."
      "; ")
-  (customize-set-variable 'eshell-prompt-regexp "^; ")
-  (customize-set-variable 'eshell-prompt-function #'env-eshell-prompt)
+  (setopt eshell-prompt-regexp "^; ")
+  (setopt eshell-prompt-function #'env-eshell-prompt)
 #+end_src
 ** Emms
 :PROPERTIES:
@@ -4075,10 +4077,10 @@ In order to open epub files, doc-view needs mutool:
       (add-to-list 'package-selected-packages 'emms)
       (add-to-list 'package-selected-packages 'org-emms)))
 
-  (customize-set-variable 'emms-player-list '(emms-player-mpd))
-  (customize-set-variable 'emms-player-mpd-server-name "localhost")
-  (customize-set-variable 'emms-player-mpd-server-port "6600")
-  (customize-set-variable 'emms-player-mpd-music-directory (expand-file-name "~/Music/Music Files/"))
+  (setopt emms-player-list '(emms-player-mpd))
+  (setopt emms-player-mpd-server-name "localhost")
+  (setopt emms-player-mpd-server-port "6600")
+  (setopt emms-player-mpd-music-directory (expand-file-name "~/Music/Music Files/"))
 
   (eval-when-compile
     (declare-function emms-player-mpd-update-all "ext:emms-player-mpd" nil)
@@ -4100,8 +4102,8 @@ In order to open epub files, doc-view needs mutool:
             (require 'emms-setup)
             (require 'emms-player-mpd)
             (emms-all)
-            (customize-set-variable 'emms-info-functions '(emms-info-mpd))
-            (customize-set-variable 'emms-player-list '(emms-player-mpd))
+            (setopt emms-info-functions '(emms-info-mpd))
+            (setopt emms-player-list '(emms-player-mpd))
             (emms-player-mpd-connect)
             (emms-mode-line-mode -1)
             (emms-playing-time-display-mode -1)
