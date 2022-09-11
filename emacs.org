@@ -206,17 +206,65 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
 #+end_src
 
 * Theme
+:PROPERTIES:
+:header-args: :noweb yes
+:ID:       1f3f490b-319c-4020-8478-630ff6798b73
+:END:
 :LOGBOOK:
 - Refiled on [2022-02-21 Mon 17:29]
 :END:
-#+begin_src emacs-lisp
 
-  ;; flymake error
-  ;; flymake warning
-  ;; flymake note
-  ;; todo not due yet
-  ;; todo past due
+Colour List OS 9
+- Menu Bar/Disabled Title :: #dedede
+- Border :: #9c9c9c / #525252
+- Titlebar Subhead :: #efefef
+- Disabled Text :: #737373
+- Selected Tab :: #8c8c8c
+- Unselected Tab :: #cecece
 
+*Redo*
+- Title :: #cecece / #9c9c9c
+- Alternate :: #dedede / #8c8c8c
+- Alter 3 :: #efefef / #525252 / #737373
+- Selected :: #8c8c8c / #adadad
+- White :: white
+- Text :: Black
+- Scrollbar :: #9c9cff / #6363ce / #ceceff
+
+*Notes*
+- Background is indicated by lower-contrast text and outlines (no chrome detail) but not lower-contrast elements
+- Instead of purple (which I love), maybe a CYMK theme?
+
+#+name: colours
+| name       | description | value   |
+|------------+-------------+---------|
+| blue       |             | #29beea |
+| cyan       |             | #00ffff |
+| x-blue     |             | #b1f8ff |
+| red        |             | #BF0B0B        |
+| red2       |             | #ff1616 |
+| dark       |             | #000000 |
+| grey       |             | #484f55 |
+| l-grey     |             | #bdc4cc |
+| xgrey      |             | #f5f6f8 |
+| white      |             | #ffffff |
+| dark-purp  |             | #6363ce |
+| mid-purp   |             | #9c9cff |
+| light-purp |             | #ceceff |
+|            |             |         |
+
+#+name: get-colour
+#+begin_src emacs-lisp :var table=colours name="dark"
+  (let ((colour (seq-some
+                 (lambda (e)
+                   (and (string= name (car e))
+                        (nth 2 e)))
+                 table)))
+        (concat "\"" colour "\"")
+      colour)
+#+end_src
+
+#+begin_src emacs-lisp :noweb yes
   (defvar env-highlight)
 
   (defvar env-red)
@@ -229,15 +277,15 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
   (defvar env-gray-dark)
   (defvar env-gray-xlight)
 
-  (let ((blue  "#29BEEA")
-        (white "#FFFFFF")
+  (let ((blue  "<<get-colour(name="dark-purp")>>")
+        (white "<<get-colour(name="white")>>")
         (dark  "#000000")
         ;;(cyan  "#00FFFF")
-        (red   "#FF1616")
+        (red   "<<get-colour(name="red")>>")
         (grey  "#484e55")
         (lgrey "#bdc4cc")
 
-        (highlight-dim "#B1F8FF")
+        (highlight-dim "<<get-colour(name="light-purp")>>")
         (code-background "#F5F6F8")
 
         (xgrey "#F5F6F8")
@@ -305,6 +353,9 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
     `(org-agenda-date-weekend ((t :inherit org-agenda-date
                                       :foreground ,lgrey
                                       :weight normal)))
+    `(org-agenda-clocking ((t :background ,blue
+:foreground ,white)))
+     `(org-checkbox-statistics-todo ((t :foreground ,lgrey)))
 
     `(org-agenda-structure ((t :foreground ,lgrey
                                :weight normal
@@ -355,8 +406,9 @@ I moved the custom-file to early init because when it was in the auto-tangled Or
                                           :extend t))))
      `(minibuffer-prompt ((t (:inherit default))))
      `(isearch ((t (:background ,lgrey))))
-     ;; `(show-paren-match ((t (:background ,lgrey))))
-     ;; `(show-paren-match-expression ((t (:background ,lgrey))))
+      `(show-paren-match ((t (:background ,grey
+                              :foreground ,white))))
+      `(show-paren-match-expression ((t (:background ,lgrey))))
      ;; `(show-paren-mismatch ((t (:background ,lgrey))))
      ;; `(magit-section-heading ((t (:background ,lgrey))))
      ;; `(magit-section-highlight ((t (:background ,lgrey))))
