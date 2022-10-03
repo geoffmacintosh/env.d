@@ -213,9 +213,9 @@ https://emacs.stackexchange.com/questions/3618/launch-emacs-with-ediff-files-of-
 
   function fish_prompt -d "The prompt for fish"
       #prompt_ssh
-      prompt_cwd
-      prompt_git
-      printf ' ❯ '
+      #prompt_cwd
+      #prompt_git
+      printf '; '
   end
 #+end_src
 
